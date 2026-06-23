@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Profile | Finovault AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#f7fafd",
+                    "on-secondary-fixed-variant": "#005143",
+                    "outline": "#74777e",
+                    "secondary": "#006b5a",
+                    "on-background": "#181c1e",
+                    "on-tertiary-fixed": "#0f0069",
+                    "tertiary-fixed-dim": "#c3c0ff",
+                    "surface-container-low": "#f1f4f7",
+                    "surface": "#f7fafd",
+                    "surface-dim": "#d7dadd",
+                    "error": "#ba1a1a",
+                    "surface-container-high": "#e5e8eb",
+                    "tertiary": "#060045",
+                    "surface-variant": "#e0e3e6",
+                    "on-tertiary-fixed-variant": "#321ed2",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#b0c8eb",
+                    "primary": "#000f22",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#58fbda",
+                    "on-secondary-container": "#00705e",
+                    "on-primary-fixed-variant": "#314865",
+                    "inverse-on-surface": "#eef1f4",
+                    "tertiary-container": "#150082",
+                    "secondary-fixed-dim": "#2cdebf",
+                    "on-primary": "#ffffff",
+                    "inverse-surface": "#2d3133",
+                    "tertiary-fixed": "#e2dfff",
+                    "on-surface-variant": "#43474d",
+                    "on-primary-container": "#768dad",
+                    "on-error-container": "#93000a",
+                    "inverse-primary": "#b0c8eb",
+                    "on-tertiary-container": "#7f7bff",
+                    "primary-container": "#0a2540",
+                    "on-secondary-fixed": "#00201a",
+                    "background": "#f7fafd",
+                    "surface-tint": "#49607e",
+                    "on-surface": "#181c1e",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#e0e3e6",
+                    "outline-variant": "#c4c6ce",
+                    "primary-fixed": "#d2e4ff",
+                    "on-primary-fixed": "#001c37",
+                    "secondary-container": "#54f8d7",
+                    "on-secondary": "#ffffff",
+                    "surface-container": "#ebeef1"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "80px",
+                    "lg": "48px",
+                    "margin-desktop": "48px",
+                    "sm": "12px",
+                    "margin-mobile": "16px",
+                    "gutter": "24px",
+                    "base": "8px",
+                    "md": "24px",
+                    "xs": "4px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Geist"],
+                    "display-lg": ["Geist"],
+                    "caption": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Geist"],
+                    "headline-md": ["Geist"],
+                    "headline-lg": ["Geist"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "caption": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #f7fafd;
+            color: #181c1e;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(230, 235, 241, 1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="font-body-md text-on-background min-h-screen pb-24 md:pb-0">
+<!-- Top Navigation Bar -->
+<header class="bg-surface-bright shadow-[0px_4px_20px_rgba(0,0,0,0.04)] w-full top-0 sticky z-50">
+<nav class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 w-full max-w-[1440px] mx-auto">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary hover:bg-surface-container-low transition-colors p-2 rounded-full active:scale-95 transition-transform" data-icon="menu">menu</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Finovault AI</h1>
+</div>
+<div class="flex items-center gap-6">
+<!-- Desktop Nav -->
+<div class="hidden md:flex gap-8">
+<a class="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low transition-colors px-3 py-2 rounded-lg" href="#">Wealth Growth</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low transition-colors px-3 py-2 rounded-lg" href="#">Smart Savings</a>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed cursor-pointer active:scale-95 transition-transform">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="A professional studio portrait of a successful financial executive with a friendly, confident expression. The person has short dark hair and is wearing a modern tailored navy blue suit. The background is a soft, blurred corporate environment with clean architectural lines and cool blue lighting, maintaining a premium fintech aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjFa6m5d7kD2sutkB5oNybaigkDR9qL5TcnWsAmLdWc45oYF_3Q_SE3C8RyVoAWkwtHUdYV6f6d8HYuHZ4iBB8djH7-L41ExCD4issoqDmkI5-JwKs_0kkP8H7s1PGCSzn23rchfpZ1Lgp-6foFYCCIX6bSwiGIaeht7bmwJC6QdtTuYIEBGZMqmUCNihnrifkzRJogJocX4XQY4Psfbius-REljtIEeyG3I6lbKr6YPcUXqIApMONduWrDGhBxsPFIfWe4EU1TAnm"/>
+</div>
+</div>
+</nav>
+</header>
+<main class="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop py-md">
+<!-- Hero Section / Profile Header -->
+<div class="relative w-full rounded-xl overflow-hidden mb-md p-lg bg-primary-container text-white">
+
+<div class="relative z-10 flex flex-col md:flex-row items-center gap-md">
+<div class="w-32 h-32 rounded-full border-4 border-white/20 overflow-hidden shadow-xl">
+<img alt="Alex Morgan avatar" class="w-full h-full object-cover" data-alt="Close up professional headshot of a person named Alex Morgan, looking charismatic and approachable. The lighting is sophisticated, with subtle highlights that define their features. The aesthetic is clean and high-end, fitting for a premium AI fintech platform's top-tier user." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHruUc8mXqVExoh37v3wK84m1bMMgIof0g7K5LBIJ1NbZm832wc1Ipu-1Xnt3-ExDYWt0kgZTzqNyRxsRCFc5fUUshFsf8auICYeBdU21Vo4F8-wjjyp1XFSoR-ef7s1cHnm_WjuaDST7GKLAYljMI4ea4tWReW4F2TrzQx4W_OMyBkYQrh0fPKsk5gPCrpg66zhKPwXkSdk44kR9nl9ijhi9eFb-AMasEx3VX2qRosKYfAZehoglD-lEaTiZCfE-uuF2frOJcTMPU"/>
+</div>
+<div class="text-center md:text-left">
+<div class="flex items-center justify-center md:justify-start gap-2 mb-1">
+<h2 class="font-headline-lg text-headline-lg font-bold">Alex Morgan</h2>
+<span class="material-symbols-outlined text-secondary-fixed text-lg" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="font-body-md text-on-primary-container flex items-center justify-center md:justify-start gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="workspace_premium">workspace_premium</span>
+                        Individual Pro Plan
+                    </p>
+<div class="mt-4 flex flex-wrap gap-2 justify-center md:justify-start">
+<span class="bg-white/10 px-4 py-1 rounded-full font-label-md text-label-md backdrop-blur-md">Account ID: FV-8892</span>
+<span class="bg-secondary-container text-on-secondary-container px-4 py-1 rounded-full font-label-md text-label-md font-bold">PRO MEMBER</span>
+</div>
+</div>
+<div class="md:ml-auto">
+<button class="bg-secondary-fixed text-on-secondary-fixed px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-secondary-fixed-dim transition-all active:scale-95 shadow-[0px_4px_12px_rgba(88,251,218,0.3)]">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+                        Edit Profile
+                    </button>
+</div>
+</div>
+</div>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-md items-start">
+<!-- Sidebar Navigation (Settings Categories) -->
+<div class="md:col-span-3 space-y-2">
+<button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-secondary-container text-on-secondary-container font-bold shadow-sm transition-all">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+                    Personal Info
+                </button>
+<button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+                    Security
+                </button>
+<button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+                    Linked Accounts
+                </button>
+<button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined" data-icon="privacy_tip">privacy_tip</span>
+                    Data Privacy
+                </button>
+<button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+                    Notifications
+                </button>
+<hr class="border-outline-variant my-4 mx-2"/>
+<button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-error hover:bg-error-container transition-all">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                    Sign Out
+                </button>
+</div>
+<!-- Settings Content -->
+<div class="md:col-span-9 space-y-md">
+<!-- Bento Grid Sections -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Personal Details -->
+<section class="glass-card p-md rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-md text-headline-md text-primary font-bold">Personal Info</h3>
+<button class="text-secondary font-bold text-label-md">Change</button>
+</div>
+<div class="space-y-4">
+<div class="flex flex-col gap-1">
+<label class="text-on-surface-variant text-caption uppercase tracking-wider">Full Name</label>
+<p class="font-body-md font-medium">Alex Morgan</p>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-on-surface-variant text-caption uppercase tracking-wider">Email Address</label>
+<p class="font-body-md font-medium">a.morgan@finovault.ai</p>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-on-surface-variant text-caption uppercase tracking-wider">Phone Number</label>
+<p class="font-body-md font-medium">+1 (555) 012-3456</p>
+</div>
+</div>
+</section>
+<!-- Plan & Billing -->
+<section class="glass-card p-md rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-md text-headline-md text-primary font-bold">Plan Details</h3>
+<span class="bg-secondary-container/50 text-on-secondary-container px-3 py-1 rounded-full text-caption font-bold">ACTIVE</span>
+</div>
+<div class="flex-grow flex flex-col justify-center items-center text-center py-4">
+<div class="w-16 h-16 bg-primary/5 rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<h4 class="font-headline-md text-headline-md">Individual Pro</h4>
+<p class="text-on-surface-variant text-body-md mb-4">$29.99 / billed monthly</p>
+<button class="w-full bg-primary text-white py-3 rounded-xl font-bold hover:opacity-90 transition-opacity">Manage Subscription</button>
+</div>
+</section>
+</div>
+<!-- Security Highlights -->
+<section class="glass-card p-md rounded-xl shadow-sm overflow-hidden relative">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-md text-headline-md text-primary font-bold">Security &amp; Protection</h3>
+<span class="text-secondary font-bold text-label-md flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="shield_moon">shield_moon</span>
+                            Safe Status
+                        </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/30 flex items-start gap-3">
+<div class="text-secondary">
+<span class="material-symbols-outlined" data-icon="lock_open">lock_open</span>
+</div>
+<div>
+<p class="font-label-md font-bold text-primary">Two-Factor Auth</p>
+<p class="text-caption text-on-surface-variant">Enabled via App</p>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/30 flex items-start gap-3">
+<div class="text-secondary">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</div>
+<div>
+<p class="font-label-md font-bold text-primary">Last Login</p>
+<p class="text-caption text-on-surface-variant">2 hours ago, London</p>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/30 flex items-start gap-3">
+<div class="text-secondary">
+<span class="material-symbols-outlined" data-icon="devices">devices</span>
+</div>
+<div>
+<p class="font-label-md font-bold text-primary">Active Devices</p>
+<p class="text-caption text-on-surface-variant">3 connected devices</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Connected Financial Institutions -->
+<section class="glass-card p-md rounded-xl shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-md text-headline-md text-primary font-bold">Linked Accounts</h3>
+<button class="flex items-center gap-1 bg-surface-container-high px-4 py-2 rounded-lg text-label-md font-bold transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                            Link Bank
+                        </button>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-white rounded-xl border border-outline-variant/20 hover:border-secondary transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="account_balance">account_balance</span>
+</div>
+<div>
+<p class="font-body-md font-bold text-primary">Chase Sapphire Banking</p>
+<p class="text-caption text-on-surface-variant">Checking •••• 9921</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-white rounded-xl border border-outline-variant/20 hover:border-secondary transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="savings">savings</span>
+</div>
+<div>
+<p class="font-body-md font-bold text-primary">Goldman Sachs Marcus</p>
+<p class="text-caption text-on-surface-variant">High Yield Savings •••• 4402</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Mobile only) -->
+<footer class="md:hidden bg-surface-container-lowest dark:bg-surface-dim fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-margin-mobile pb-safe shadow-[0px_-4px_20px_rgba(0,0,0,0.04)]">
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:text-secondary transition-opacity active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:text-secondary transition-opacity active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="gpp_good">gpp_good</span>
+<span class="font-label-md text-label-md">Protection</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-2xl px-6 py-1 active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="account_circle" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+<span class="font-label-md text-label-md font-bold">Profile</span>
+</div>
+</footer>
+<script>
+        // Simple ripple effect or hover interactions can be added here
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', function() {
+                this.classList.add('scale-95');
+            });
+            button.addEventListener('mouseup', function() {
+                this.classList.remove('scale-95');
+            });
+            button.addEventListener('mouseleave', function() {
+                this.classList.remove('scale-95');
+            });
+        });
+    </script>
+</body></html>

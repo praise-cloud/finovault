@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Finovault AI | Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#f7fafd",
+                    "on-secondary-fixed-variant": "#005143",
+                    "outline": "#74777e",
+                    "secondary": "#006b5a",
+                    "on-background": "#181c1e",
+                    "on-tertiary-fixed": "#0f0069",
+                    "tertiary-fixed-dim": "#c3c0ff",
+                    "surface-container-low": "#f1f4f7",
+                    "surface": "#f7fafd",
+                    "surface-dim": "#d7dadd",
+                    "error": "#ba1a1a",
+                    "surface-container-high": "#e5e8eb",
+                    "tertiary": "#060045",
+                    "surface-variant": "#e0e3e6",
+                    "on-tertiary-fixed-variant": "#321ed2",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#b0c8eb",
+                    "primary": "#000f22",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#58fbda",
+                    "on-secondary-container": "#00705e",
+                    "on-primary-fixed-variant": "#314865",
+                    "inverse-on-surface": "#eef1f4",
+                    "tertiary-container": "#150082",
+                    "secondary-fixed-dim": "#2cdebf",
+                    "on-primary": "#ffffff",
+                    "inverse-surface": "#2d3133",
+                    "tertiary-fixed": "#e2dfff",
+                    "on-surface-variant": "#43474d",
+                    "on-primary-container": "#768dad",
+                    "on-error-container": "#93000a",
+                    "inverse-primary": "#b0c8eb",
+                    "on-tertiary-container": "#7f7bff",
+                    "primary-container": "#0a2540",
+                    "on-secondary-fixed": "#00201a",
+                    "background": "#f7fafd",
+                    "surface-tint": "#49607e",
+                    "on-surface": "#181c1e",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#e0e3e6",
+                    "outline-variant": "#c4c6ce",
+                    "primary-fixed": "#d2e4ff",
+                    "on-primary-fixed": "#001c37",
+                    "secondary-container": "#54f8d7",
+                    "on-secondary": "#ffffff",
+                    "surface-container": "#ebeef1"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "80px",
+                    "lg": "48px",
+                    "margin-desktop": "48px",
+                    "sm": "12px",
+                    "margin-mobile": "16px",
+                    "gutter": "24px",
+                    "base": "8px",
+                    "md": "24px",
+                    "xs": "4px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Geist"],
+                    "display-lg": ["Geist"],
+                    "caption": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Geist"],
+                    "headline-md": ["Geist"],
+                    "headline-lg": ["Geist"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "caption": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .bento-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .bento-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0px 12px 40px rgba(0,0,0,0.06);
+        }
+        
+        .ai-pulse {
+            animation: pulse-glow 3s infinite ease-in-out;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.6; filter: blur(8px); }
+            50% { opacity: 1; filter: blur(12px); }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface-bright text-on-surface font-body-md min-h-screen pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="bg-surface-bright dark:bg-surface-dim shadow-[0px_4px_20px_rgba(0,0,0,0.04)] w-full top-0 sticky z-50">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 w-full max-w-[1440px] mx-auto">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-primary transition-transform active:scale-95">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">Finovault AI</h1>
+</div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="font-label-md text-label-md text-primary dark:text-primary-fixed-dim font-bold" href="#">Dashboard</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low transition-colors px-3 py-1 rounded-full" href="#">Growth</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low transition-colors px-3 py-1 rounded-full" href="#">Protection</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors" data-icon="notifications">notifications</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="A professional headshot of a person with a friendly expression, captured with high-end studio lighting. The background is a soft, blurred office interior with neutral tones. The image style is clean, modern, and high-resolution, perfectly complementing a premium financial technology interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4ja6A8syKkXB8yhmbHV0lAWV_OsIdygJxBEF82QmlBoFXOxr7FkyWeUpuZpWVpgQss0UBd7Ut_89ef3fn20qGz5KdpmsHhhJbWs0bzS2YnPNQCDpMpBOjw2UX_EVRhnVt4-uFWEB3ZdYxG8LkF9IbwUdks2Nc6KJPi8wC0ylHU4gYUbbgf4e9zWfebcYzN19QTWQyc577XsDG0La4t5DIan_QRzuntaaieYF-WusQRrdZX0t55VIhOm6QX6h3vQPuuve57LygM4uf"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop py-8 grid grid-cols-4 md:grid-cols-12 gap-gutter">
+<!-- Left Column: Navigation Drawer (Desktop only) -->
+<aside class="hidden md:flex md:col-span-3 flex-col gap-2">
+<div class="p-6 bg-surface-container rounded-2xl mb-4">
+<div class="flex items-center gap-3 mb-2">
+<span class="font-headline-md text-headline-md font-bold text-primary">Alex Morgan</span>
+<span class="bg-secondary-container text-on-secondary-container text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Verified</span>
+</div>
+<p class="text-on-surface-variant font-label-md">Individual Pro Plan</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="bg-secondary-container text-on-secondary-container rounded-full px-4 py-3 font-bold flex items-center gap-3 transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+<span class="font-label-md">Wealth Growth</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-variant rounded-full px-4 py-3 flex items-center gap-3 transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="savings">savings</span>
+<span class="font-label-md">Smart Savings</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-variant rounded-full px-4 py-3 flex items-center gap-3 transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+<span class="font-label-md">Fraud Protection</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-variant rounded-full px-4 py-3 flex items-center gap-3 transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-md">SME Analytics</span>
+</a>
+</nav>
+</aside>
+<!-- Center/Right Column: Content -->
+<div class="col-span-4 md:col-span-9 space-y-gutter">
+<!-- Net Worth Hero Card -->
+<section class="relative overflow-hidden bg-primary-container text-white rounded-3xl p-8 md:p-12 shadow-lg">
+
+<div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<span class="text-on-primary-container font-label-md uppercase tracking-widest mb-2 block">Total Net Worth</span>
+<div class="flex items-baseline gap-3">
+<h2 class="font-display-lg text-display-lg text-on-primary">$1,284,500.42</h2>
+<span class="text-secondary-fixed font-label-md flex items-center bg-secondary/20 px-2 py-1 rounded-lg">
+<span class="material-symbols-outlined text-[16px] mr-1" data-icon="arrow_upward">arrow_upward</span>
+                                12.4%
+                            </span>
+</div>
+<p class="text-on-primary-container mt-4 font-body-md max-w-md">Your wealth has grown by $42k this month, primarily driven by your diversified SME equity portfolio.</p>
+</div>
+<div class="flex gap-4">
+<button class="bg-secondary-fixed text-on-secondary-fixed px-6 py-3 rounded-full font-bold transition-all active:scale-95 shadow-lg shadow-secondary/20">Add Asset</button>
+<button class="bg-white/10 backdrop-blur-md text-white border border-white/20 px-6 py-3 rounded-full font-bold transition-all active:scale-95">Detailed Report</button>
+</div>
+</div>
+</section>
+<!-- Bento Grid Main Content -->
+<div class="grid grid-cols-4 md:grid-cols-6 gap-gutter">
+<!-- Next Best Move AI (Bento Large) -->
+<div class="col-span-4 bento-card bg-surface-container-lowest border border-outline-variant/30 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between">
+<div class="absolute -top-12 -right-12 w-48 h-48 bg-secondary/10 rounded-full blur-3xl ai-pulse"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-secondary" data-icon="auto_awesome">auto_awesome</span>
+<h3 class="font-headline-md text-headline-md text-primary">Next Best Move</h3>
+</div>
+<div class="space-y-4">
+<div class="bg-surface-bright p-5 rounded-2xl border border-secondary-fixed/30">
+<p class="font-body-lg text-primary font-medium mb-1">Transfer $4,200 to Wealth Reserve</p>
+<p class="text-on-surface-variant text-label-md">Finovault AI detected a surplus in your primary checking. Moving this to your high-yield reserve could earn an additional $18/mo.</p>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex-1 bg-secondary text-white py-3 rounded-xl font-bold transition-colors hover:bg-on-secondary-fixed-variant">Execute Transfer</button>
+<button class="p-3 border border-outline-variant rounded-xl text-on-surface-variant hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Monthly Spending (Bento Small) -->
+<div class="col-span-4 md:col-span-2 bento-card bg-surface-container-lowest border border-outline-variant/30 rounded-3xl p-6 flex flex-col">
+<h3 class="font-label-md text-on-surface-variant uppercase mb-4 tracking-wider">Monthly Spending</h3>
+<div class="flex-1 flex flex-col justify-center">
+<div class="text-headline-lg font-display-lg text-primary">$8,420.00</div>
+<p class="text-error font-label-md flex items-center mt-1">
+<span class="material-symbols-outlined text-[16px] mr-1" data-icon="trending_up">trending_up</span>
+                            8% above limit
+                        </p>
+</div>
+<div class="mt-6 space-y-3">
+<div class="flex justify-between items-center text-label-md">
+<span class="text-on-surface-variant">Housing</span>
+<span class="font-bold">$3,200</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-full w-[45%]"></div>
+</div>
+<div class="flex justify-between items-center text-label-md">
+<span class="text-on-surface-variant">Lifestyle</span>
+<span class="font-bold">$2,100</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-secondary h-full w-[70%]"></div>
+</div>
+</div>
+</div>
+<!-- Assets Breakdown (Bento Medium) -->
+<div class="col-span-4 md:col-span-3 bento-card bg-surface-container-lowest border border-outline-variant/30 rounded-3xl p-6">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-primary">Asset Allocation</h3>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer" data-icon="info">info</span>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-4 p-3 hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed text-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="apartment">apartment</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-primary">Real Estate</p>
+<p class="text-caption text-on-surface-variant">42% of portfolio</p>
+</div>
+<p class="font-bold text-primary">$540k</p>
+</div>
+<div class="flex items-center gap-4 p-3 hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="token">token</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-primary">SME Equity</p>
+<p class="text-caption text-on-surface-variant">35% of portfolio</p>
+</div>
+<p class="font-bold text-primary">$450k</p>
+</div>
+<div class="flex items-center gap-4 p-3 hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-primary-fixed text-primary flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-primary">Liquid Cash</p>
+<p class="text-caption text-on-surface-variant">23% of portfolio</p>
+</div>
+<p class="font-bold text-primary">$294k</p>
+</div>
+</div>
+</div>
+<!-- Recent Activity (Bento Medium) -->
+<div class="col-span-4 md:col-span-3 bento-card bg-surface-container-lowest border border-outline-variant/30 rounded-3xl p-6">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-primary">Recent Flux</h3>
+<a class="text-secondary font-label-md hover:underline" href="#">View all</a>
+</div>
+<div class="space-y-5">
+<div class="flex gap-4">
+<div class="w-2 h-10 bg-secondary rounded-full"></div>
+<div>
+<p class="font-label-md text-primary font-bold">Dividends Received</p>
+<p class="text-caption text-on-surface-variant">TechVentures SME Fund • Today</p>
+<p class="text-secondary font-bold text-label-md">+$2,450.00</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-2 h-10 bg-error rounded-full opacity-60"></div>
+<div>
+<p class="font-label-md text-primary font-bold">Travel Expense</p>
+<p class="text-caption text-on-surface-variant">St. Regis Maldives • 2d ago</p>
+<p class="text-on-surface font-bold text-label-md">-$4,120.50</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-2 h-10 bg-primary-fixed text-primary rounded-full"></div>
+<div>
+<p class="font-label-md text-primary font-bold">Crypto Adjustment</p>
+<p class="text-caption text-on-surface-variant">Ethereum Wallet • 3d ago</p>
+<p class="text-secondary font-bold text-label-md">+$840.12</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-margin-mobile pb-safe bg-surface-container-lowest dark:bg-surface-dim shadow-[0px_-4px_20px_rgba(0,0,0,0.04)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-2xl px-6 py-1 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:text-secondary transition-opacity active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="gpp_good">gpp_good</span>
+<span class="font-label-md">Protection</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:text-secondary transition-opacity active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="font-label-md">Profile</span>
+</a>
+</nav>
+<!-- Micro-interaction for cards -->
+<script>
+        document.querySelectorAll('.bento-card').forEach(card => {
+            card.addEventListener('mousedown', () => {
+                card.style.transform = 'scale(0.98)';
+            });
+            card.addEventListener('mouseup', () => {
+                card.style.transform = 'scale(1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Finovault AI | Fraud Protection</title>
+<!-- Google Fonts: Inter & Geist -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#f7fafd",
+                    "on-secondary-fixed-variant": "#005143",
+                    "outline": "#74777e",
+                    "secondary": "#006b5a",
+                    "on-background": "#181c1e",
+                    "on-tertiary-fixed": "#0f0069",
+                    "tertiary-fixed-dim": "#c3c0ff",
+                    "surface-container-low": "#f1f4f7",
+                    "surface": "#f7fafd",
+                    "surface-dim": "#d7dadd",
+                    "error": "#ba1a1a",
+                    "surface-container-high": "#e5e8eb",
+                    "tertiary": "#060045",
+                    "surface-variant": "#e0e3e6",
+                    "on-tertiary-fixed-variant": "#321ed2",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#b0c8eb",
+                    "primary": "#000f22",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#58fbda",
+                    "on-secondary-container": "#00705e",
+                    "on-primary-fixed-variant": "#314865",
+                    "inverse-on-surface": "#eef1f4",
+                    "tertiary-container": "#150082",
+                    "secondary-fixed-dim": "#2cdebf",
+                    "on-primary": "#ffffff",
+                    "inverse-surface": "#2d3133",
+                    "tertiary-fixed": "#e2dfff",
+                    "on-surface-variant": "#43474d",
+                    "on-primary-container": "#768dad",
+                    "on-error-container": "#93000a",
+                    "inverse-primary": "#b0c8eb",
+                    "on-tertiary-container": "#7f7bff",
+                    "primary-container": "#0a2540",
+                    "on-secondary-fixed": "#00201a",
+                    "background": "#f7fafd",
+                    "surface-tint": "#49607e",
+                    "on-surface": "#181c1e",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#e0e3e6",
+                    "outline-variant": "#c4c6ce",
+                    "primary-fixed": "#d2e4ff",
+                    "on-primary-fixed": "#001c37",
+                    "secondary-container": "#54f8d7",
+                    "on-secondary": "#ffffff",
+                    "surface-container": "#ebeef1"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "80px",
+                    "lg": "48px",
+                    "margin-desktop": "48px",
+                    "sm": "12px",
+                    "margin-mobile": "16px",
+                    "gutter": "24px",
+                    "base": "8px",
+                    "md": "24px",
+                    "xs": "4px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Geist"],
+                    "display-lg": ["Geist"],
+                    "caption": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Geist"],
+                    "headline-md": ["Geist"],
+                    "headline-lg": ["Geist"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "caption": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .security-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.05); }
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(230, 235, 241, 0.5);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-surface-bright dark:bg-surface-dim shadow-[0px_4px_20px_rgba(0,0,0,0.04)] w-full top-0 sticky z-50">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 w-full max-w-[1440px] mx-auto">
+<div class="flex items-center gap-4">
+<button class="text-primary dark:text-primary-fixed-dim hover:bg-surface-container-low transition-colors p-2 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">Finovault AI</h1>
+</div>
+<div class="hidden md:flex gap-8 items-center">
+<nav class="flex gap-6">
+<a class="text-on-surface-variant dark:text-outline-variant font-label-md text-label-md hover:text-secondary transition-opacity" href="#">Wealth Growth</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-md text-label-md hover:text-secondary transition-opacity" href="#">Smart Savings</a>
+<a class="text-primary dark:text-primary-fixed-dim font-label-md text-label-md font-bold" href="#">Fraud Protection</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-md text-label-md hover:text-secondary transition-opacity" href="#">SME Analytics</a>
+</nav>
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden border border-outline-variant">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqsIUDV-W1NPVccACULIQJ8vnr0pdYjOKwY1_ZrrK9FATXwLfglHIGdk2gERSdI2bJ5AzOSaQtUT_rowajmXUJP11wCowZ9XvDLAyJ2e3wKnP1yMyl2jXRixdrGjIkafEj0Q3vGQGB1Ivu2jvL91_HpWOho1_rtfPzoI08tsZj4JNoasqMjSPEtw6yl-il2vTTSV6Qij0aYDTI2coDllPi6AxjNF90jCWcaF_E47JDdh2J6TaiyJ9BiAOqoMtSpJZhC9pKQJ5-CMmo"/>
+</div>
+</div>
+<div class="md:hidden">
+<span class="material-symbols-outlined text-primary">account_circle</span>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop pt-md pb-xl">
+<!-- Hero Branding Section -->
+<div class="mb-lg">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">Fraud Protection</h2>
+<p class="text-on-surface-variant font-body-lg max-w-2xl">Bank-grade vigilant AI monitoring your assets 24/7. Real-time encryption and neural threat detection active.</p>
+</div>
+<div class="flex items-center gap-2 bg-secondary-container px-4 py-2 rounded-full">
+<span class="material-symbols-outlined text-on-secondary-container text-sm" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="text-on-secondary-container font-label-md text-label-md font-bold">Vigilance Active</span>
+</div>
+</div>
+</div>
+<!-- Bento Grid Main Content -->
+<div class="bento-grid">
+<!-- Security Score Card (Primary) -->
+<div class="col-span-12 md:col-span-5 lg:col-span-4 bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant relative overflow-hidden">
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-lg">
+<h3 class="font-headline-md text-headline-md text-primary">Security Score</h3>
+<span class="material-symbols-outlined text-secondary">info</span>
+</div>
+<div class="flex flex-col items-center justify-center py-4">
+<div class="relative w-48 h-48 flex items-center justify-center">
+<!-- Circular Progress SVG -->
+<svg class="w-full h-full -rotate-90" viewbox="0 0 100 100">
+<circle class="text-surface-variant" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-secondary transition-all duration-1000" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-dasharray="282.7" stroke-dashoffset="28.27" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="font-display-lg text-display-lg text-primary">98</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Optimal</span>
+</div>
+</div>
+</div>
+<div class="mt-lg space-y-4">
+<div class="flex items-center justify-between p-3 bg-surface-container rounded-lg">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-md text-body-md">Identity Verified</span>
+</div>
+<span class="text-secondary font-bold">Safe</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container rounded-lg">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-md text-body-md">Encryption Level</span>
+</div>
+<span class="text-secondary font-bold">AES-256</span>
+</div>
+</div>
+</div>
+<!-- Subtle background mesh -->
+<div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-secondary/5 rounded-full blur-3xl"></div>
+</div>
+<!-- Active Alerts Feed -->
+<div class="col-span-12 md:col-span-7 lg:col-span-8 bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant flex flex-col">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-headline-md text-headline-md text-primary">Real-time Monitoring</h3>
+<div class="flex gap-2">
+<button class="bg-surface-variant p-2 rounded-lg hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+<div class="flex-grow space-y-sm overflow-y-auto max-h-[420px] pr-2">
+<!-- Alert Item 1 -->
+<div class="p-md bg-surface-container-low rounded-xl border-l-4 border-secondary flex items-start gap-4 transition-all hover:translate-x-1">
+<div class="bg-secondary-container p-3 rounded-full">
+<span class="material-symbols-outlined text-on-secondary-container">shield_with_heart</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between">
+<h4 class="font-headline-md text-body-lg text-primary">Biometric Login Verified</h4>
+<span class="font-caption text-caption text-on-surface-variant">2 mins ago</span>
+</div>
+<p class="text-on-surface-variant text-body-md mt-1">Successful facial recognition login from known device: iPhone 15 Pro.</p>
+</div>
+</div>
+<!-- Alert Item 2 -->
+<div class="p-md bg-surface-container-low rounded-xl border-l-4 border-tertiary flex items-start gap-4 transition-all hover:translate-x-1">
+<div class="bg-tertiary-fixed p-3 rounded-full">
+<span class="material-symbols-outlined text-tertiary">cloud_sync</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between">
+<h4 class="font-headline-md text-body-lg text-primary">Neural Pattern Sync</h4>
+<span class="font-caption text-caption text-on-surface-variant">15 mins ago</span>
+</div>
+<p class="text-on-surface-variant text-body-md mt-1">Transaction patterns synchronized with global fraud database. 0 anomalies detected.</p>
+</div>
+</div>
+<!-- Alert Item 3 (Passive) -->
+<div class="p-md bg-surface-container-low rounded-xl border-l-4 border-outline flex items-start gap-4 transition-all hover:translate-x-1">
+<div class="bg-surface-variant p-3 rounded-full">
+<span class="material-symbols-outlined text-on-surface-variant">location_on</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between">
+<h4 class="font-headline-md text-body-lg text-primary">Location Update</h4>
+<span class="font-caption text-caption text-on-surface-variant">1 hour ago</span>
+</div>
+<p class="text-on-surface-variant text-body-md mt-1">Your location is verified as London, UK. International travel lock remains active.</p>
+</div>
+</div>
+</div>
+<button class="mt-md w-full py-3 text-secondary font-label-md text-label-md hover:bg-surface-container transition-colors rounded-xl">View Historical Logs</button>
+</div>
+<!-- Encryption & Technical Status -->
+<div class="col-span-12 lg:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Status 1 -->
+<div class="glass-card rounded-xl p-md flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container">lock_open</span>
+</div>
+<div>
+<p class="font-caption text-caption text-on-surface-variant uppercase tracking-tighter">Encryption</p>
+<p class="font-headline-md text-body-lg text-primary font-bold">End-to-End Tunnel</p>
+<div class="flex items-center gap-1 mt-1">
+<div class="w-2 h-2 rounded-full bg-secondary security-pulse"></div>
+<span class="text-xs text-secondary">Active</span>
+</div>
+</div>
+</div>
+<!-- Status 2 -->
+<div class="glass-card rounded-xl p-md flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container">psychology</span>
+</div>
+<div>
+<p class="font-caption text-caption text-on-surface-variant uppercase tracking-tighter">AI Monitoring</p>
+<p class="font-headline-md text-body-lg text-primary font-bold">Neural Engine v4.2</p>
+<div class="flex items-center gap-1 mt-1">
+<div class="w-2 h-2 rounded-full bg-secondary security-pulse"></div>
+<span class="text-xs text-secondary">Learning</span>
+</div>
+</div>
+</div>
+<!-- Status 3 -->
+<div class="glass-card rounded-xl p-md flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-tertiary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-on-tertiary-fixed-variant">key</span>
+</div>
+<div>
+<p class="font-caption text-caption text-on-surface-variant uppercase tracking-tighter">Key Custody</p>
+<p class="font-headline-md text-body-lg text-primary font-bold">Hardware Isolated</p>
+<div class="flex items-center gap-1 mt-1">
+<div class="w-2 h-2 rounded-full bg-secondary security-pulse"></div>
+<span class="text-xs text-secondary">Protected</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Visualization / Graphic Section -->
+<div class="col-span-12 bg-primary rounded-xl overflow-hidden min-h-[300px] relative">
+<div class="absolute inset-0 opacity-40">
+<!-- Placeholder for potential animation or abstract background -->
+<div class="absolute inset-0 bg-gradient-to-br from-primary to-secondary/30"></div>
+</div>
+<div class="relative z-10 p-lg flex flex-col md:flex-row items-center justify-between h-full gap-8">
+<div class="text-on-primary md:w-1/2">
+<h3 class="font-headline-lg text-headline-lg mb-4">The Finovault Shield</h3>
+<p class="font-body-md opacity-80 mb-6 leading-relaxed">Our proprietary AI architecture uses multi-dimensional analysis to detect fraud before it happens. Every transaction is cross-referenced with over 500 signals across our global network.</p>
+<div class="flex flex-wrap gap-4">
+<button class="bg-secondary text-white px-6 py-3 rounded-full font-label-md font-bold hover:shadow-[0_0_20px_rgba(0,107,90,0.4)] transition-all active:scale-95">Configure Guardrails</button>
+<button class="border border-outline-variant text-white px-6 py-3 rounded-full font-label-md font-bold hover:bg-white/10 transition-all">Audit Report</button>
+</div>
+</div>
+<div class="md:w-1/3 flex justify-center">
+<div class="w-64 h-64 bg-secondary/10 rounded-full border border-secondary/30 flex items-center justify-center p-4">
+<div class="w-full h-full bg-secondary/20 rounded-full border border-secondary/50 flex items-center justify-center p-4">
+<div class="w-full h-full bg-secondary/40 rounded-full border border-secondary/70 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-6xl" style="font-variation-settings: 'FILL' 1;">security</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Background Image Prompt -->
+<img class="hidden" data-alt="A futuristic, high-tech command center interface showing glowing digital security waves and complex neural network data nodes. The aesthetic is clean and corporate, featuring a deep navy and teal color palette with soft glowing accents of bright emerald green. The lighting is low-key with focused highlights on digital interactive panels, creating a mood of absolute security and sophisticated bank-grade vigilance. Digital particles float in the atmosphere, suggesting a dynamic, real-time protection system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbA1LBKyILJQLuT2GXBSerKxrHPXFLzoswvGCqzL9_4mmwLmM98x3DKnIJxXEfuMTByez3YnY_wuMRYIJgkACdPYICWhSXtNZlAjXdnfkqgDNIe4yJmazC6HIYMnLhcSnA767XUrkcX19A0VxfMaAJv-QtDhFtPjZZld245hgrSQ3L4CZlj0oSWuJvx0xA-t09T_1QNqwJPh_HpHAguUHw6PUYAiXlVu-OtmuIj9O8I9bF3Gfnfi30g9AXG7CqyTSft5DB9c3P9NtU"/>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-margin-mobile pb-safe bg-surface-container-lowest dark:bg-surface-dim shadow-lg">
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:text-secondary transition-opacity active:scale-90 duration-200">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-2xl px-6 py-1 active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">gpp_good</span>
+<span class="font-label-md text-label-md">Protection</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:text-secondary transition-opacity active:scale-90 duration-200">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-md text-label-md">Profile</span>
+</div>
+</nav>
+<script>
+        // Micro-interaction for alerts
+        document.querySelectorAll('.bento-grid > div').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-2px)';
+                card.style.transition = 'transform 0.3s ease';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>
