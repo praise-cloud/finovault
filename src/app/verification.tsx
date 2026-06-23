@@ -48,11 +48,19 @@ export default function Verification() {
   const inputs = useRef<any[]>([]);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
   const verifyOtp = useAuthStore((s) => s.verifyOtp);
   const resendOtp = useAuthStore((s) => s.resendOtp);
   const user = useAuthStore((s) => s.user);
 
   const email = user?.email || '';
+
+  useEffect(() => {
+    if (cooldown > 0) {
+      const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [cooldown]);
 
   const handleOtpChange = (text: string, index: number) => {
     const newOtp = [...otp];
@@ -86,14 +94,20 @@ export default function Verification() {
   };
 
   const handleResend = async () => {
+    if (cooldown > 0) return;
     setIsResending(true);
     const error = await resendOtp(email);
     setIsResending(false);
     if (error) {
-      Alert.alert('Error', error);
+      if (error.includes('429') || error.includes('rate')) {
+        Alert.alert('Too Many Requests', 'Please wait 60 seconds before requesting a new code.');
+      } else {
+        Alert.alert('Error', error);
+      }
       return;
     }
-    Alert.alert('Code Resent', 'A new verification code has been sent to your email.');
+    setCooldown(60);
+    Alert.alert('Code Sent', 'A new verification code has been sent to your email.');
   };
 
   return (
@@ -148,9 +162,11 @@ export default function Verification() {
               </Input>
             ))}
           </View>
-          <Pressable onPress={handleResend} disabled={isResending} className="items-center mt-8 active:scale-95">
+          <Pressable onPress={handleResend} disabled={isResending || cooldown > 0} className="items-center mt-8 active:scale-95">
             {isResending ? (
               <ActivityIndicator size="small" color="#006b5a" />
+            ) : cooldown > 0 ? (
+              <Text className="font-label-md text-label-md text-outline">Resend in {cooldown}s</Text>
             ) : (
               <Text className="font-label-md text-label-md text-secondary">Resend Code</Text>
             )}
