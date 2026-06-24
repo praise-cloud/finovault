@@ -38,6 +38,11 @@ export async function updateUserPassword(password: string): Promise<string | nul
   return error ? error.message : null;
 }
 
+export async function updateUserMetadata(data: Record<string, any>): Promise<string | null> {
+  const { error } = await supabase.auth.updateUser({ data });
+  return error ? error.message : null;
+}
+
 export async function signInWithEmail({ email, password }: SignInParams): Promise<AuthResult> {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,

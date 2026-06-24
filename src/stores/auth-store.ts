@@ -8,6 +8,7 @@ interface AuthState {
   isLoading: boolean;
   isAuthenticated: boolean;
   pendingPassword: string | null;
+  pendingUserData: { full_name: string; phone?: string } | null;
 
   initialize: () => Promise<void>;
   signUp: (params: AuthService.SignUpParams) => Promise<string | null>;
@@ -25,6 +26,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isLoading: true,
   isAuthenticated: false,
   pendingPassword: null,
+  pendingUserData: null,
 
   initialize: async () => {
     try {
@@ -51,7 +53,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   signUp: async (params) => {
     const error = await AuthService.sendSignUpOtp(params);
     if (error) return error;
-    set({ user: { email: params.email, user_metadata: { full_name: params.fullName, phone: params.phone } }, isAuthenticated: false, pendingPassword: params.password });
+    set({
+      user: { email: params.email, user_metadata: { full_name: params.fullName, phone: params.phone } },
+      isAuthenticated: false,
+      pendingPassword: params.password,
+      pendingUserData: { full_name: params.fullName, phone: params.phone },
+    });
     return null;
   },
 
@@ -72,7 +79,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   verifyOtp: async (email, token) => {
-    const { pendingPassword } = get();
+    const { pendingPassword, pendingUserData } = get();
     const result = await AuthService.verifyOtp(email, token);
     if (result.error) return result.error;
     set({ user: result.user, session: result.session, isAuthenticated: true });
@@ -80,8 +87,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (pendingPassword) {
       const pwError = await AuthService.updateUserPassword(pendingPassword);
       if (pwError) console.warn('Failed to set password:', pwError);
-      set({ pendingPassword: null });
     }
+
+    if (pendingUserData) {
+      const mdError = await AuthService.updateUserMetadata(pendingUserData);
+      if (mdError) console.warn('Failed to set user metadata:', mdError);
+    }
+
+    set({ pendingPassword: null, pendingUserData: null });
 
     return null;
   },

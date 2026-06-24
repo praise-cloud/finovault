@@ -65,6 +65,7 @@ export default function SignUp() {
       }
       return;
     }
+    Alert.alert('Code Sent', 'A 6-digit verification code has been sent to ' + email + '. Please check your inbox (and spam folder).');
     router.push('/verification');
   };
 
