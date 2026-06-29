@@ -1,28 +1,27 @@
 export const ENDPOINTS = {
   auth: {
+    sendOtp: '/auth/send-otp',
     signup: '/auth/signup',
     login: '/auth/login',
     logout: '/auth/logout',
     verifyOtp: '/auth/verify-otp',
-    resendOtp: '/auth/resend-otp',
     google: '/auth/google',
-    apple: '/auth/apple',
+    verify: '/auth/verify',
+    refresh: '/auth/refresh',
   },
   profile: {
     me: '/profile/me',
-    update: '/profile/update',
-  },
-  preferences: {
-    get: '/preferences',
-    save: '/preferences',
-    update: '/preferences',
+    update: '/profile/me',
+    preferences: '/profile/preferences',
+    linkAccount: '/profile/link-account',
+    linkedAccounts: '/profile/linked-accounts',
   },
   dashboard: {
     summary: '/dashboard/summary',
     wealthGrowth: '/dashboard/wealth-growth',
     smartSavings: '/dashboard/smart-savings',
     fraudProtection: '/dashboard/fraud-protection',
-    smeDashboard: '/dashboard/sme',
+    sme: '/dashboard/sme',
     smeAnalytics: '/dashboard/sme-analytics',
     freelancer: '/dashboard/freelancer',
     entrepreneur: '/dashboard/entrepreneur',
@@ -31,20 +30,35 @@ export const ENDPOINTS = {
   transactions: {
     list: '/transactions',
     create: '/transactions',
+    detail: (id: string) => `/transactions/${id}`,
+    update: (id: string) => `/transactions/${id}`,
+    delete: (id: string) => `/transactions/${id}`,
   },
   savings: {
     goals: '/savings/goals',
+    goalDetail: (id: string) => `/savings/goals/${id}`,
     roundUps: '/savings/round-ups',
   },
-  vendors: {
-    list: '/vendors',
-  },
   fraud: {
+    check: '/fraud/check',
     events: '/fraud/events',
-    metrics: '/fraud/metrics',
+    resolveEvent: (id: string) => `/fraud/events/${id}/resolve`,
   },
   ai: {
-    suggestions: '/ai/suggestions',
     insights: '/ai/insights',
+    askCoach: '/ai/coach/ask',
+    morningBriefing: '/ai/coach/morning-briefing',
+    suggestions: '/ai/suggestions',
+    updateSuggestion: (id: string) => `/ai/suggestions/${id}`,
+  },
+  business: {
+    health: '/business/health',
+    forecast: '/business/forecast',
+    vendors: '/business/vendors',
+    aiAdvice: '/business/ai-advice',
+  },
+  onboarding: {
+    financialInterview: '/onboarding/financial-interview',
+    financialProfile: '/onboarding/financial-profile',
   },
 };

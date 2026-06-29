@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { supabase } from '@/lib/supabase';
+import { setApiToken } from '@/lib/api/client';
 import * as AuthService from '@/lib/api/services/auth';
 
 interface AuthState {
@@ -32,22 +32,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const session = await AuthService.getCurrentSession();
       if (session) {
-        const user = await AuthService.getCurrentUser();
-        set({ user, session, isAuthenticated: true, isLoading: false });
+        setApiToken(session.access_token);
+        set({ user: session.user, session, isAuthenticated: true, isLoading: false });
       } else {
         set({ isLoading: false });
       }
     } catch {
       set({ isLoading: false });
     }
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        set({ session, user: session.user, isAuthenticated: true });
-      } else {
-        set({ session: null, user: null, isAuthenticated: false });
-      }
-    });
   },
 
   signUp: async (params) => {
@@ -65,6 +57,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   signIn: async (params) => {
     const result = await AuthService.signInWithEmail(params);
     if (result.error) return result.error;
+    if (result.session) setApiToken(result.session.access_token);
     set({ user: result.user, session: result.session, isAuthenticated: true });
     return null;
   },
@@ -75,27 +68,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   signOut: async () => {
     await AuthService.signOut();
+    setApiToken(null);
     set({ user: null, session: null, isAuthenticated: false });
   },
 
   verifyOtp: async (email, token) => {
     const { pendingPassword, pendingUserData } = get();
-    const result = await AuthService.verifyOtp(email, token);
+
+    const result = await AuthService.verifyOtp(email, token, pendingPassword || undefined, pendingUserData || undefined);
     if (result.error) return result.error;
-    set({ user: result.user, session: result.session, isAuthenticated: true });
-
-    if (pendingPassword) {
-      const pwError = await AuthService.updateUserPassword(pendingPassword);
-      if (pwError) console.warn('Failed to set password:', pwError);
-    }
-
-    if (pendingUserData) {
-      const mdError = await AuthService.updateUserMetadata(pendingUserData);
-      if (mdError) console.warn('Failed to set user metadata:', mdError);
-    }
-
-    set({ pendingPassword: null, pendingUserData: null });
-
+    if (result.session) setApiToken(result.session.access_token);
+    set({ user: result.user, session: result.session, isAuthenticated: true, pendingPassword: null, pendingUserData: null });
     return null;
   },
 
@@ -104,6 +87,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   setSession: (session) => {
+    if (session) setApiToken(session.access_token);
+    else setApiToken(null);
     set({ session, user: session?.user ?? null, isAuthenticated: !!session });
   },
 }));

@@ -1,4 +1,5 @@
-import { supabase } from '@/lib/supabase';
+import { apiClient } from '../client';
+import { ENDPOINTS } from '../endpoints';
 
 export interface SignUpParams {
   email: string;
@@ -18,76 +19,92 @@ export interface AuthResult {
   error?: string;
 }
 
-export async function sendSignUpOtp({ email, fullName, phone }: Omit<SignUpParams, 'password'>): Promise<string | null> {
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: {
-      data: {
-        full_name: fullName,
-        phone: phone || null,
-      },
-      shouldCreateUser: true,
-    },
-  });
-
-  return error ? error.message : null;
+export async function sendSignUpOtp(params: Omit<SignUpParams, 'password'>): Promise<string | null> {
+  try {
+    await apiClient.post(ENDPOINTS.auth.sendOtp, {
+      email: params.email,
+      full_name: params.fullName,
+      phone: params.phone,
+    });
+    return null;
+  } catch (err: any) {
+    return err.message || 'Failed to send verification code';
+  }
 }
 
-export async function updateUserPassword(password: string): Promise<string | null> {
-  const { error } = await supabase.auth.updateUser({ password });
-  return error ? error.message : null;
+export async function updateUserPassword(_password: string): Promise<string | null> {
+  return null;
 }
 
-export async function updateUserMetadata(data: Record<string, any>): Promise<string | null> {
-  const { error } = await supabase.auth.updateUser({ data });
-  return error ? error.message : null;
+export async function updateUserMetadata(_data: Record<string, any>): Promise<string | null> {
+  return null;
 }
 
-export async function signInWithEmail({ email, password }: SignInParams): Promise<AuthResult> {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) return { user: null, session: null, error: error.message };
-  return { user: data.user, session: data.session };
+export async function signInWithEmail(params: SignInParams): Promise<AuthResult> {
+  try {
+    const result = await apiClient.post<any>(ENDPOINTS.auth.login, params);
+    return { user: result.user, session: result.session };
+  } catch (err: any) {
+    return { user: null, session: null, error: err.message || 'Login failed' };
+  }
 }
 
 export async function signInWithGoogle(): Promise<void> {
-  await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: 'finovault://auth/callback',
-    },
-  });
+  try {
+    const result = await apiClient.post<{ url?: string }>(ENDPOINTS.auth.google, {});
+    if (result.url) {
+      window.location.href = result.url;
+    }
+  } catch (err) {
+    console.error('Google auth failed', err);
+  }
 }
 
 export async function signOut(): Promise<void> {
-  await supabase.auth.signOut();
+  try {
+    await apiClient.post(ENDPOINTS.auth.logout, {});
+  } catch {
+    // ignore
+  }
 }
 
-export async function verifyOtp(email: string, token: string): Promise<AuthResult> {
-  const { data, error } = await supabase.auth.verifyOtp({
-    email,
-    token,
-    type: 'email',
-  });
-
-  if (error) return { user: null, session: null, error: error.message };
-  return { user: data.user, session: data.session };
+export async function verifyOtp(email: string, token: string, password?: string, userData?: { full_name?: string; phone?: string }): Promise<AuthResult> {
+  try {
+    const result = await apiClient.post<any>(ENDPOINTS.auth.verifyOtp, {
+      email,
+      token,
+      password,
+      ...(userData || {}),
+    });
+    return { user: result.user, session: result.session };
+  } catch (err: any) {
+    return { user: null, session: null, error: err.message || 'Verification failed' };
+  }
 }
 
 export async function resendOtp(email: string): Promise<string | null> {
-  const { error } = await supabase.auth.signInWithOtp({ email });
-  return error ? error.message : null;
+  try {
+    await apiClient.post(ENDPOINTS.auth.sendOtp, { email, full_name: '' });
+    return null;
+  } catch (err: any) {
+    return err.message || 'Failed to resend code';
+  }
 }
 
-export async function getCurrentSession() {
-  const { data } = await supabase.auth.getSession();
-  return data.session;
+export async function getCurrentSession(): Promise<any> {
+  const { getApiToken } = await import('../client');
+  const token = getApiToken();
+  if (!token) return null;
+
+  try {
+    const result = await apiClient.post<{ user: any }>(ENDPOINTS.auth.verify, { token });
+    return { access_token: token, user: result.user };
+  } catch {
+    return null;
+  }
 }
 
-export async function getCurrentUser() {
-  const { data } = await supabase.auth.getUser();
-  return data.user;
+export async function getCurrentUser(): Promise<any> {
+  const session = await getCurrentSession();
+  return session?.user || null;
 }

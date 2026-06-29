@@ -1,4 +1,17 @@
-const API_BASE_URL = 'https://www.finovault.io/api';
+let _token: string | null = null;
+let _baseUrl: string = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:4000/api/v1';
+
+export function setApiBaseUrl(url: string) {
+  _baseUrl = url;
+}
+
+export function setApiToken(token: string | null) {
+  _token = token;
+}
+
+export function getApiToken(): string | null {
+  return _token;
+}
 
 interface FetchOptions extends RequestInit {
   params?: Record<string, string>;
@@ -26,7 +39,7 @@ class ApiClient {
       ...(options.headers as Record<string, string>),
     };
 
-    const token = '';
+    const token = _token;
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
@@ -36,12 +49,14 @@ class ApiClient {
       headers,
     });
 
+    const json = await response.json();
+
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`API Error ${response.status}: ${error}`);
+      const message = json?.error?.message || `API Error ${response.status}`;
+      throw new Error(message);
     }
 
-    return response.json();
+    return json.data !== undefined ? json.data : json;
   }
 
   get<T>(endpoint: string, options?: FetchOptions) {
@@ -69,4 +84,4 @@ class ApiClient {
   }
 }
 
-export const apiClient = new ApiClient(API_BASE_URL);
+export const apiClient = new ApiClient(_baseUrl);
