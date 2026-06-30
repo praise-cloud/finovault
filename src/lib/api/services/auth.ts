@@ -19,16 +19,17 @@ export interface AuthResult {
   error?: string;
 }
 
-export async function sendSignUpOtp(params: Omit<SignUpParams, 'password'>): Promise<string | null> {
+export async function signUpWithEmail(params: SignUpParams): Promise<AuthResult> {
   try {
-    await apiClient.post(ENDPOINTS.auth.sendOtp, {
+    const result = await apiClient.post<any>(ENDPOINTS.auth.signup, {
       email: params.email,
+      password: params.password,
       full_name: params.fullName,
       phone: params.phone,
     });
-    return null;
+    return { user: result.user, session: result.session };
   } catch (err: any) {
-    return err.message || 'Failed to send verification code';
+    return { user: null, session: null, error: err.message || 'Sign up failed' };
   }
 }
 
@@ -65,29 +66,6 @@ export async function signOut(): Promise<void> {
     await apiClient.post(ENDPOINTS.auth.logout, {});
   } catch {
     // ignore
-  }
-}
-
-export async function verifyOtp(email: string, token: string, password?: string, userData?: { full_name?: string; phone?: string }): Promise<AuthResult> {
-  try {
-    const result = await apiClient.post<any>(ENDPOINTS.auth.verifyOtp, {
-      email,
-      token,
-      password,
-      ...(userData || {}),
-    });
-    return { user: result.user, session: result.session };
-  } catch (err: any) {
-    return { user: null, session: null, error: err.message || 'Verification failed' };
-  }
-}
-
-export async function resendOtp(email: string): Promise<string | null> {
-  try {
-    await apiClient.post(ENDPOINTS.auth.sendOtp, { email, full_name: '' });
-    return null;
-  } catch (err: any) {
-    return err.message || 'Failed to resend code';
   }
 }
 
