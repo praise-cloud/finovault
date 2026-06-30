@@ -1,5 +1,5 @@
 import { getSupabase } from '../config/supabase';
-import { UnauthorizedError, ConflictError, InternalError } from '../utils/errors';
+import { UnauthorizedError, ConflictError, RateLimitError, InternalError } from '../utils/errors';
 import { createContextLogger } from '../utils/logger';
 
 const log = createContextLogger('AuthService');
@@ -22,8 +22,11 @@ export async function sendOtp(input: { email: string; full_name: string; phone?:
     if (error.message.includes('already')) {
       throw new ConflictError('Email already registered');
     }
-    log.error('Send OTP failed', { error: error.message });
-    throw new InternalError('Failed to send verification code');
+    if (error.message.includes('rate_limit') || error.message.includes('rate limit')) {
+      throw new RateLimitError('Too many OTP requests. Please wait a minute and try again.');
+    }
+    log.error('Send OTP failed', { error: error.message, status: error.status });
+    throw new InternalError(error.message);
   }
 
   return { message: 'Verification code sent' };
