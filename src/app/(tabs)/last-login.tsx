@@ -1,0 +1,114 @@
+import { useEffect, useState } from 'react';
+import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import { getLoginActivity } from '@/lib/api/services/settings';
+
+type LoginEntry = {
+  id: string;
+  device: string;
+  location: string;
+  ip: string;
+  time: string;
+  successful: boolean;
+};
+
+export default function LastLogin() {
+  const [logins, setLogins] = useState<LoginEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getLoginActivity()
+      .then((data) => setLogins(data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const latest = logins.length > 0 ? logins[0] : null;
+
+  const extractSummary = (device: string) => {
+    if (device.includes('Windows')) return 'Windows 11';
+    if (device.includes('iPhone')) return 'iPhone 15 Pro';
+    if (device.includes('macOS') || device.includes('Mac')) return 'macOS';
+    if (device.includes('Ubuntu')) return 'Ubuntu';
+    return device;
+  };
+
+  const extractCity = (location: string) => {
+    return location.split(',')[0] || location;
+  };
+
+  return (
+    <View className="flex-1 bg-surface-bright">
+      <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, elevation: 4 }}>
+        <View className="flex-row items-center gap-3">
+          <Pressable onPress={() => router.back()} className="w-9 h-9 rounded-xl bg-surface-variant items-center justify-center active:scale-90">
+            <MaterialIcons name="arrow-back" size={20} color="#43474d" />
+          </Pressable>
+          <Text className="font-headline-md text-primary font-bold">Login Activity</Text>
+        </View>
+      </View>
+
+      <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+        {loading ? (
+          <View className="flex-1 items-center justify-center mt-20">
+            <ActivityIndicator size="large" color="#00705e" />
+          </View>
+        ) : (
+          <View className="mt-4 mb-6">
+            <View className="flex-row flex-wrap mb-4" style={{ gap: 12 }}>
+              <View className="bg-white border border-outline-variant/20 rounded-2xl p-4 flex-1 min-w-[100px]">
+                <Text className="text-caption text-on-surface-variant uppercase tracking-wider text-xs">Last Login</Text>
+                <Text className="font-label-md font-bold text-primary mt-1">{latest ? latest.time : 'N/A'}</Text>
+              </View>
+              <View className="bg-white border border-outline-variant/20 rounded-2xl p-4 flex-1 min-w-[100px]">
+                <Text className="text-caption text-on-surface-variant uppercase tracking-wider text-xs">Device</Text>
+                <Text className="font-label-md font-bold text-primary mt-1">{latest ? extractSummary(latest.device) : 'N/A'}</Text>
+              </View>
+              <View className="bg-white border border-outline-variant/20 rounded-2xl p-4 flex-1 min-w-[100px]">
+                <Text className="text-caption text-on-surface-variant uppercase tracking-wider text-xs">Location</Text>
+                <Text className="font-label-md font-bold text-primary mt-1">{latest ? extractCity(latest.location) : 'N/A'}</Text>
+              </View>
+            </View>
+
+            <View className="bg-white border border-outline-variant/20 rounded-2xl overflow-hidden">
+              <View className="px-4 py-3.5 border-b border-outline-variant/10">
+                <Text className="font-label-md text-primary font-bold">Recent Login Attempts</Text>
+              </View>
+              {logins.length === 0 ? (
+                <View className="p-8 items-center">
+                  <MaterialIcons name="history" size={40} color="#c4c6ca" />
+                  <Text className="text-on-surface-variant text-sm mt-2">No login activity recorded</Text>
+                </View>
+              ) : (
+                logins.map((entry, i) => (
+                  <View key={entry.id} className={`flex-row items-center gap-3 p-4 ${i < logins.length - 1 ? 'border-b border-outline-variant/10' : ''}`}>
+                    <View className={`w-10 h-10 rounded-xl items-center justify-center ${entry.successful ? 'bg-secondary-container' : 'bg-error-container'}`}>
+                      <MaterialIcons name={entry.successful ? 'computer' : 'warning'} size={20} color={entry.successful ? '#00705e' : '#ba1a1a'} />
+                    </View>
+                    <View className="flex-1">
+                      <View className="flex-row items-center gap-2">
+                        <Text className="font-label-md font-bold text-primary">{entry.device}</Text>
+                        {!entry.successful && <View className="bg-error px-1.5 py-0.5 rounded"><Text className="text-white text-[10px] font-bold">Failed</Text></View>}
+                      </View>
+                      <Text className="text-caption text-on-surface-variant text-xs">{entry.location} • {entry.ip}</Text>
+                      <Text className="text-caption text-on-surface-variant text-xs mt-0.5">{entry.time}</Text>
+                    </View>
+                  </View>
+                ))
+              )}
+            </View>
+
+            <View className="bg-white border border-outline-variant/20 rounded-2xl p-5 mt-4">
+              <View className="flex-row items-center gap-2 mb-3">
+                <MaterialIcons name="info" size={16} color="#006b5a" />
+                <Text className="font-label-md font-bold text-primary">Security Tip</Text>
+              </View>
+              <Text className="text-body-md text-on-surface-variant text-sm">If you notice any unrecognized login attempts, change your password immediately and enable two-factor authentication.</Text>
+            </View>
+          </View>
+        )}
+      </ScrollView>
+    </View>
+  );
+}
