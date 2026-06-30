@@ -3,7 +3,7 @@ uvicorn[standard]==0.34.0
 pydantic==2.10.3
 supabase==2.6.0
 openai==1.58.1
-httpx==0.28.1
+httpx>=0.24,<0.28
 redis==5.2.1
 celery==5.4.0
 scikit-learn==1.6.0
