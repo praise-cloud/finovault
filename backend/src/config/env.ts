@@ -21,7 +21,7 @@ export const env = {
 
   REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
 
-  CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:8081,http://localhost:19006',
+  CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:8081,http://localhost:8082,http://localhost:19006',
 
   LOG_LEVEL: process.env.LOG_LEVEL || 'debug',
 
