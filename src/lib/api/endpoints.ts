@@ -1,10 +1,8 @@
 export const ENDPOINTS = {
   auth: {
-    sendOtp: '/auth/send-otp',
     signup: '/auth/signup',
     login: '/auth/login',
     logout: '/auth/logout',
-    verifyOtp: '/auth/verify-otp',
     google: '/auth/google',
     verify: '/auth/verify',
     refresh: '/auth/refresh',

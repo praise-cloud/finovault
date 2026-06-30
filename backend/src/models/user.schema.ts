@@ -13,14 +13,6 @@ export const loginSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 });
 
-export const verifyOtpSchema = z.object({
-  email: z.string().email(),
-  token: z.string().length(6, 'OTP must be 6 characters'),
-  password: z.string().min(8).optional(),
-  full_name: z.string().optional(),
-  phone: z.string().optional(),
-});
-
 export const updateProfileSchema = z.object({
   full_name: z.string().min(1).max(100).optional(),
   phone: z.string().optional(),
@@ -36,6 +28,5 @@ export const updatePreferencesSchema = z.object({
 
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
-export type VerifyOtpInput = z.infer<typeof verifyOtpSchema>;
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type UpdatePreferencesInput = z.infer<typeof updatePreferencesSchema>;

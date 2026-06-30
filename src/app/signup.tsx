@@ -1,6 +1,6 @@
 import { Input, InputField } from '@gluestack-ui/themed';
 import { router } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { View, Text, Pressable, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/stores/auth-store';
@@ -15,7 +15,6 @@ export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [cooldown, setCooldown] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const signUp = useAuthStore((s) => s.signUp);
 
@@ -44,29 +43,16 @@ export default function SignUp() {
     return Object.keys(errs).length === 0;
   };
 
-  useEffect(() => {
-    if (cooldown > 0) {
-      const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [cooldown]);
-
   const handleSubmit = async () => {
     if (!validate()) return;
     setIsSubmitting(true);
     const error = await signUp({ email, password, fullName: name, phone: phone || undefined });
     setIsSubmitting(false);
     if (error) {
-      if (error.includes('429') || error.includes('rate')) {
-        Alert.alert('Too Many Requests', 'Please wait 60 seconds before trying again.');
-        setCooldown(60);
-      } else {
-        Alert.alert('Sign Up Failed', error);
-      }
+      Alert.alert('Sign Up Failed', error);
       return;
     }
-    Alert.alert('Code Sent', 'A 6-digit verification code has been sent to ' + email + '. Please check your inbox (and spam folder).');
-    router.push('/verification');
+    router.replace('/(tabs)');
   };
 
   const handleGoogleSignIn = async () => {
@@ -109,7 +95,7 @@ export default function SignUp() {
       </View>
 
       <ScrollView className="flex-1 w-full md:w-1/2 bg-surface">
-        <View className="px-margin-mobile md:px-margin-desktop py-lg items-center">
+        <View className="px-margin-mobile md:px-margin-desktop py-lg pb-[60px] items-center">
           <View className="w-full max-w-md">
             <View className="md:hidden mb-lg">
               <View className="flex-row items-center gap-xs mb-sm">
@@ -181,14 +167,12 @@ export default function SignUp() {
 
             <Pressable
               onPress={handleSubmit}
-              disabled={isSubmitting || cooldown > 0}
-              className="w-full py-md rounded-lg bg-gradient-to-r from-secondary to-[#005143] flex-row items-center justify-center gap-sm active:scale-[0.98]"
+              disabled={isSubmitting}
+              className="w-full py-md rounded-lg bg-secondary bg-gradient-to-r from-secondary to-[#005143] flex-row items-center justify-center gap-sm active:scale-[0.98]"
               style={{ shadowColor: 'rgba(0,107,90,0.25)', shadowOffset: { width: 0, height: 4 }, shadowRadius: 14, elevation: 4 }}
             >
               {isSubmitting ? (
                 <ActivityIndicator size="small" color="#ffffff" />
-              ) : cooldown > 0 ? (
-                <Text className="text-on-primary font-label-md text-label-md">Wait {cooldown}s</Text>
               ) : (
                 <>
                   <Text className="text-on-primary font-label-md text-label-md">Create Free Account</Text>

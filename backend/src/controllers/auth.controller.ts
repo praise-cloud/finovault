@@ -2,11 +2,6 @@ import { Request, Response } from 'express';
 import { sendSuccess } from '../utils/helpers';
 import * as authService from '../services/auth.service';
 
-export async function sendOtp(req: Request, res: Response): Promise<void> {
-  const result = await authService.sendOtp(req.body);
-  sendSuccess(res, result);
-}
-
 export async function signup(req: Request, res: Response): Promise<void> {
   const result = await authService.signup(req.body);
   sendSuccess(res, result, 201);
@@ -14,11 +9,6 @@ export async function signup(req: Request, res: Response): Promise<void> {
 
 export async function login(req: Request, res: Response): Promise<void> {
   const result = await authService.login(req.body);
-  sendSuccess(res, result);
-}
-
-export async function verifyOtp(req: Request, res: Response): Promise<void> {
-  const result = await authService.verifyOtp(req.body);
   sendSuccess(res, result);
 }
 
