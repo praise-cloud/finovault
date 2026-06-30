@@ -43,3 +43,8 @@ example
 # generated native folders
 /ios
 /android
+
+
+# files and folders
+stitch_finovault_ai_onboarding_flow
+deign_ui

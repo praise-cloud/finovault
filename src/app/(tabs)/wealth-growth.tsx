@@ -22,7 +22,6 @@ export default function WealthGrowth() {
       <View className="bg-surface-bright w-full" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, elevation: 4 }}>
         <View className="flex-row items-center justify-between px-margin-mobile md:px-margin-desktop h-16 max-w-[1440px] mx-auto">
           <View className="flex-row items-center gap-4">
-            <Pressable className="active:scale-95 md:hidden"><MaterialIcons name="menu" size={24} color="#000f22" /></Pressable>
             <Text className="font-headline-md text-primary font-bold">Finovault AI</Text>
           </View>
           <View className="flex-row items-center gap-6">

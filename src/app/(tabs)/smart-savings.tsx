@@ -39,7 +39,6 @@ export default function SmartSavings() {
       <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-4">
-            <Pressable className="p-2 rounded-full active:scale-95 transition-transform"><MaterialIcons name="menu" size={24} color="#000f22" /></Pressable>
             <Text className="font-headline-md text-headline-md text-primary font-bold">Finovault AI</Text>
           </View>
           <View className="flex-row items-center gap-6">

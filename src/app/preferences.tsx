@@ -46,7 +46,7 @@ export default function Preferences() {
     <View className="flex-1 bg-background">
       <View className="flex-row items-center px-margin-mobile pt-14 pb-4 bg-background">
         <Pressable onPress={() => router.back()} className="mr-2">
-          <MaterialIcons name="arrow-back" size={24} color="#000f22" />
+          <MaterialIcons name="arrow-back" size={24} color="#ffffff" />
         </Pressable>
         <Text className="flex-1 text-headline-lg-mobile text-primary font-semibold">Finovault AI</Text>
         <View className="h-1 w-24 bg-surface-container-high rounded-full overflow-hidden">

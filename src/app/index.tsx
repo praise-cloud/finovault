@@ -18,23 +18,20 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const SLIDES = [
   {
     title: 'Smart Financial AI',
-    subtitle: 'Finovault uses advanced artificial intelligence to analyze your finances, predict market trends, and optimize your wealth — all in real time.',
+    subtitle: 'Finovault uses advanced AI to analyze your finances, predict market trends, and optimize your wealth in real time.',
     icon: 'auto-awesome' as const,
-    color: '#006b5a',
     animationDelay: 0,
   },
   {
     title: 'Bank-Grade Protection',
-    subtitle: 'Enterprise-level fraud detection and AES-256 encryption keep your assets safe. Our neural network monitors transactions 24/7 for suspicious activity.',
+    subtitle: 'Enterprise-level fraud detection and AES-256 encryption keep your assets safe, monitored 24/7 by our neural network.',
     icon: 'shield' as const,
-    color: '#0a2540',
     animationDelay: 1000,
   },
   {
     title: 'Intelligent Growth',
-    subtitle: 'Get personalized AI-driven investment suggestions, smart savings automation, and a complete view of your financial health — all in one place.',
+    subtitle: 'Personalized AI-driven suggestions, smart savings automation, and a complete view of your financial health in one place.',
     icon: 'auto-awesome' as const,
-    color: '#006b5a',
     animationDelay: 2000,
   },
 ];
@@ -42,59 +39,42 @@ const SLIDES = [
 export default function WelcomeTour() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const skipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (isAuthenticated) {
       router.replace('/(tabs)');
     }
   }, [isAuthenticated]);
+
   const currentIndexRef = useRef(0);
   const translateX = useSharedValue(0);
-  const floatingY1 = useSharedValue(0);
-  const floatingY2 = useSharedValue(0);
-  const floatingY3 = useSharedValue(0);
-  const floatingValues = [floatingY1, floatingY2, floatingY3];
+  const floatY1 = useSharedValue(0);
+  const floatY2 = useSharedValue(0);
+  const floatY3 = useSharedValue(0);
+  const floatStyles = [
+    useAnimatedStyle(() => ({ transform: [{ translateY: floatY1.value }] })),
+    useAnimatedStyle(() => ({ transform: [{ translateY: floatY2.value }] })),
+    useAnimatedStyle(() => ({ transform: [{ translateY: floatY3.value }] })),
+  ];
 
   useEffect(() => {
-    SLIDES.forEach((_, index) => {
-      floatingValues[index].value = withDelay(
-        index * 1000,
-        withRepeat(
-          withSequence(
-            withTiming(-20, { duration: 3000, easing: Easing.inOut(Easing.sin) }),
-            withTiming(0, { duration: 3000, easing: Easing.inOut(Easing.sin) }),
-          ),
-          -1,
-          true,
-        ),
-      );
+    [floatY1, floatY2, floatY3].forEach((y, i) => {
+      y.value = withDelay(i * 1000, withRepeat(withSequence(withTiming(-15, { duration: 3000, easing: Easing.inOut(Easing.sin) }), withTiming(0, { duration: 3000, easing: Easing.inOut(Easing.sin) })), -1, true));
     });
   }, []);
 
   const goToSlide = useCallback((index: number) => {
     currentIndexRef.current = index;
     setCurrentIndex(index);
-    translateX.value = withTiming(-index * SCREEN_WIDTH, {
-      duration: 400,
-      easing: Easing.inOut(Easing.ease),
-    });
+    translateX.value = withTiming(-index * SCREEN_WIDTH, { duration: 400, easing: Easing.inOut(Easing.ease) });
   }, [translateX]);
 
-  const nextSlide = useCallback(() => {
-    const next = (currentIndexRef.current + 1) % SLIDES.length;
-    goToSlide(next);
-  }, [goToSlide]);
-
-  const prevSlide = useCallback(() => {
-    const prev = (currentIndexRef.current - 1 + SLIDES.length) % SLIDES.length;
-    goToSlide(prev);
-  }, [goToSlide]);
+  const nextSlide = useCallback(() => goToSlide((currentIndexRef.current + 1) % SLIDES.length), [goToSlide]);
+  const prevSlide = useCallback(() => goToSlide((currentIndexRef.current - 1 + SLIDES.length) % SLIDES.length), [goToSlide]);
 
   useEffect(() => {
-    const id = setInterval(() => {
-      const next = (currentIndexRef.current + 1) % SLIDES.length;
-      goToSlide(next);
-    }, 5000);
+    const id = setInterval(() => goToSlide((currentIndexRef.current + 1) % SLIDES.length), 5000);
     return () => clearInterval(id);
   }, [goToSlide]);
 
@@ -108,114 +88,66 @@ export default function WelcomeTour() {
     },
   }), [prevSlide, nextSlide]);
 
-  const carouselStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
+  const carouselStyle = useAnimatedStyle(() => ({ transform: [{ translateX: translateX.value }] }));
 
-  const float1Style = useAnimatedStyle(() => ({
-    transform: [{ translateY: floatingY1.value }],
-  }));
-  const float2Style = useAnimatedStyle(() => ({
-    transform: [{ translateY: floatingY2.value }],
-  }));
-  const float3Style = useAnimatedStyle(() => ({
-    transform: [{ translateY: floatingY3.value }],
-  }));
-  const floatStyles = [float1Style, float2Style, float3Style];
-
-  const handleDotPress = useCallback((index: number) => {
-    goToSlide(index);
-  }, [goToSlide]);
+  const handleSkip = () => {
+    router.replace('/getting-started');
+  };
 
   return (
-    <View className="flex-1 bg-background">
-      <View className="absolute top-20 -right-20 w-80 h-80 rounded-full bg-secondary-container/20 pointer-events-none" />
-      <View className="absolute bottom-20 -left-20 w-80 h-80 rounded-full bg-primary-container/10 pointer-events-none" />
+    <View className="flex-1 bg-primary">
+      <View className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-white/5" />
+      <View className="absolute top-1/3 -left-20 w-56 h-56 rounded-full bg-white/5" />
+      <View className="absolute bottom-40 -right-16 w-48 h-48 rounded-full bg-white/5" />
+
+      <Pressable onPress={handleSkip} className="absolute top-14 right-5 z-10 px-5 py-2 rounded-full bg-white/15 active:scale-95">
+        <Text className="text-white font-label-md font-bold">Skip</Text>
+      </Pressable>
 
       <View className="flex-1 justify-center">
-        <View className="items-center mt-16 mb-4">
-          <View className="w-20 h-20 rounded-2xl bg-primary items-center justify-center mb-4" style={{ shadowColor: '#006b5a', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 24, elevation: 8 }}>
-            <Text className="text-on-primary font-bold text-4xl">F</Text>
+        <View className="items-center mt-16 mb-6">
+          <View className="w-20 h-20 rounded-2xl bg-white/20 items-center justify-center mb-3" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.2, shadowRadius: 24, elevation: 8 }}>
+            <Text className="text-white font-bold text-4xl">F</Text>
           </View>
-          <Text className="font-headline-lg text-headline-lg text-primary font-bold">Finovault AI</Text>
-          <Text className="font-body-md text-body-md text-on-surface-variant mt-1">Your Adaptive Financial Intelligence</Text>
+          <Text className="font-headline-lg text-headline-lg text-white font-bold">Finovault AI</Text>
         </View>
 
-        <View className="overflow-hidden" style={{ height: 400 }} {...panResponder.panHandlers}>
+        <View className="overflow-hidden" style={{ height: 360 }} {...panResponder.panHandlers}>
           <Animated.View className="flex-row" style={[{ width: SCREEN_WIDTH * SLIDES.length }, carouselStyle]}>
             {SLIDES.map((slide, index) => (
-              <View key={index} style={{ width: SCREEN_WIDTH }} className="items-center justify-center px-margin-mobile">
-                <View
-                  className="rounded-2xl p-8 w-full max-w-sm items-center"
-                  style={{
-                    backgroundColor: 'rgba(255,255,255,0.8)',
-                    borderWidth: 1,
-                    borderColor: 'rgba(230,235,241,0.8)',
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.06,
-                    shadowRadius: 24,
-                    elevation: 3,
-                  }}
-                >
-                  <Animated.View style={[floatStyles[index], { marginBottom: 28 }]}>
-                    <View
-                      className="w-40 h-40 rounded-full items-center justify-center"
-                      style={{ backgroundColor: `${slide.color}10` }}
-                    >
-                      <MaterialIcons name={slide.icon} size={64} color={slide.color} />
+              <View key={index} style={{ width: SCREEN_WIDTH }} className="items-center justify-center px-8 py-8">
+                <View className="items-center">
+                  <Animated.View style={[floatStyles[index], { marginBottom: 24 }]}>
+                    <View className="w-36 h-36 rounded-full bg-white/15 items-center justify-center">
+                      <MaterialIcons name={slide.icon} size={56} color="#ffffff" />
                     </View>
                   </Animated.View>
-                  <Text className="font-headline-md text-headline-md text-primary mb-3 text-center">
-                    {slide.title}
-                  </Text>
-                  <Text className="font-body-md text-body-md text-on-surface-variant text-center leading-relaxed">
-                    {slide.subtitle}
-                  </Text>
+                  <Text className="font-headline-md text-headline-md text-white font-bold mb-3 text-center">{slide.title}</Text>
+                  <Text className="font-body-md text-body-md text-white/80 text-center leading-relaxed">{slide.subtitle}</Text>
                 </View>
               </View>
             ))}
           </Animated.View>
         </View>
 
-        <View className="flex-row justify-center gap-2 mt-6 mb-6">
+        <View className="flex-row justify-center gap-2 mt-4 mb-8">
           {SLIDES.map((_, index) => (
-            <Pressable key={index} onPress={() => handleDotPress(index)}>
-              <View
-                className={`rounded-full ${index === currentIndex ? 'w-6 bg-secondary' : 'w-2 h-2 bg-outline/30'}`}
-                style={{ height: 8 }}
-              />
+            <Pressable key={index} onPress={() => goToSlide(index)}>
+              <View className={`rounded-full ${index === currentIndex ? 'w-6 bg-white' : 'w-2 h-2 bg-white/30'}`} style={{ height: 8 }} />
             </Pressable>
           ))}
         </View>
 
-        <View className="px-margin-mobile max-w-sm mx-auto w-full">
+        <View className="px-8 max-w-sm mx-auto w-full">
           <Pressable
-            onPress={() => router.push(isAuthenticated ? '/(tabs)' : '/preferences')}
-            className="w-full py-4 rounded-xl bg-secondary items-center justify-center flex-row active:scale-[0.98]"
-            style={{
-              shadowColor: 'rgba(0,107,90,0.25)',
-              shadowOffset: { width: 0, height: 4 },
-              shadowRadius: 14,
-              elevation: 4,
-            }}
+            onPress={() => router.replace('/getting-started')}
+            className="w-full py-4 rounded-xl bg-white items-center justify-center flex-row active:scale-[0.98]"
+            style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowRadius: 14, elevation: 4 }}
           >
-            <Text className="font-label-md text-label-md text-on-primary mr-2 font-bold">
-              Get Started
-            </Text>
-            <MaterialIcons name="arrow-forward" size={20} color="#ffffff" />
+            <Text className="font-label-md text-label-md text-primary mr-2 font-bold">Get Started</Text>
+            <MaterialIcons name="arrow-forward" size={20} color="#006b5a" />
           </Pressable>
         </View>
-      </View>
-
-      <View className="flex-row justify-center items-center pb-10 gap-6">
-        <Pressable onPress={prevSlide} className="w-12 h-12 items-center justify-center active:opacity-70">
-          <MaterialIcons name="chevron-left" size={28} color="#74777e" />
-        </Pressable>
-        <View className="w-2 h-2 rounded-full bg-secondary" />
-        <Pressable onPress={nextSlide} className="w-12 h-12 items-center justify-center active:opacity-70">
-          <MaterialIcons name="chevron-right" size={28} color="#74777e" />
-        </Pressable>
       </View>
     </View>
   );

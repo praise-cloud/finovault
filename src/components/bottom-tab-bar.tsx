@@ -11,6 +11,7 @@ type Tab = {
 const TABS: Tab[] = [
   { key: 'dashboard', label: 'Dashboard', icon: 'dashboard', activeIcon: 'dashboard' },
   { key: 'protection', label: 'Protection', icon: 'gpp-good', activeIcon: 'gpp-good' },
+  { key: 'ai-analysis', label: 'AI Analysis', icon: 'auto-awesome', activeIcon: 'auto-awesome' },
   { key: 'profile', label: 'Profile', icon: 'account-circle', activeIcon: 'account-circle' },
 ];
 

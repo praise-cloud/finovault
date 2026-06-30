@@ -22,7 +22,6 @@ export default function SmeDashboard() {
       <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-4">
-            <Pressable className="active:scale-95 md:hidden"><MaterialIcons name="menu" size={24} color="#000f22" /></Pressable>
             <Text className="font-headline-md text-headline-md text-primary font-bold">Finovault AI</Text>
           </View>
           <View className="hidden md:flex flex-row items-center gap-8">

@@ -7,6 +7,7 @@ interface AuthState {
   session: any | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  avatarUri: string | null;
 
   initialize: () => Promise<void>;
   signUp: (params: AuthService.SignUpParams) => Promise<string | null>;
@@ -14,6 +15,7 @@ interface AuthState {
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   setSession: (session: any) => void;
+  setAvatarUri: (uri: string | null) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -21,6 +23,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   session: null,
   isLoading: true,
   isAuthenticated: false,
+  avatarUri: null,
 
   initialize: async () => {
     try {
@@ -67,4 +70,5 @@ export const useAuthStore = create<AuthState>((set) => ({
     else setApiToken(null);
     set({ session, user: session?.user ?? null, isAuthenticated: !!session });
   },
+  setAvatarUri: (uri) => set({ avatarUri: uri }),
 }));

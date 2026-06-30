@@ -44,7 +44,7 @@ export default function Login() {
   };
 
   const getFocusBorder = (field: string) =>
-    focusedField === field ? 'border-[#000f22]' : errors[field] ? 'border-error' : 'border-outline-variant';
+    focusedField === field ? 'border-[#ffffff]' : errors[field] ? 'border-error' : 'border-outline-variant';
 
   return (
     <View className="flex-1 bg-background flex-col md:flex-row">
@@ -113,7 +113,7 @@ export default function Login() {
 
             <View className="flex-row gap-md">
               <Pressable onPress={handleGoogleSignIn} className="flex-1 flex-row items-center justify-center gap-sm px-md py-sm bg-white border border-outline-variant rounded-lg active:scale-95">
-                <Ionicons name="logo-google" size={20} color="#000f22" />
+                <Ionicons name="logo-google" size={20} color="#ffffff" />
                 <Text className="font-label-md text-label-md text-on-surface">Google</Text>
               </Pressable>
             </View>

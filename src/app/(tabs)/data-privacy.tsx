@@ -56,7 +56,7 @@ export default function DataPrivacy() {
             <View className="bg-white border border-outline-variant/20 rounded-2xl p-5 mb-4">
               <View className="flex-row items-center gap-3 mb-4">
                 <View className="w-12 h-12 rounded-full bg-primary-container items-center justify-center">
-                  <MaterialIcons name="privacy-tip" size={24} color="#000f22" />
+                  <MaterialIcons name="privacy-tip" size={24} color="#ffffff" />
                 </View>
                 <View className="flex-1">
                   <Text className="font-headline-md text-primary font-bold">Your Privacy Matters</Text>

@@ -5,6 +5,7 @@ import Svg, { Circle } from 'react-native-svg';
 import { useDashboardStore } from '@/stores/dashboard-store';
 import { router } from 'expo-router';
 import { NotificationIcon, NotificationModal } from '@/components/notification-modal';
+import { UserAvatar } from '@/components/user-avatar';
 
 export default function FraudProtection() {
   const data = useDashboardStore((s) => s.fraudProtection);
@@ -31,7 +32,6 @@ export default function FraudProtection() {
       <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
-            <Pressable className="active:scale-95 md:hidden"><MaterialIcons name="menu" size={24} color="#000f22" /></Pressable>
             <View className="w-9 h-9 rounded-xl bg-primary items-center justify-center">
               <MaterialIcons name="shield" size={18} color="#fff" />
             </View>
@@ -39,9 +39,7 @@ export default function FraudProtection() {
           </View>
           <View className="flex-row items-center gap-3">
             <NotificationIcon onPress={() => setNotifVisible(true)} count={2} />
-            <View className="w-9 h-9 rounded-full bg-surface-container-high items-center justify-center border border-outline-variant">
-              <MaterialIcons name="person" size={20} color="#43474d" />
-            </View>
+            <UserAvatar size={36} />
           </View>
         </View>
       </View>

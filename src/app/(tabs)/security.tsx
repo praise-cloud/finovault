@@ -75,7 +75,7 @@ export default function Security() {
                   className={`flex-row items-center gap-3 p-4 ${i < items.length - 1 ? 'border-b border-outline-variant/10' : ''} active:scale-[0.98]`}
                 >
                   <View className="w-10 h-10 rounded-xl bg-primary-container items-center justify-center">
-                    <MaterialIcons name={item.icon} size={20} color="#000f22" />
+                    <MaterialIcons name={item.icon} size={20} color="#ffffff" />
                   </View>
                   <View className="flex-1">
                     <Text className="font-label-md font-bold text-primary">{item.label}</Text>

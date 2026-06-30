@@ -27,7 +27,7 @@ export default function AuditReport() {
     switch (s) {
       case 'critical': return { bg: 'bg-error-container', text: '#ba1a1a', icon: 'error' as const };
       case 'warning': return { bg: 'bg-secondary-container', text: '#00705e', icon: 'warning' as const };
-      default: return { bg: 'bg-primary-container', text: '#000f22', icon: 'info' as const };
+      default: return { bg: 'bg-primary-container', text: '#ffffff', icon: 'info' as const };
     }
   };
 

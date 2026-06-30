@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
-import { ScrollView, View, Text, Pressable, ActivityIndicator, TextInput, Modal } from 'react-native';
+import { ScrollView, View, Text, Pressable, ActivityIndicator, TextInput, Modal, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { useDashboardStore } from '@/stores/dashboard-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { router } from 'expo-router';
 import { NotificationIcon, NotificationModal } from '@/components/notification-modal';
+import { UserAvatar } from '@/components/user-avatar';
+import { useSettingsStore, CURRENCIES, LOCATIONS, LANGUAGES } from '@/stores/settings-store';
 
 const SETTINGS = [
   { icon: 'person' as const, label: 'Personal Info', route: null, active: true },
@@ -19,18 +22,41 @@ export default function Profile() {
   const isLoading = useDashboardStore((s) => s.isLoading);
   const load = useDashboardStore((s) => s.loadProfileData);
   const signOut = useAuthStore((s) => s.signOut);
+  const { currency, location, language, setCurrency, setLocation, setLanguage } = useSettingsStore();
   const [notifVisible, setNotifVisible] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
   const [editName, setEditName] = useState('');
   const [editEmail, setEditEmail] = useState('');
   const [editPhone, setEditPhone] = useState('');
   const [activeSection, setActiveSection] = useState('Personal Info');
+  const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
+  const [showLocationPicker, setShowLocationPicker] = useState(false);
+  const [showLanguagePicker, setShowLanguagePicker] = useState(false);
 
   useEffect(() => { load(); }, [load]);
 
   const handleSignOut = async () => {
     await signOut();
     router.replace('/');
+  };
+
+  const setAvatarUri = useAuthStore((s) => s.setAvatarUri);
+
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission Required', 'Camera roll permission is needed to change your avatar.');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+    if (!result.canceled && result.assets[0]) {
+      setAvatarUri(result.assets[0].uri);
+    }
   };
 
   const openEdit = () => {
@@ -58,7 +84,6 @@ export default function Profile() {
       <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile md:px-margin-desktop" style={{ elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
-            <Pressable className="active:scale-95 md:hidden"><MaterialIcons name="menu" size={24} color="#000f22" /></Pressable>
             <View className="w-9 h-9 rounded-xl bg-primary items-center justify-center">
               <Text className="text-on-primary font-bold text-sm">P</Text>
             </View>
@@ -66,7 +91,7 @@ export default function Profile() {
           </View>
           <View className="flex-row items-center gap-3">
             <NotificationIcon onPress={() => setNotifVisible(true)} count={1} />
-            <View className="w-9 h-9 rounded-full border-2 border-primary-fixed items-center justify-center bg-surface-container-high overflow-hidden"><MaterialIcons name="person" size={20} color="#43474d" /></View>
+            <UserAvatar size={36} showBorder />
           </View>
         </View>
       </View>
@@ -75,9 +100,9 @@ export default function Profile() {
         <View className="bg-[#001f1a] rounded-2xl overflow-hidden p-6 mt-4 mb-4 relative">
           <View className="absolute -top-16 -right-16 w-40 h-40 bg-secondary/10 rounded-full" />
           <View className="flex-row items-center gap-4">
-            <View className="w-20 h-20 rounded-full border-4 border-white/20 overflow-hidden bg-surface-container items-center justify-center">
-              <MaterialIcons name="person" size={40} color="#43474d" />
-            </View>
+            <Pressable onPress={pickImage} className="w-20 h-20 rounded-full border-4 border-white/20 overflow-hidden">
+              <UserAvatar size={80} name={d.profile.full_name} />
+            </Pressable>
             <View className="flex-1">
               <View className="flex-row items-center gap-2">
                 <Text className="font-headline-md text-white font-bold">{d.profile.full_name}</Text>
@@ -132,7 +157,7 @@ export default function Profile() {
               <View className="flex-row justify-between items-center mb-5">
                 <View className="flex-row items-center gap-2">
                   <View className="w-8 h-8 rounded-lg bg-primary-container items-center justify-center">
-                    <MaterialIcons name="person" size={16} color="#000f22" />
+                    <MaterialIcons name="person" size={16} color="#ffffff" />
                   </View>
                   <Text className="font-headline-md text-primary font-bold">Personal Info</Text>
                 </View>
@@ -206,7 +231,7 @@ export default function Profile() {
               <View className="flex-row justify-between items-center mb-5">
                 <View className="flex-row items-center gap-2">
                   <View className="w-8 h-8 rounded-lg bg-primary-container items-center justify-center">
-                    <MaterialIcons name="account-balance" size={16} color="#000f22" />
+                    <MaterialIcons name="account-balance" size={16} color="#ffffff" />
                   </View>
                   <Text className="font-headline-md text-primary font-bold">Linked Accounts</Text>
                 </View>
@@ -244,7 +269,7 @@ export default function Profile() {
               )}
             </View>
 
-            <View className="bg-white border border-outline-variant/20 rounded-2xl p-5">
+            <View className="bg-white border border-outline-variant/20 rounded-2xl p-5 mb-4">
               <View className="flex-row items-center gap-2 mb-5">
                 <View className="w-8 h-8 rounded-lg bg-secondary-container items-center justify-center">
                   <MaterialIcons name="auto-awesome" size={16} color="#00705e" />
@@ -264,6 +289,47 @@ export default function Profile() {
               <Pressable className="w-full bg-primary py-3 rounded-xl items-center mt-4 active:scale-[0.98]">
                 <Text className="text-on-primary font-label-md font-bold">Manage Subscription</Text>
               </Pressable>
+            </View>
+
+            <View className="bg-white border border-outline-variant/20 rounded-2xl p-5">
+              <View className="flex-row items-center gap-2 mb-5">
+                <View className="w-8 h-8 rounded-lg bg-primary-container items-center justify-center">
+                  <MaterialIcons name="settings" size={16} color="#ffffff" />
+                </View>
+                <Text className="font-headline-md text-primary font-bold">App Preferences</Text>
+              </View>
+              <View className="space-y-12">
+                <Pressable onPress={() => setShowLocationPicker(true)} className="flex-row items-center justify-between p-3.5 bg-surface-container-low rounded-xl active:scale-[0.98]">
+                  <View className="flex-row items-center gap-3">
+                    <MaterialIcons name="language" size={18} color="#006b5a" />
+                    <View>
+                      <Text className="font-label-md font-bold text-primary">Location</Text>
+                      <Text className="text-caption text-on-surface-variant text-xs">{LOCATIONS.find((l) => l.value === location)?.label}</Text>
+                    </View>
+                  </View>
+                  <MaterialIcons name="chevron-right" size={18} color="#c4c6ca" />
+                </Pressable>
+                <Pressable onPress={() => setShowCurrencyPicker(true)} className="flex-row items-center justify-between p-3.5 bg-surface-container-low rounded-xl active:scale-[0.98]">
+                  <View className="flex-row items-center gap-3">
+                    <MaterialIcons name="currency-exchange" size={18} color="#006b5a" />
+                    <View>
+                      <Text className="font-label-md font-bold text-primary">Currency</Text>
+                      <Text className="text-caption text-on-surface-variant text-xs">{currency.symbol} {currency.code} - {currency.name}</Text>
+                    </View>
+                  </View>
+                  <MaterialIcons name="chevron-right" size={18} color="#c4c6ca" />
+                </Pressable>
+                <Pressable onPress={() => setShowLanguagePicker(true)} className="flex-row items-center justify-between p-3.5 bg-surface-container-low rounded-xl active:scale-[0.98]">
+                  <View className="flex-row items-center gap-3">
+                    <MaterialIcons name="translate" size={18} color="#006b5a" />
+                    <View>
+                      <Text className="font-label-md font-bold text-primary">Language</Text>
+                      <Text className="text-caption text-on-surface-variant text-xs">{LANGUAGES.find((l) => l.value === language)?.label}</Text>
+                    </View>
+                  </View>
+                  <MaterialIcons name="chevron-right" size={18} color="#c4c6ca" />
+                </Pressable>
+              </View>
             </View>
           </View>
         </View>
@@ -321,6 +387,71 @@ export default function Profile() {
       </Modal>
 
       <NotificationModal visible={notifVisible} onClose={() => setNotifVisible(false)} />
+
+      <Modal visible={showLocationPicker} transparent animationType="slide" onRequestClose={() => setShowLocationPicker(false)}>
+        <View className="flex-1 bg-black/40 justify-end">
+          <View className="bg-white rounded-t-3xl max-h-[70%]" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: -8 }, shadowOpacity: 0.1, shadowRadius: 24, elevation: 16 }}>
+            <View className="items-center pt-3 pb-1"><View className="w-10 h-1 rounded-full bg-outline/40" /></View>
+            <View className="flex-row items-center justify-between px-6 py-4 border-b border-outline-variant/20">
+              <Text className="font-headline-md text-primary font-bold">Select Location</Text>
+              <Pressable onPress={() => setShowLocationPicker(false)} className="w-8 h-8 rounded-full bg-surface-variant items-center justify-center"><MaterialIcons name="close" size={18} color="#43474d" /></Pressable>
+            </View>
+            <ScrollView className="px-6 py-4">
+              {LOCATIONS.map((loc) => (
+                <Pressable key={loc.value} onPress={() => { setLocation(loc.value); setShowLocationPicker(false); }} className={`flex-row items-center gap-3 p-4 rounded-xl mb-1 ${location === loc.value ? 'bg-secondary-container' : ''} active:scale-[0.98]`}>
+                  <MaterialIcons name="language" size={20} color={location === loc.value ? '#00705e' : '#43474d'} />
+                  <Text className={`font-label-md flex-1 ${location === loc.value ? 'text-on-secondary-container font-bold' : 'text-on-surface'}`}>{loc.label}</Text>
+                  <Text className="text-caption text-on-surface-variant">{loc.currency}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={showCurrencyPicker} transparent animationType="slide" onRequestClose={() => setShowCurrencyPicker(false)}>
+        <View className="flex-1 bg-black/40 justify-end">
+          <View className="bg-white rounded-t-3xl max-h-[70%]" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: -8 }, shadowOpacity: 0.1, shadowRadius: 24, elevation: 16 }}>
+            <View className="items-center pt-3 pb-1"><View className="w-10 h-1 rounded-full bg-outline/40" /></View>
+            <View className="flex-row items-center justify-between px-6 py-4 border-b border-outline-variant/20">
+              <Text className="font-headline-md text-primary font-bold">Select Currency</Text>
+              <Pressable onPress={() => setShowCurrencyPicker(false)} className="w-8 h-8 rounded-full bg-surface-variant items-center justify-center"><MaterialIcons name="close" size={18} color="#43474d" /></Pressable>
+            </View>
+            <ScrollView className="px-6 py-4">
+              {CURRENCIES.map((c) => (
+                <Pressable key={c.code} onPress={() => { setCurrency(c.code); setShowCurrencyPicker(false); }} className={`flex-row items-center gap-3 p-4 rounded-xl mb-1 ${currency.code === c.code ? 'bg-secondary-container' : ''} active:scale-[0.98]`}>
+                  <View className="w-10 h-10 rounded-full bg-primary-container items-center justify-center"><Text className="font-bold text-primary">{c.symbol}</Text></View>
+                  <View className="flex-1">
+                    <Text className={`font-label-md ${currency.code === c.code ? 'text-on-secondary-container font-bold' : 'text-on-surface'}`}>{c.code} - {c.name}</Text>
+                  </View>
+                  {currency.code === c.code && <MaterialIcons name="check-circle" size={20} color="#00705e" />}
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={showLanguagePicker} transparent animationType="slide" onRequestClose={() => setShowLanguagePicker(false)}>
+        <View className="flex-1 bg-black/40 justify-end">
+          <View className="bg-white rounded-t-3xl max-h-[70%]" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: -8 }, shadowOpacity: 0.1, shadowRadius: 24, elevation: 16 }}>
+            <View className="items-center pt-3 pb-1"><View className="w-10 h-1 rounded-full bg-outline/40" /></View>
+            <View className="flex-row items-center justify-between px-6 py-4 border-b border-outline-variant/20">
+              <Text className="font-headline-md text-primary font-bold">Select Language</Text>
+              <Pressable onPress={() => setShowLanguagePicker(false)} className="w-8 h-8 rounded-full bg-surface-variant items-center justify-center"><MaterialIcons name="close" size={18} color="#43474d" /></Pressable>
+            </View>
+            <ScrollView className="px-6 py-4">
+              {LANGUAGES.map((lang) => (
+                <Pressable key={lang.value} onPress={() => { setLanguage(lang.value); setShowLanguagePicker(false); }} className={`flex-row items-center gap-3 p-4 rounded-xl mb-1 ${language === lang.value ? 'bg-secondary-container' : ''} active:scale-[0.98]`}>
+                  <MaterialIcons name="translate" size={20} color={language === lang.value ? '#00705e' : '#43474d'} />
+                  <Text className={`font-label-md flex-1 ${language === lang.value ? 'text-on-secondary-container font-bold' : 'text-on-surface'}`}>{lang.label}</Text>
+                  {language === lang.value && <MaterialIcons name="check-circle" size={20} color="#00705e" />}
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
