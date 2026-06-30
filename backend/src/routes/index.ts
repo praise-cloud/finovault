@@ -9,6 +9,7 @@ import fraudRoutes from './fraud.routes';
 import aiRoutes from './ai.routes';
 import businessRoutes from './business.routes';
 import onboardingRoutes from './onboarding.routes';
+import settingsRoutes from './settings.routes';
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use('/fraud', fraudRoutes);
 router.use('/ai', aiRoutes);
 router.use('/business', businessRoutes);
 router.use('/onboarding', onboardingRoutes);
+router.use('/settings', settingsRoutes);
 
 export default router;

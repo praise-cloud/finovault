@@ -59,4 +59,13 @@ export const ENDPOINTS = {
     financialInterview: '/onboarding/financial-interview',
     financialProfile: '/onboarding/financial-profile',
   },
+  settings: {
+    security: '/settings/security',
+    securityTwoFactor: '/settings/security/two-factor',
+    securityGuardrails: '/settings/security/guardrails',
+    dataPrivacy: '/settings/data-privacy',
+    linkedAccounts: '/settings/linked-accounts',
+    loginActivity: '/settings/login-activity',
+    auditLog: '/settings/audit-log',
+  },
 };
