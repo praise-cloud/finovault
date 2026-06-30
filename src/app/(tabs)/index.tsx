@@ -13,12 +13,12 @@ export default function IndividualDashboard() {
   }, [loadSummary]);
 
   const data = summary || {
-    total_net_worth: 1284500.42,
-    net_worth_change: 42000,
-    net_worth_change_pct: 12.4,
-    monthly_spending: 8420,
-    spending_limit: 7500,
-    spending_trend: 'up',
+    total_net_worth: 0,
+    net_worth_change: 0,
+    net_worth_change_pct: 0,
+    monthly_spending: 0,
+    spending_limit: 0,
+    spending_trend: null,
     next_best_move: null,
     recent_transactions: [],
     asset_allocations: [],
@@ -149,24 +149,7 @@ export default function IndividualDashboard() {
                   <Text className="font-bold text-primary">${item.value.toLocaleString()}</Text>
                 </Pressable>
               )) : (
-                <>
-                  {[
-                    { label: 'Real Estate', percent: '42%', value: '$540k', icon: 'apartment' as const, bg: '#e2dfff', color: '#060045' },
-                    { label: 'SME Equity', percent: '35%', value: '$450k', icon: 'token' as const, bg: '#58fbda', color: '#006b5a' },
-                    { label: 'Liquid Cash', percent: '23%', value: '$294k', icon: 'account-balance' as const, bg: '#d2e4ff', color: '#000f22' },
-                  ].map((item) => (
-                    <Pressable key={item.label} className="flex-row items-center gap-4 p-3 rounded-xl active:scale-[0.98]">
-                      <View className="w-10 h-10 rounded-full items-center justify-center" style={{ backgroundColor: item.bg }}>
-                        <MaterialIcons name={item.icon} size={20} color={item.color} />
-                      </View>
-                      <View className="flex-1">
-                        <Text className="font-bold text-primary">{item.label}</Text>
-                        <Text className="text-caption text-on-surface-variant">{item.percent} of portfolio</Text>
-                      </View>
-                      <Text className="font-bold text-primary">{item.value}</Text>
-                    </Pressable>
-                  ))}
-                </>
+                <Text className="text-on-surface-variant text-body-md text-center py-4">No assets allocated yet.</Text>
               )}
             </View>
           </View>
@@ -189,32 +172,7 @@ export default function IndividualDashboard() {
                   </View>
                 </View>
               )) : (
-                <>
-                  <View className="flex-row gap-4">
-                    <View className="w-2 h-10 bg-secondary rounded-full" />
-                    <View className="flex-1">
-                      <Text className="font-label-md text-primary font-bold">Dividends Received</Text>
-                      <Text className="text-caption text-on-surface-variant">TechVentures SME Fund • Today</Text>
-                      <Text className="text-secondary font-bold text-label-md">+$2,450.00</Text>
-                    </View>
-                  </View>
-                  <View className="flex-row gap-4">
-                    <View className="w-2 h-10 bg-error rounded-full opacity-60" />
-                    <View className="flex-1">
-                      <Text className="font-label-md text-primary font-bold">Travel Expense</Text>
-                      <Text className="text-caption text-on-surface-variant">St. Regis Maldives • 2d ago</Text>
-                      <Text className="text-on-surface font-bold text-label-md">-$4,120.50</Text>
-                    </View>
-                  </View>
-                  <View className="flex-row gap-4">
-                    <View className="w-2 h-10 bg-primary-fixed rounded-full" />
-                    <View className="flex-1">
-                      <Text className="font-label-md text-primary font-bold">Crypto Adjustment</Text>
-                      <Text className="text-caption text-on-surface-variant">Ethereum Wallet • 3d ago</Text>
-                      <Text className="text-secondary font-bold text-label-md">+$840.12</Text>
-                    </View>
-                  </View>
-                </>
+                <Text className="text-on-surface-variant text-body-md text-center py-4">No recent transactions.</Text>
               )}
             </View>
           </View>

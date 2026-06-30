@@ -118,8 +118,8 @@ export default function SmartSavings() {
                   <MaterialIcons name="auto-awesome" size={20} color="#58fbda" />
                   <Text className="font-label-md text-label-md text-secondary-fixed uppercase font-bold tracking-widest">AI Suggestion</Text>
                 </View>
-                <Text className="font-headline-md text-headline-md text-on-primary mb-md">{d?.ai_suggestion?.title || 'We found $85 in hidden potential.'}</Text>
-                <Text className="text-body-md text-body-md text-on-primary-container mb-lg">{d?.ai_suggestion?.description || 'Based on your spending patterns.'}</Text>
+                <Text className="font-headline-md text-headline-md text-on-primary mb-md">{d?.ai_suggestion?.title || 'No AI suggestions yet.'}</Text>
+                <Text className="text-body-md text-body-md text-on-primary-container mb-lg">{d?.ai_suggestion?.description || 'Start tracking your spending to get personalized savings tips.'}</Text>
               </View>
               <Pressable className="w-full bg-secondary py-3 rounded-full items-center active:scale-95 transition-all">
                 <Text className="text-on-secondary font-label-md text-label-md">Enable Auto-Budgeting</Text>
@@ -159,11 +159,13 @@ export default function SmartSavings() {
               <View className="bg-surface-container-lowest rounded-xl p-md border border-outline-variant/30 items-center" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}>
                 <View className="mb-sm"><MaterialIcons name="savings" size={48} color="#006b5a" /></View>
                 <Text className="font-label-md text-label-md text-on-surface-variant mb-1">Total Savings Impact</Text>
-                <Text className="font-headline-lg text-headline-lg text-primary">${(d?.total_savings_impact || 1248.12).toLocaleString('en-US', { minimumFractionDigits: 2 })}</Text>
+                <Text className="font-headline-lg text-headline-lg text-primary">${(d?.total_savings_impact || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</Text>
+                {d?.savings_trend ? (
                 <View className="flex-row items-center gap-1 mt-2">
                   <MaterialIcons name="arrow-upward" size={14} color="#006b5a" />
-                  <Text className="text-caption font-caption text-secondary">{d?.savings_trend || 12}% increase from last quarter</Text>
+                  <Text className="text-caption font-caption text-secondary">{d.savings_trend}% increase from last quarter</Text>
                 </View>
+                ) : null}
               </View>
 
               <View className="rounded-xl p-md" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(230, 235, 241, 0.5)' }}>
@@ -173,7 +175,7 @@ export default function SmartSavings() {
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text className="font-label-md text-label-md font-bold mb-1">Optimization Suggestion</Text>
-                    <Text className="text-caption font-caption text-on-surface-variant">{d?.micro_budget_suggestion || "You're spending 15% more on entertainment than users with similar goals."}</Text>
+                    <Text className="text-caption font-caption text-on-surface-variant">{d?.micro_budget_suggestion || 'No optimization suggestions yet.'}</Text>
                   </View>
                 </View>
               </View>

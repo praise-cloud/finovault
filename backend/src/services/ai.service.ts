@@ -108,17 +108,7 @@ export async function getMorningBriefing(userId: string) {
     .eq('briefing_date', today)
     .single();
 
-  if (data) {
-    return data;
-  }
-
-  return {
-    briefing_date: today,
-    title: 'Good morning!',
-    content: 'Here is your daily financial overview. Your accounts are secure and all transactions are processing normally.',
-    action_items: [],
-    read: false,
-  };
+  return data || null;
 }
 
 export async function getSuggestions(userId: string) {
