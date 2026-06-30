@@ -1,13 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import { useDashboardStore } from '@/stores/dashboard-store';
+import { router } from 'expo-router';
+import { NotificationIcon, NotificationModal } from '@/components/notification-modal';
 
 export default function FraudProtection() {
   const data = useDashboardStore((s) => s.fraudProtection);
   const isLoading = useDashboardStore((s) => s.isLoading);
   const load = useDashboardStore((s) => s.loadFraudProtection);
+  const [notifVisible, setNotifVisible] = useState(false);
 
   useEffect(() => { load(); }, [load]);
 
@@ -16,157 +19,134 @@ export default function FraudProtection() {
   }
 
   const d = data;
+  const statusCards = [
+    { icon: 'lock-open' as const, label: 'Encryption', value: 'End-to-End Tunnel', status: 'Active', bg: 'bg-primary-container', color: '#768dad', dot: 'bg-secondary' },
+    { icon: 'psychology' as const, label: 'AI Monitoring', value: 'Neural Engine v4.2', status: 'Learning', bg: 'bg-secondary-container', color: '#00705e', dot: 'bg-secondary' },
+    { icon: 'key' as const, label: 'Key Custody', value: 'Hardware Isolated', status: 'Protected', bg: 'bg-tertiary-fixed', color: '#321ed2', dot: 'bg-secondary' },
+    { icon: 'verified-user' as const, label: 'Identity', value: 'Verified Account', status: 'Confirmed', bg: 'bg-primary-container', color: '#000f22', dot: 'bg-secondary' },
+  ];
 
   return (
     <View className="flex-1 bg-background">
       <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, elevation: 4 }}>
         <View className="flex-row items-center justify-between">
-          <View className="flex-row items-center gap-4">
+          <View className="flex-row items-center gap-3">
             <Pressable className="active:scale-95 md:hidden"><MaterialIcons name="menu" size={24} color="#000f22" /></Pressable>
-            <Text className="font-headline-md text-primary font-bold">Finovault AI</Text>
-          </View>
-          <View className="hidden md:flex-row md:gap-8 md:items-center">
-            <View className="flex-row gap-6">
-              <Text className="text-on-surface-variant font-label-md">Wealth Growth</Text>
-              <Text className="text-on-surface-variant font-label-md">Smart Savings</Text>
-              <Text className="text-primary font-label-md font-bold">Fraud Protection</Text>
-              <Text className="text-on-surface-variant font-label-md">SME Analytics</Text>
+            <View className="w-9 h-9 rounded-xl bg-primary items-center justify-center">
+              <MaterialIcons name="shield" size={18} color="#fff" />
             </View>
-            <View className="w-10 h-10 rounded-full bg-surface-variant overflow-hidden border border-outline-variant items-center justify-center"><MaterialIcons name="person" size={22} color="#43474d" /></View>
+            <Text className="font-headline-md text-primary font-bold">Protection</Text>
           </View>
-          <View className="md:hidden"><MaterialIcons name="account-circle" size={24} color="#000f22" /></View>
+          <View className="flex-row items-center gap-3">
+            <NotificationIcon onPress={() => setNotifVisible(true)} count={2} />
+            <View className="w-9 h-9 rounded-full bg-surface-container-high items-center justify-center border border-outline-variant">
+              <MaterialIcons name="person" size={20} color="#43474d" />
+            </View>
+          </View>
         </View>
       </View>
 
-      <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }}>
-        <View className="mt-6 mb-6">
-          <View className="flex-col md:flex-row md:items-end justify-between gap-4">
-            <View>
-              <Text className="font-headline-lg text-headline-lg text-primary mb-2">Fraud Protection</Text>
-              <Text className="text-on-surface-variant text-body-lg max-w-2xl">Bank-grade vigilant AI monitoring your assets 24/7. Real-time encryption and neural threat detection active.</Text>
+      <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+        <View className="mt-4 mb-4">
+          <View className="flex-row items-center gap-2 bg-secondary-container px-3 py-1.5 rounded-full self-start mb-3">
+            <MaterialIcons name="verified-user" size={14} color="#00705e" />
+            <Text className="text-on-secondary-container font-label-md font-bold">Vigilance Active</Text>
+          </View>
+          <Text className="font-headline-lg text-headline-lg text-primary">Fraud Protection</Text>
+          <Text className="text-on-surface-variant text-body-md">Bank-grade AI monitoring your assets 24/7.</Text>
+        </View>
+
+        <View className="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant/20 mb-4 relative overflow-hidden">
+          <View className="absolute -top-12 -right-12 w-40 h-40 bg-secondary/5 rounded-full" />
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="font-headline-md text-primary font-bold">Security Score</Text>
+            <MaterialIcons name="info" size={20} color="#006b5a" />
+          </View>
+          <View className="items-center py-2">
+            <View className="relative w-36 h-36 items-center justify-center">
+              <Svg width={144} height={144} viewBox="0 0 100 100" style={{ transform: [{ rotate: '-90deg' }] }}>
+                <Circle cx={50} cy={50} r={45} fill="none" stroke="#e0e3e6" strokeWidth={8} />
+                <Circle cx={50} cy={50} r={45} fill="none" stroke="#006b5a" strokeDasharray="282.7" strokeDashoffset={282.7 - (282.7 * d.security_score / 100)} strokeLinecap="round" strokeWidth={8} />
+              </Svg>
+              <View className="absolute items-center">
+                <Text className="font-display-lg text-display-lg text-primary">{d.security_score}</Text>
+                <Text className="font-label-md text-on-surface-variant uppercase tracking-widest text-xs">Optimal</Text>
+              </View>
             </View>
-            <View className="flex-row items-center gap-2 bg-secondary-container px-4 py-2 rounded-full self-start">
-              <MaterialIcons name="verified-user" size={16} color="#00705e" />
-              <Text className="text-on-secondary-container font-label-md font-bold">Vigilance Active</Text>
+          </View>
+          <View className="flex-row gap-3 mt-2">
+            <View className="flex-1 flex-row items-center gap-2 p-2.5 bg-surface-container rounded-xl">
+              <MaterialIcons name="check-circle" size={16} color="#006b5a" />
+              <Text className="text-body-md text-xs flex-1">Identity Verified</Text>
+              <Text className="text-secondary font-bold text-xs">Safe</Text>
+            </View>
+            <View className="flex-1 flex-row items-center gap-2 p-2.5 bg-surface-container rounded-xl">
+              <MaterialIcons name="check-circle" size={16} color="#006b5a" />
+              <Text className="text-body-md text-xs flex-1">Encryption</Text>
+              <Text className="text-secondary font-bold text-xs">{d.metrics.encryption_level}</Text>
             </View>
           </View>
         </View>
 
-        <View className="flex-row flex-wrap" style={{ gap: 24 }}>
-          <View className="bg-surface-container-lowest rounded-xl p-md border border-outline-variant relative overflow-hidden" style={{ width: '100%', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}>
-            <View className="relative z-10">
-              <View className="flex-row justify-between items-start mb-lg">
-                <Text className="font-headline-md text-primary">Security Score</Text>
-                <MaterialIcons name="info" size={20} color="#006b5a" />
+        <View className="flex-row flex-wrap mb-4" style={{ gap: 12 }}>
+          {statusCards.map((card) => (
+            <View key={card.label} className="flex-row items-center gap-3 p-4 rounded-xl bg-white border border-outline-variant/20" style={{ width: '47%', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 1 }}>
+              <View className={`w-10 h-10 rounded-xl ${card.bg} items-center justify-center`}>
+                <MaterialIcons name={card.icon} size={18} color={card.color} />
               </View>
-              <View className="items-center py-4">
-                <View className="relative w-48 h-48 items-center justify-center">
-                  <Svg width={192} height={192} viewBox="0 0 100 100" style={{ transform: [{ rotate: '-90deg' }] }}>
-                    <Circle cx={50} cy={50} r={45} fill="none" stroke="#e0e3e6" strokeWidth={8} />
-                    <Circle cx={50} cy={50} r={45} fill="none" stroke="#006b5a" strokeDasharray="282.7" strokeDashoffset={282.7 - (282.7 * d.security_score / 100)} strokeLinecap="round" strokeWidth={8} />
-                  </Svg>
-                  <View className="absolute items-center">
-                    <Text className="font-display-lg text-display-lg text-primary">{d.security_score}</Text>
-                    <Text className="font-label-md text-on-surface-variant uppercase tracking-widest">Optimal</Text>
-                  </View>
-                </View>
-              </View>
-              <View style={{ gap: 16 }}>
-                <View className="flex-row items-center justify-between p-3 bg-surface-container rounded-lg">
-                  <View className="flex-row items-center gap-3">
-                    <MaterialIcons name="check-circle" size={20} color="#006b5a" />
-                    <Text className="text-body-md">Identity Verified</Text>
-                  </View>
-                  <Text className="text-secondary font-bold">Safe</Text>
-                </View>
-                <View className="flex-row items-center justify-between p-3 bg-surface-container rounded-lg">
-                  <View className="flex-row items-center gap-3">
-                    <MaterialIcons name="check-circle" size={20} color="#006b5a" />
-                    <Text className="text-body-md">Encryption Level</Text>
-                  </View>
-                  <Text className="text-secondary font-bold">{d.metrics.encryption_level}</Text>
-                </View>
-              </View>
-            </View>
-            <View className="absolute top-0 right-0 w-64 h-64 bg-secondary/5 rounded-full" style={{ marginRight: -64, marginTop: -64 }} />
-          </View>
-
-          <View className="bg-surface-container-lowest rounded-xl p-md border border-outline-variant flex-1" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}>
-            <View className="flex-row justify-between items-center mb-md">
-              <Text className="font-headline-md text-primary">Real-time Monitoring</Text>
-              <Pressable className="bg-surface-variant p-2 rounded-lg"><MaterialIcons name="filter-list" size={20} color="#43474d" /></Pressable>
-            </View>
-            <View style={{ gap: 12 }}>
-              {d.events.map((event, i) => (
-                <View key={event.id || i} className="p-md bg-surface-container-low rounded-xl flex-row items-start gap-4" style={{ borderLeftWidth: 4, borderLeftColor: event.severity === 'critical' ? '#ba1a1a' : event.severity === 'warning' ? '#006b5a' : '#060045' }}>
-                  <View className={`p-3 rounded-full ${event.severity === 'critical' ? 'bg-error-container' : 'bg-secondary-container'}`}>
-                    <MaterialIcons name={event.severity === 'critical' ? 'warning' : 'verified-user'} size={20} color={event.severity === 'critical' ? '#ba1a1a' : '#00705e'} />
-                  </View>
-                  <View className="flex-1">
-                    <View className="flex-row justify-between">
-                      <Text className="font-bold text-body-lg text-primary">{event.event_type}</Text>
-                      <Text className="text-caption text-on-surface-variant">{getTimeAgo(event.timestamp)}</Text>
-                    </View>
-                    <Text className="text-on-surface-variant text-body-md mt-1">{event.description}</Text>
-                  </View>
-                </View>
-              ))}
-            </View>
-            <Pressable className="mt-md w-full py-3 items-center rounded-xl"><Text className="text-secondary font-label-md">View Historical Logs</Text></Pressable>
-          </View>
-
-          <View className="w-full flex-row flex-wrap" style={{ gap: 24 }}>
-            <View className="flex-1 min-w-[100px] flex-row items-center gap-4 p-md rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.7)', borderWidth: 1, borderColor: 'rgba(230,235,241,0.5)' }}>
-              <View className="w-12 h-12 rounded-xl bg-primary-container items-center justify-center"><MaterialIcons name="lock-open" size={20} color="#768dad" /></View>
-              <View>
-                <Text className="text-caption text-on-surface-variant uppercase tracking-tighter">Encryption</Text>
-                <Text className="font-bold text-body-lg text-primary">End-to-End Tunnel</Text>
-                <View className="flex-row items-center gap-1 mt-1"><View className="w-2 h-2 rounded-full bg-secondary" /><Text className="text-xs text-secondary">Active</Text></View>
-              </View>
-            </View>
-            <View className="flex-1 min-w-[100px] flex-row items-center gap-4 p-md rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.7)', borderWidth: 1, borderColor: 'rgba(230,235,241,0.5)' }}>
-              <View className="w-12 h-12 rounded-xl bg-secondary-container items-center justify-center"><MaterialIcons name="psychology" size={20} color="#00705e" /></View>
-              <View>
-                <Text className="text-caption text-on-surface-variant uppercase tracking-tighter">AI Monitoring</Text>
-                <Text className="font-bold text-body-lg text-primary">Neural Engine v4.2</Text>
-                <View className="flex-row items-center gap-1 mt-1"><View className="w-2 h-2 rounded-full bg-secondary" /><Text className="text-xs text-secondary">Learning</Text></View>
-              </View>
-            </View>
-            <View className="flex-1 min-w-[100px] flex-row items-center gap-4 p-md rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.7)', borderWidth: 1, borderColor: 'rgba(230,235,241,0.5)' }}>
-              <View className="w-12 h-12 rounded-xl bg-tertiary-fixed items-center justify-center"><MaterialIcons name="key" size={20} color="#321ed2" /></View>
-              <View>
-                <Text className="text-caption text-on-surface-variant uppercase tracking-tighter">Key Custody</Text>
-                <Text className="font-bold text-body-lg text-primary">Hardware Isolated</Text>
-                <View className="flex-row items-center gap-1 mt-1"><View className="w-2 h-2 rounded-full bg-secondary" /><Text className="text-xs text-secondary">Protected</Text></View>
-              </View>
-            </View>
-          </View>
-
-          <View className="w-full bg-primary rounded-xl overflow-hidden min-h-[300px] relative">
-            <View className="absolute inset-0 opacity-40">
-              <View className="absolute inset-0" style={{ backgroundColor: '#000f22' }} />
-              <View className="absolute inset-0" style={{ backgroundColor: '#006b5a', opacity: 0.3 }} />
-            </View>
-            <View className="relative z-10 p-lg flex-col md:flex-row items-center justify-between gap-8">
               <View className="flex-1">
-                <Text className="font-headline-lg text-headline-lg text-white mb-4">The Finovault Shield</Text>
-                <Text className="text-body-md text-white/80 mb-6 leading-relaxed">Our proprietary AI architecture uses multi-dimensional analysis to detect fraud before it happens. Every transaction is cross-referenced with over 500 signals across our global network.</Text>
-                <View className="flex-row flex-wrap gap-4">
-                  <Pressable className="bg-secondary px-6 py-3 rounded-full active:scale-95"><Text className="text-on-secondary font-bold">Configure Guardrails</Text></Pressable>
-                  <Pressable className="border border-outline-variant px-6 py-3 rounded-full active:scale-95"><Text className="text-white font-bold">Audit Report</Text></Pressable>
-                </View>
-              </View>
-              <View className="w-64 h-64 bg-secondary/10 rounded-full border border-secondary/30 items-center justify-center p-4">
-                <View className="w-full h-full bg-secondary/20 rounded-full border border-secondary/50 items-center justify-center p-4">
-                  <View className="w-full h-full bg-secondary/40 rounded-full border border-secondary/70 items-center justify-center">
-                    <MaterialIcons name="security" size={48} color="#ffffff" />
-                  </View>
+                <Text className="text-caption text-on-surface-variant uppercase tracking-tighter text-[10px]">{card.label}</Text>
+                <Text className="font-bold text-sm text-primary" numberOfLines={1}>{card.value}</Text>
+                <View className="flex-row items-center gap-1 mt-0.5">
+                  <View className={`w-1.5 h-1.5 rounded-full ${card.dot}`} />
+                  <Text className="text-xs text-secondary font-medium">{card.status}</Text>
                 </View>
               </View>
             </View>
+          ))}
+        </View>
+
+        <View className="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant/20 mb-4">
+          <View className="flex-row justify-between items-center mb-4">
+            <Text className="font-headline-md text-primary font-bold">Real-time Monitoring</Text>
+            <Pressable className="bg-surface-variant p-2 rounded-lg"><MaterialIcons name="filter-list" size={18} color="#43474d" /></Pressable>
+          </View>
+          {d.events.map((event, i) => (
+            <View key={event.id || i} className="flex-row items-start gap-3 p-3.5 bg-surface-container-low rounded-xl mb-2.5" style={{ borderLeftWidth: 3, borderLeftColor: event.severity === 'critical' ? '#ba1a1a' : event.severity === 'warning' ? '#006b5a' : '#060045' }}>
+              <View className={`p-2 rounded-full ${event.severity === 'critical' ? 'bg-error-container' : 'bg-secondary-container'}`}>
+                <MaterialIcons name={event.severity === 'critical' ? 'warning' : 'verified-user'} size={18} color={event.severity === 'critical' ? '#ba1a1a' : '#00705e'} />
+              </View>
+              <View className="flex-1">
+                <View className="flex-row justify-between items-start">
+                  <Text className="font-label-md font-bold text-primary">{event.event_type}</Text>
+                  <Text className="text-caption text-on-surface-variant text-xs">{getTimeAgo(event.timestamp)}</Text>
+                </View>
+                <Text className="text-on-surface-variant text-body-md text-sm mt-0.5">{event.description}</Text>
+              </View>
+            </View>
+          ))}
+          <Pressable className="mt-2 w-full py-3 items-center rounded-xl active:scale-[0.98]"><Text className="text-secondary font-label-md font-bold">View Historical Logs</Text></Pressable>
+        </View>
+
+        <View className="bg-primary rounded-2xl overflow-hidden p-5 relative mb-4">
+          <View className="absolute -bottom-12 -right-12 w-48 h-48 bg-secondary/10 rounded-full" />
+          <View className="flex-row items-center justify-between mb-3">
+            <Text className="font-headline-md text-white font-bold">The Finovault Shield</Text>
+            <MaterialIcons name="security" size={24} color="#58fbda" />
+          </View>
+          <Text className="text-white/80 text-body-md mb-4">Multi-dimensional fraud detection analyzing 500+ signals across our global network.</Text>
+          <View className="flex-row flex-wrap gap-3">
+            <Pressable onPress={() => router.push('/(tabs)/guardrails' as any)} className="bg-secondary px-5 py-2.5 rounded-full active:scale-95">
+              <Text className="text-on-secondary font-bold text-sm">Configure Guardrails</Text>
+            </Pressable>
+            <Pressable onPress={() => router.push('/(tabs)/audit-report' as any)} className="border border-white/30 px-5 py-2.5 rounded-full active:scale-95">
+              <Text className="text-white font-bold text-sm">Audit Report</Text>
+            </Pressable>
           </View>
         </View>
       </ScrollView>
+
+      <NotificationModal visible={notifVisible} onClose={() => setNotifVisible(false)} />
     </View>
   );
 }

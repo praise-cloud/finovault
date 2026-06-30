@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Dimensions, PanResponder, Pressable, Text, View } from 'react-native';
+import { Dimensions, PanResponder, Pressable, Text, View } from 'react-native';
 import { useAuthStore } from '@/stores/auth-store';
 import Animated, {
   Easing,
@@ -17,32 +17,25 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const SLIDES = [
   {
-    title: 'Predict',
-    subtitle: 'Harness advanced AI to forecast market trends and optimize your asset allocation with institutional precision.',
-    icon: 'trending-up' as const,
+    title: 'Smart Financial AI',
+    subtitle: 'Finovault uses advanced artificial intelligence to analyze your finances, predict market trends, and optimize your wealth — all in real time.',
+    icon: 'auto-awesome' as const,
     color: '#006b5a',
     animationDelay: 0,
   },
   {
-    title: 'Protect',
-    subtitle: 'Rest easy with enterprise-grade fraud detection and real-time security monitoring powered by our neural network.',
+    title: 'Bank-Grade Protection',
+    subtitle: 'Enterprise-level fraud detection and AES-256 encryption keep your assets safe. Our neural network monitors transactions 24/7 for suspicious activity.',
     icon: 'shield' as const,
     color: '#0a2540',
     animationDelay: 1000,
   },
   {
-    title: 'Empower',
-    subtitle: 'Transform raw data into actionable intelligence. Grow your wealth through personalized AI-driven suggestions.',
+    title: 'Intelligent Growth',
+    subtitle: 'Get personalized AI-driven investment suggestions, smart savings automation, and a complete view of your financial health — all in one place.',
     icon: 'auto-awesome' as const,
     color: '#006b5a',
     animationDelay: 2000,
-  },
-  {
-    title: 'SME Intelligence',
-    subtitle: 'Scale your business with dedicated tools for operational efficiency and automated financial reporting.',
-    icon: 'business' as const,
-    color: '#150082',
-    animationDelay: 3500,
   },
 ];
 
@@ -60,13 +53,12 @@ export default function WelcomeTour() {
   const floatingY1 = useSharedValue(0);
   const floatingY2 = useSharedValue(0);
   const floatingY3 = useSharedValue(0);
-  const floatingY4 = useSharedValue(0);
-  const floatingValues = [floatingY1, floatingY2, floatingY3, floatingY4];
+  const floatingValues = [floatingY1, floatingY2, floatingY3];
 
   useEffect(() => {
-    SLIDES.forEach((slide, index) => {
+    SLIDES.forEach((_, index) => {
       floatingValues[index].value = withDelay(
-        slide.animationDelay,
+        index * 1000,
         withRepeat(
           withSequence(
             withTiming(-20, { duration: 3000, easing: Easing.inOut(Easing.sin) }),
@@ -129,14 +121,7 @@ export default function WelcomeTour() {
   const float3Style = useAnimatedStyle(() => ({
     transform: [{ translateY: floatingY3.value }],
   }));
-  const float4Style = useAnimatedStyle(() => ({
-    transform: [{ translateY: floatingY4.value }],
-  }));
-  const floatStyles = [float1Style, float2Style, float3Style, float4Style];
-
-  const handleHelpPress = useCallback(() => {
-    Alert.alert('Help', 'Finovault AI Tour');
-  }, []);
+  const floatStyles = [float1Style, float2Style, float3Style];
 
   const handleDotPress = useCallback((index: number) => {
     goToSlide(index);
@@ -144,60 +129,47 @@ export default function WelcomeTour() {
 
   return (
     <View className="flex-1 bg-background">
-      <View className="flex-row items-center justify-between px-margin-mobile pt-14 pb-4">
-        <Text className="font-headline-lg-mobile text-headline-lg-mobile text-primary font-semibold">
-          Finovault AI
-        </Text>
-        <Pressable
-          className="w-10 h-10 rounded-full bg-surface-container-high items-center justify-center active:opacity-80"
-          onPress={handleHelpPress}
-        >
-          <MaterialIcons name="help-outline" size={20} color="#43474d" />
-        </Pressable>
-      </View>
+      <View className="absolute top-20 -right-20 w-80 h-80 rounded-full bg-secondary-container/20 pointer-events-none" />
+      <View className="absolute bottom-20 -left-20 w-80 h-80 rounded-full bg-primary-container/10 pointer-events-none" />
 
-      <View className="flex-1 overflow-hidden">
-        <View className="absolute top-20 -right-20 w-80 h-80 rounded-full bg-secondary-container/20 pointer-events-none" />
-        <View className="absolute bottom-20 -left-20 w-80 h-80 rounded-full bg-primary-container/10 pointer-events-none" />
-
-        <View className="px-margin-mobile mb-8 items-center">
-          <Text className="font-label-md text-label-md text-secondary uppercase tracking-widest mb-2">
-            Getting Started
-          </Text>
-          <Text className="font-headline-lg-mobile text-headline-lg-mobile text-on-background text-center">
-            Welcome, Alex! Let's get you started.
-          </Text>
+      <View className="flex-1 justify-center">
+        <View className="items-center mt-16 mb-4">
+          <View className="w-20 h-20 rounded-2xl bg-primary items-center justify-center mb-4" style={{ shadowColor: '#006b5a', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 24, elevation: 8 }}>
+            <Text className="text-on-primary font-bold text-4xl">F</Text>
+          </View>
+          <Text className="font-headline-lg text-headline-lg text-primary font-bold">Finovault AI</Text>
+          <Text className="font-body-md text-body-md text-on-surface-variant mt-1">Your Adaptive Financial Intelligence</Text>
         </View>
 
-        <View className="overflow-hidden" style={{ height: 480 }} {...panResponder.panHandlers}>
+        <View className="overflow-hidden" style={{ height: 400 }} {...panResponder.panHandlers}>
           <Animated.View className="flex-row" style={[{ width: SCREEN_WIDTH * SLIDES.length }, carouselStyle]}>
             {SLIDES.map((slide, index) => (
               <View key={index} style={{ width: SCREEN_WIDTH }} className="items-center justify-center px-margin-mobile">
                 <View
-                  className="rounded-xl p-8 w-full max-w-sm items-center"
+                  className="rounded-2xl p-8 w-full max-w-sm items-center"
                   style={{
-                    backgroundColor: 'rgba(255,255,255,0.7)',
+                    backgroundColor: 'rgba(255,255,255,0.8)',
                     borderWidth: 1,
-                    borderColor: 'rgba(230,235,241,1)',
+                    borderColor: 'rgba(230,235,241,0.8)',
                     shadowColor: '#000',
                     shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.04,
-                    shadowRadius: 20,
-                    elevation: 2,
+                    shadowOpacity: 0.06,
+                    shadowRadius: 24,
+                    elevation: 3,
                   }}
                 >
-                  <Animated.View style={[floatStyles[index], { marginBottom: 32 }]}>
+                  <Animated.View style={[floatStyles[index], { marginBottom: 28 }]}>
                     <View
-                      className="w-48 h-48 rounded-full items-center justify-center"
+                      className="w-40 h-40 rounded-full items-center justify-center"
                       style={{ backgroundColor: `${slide.color}10` }}
                     >
-                      <MaterialIcons name={slide.icon} size={72} color={slide.color} />
+                      <MaterialIcons name={slide.icon} size={64} color={slide.color} />
                     </View>
                   </Animated.View>
-                  <Text className="font-headline-md text-headline-md text-primary mb-3">
+                  <Text className="font-headline-md text-headline-md text-primary mb-3 text-center">
                     {slide.title}
                   </Text>
-                  <Text className="font-body-md text-body-md text-on-surface-variant text-center">
+                  <Text className="font-body-md text-body-md text-on-surface-variant text-center leading-relaxed">
                     {slide.subtitle}
                   </Text>
                 </View>
@@ -206,50 +178,42 @@ export default function WelcomeTour() {
           </Animated.View>
         </View>
 
-        <View className="mt-8 items-center">
-          <View className="flex-row gap-2 mb-10">
-            {SLIDES.map((_, index) => (
-              <Pressable key={index} onPress={() => handleDotPress(index)}>
-                <View
-                  className={`rounded-full ${index === currentIndex ? 'w-6 bg-secondary' : 'w-2 h-2 bg-outline/30'}`}
-                  style={{ height: 8 }}
-                />
-              </Pressable>
-            ))}
-          </View>
-
-          <View className="w-full px-margin-mobile max-w-sm">
-            <Pressable
-              onPress={() => router.push(isAuthenticated ? '/(tabs)' : '/preferences')}
-              className="w-full py-4 rounded-xl bg-secondary items-center justify-center flex-row"
-              style={{
-                shadowColor: 'rgba(0,107,90,0.25)',
-                shadowOffset: { width: 0, height: 4 },
-                shadowRadius: 14,
-                elevation: 4,
-              }}
-            >
-              <Text className="font-label-md text-label-md text-on-primary mr-2">
-                Go to My Dashboard
-              </Text>
-              <MaterialIcons name="arrow-forward" size={20} color="#ffffff" />
+        <View className="flex-row justify-center gap-2 mt-6 mb-6">
+          {SLIDES.map((_, index) => (
+            <Pressable key={index} onPress={() => handleDotPress(index)}>
+              <View
+                className={`rounded-full ${index === currentIndex ? 'w-6 bg-secondary' : 'w-2 h-2 bg-outline/30'}`}
+                style={{ height: 8 }}
+              />
             </Pressable>
-          </View>
+          ))}
+        </View>
+
+        <View className="px-margin-mobile max-w-sm mx-auto w-full">
+          <Pressable
+            onPress={() => router.push(isAuthenticated ? '/(tabs)' : '/preferences')}
+            className="w-full py-4 rounded-xl bg-secondary items-center justify-center flex-row active:scale-[0.98]"
+            style={{
+              shadowColor: 'rgba(0,107,90,0.25)',
+              shadowOffset: { width: 0, height: 4 },
+              shadowRadius: 14,
+              elevation: 4,
+            }}
+          >
+            <Text className="font-label-md text-label-md text-on-primary mr-2 font-bold">
+              Get Started
+            </Text>
+            <MaterialIcons name="arrow-forward" size={20} color="#ffffff" />
+          </Pressable>
         </View>
       </View>
 
-      <View className="flex-row justify-center items-center pb-8 gap-6">
-        <Pressable
-          onPress={prevSlide}
-          className="w-12 h-12 items-center justify-center active:opacity-70"
-        >
+      <View className="flex-row justify-center items-center pb-10 gap-6">
+        <Pressable onPress={prevSlide} className="w-12 h-12 items-center justify-center active:opacity-70">
           <MaterialIcons name="chevron-left" size={28} color="#74777e" />
         </Pressable>
-        <View className="w-2 h-2 rounded-full bg-secondary scale-110" />
-        <Pressable
-          onPress={nextSlide}
-          className="w-12 h-12 items-center justify-center active:opacity-70"
-        >
+        <View className="w-2 h-2 rounded-full bg-secondary" />
+        <Pressable onPress={nextSlide} className="w-12 h-12 items-center justify-center active:opacity-70">
           <MaterialIcons name="chevron-right" size={28} color="#74777e" />
         </Pressable>
       </View>

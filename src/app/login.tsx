@@ -57,7 +57,7 @@ export default function Login() {
       </View>
 
       <ScrollView className="flex-1 w-full md:w-1/2 bg-surface">
-        <View className="px-margin-mobile md:px-margin-desktop py-lg items-center">
+        <View className="px-margin-mobile md:px-margin-desktop py-lg pb-[60px] items-center">
           <View className="w-full max-w-md">
             <View className="md:hidden mb-lg">
               <Text className="font-headline-lg-mobile text-headline-lg-mobile text-primary font-semibold">Finovault AI</Text>
@@ -92,7 +92,7 @@ export default function Login() {
             <Pressable
               onPress={handleLogin}
               disabled={isSubmitting}
-              className="w-full py-md rounded-lg bg-gradient-to-r from-secondary to-[#005143] flex-row items-center justify-center gap-sm active:scale-[0.98]"
+              className="w-full py-md rounded-lg bg-secondary bg-gradient-to-r from-secondary to-[#005143] flex-row items-center justify-center gap-sm active:scale-[0.98]"
               style={{ shadowColor: 'rgba(0,107,90,0.25)', shadowOffset: { width: 0, height: 4 }, shadowRadius: 14, elevation: 4 }}
             >
               {isSubmitting ? (
