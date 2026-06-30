@@ -30,12 +30,12 @@ export async function getHealth(userId: string) {
     : 0;
 
   return {
-    revenue: totalRevenue || 142500,
-    expenses: totalExpenses || 98200,
-    profit: profit || 44300,
+    revenue: totalRevenue || 0,
+    expenses: totalExpenses || 0,
+    profit: profit || 0,
     profit_margin: Math.round(profitMargin * 10) / 10,
-    revenue_trend: 12.4,
-    expense_trend: -3.2,
+    revenue_trend: 0,
+    expense_trend: 0,
     vendor_count: vendors.length,
     vendor_health_average: Math.round(vendorHealth),
     overall_health_score: calculateHealthScore(profitMargin, vendorHealth),
@@ -72,7 +72,7 @@ export async function getForecast(userId: string) {
 
   const netMonthly = avgRevenue - avgExpenses;
   const cashReserves = Math.max(0, netMonthly * 3);
-  const runway = avgExpenses > 0 ? Math.round(cashReserves / avgExpenses) : 12;
+  const runway = avgExpenses > 0 ? Math.round(cashReserves / avgExpenses) : 0;
 
   return {
     monthly_avg_revenue: Math.round(avgRevenue),
@@ -89,13 +89,11 @@ export async function getForecast(userId: string) {
 
 function generateForecast(avgRevenue: number, avgExpenses: number): number[] {
   const net = avgRevenue - avgExpenses;
-  const months = 6;
   const forecast: number[] = [];
-  let current = 100000;
+  let current = 0;
 
-  for (let i = 0; i < months; i++) {
+  for (let i = 0; i < 6; i++) {
     current += net;
-    current += current * (Math.random() * 0.1 - 0.05);
     forecast.push(Math.round(current));
   }
 
