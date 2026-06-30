@@ -17,6 +17,8 @@ services:
         sync: false
       - key: CORS_ORIGIN
         sync: false
+      - key: PYTHON_AI_URL
+        value: https://finovault-ai.onrender.com
       - key: LOG_LEVEL
         value: info
 
