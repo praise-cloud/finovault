@@ -112,7 +112,7 @@ export default function IndividualDashboard() {
             </View>
             <Text className="text-white font-headline-md font-bold mb-1">{data.next_best_move.title}</Text>
             <Text className="text-white/80 text-body-md mb-4">{data.next_best_move.description}</Text>
-            <Pressable className="bg-white/20 backdrop-blur-md px-5 py-2.5 rounded-xl self-start active:scale-95 border border-white/20">
+            <Pressable onPress={() => router.push('/(tabs)/transactions')} className="bg-white/20 backdrop-blur-md px-5 py-2.5 rounded-xl self-start active:scale-95 border border-white/20">
               <Text className="text-white font-label-md font-bold">Execute Transfer</Text>
             </Pressable>
           </View>
@@ -175,7 +175,7 @@ export default function IndividualDashboard() {
         </View>
 
         <View className="flex-row flex-wrap mt-3" style={{ gap: 12 }}>
-          <Pressable className="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl p-4 flex-row items-center gap-3 active:scale-[0.98]" style={{ width: '48%' }}>
+          <Pressable onPress={() => router.push('/(tabs)/wealth-growth')} className="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl p-4 flex-row items-center gap-3 active:scale-[0.98]" style={{ width: '48%' }}>
             <View className="w-10 h-10 rounded-xl bg-secondary-container items-center justify-center">
               <MaterialIcons name="trending-up" size={20} color="#00705e" />
             </View>
@@ -184,7 +184,7 @@ export default function IndividualDashboard() {
               <Text className="text-caption text-on-surface-variant">Track growth</Text>
             </View>
           </Pressable>
-          <Pressable className="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl p-4 flex-row items-center gap-3 active:scale-[0.98]" style={{ width: '48%' }}>
+          <Pressable onPress={() => router.push('/(tabs)/savings-goals')} className="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl p-4 flex-row items-center gap-3 active:scale-[0.98]" style={{ width: '48%' }}>
             <View className="w-10 h-10 rounded-xl bg-primary-container items-center justify-center">
               <MaterialIcons name="savings" size={20} color="#ffffff" />
             </View>

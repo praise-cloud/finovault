@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { View, Text, Pressable, Modal, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import Animated, { FadeInDown, FadeInUp, BounceIn } from 'react-native-reanimated';
+import { lightImpact, successNotification } from '@/hooks/use-haptics';
 
 export type NotificationType = 'alert' | 'insight' | 'transaction' | 'security';
 
@@ -62,21 +64,27 @@ export function NotificationModal({ visible, onClose }: { visible: boolean; onCl
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const handleNotificationPress = (n: Notification) => {
+    lightImpact();
     setNotifications((prev) => prev.map((item) => item.id === n.id ? { ...item, read: true } : item));
     const route = TYPE_ROUTES[n.type];
     if (route) router.push(route as any);
     onClose();
   };
 
+  const handleMarkAllRead = useCallback(() => {
+    successNotification();
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  }, []);
+
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
       <Pressable className="flex-1 bg-black/40" onPress={onClose}>
-        <Pressable className="mt-20 mx-4 bg-white rounded-3xl max-h-[70%] overflow-hidden" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 16 }} onPress={() => {}}>
+        <Animated.View entering={FadeInUp.springify().damping(14).stiffness(100)} className="mt-20 mx-4 bg-white rounded-3xl max-h-[70%] overflow-hidden" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 16 }}>
           <View className="flex-row items-center justify-between px-6 pt-6 pb-4 border-b border-outline-variant/30">
             <View className="flex-row items-center gap-3">
               <Text className="font-headline-md text-primary font-bold">Notifications</Text>
               {unreadCount > 0 && (
-                <View className="bg-error px-2 py-0.5 rounded-full"><Text className="text-white text-xs font-bold">{unreadCount} new</Text></View>
+                <Animated.View entering={BounceIn.springify().damping(10)} className="bg-error px-2 py-0.5 rounded-full"><Text className="text-white text-xs font-bold">{unreadCount} new</Text></Animated.View>
               )}
             </View>
             <Pressable onPress={onClose} className="w-8 h-8 rounded-full bg-surface-variant items-center justify-center active:scale-90">
@@ -90,34 +98,36 @@ export function NotificationModal({ visible, onClose }: { visible: boolean; onCl
                 <Text className="text-on-surface-variant text-body-md mt-4">No notifications yet</Text>
               </View>
             ) : (
-              notifications.map((n) => {
+              notifications.map((n, i) => {
                 const config = TYPE_CONFIG[n.type];
                 return (
-                  <Pressable key={n.id} onPress={() => handleNotificationPress(n)} className={`flex-row gap-4 p-4 rounded-xl mb-3 active:scale-[0.98] ${n.read ? 'bg-white' : 'bg-secondary-container/20'}`}>
-                    <View className={`w-10 h-10 rounded-full items-center justify-center ${config.bg}`}>
-                      <MaterialIcons name={config.icon} size={20} color={config.color} />
-                    </View>
-                    <View className="flex-1">
-                      <View className="flex-row justify-between items-start">
-                        <Text className={`font-label-md flex-1 ${n.read ? 'text-on-surface' : 'text-primary font-bold'}`}>{n.title}</Text>
-                        <Text className="text-caption text-on-surface-variant ml-2">{n.time}</Text>
+                  <Animated.View key={n.id} entering={FadeInDown.springify().damping(14).stiffness(100).delay(i * 80)}>
+                    <Pressable onPress={() => handleNotificationPress(n)} className={`flex-row gap-4 p-4 rounded-xl mb-3 active:scale-[0.98] ${n.read ? 'bg-white' : 'bg-secondary-container/20'}`}>
+                      <View className={`w-10 h-10 rounded-full items-center justify-center ${config.bg}`}>
+                        <MaterialIcons name={config.icon} size={20} color={config.color} />
                       </View>
-                      <Text className="text-body-md text-on-surface-variant mt-1">{n.message}</Text>
-                    </View>
-                    <View className="justify-center">
-                      <MaterialIcons name="chevron-right" size={18} color="#c4c6ca" />
-                    </View>
-                  </Pressable>
+                      <View className="flex-1">
+                        <View className="flex-row justify-between items-start">
+                          <Text className={`font-label-md flex-1 ${n.read ? 'text-on-surface' : 'text-primary font-bold'}`}>{n.title}</Text>
+                          <Text className="text-caption text-on-surface-variant ml-2">{n.time}</Text>
+                        </View>
+                        <Text className="text-body-md text-on-surface-variant mt-1">{n.message}</Text>
+                      </View>
+                      <View className="justify-center">
+                        <MaterialIcons name="chevron-right" size={18} color="#c4c6ca" />
+                      </View>
+                    </Pressable>
+                  </Animated.View>
                 );
               })
             )}
           </ScrollView>
           <View className="px-6 py-4 border-t border-outline-variant/30">
-            <Pressable onPress={() => setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))} className="w-full py-3 bg-primary rounded-xl items-center active:scale-[0.98]">
+            <Pressable onPress={handleMarkAllRead} className="w-full py-3 bg-primary rounded-xl items-center active:scale-[0.98]">
               <Text className="text-on-primary font-label-md font-bold">Mark All as Read</Text>
             </Pressable>
           </View>
-        </Pressable>
+        </Animated.View>
       </Pressable>
     </Modal>
   );

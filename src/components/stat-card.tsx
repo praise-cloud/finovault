@@ -1,16 +1,21 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { View, Text } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 type Props = {
   label: string;
   value: string;
   trend?: { direction: 'up' | 'down'; text: string; positive?: boolean };
   className?: string;
+  index?: number;
 };
 
-export function StatCard({ label, value, trend, className = '' }: Props) {
+export function StatCard({ label, value, trend, className = '', index = 0 }: Props) {
   return (
-    <View className={`p-4 rounded-xl bg-surface-bright border border-outline-variant ${className}`}>
+    <Animated.View
+      entering={FadeInDown.springify().damping(14).stiffness(100).delay(index * 100)}
+      className={`p-4 rounded-xl bg-surface-bright border border-outline-variant ${className}`}
+    >
       <Text className="text-caption text-on-surface-variant uppercase tracking-wider mb-1">{label}</Text>
       <Text className="font-headline-md text-headline-md text-primary">{value}</Text>
       {trend && (
@@ -25,6 +30,6 @@ export function StatCard({ label, value, trend, className = '' }: Props) {
           </Text>
         </View>
       )}
-    </View>
+    </Animated.View>
   );
 }

@@ -9,6 +9,7 @@ import {
     Text,
     View,
 } from "react-native";
+import { router } from "expo-router";
 
 export default function EntrepreneurDashboard() {
   const data = useDashboardStore((s) => s.entrepreneur);
@@ -176,6 +177,7 @@ export default function EntrepreneurDashboard() {
                     {d.grant.description}
                   </Text>
                   <Pressable
+                    onPress={() => router.push("/(tabs)/ai-coach")}
                     className="bg-secondary-fixed py-4 rounded-xl flex-row items-center justify-center gap-2 active:scale-95"
                     style={{
                       shadowColor: "rgba(88,251,218,0.3)",
@@ -232,7 +234,7 @@ export default function EntrepreneurDashboard() {
                 <Text className="font-headline-md text-headline-md text-primary">
                   Circle Network
                 </Text>
-                <Text className="text-caption text-secondary">View All</Text>
+                <Pressable onPress={() => router.push("/(tabs)/transactions")}><Text className="text-caption text-secondary">View All</Text></Pressable>
               </View>
               {d.network.map((person) => (
                 <View

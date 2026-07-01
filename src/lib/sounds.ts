@@ -2,11 +2,7 @@ import { Audio } from 'expo-av';
 
 export type SoundName = 'welcome' | 'open' | 'lock';
 
-type SoundMap = {
-  [K in SoundName]: string;
-};
-
-const SOUND_FILES: SoundMap = {
+const SOUND_FILES: Record<SoundName, number> = {
   welcome: require('@/assets/audio/safe-opening-welcome-page.mpeg'),
   open: require('@/assets/audio/opening_safe_sound.mpeg'),
   lock: require('@/assets/audio/lock_safe_sound.mpeg'),
@@ -16,7 +12,7 @@ const loadedSounds = new Map<SoundName, Audio.Sound>();
 
 export async function preloadSounds() {
   await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
-  const entries = Object.entries(SOUND_FILES) as [SoundName, string][];
+  const entries = Object.entries(SOUND_FILES) as [SoundName, number][];
   const results = await Promise.allSettled(
     entries.map(async ([name, source]) => {
       const { sound } = await Audio.Sound.createAsync(source, { volume: 0.5 });

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useDashboardStore } from '@/stores/dashboard-store';
+import { router } from 'expo-router';
 
 type IconName = React.ComponentProps<typeof MaterialIcons>['name'];
 
@@ -48,7 +49,16 @@ export default function FreelancerDashboard() {
           </View>
           <View className="flex-1 gap-1">
             {navItems.map((item) => (
-              <Pressable key={item.name} className={`flex-row items-center gap-3 mx-2 px-4 py-3 rounded-full ${item.active ? 'bg-secondary-container' : ''}`}>
+              <Pressable key={item.name} onPress={() => {
+                const routes: Record<string, string> = {
+                  'Dashboard': '/(tabs)',
+                  'Wealth Growth': '/(tabs)/wealth-growth',
+                  'Smart Savings': '/(tabs)/savings-goals',
+                  'Fraud Protection': '/(tabs)/fraud-protection',
+                  'SME Analytics': '/(tabs)/sme-analytics',
+                };
+                if (routes[item.name]) router.push(routes[item.name] as any);
+              }} className={`flex-row items-center gap-3 mx-2 px-4 py-3 rounded-full ${item.active ? 'bg-secondary-container' : ''}`}>
                 <MaterialIcons name={item.icon} size={20} color={item.active ? '#00705e' : '#43474d'} />
                 <Text className={`font-bold ${item.active ? 'text-on-secondary-container' : 'text-on-surface-variant'}`}>{item.name}</Text>
               </Pressable>
@@ -99,7 +109,7 @@ export default function FreelancerDashboard() {
                   <Text className="font-label-md font-bold text-primary">${d.income.retainers.toLocaleString()}</Text>
                 </View>
               </View>
-              <Pressable className="mt-4 w-full py-2 bg-surface-container-high rounded-lg items-center active:scale-95">
+              <Pressable onPress={() => router.push('/(tabs)/transactions')} className="mt-4 w-full py-2 bg-surface-container-high rounded-lg items-center active:scale-95">
                 <Text className="font-label-md text-primary">View Details</Text>
               </Pressable>
             </View>
@@ -125,7 +135,7 @@ export default function FreelancerDashboard() {
             <View className="w-full md:flex-[3] md:min-w-0 min-w-[280px] rounded-xl overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.8)', borderWidth: 1, borderColor: '#E6EBF1', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}>
               <View className="p-md border-b border-outline-variant flex-row justify-between items-center">
                 <Text className="font-headline-md text-[20px] font-bold">Recent Projects & Status</Text>
-                <Pressable className="flex-row items-center gap-1"><Text className="text-secondary font-label-md">All Projects</Text><MaterialIcons name="arrow-forward" size={18} color="#006b5a" /></Pressable>
+                <Pressable onPress={() => router.push('/(tabs)/transactions')} className="flex-row items-center gap-1"><Text className="text-secondary font-label-md">All Projects</Text><MaterialIcons name="arrow-forward" size={18} color="#006b5a" /></Pressable>
               </View>
               <View className="overflow-x-auto">
                 <View className="flex-row bg-surface-container-low px-md py-3">
@@ -145,14 +155,14 @@ export default function FreelancerDashboard() {
                         <Text className={`text-caption ${proj.status === 'Invoiced' ? 'text-on-secondary-container' : proj.status === 'In Progress' ? 'text-on-primary-container' : 'text-on-error-container'}`}>{proj.status}</Text>
                       </View>
                     </View>
-                    <Pressable className="w-8 items-center"><MaterialIcons name="more-vert" size={20} color="#74777e" /></Pressable>
+                    <Pressable onPress={() => router.push('/(tabs)/transactions')} className="w-8 items-center"><MaterialIcons name="more-vert" size={20} color="#74777e" /></Pressable>
                   </View>
                 ))}
               </View>
             </View>
 
             <View className="w-full md:flex-1 md:min-w-0 min-w-[200px] p-md rounded-xl items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.8)', borderWidth: 1, borderColor: '#E6EBF1', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}>
-              <Pressable className="items-center active:scale-95">
+              <Pressable onPress={() => router.push('/(tabs)/transactions')} className="items-center active:scale-95">
                 <View className="w-12 h-12 rounded-full bg-secondary-container items-center justify-center mb-3"><MaterialIcons name="add" size={24} color="#00705e" /></View>
                 <Text className="font-label-md font-bold">New Invoice</Text>
               </Pressable>
@@ -164,7 +174,7 @@ export default function FreelancerDashboard() {
               <View className="flex-1 min-w-[280px]">
                 <Text className="font-headline-lg text-headline-lg text-white mb-4">Optimize your Tax Shield</Text>
                 <Text className="font-body-md text-on-primary-container mb-6 max-w-md">{d.tax_shield_message}</Text>
-                <Pressable className="bg-secondary-fixed px-6 py-3 rounded-full self-start active:scale-95">
+                <Pressable onPress={() => router.push('/(tabs)/ai-coach')} className="bg-secondary-fixed px-6 py-3 rounded-full self-start active:scale-95">
                   <Text className="font-label-md font-bold text-on-secondary-fixed">Review Strategy</Text>
                 </Pressable>
               </View>
