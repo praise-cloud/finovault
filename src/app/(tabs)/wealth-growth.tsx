@@ -3,6 +3,7 @@ import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-nati
 import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import { useDashboardStore } from '@/stores/dashboard-store';
+import { router } from 'expo-router';
 
 export default function WealthGrowth() {
   const data = useDashboardStore((s) => s.wealthGrowth);
@@ -48,7 +49,7 @@ export default function WealthGrowth() {
               <Text className="font-body-md text-on-surface-variant max-w-2xl">Visualizing your path to financial freedom with real-time institutional-grade forecasts and automated risk mitigation.</Text>
             </View>
             <View className="flex-row gap-4">
-              <Pressable className="bg-primary px-6 py-3 rounded-xl flex-row items-center gap-2 active:scale-95" style={{ shadowColor: '#006b5a', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8, elevation: 4 }}>
+              <Pressable onPress={() => router.push('/(tabs)/ai-coach')} className="bg-primary px-6 py-3 rounded-xl flex-row items-center gap-2 active:scale-95" style={{ shadowColor: '#006b5a', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8, elevation: 4 }}>
                 <MaterialIcons name="add-circle" size={20} color="#ffffff" />
                 <Text className="text-on-primary font-label-md">Optimize Allocation</Text>
               </Pressable>
@@ -155,7 +156,7 @@ export default function WealthGrowth() {
                     <View className="bg-secondary h-full rounded-full" style={{ width: `${d.risk_shield_progress}%` }} />
                   </View>
                 </View>
-                <Pressable className="w-full bg-secondary py-4 rounded-xl flex-row items-center justify-center gap-2 active:scale-95">
+                <Pressable onPress={() => router.push('/(tabs)/ai-coach')} className="w-full bg-secondary py-4 rounded-xl flex-row items-center justify-center gap-2 active:scale-95">
                   <Text className="text-on-secondary font-bold">Execute Optimization</Text>
                   <MaterialIcons name="bolt" size={20} color="#ffffff" />
                 </Pressable>

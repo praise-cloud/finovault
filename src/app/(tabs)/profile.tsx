@@ -8,6 +8,7 @@ import { router } from 'expo-router';
 import { NotificationIcon, NotificationModal } from '@/components/notification-modal';
 import { UserAvatar } from '@/components/user-avatar';
 import { useSettingsStore, CURRENCIES, LOCATIONS, LANGUAGES } from '@/stores/settings-store';
+import * as ProfileService from '@/lib/api/services/profile';
 
 const SETTINGS = [
   { icon: 'person' as const, label: 'Personal Info', route: null, active: true },
@@ -217,7 +218,7 @@ export default function Profile() {
                     <Text className="text-caption text-on-surface-variant text-xs">{new Date(d.security.last_login).toLocaleDateString()}</Text>
                   </View>
                 </Pressable>
-                <Pressable className="flex-1 min-w-[140px] p-4 rounded-xl bg-surface-container-low border border-outline-variant/20 flex-row items-start gap-3 active:scale-[0.98]">
+                <Pressable onPress={() => router.push('/(tabs)/last-login' as any)} className="flex-1 min-w-[140px] p-4 rounded-xl bg-surface-container-low border border-outline-variant/20 flex-row items-start gap-3 active:scale-[0.98]">
                   <MaterialIcons name="devices" size={18} color="#006b5a" />
                   <View className="flex-1">
                     <Text className="font-label-md font-bold text-primary">Active Devices</Text>
@@ -286,7 +287,7 @@ export default function Profile() {
                 </View>
                 <View className="bg-secondary-container/30 px-3 py-1 rounded-full"><Text className="text-secondary-fixed text-xs font-bold">ACTIVE</Text></View>
               </View>
-              <Pressable className="w-full bg-primary py-3 rounded-xl items-center mt-4 active:scale-[0.98]">
+              <Pressable onPress={() => router.push('/(tabs)/ai-coach' as any)} className="w-full bg-primary py-3 rounded-xl items-center mt-4 active:scale-[0.98]">
                 <Text className="text-on-primary font-label-md font-bold">Manage Subscription</Text>
               </Pressable>
             </View>
@@ -378,7 +379,15 @@ export default function Profile() {
               <Pressable onPress={() => setEditVisible(false)} className="flex-1 py-3.5 rounded-xl border border-outline-variant items-center active:scale-[0.98]">
                 <Text className="font-label-md text-on-surface font-bold">Cancel</Text>
               </Pressable>
-              <Pressable onPress={() => setEditVisible(false)} className="flex-1 py-3.5 rounded-xl bg-primary items-center active:scale-[0.98]">
+              <Pressable onPress={async () => {
+                try {
+                  await ProfileService.updateProfile('', { full_name: editName, phone: editPhone });
+                  setEditVisible(false);
+                  load();
+                } catch (e: any) {
+                  Alert.alert('Error', e.message);
+                }
+              }} className="flex-1 py-3.5 rounded-xl bg-primary items-center active:scale-[0.98]">
                 <Text className="font-label-md text-on-primary font-bold">Save Changes</Text>
               </Pressable>
             </View>

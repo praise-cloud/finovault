@@ -3,6 +3,7 @@ import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-nati
 import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import { useDashboardStore } from '@/stores/dashboard-store';
+import { router } from 'expo-router';
 
 export default function SmeDashboard() {
   const data = useDashboardStore((s) => s.smeDashboard);
@@ -41,7 +42,7 @@ export default function SmeDashboard() {
             <Text className="font-headline-lg text-headline-lg text-primary mb-2">Good Morning, Alex</Text>
             <Text className="text-on-surface-variant text-body-md">Here&apos;s your SME health overview.</Text>
           </View>
-          <Pressable className="bg-secondary px-6 py-2 rounded-full flex-row items-center gap-2 active:scale-95 transition-transform ml-4">
+          <Pressable onPress={() => router.push('/(tabs)/transactions')} className="bg-secondary px-6 py-2 rounded-full flex-row items-center gap-2 active:scale-95 transition-transform ml-4">
             <MaterialIcons name="add" size={20} color="#ffffff" />
             <Text className="text-on-primary font-label-md text-label-md font-bold">New Transaction</Text>
           </Pressable>
@@ -96,7 +97,7 @@ export default function SmeDashboard() {
                     <View className="flex-1">
                       <Text className="font-label-md text-label-md text-primary font-bold">{task.title}</Text>
                       <Text className="text-caption text-on-surface-variant">{task.description}</Text>
-                      {task.status === 'overdue' && <Text className="mt-2 text-error font-bold text-caption underline">Resolve Now</Text>}
+                      {task.status === 'overdue' && <Pressable onPress={() => router.push('/(tabs)/transactions')} className="mt-2"><Text className="text-error font-bold text-caption underline">Resolve Now</Text></Pressable>}
                     </View>
                   </View>
                 </View>
@@ -205,7 +206,7 @@ export default function SmeDashboard() {
                       <View className="w-2 h-2 rounded-full bg-error" />
                       <View className="flex-1"><Text className="font-label-md text-label-md font-bold text-error">Unusual Transaction Flagged</Text><Text className="text-caption text-on-surface-variant">A $4,500 outgoing wire requires your verbal confirmation.</Text></View>
                     </View>
-                    <Pressable className="bg-error px-4 py-1.5 rounded-full active:scale-95"><Text className="text-white text-caption font-bold">Review</Text></Pressable>
+                    <Pressable onPress={() => router.push('/(tabs)/transactions')} className="bg-error px-4 py-1.5 rounded-full active:scale-95"><Text className="text-white text-caption font-bold">Review</Text></Pressable>
                   </View>
                 </>
               )}

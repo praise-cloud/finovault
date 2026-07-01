@@ -16,7 +16,7 @@ colors:
   outline: '#74777e'
   outline-variant: '#c4c6ce'
   surface-tint: '#49607e'
-  primary: '#000f22'
+  primary: '#ffffff'
   on-primary: '#ffffff'
   primary-container: '#0a2540'
   on-primary-container: '#768dad'
@@ -117,7 +117,7 @@ The design system is engineered to project a sense of **intelligence, bank-grade
 The UI should evoke a sense of "calm power," ensuring users feel in control of their assets. It avoids the frantic energy of consumer trading apps in favor of a sophisticated, institutional interface that remains approachable through high-quality typography and generous spacing.
 
 ## Colors
-The palette is anchored by **Deep Blue (#0A2540)**, providing a solid foundation of trust and authority. 
+The palette is anchored by **Deep Blue (#0A2540)**, providing a solid foundation of trust and authority.
 
 - **Primary:** Deep Blue is used for core navigation, headings, and high-emphasis backgrounds.
 - **Secondary:** A vibrant Teal/Green gradient (from #00D1B2 to #00BFA5) signifies growth, health, and AI-driven actions.
@@ -136,7 +136,7 @@ This design system utilizes a dual-font strategy. **Geist** provides a technical
 The layout follows a **Fixed-Fluid Hybrid** model. Content is contained within a maximum width of 1440px on desktop to prevent eye-strain across ultra-wide monitors, but fluidly scales down for smaller devices.
 
 - **Grid:** A 12-column grid system is used for desktop (24px gutters), 8-column for tablet, and 4-column for mobile.
-- **Rhythm:** An 8px linear scale governs all padding and margins. 
+- **Rhythm:** An 8px linear scale governs all padding and margins.
 - **Containers:** Large internal padding (minimum 24px) is required for all card layouts to reinforce the premium, spacious feel of the brand.
 
 ## Elevation & Depth
@@ -148,7 +148,7 @@ Depth is conveyed through **Ambient Shadows** and **Tonal Layering**. Instead of
 - **Active State:** Interactive elements should use a "pressed" effect (reducing shadow and slightly scaling down) to feel tactile and responsive.
 
 ## Shapes
-The shape language is **distinctly rounded** to soften the technical nature of fintech data. 
+The shape language is **distinctly rounded** to soften the technical nature of fintech data.
 
 - **Primary Radius:** 0.5rem (8px) for standard components like input fields and small buttons.
 - **Large Radius (rounded-lg):** 1rem (16px) for cards, dashboard widgets, and main containers.

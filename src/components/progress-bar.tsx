@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 type Props = {
   progress: number; // 0-100
@@ -14,7 +14,7 @@ export function ProgressBar({ progress, height = 8, className = '', trackClassNa
   const width = useSharedValue(0);
 
   useEffect(() => {
-    width.value = withTiming(progress, { duration: 1500 });
+    width.value = withSpring(progress, { damping: 20, stiffness: 90 });
   }, [progress]);
 
   const animatedStyle = useAnimatedStyle(() => ({

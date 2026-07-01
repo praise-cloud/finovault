@@ -1,13 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { BentoCard } from '@/components/bento-card';
 import { useDashboardStore } from '@/stores/dashboard-store';
+import { router } from 'expo-router';
 
 export default function SmeAnalytics() {
   const data = useDashboardStore((s) => s.smeAnalytics);
   const isLoading = useDashboardStore((s) => s.isLoading);
   const load = useDashboardStore((s) => s.loadSmeAnalytics);
+  const [vendorFilter, setVendorFilter] = useState('High Risk');
 
   useEffect(() => { load(); }, [load]);
 
@@ -43,11 +45,11 @@ export default function SmeAnalytics() {
               <Text className="text-on-surface-variant mt-2 max-w-2xl">Advanced cashflow forensics and vendor risk assessment powered by Finovault AI.</Text>
             </View>
             <View className="flex-row gap-3">
-              <Pressable className="flex-row items-center gap-2 px-4 py-2.5 rounded-xl border border-outline-variant active:scale-95">
+              <Pressable onPress={() => router.push('/(tabs)/transactions')} className="flex-row items-center gap-2 px-4 py-2.5 rounded-xl border border-outline-variant active:scale-95">
                 <MaterialIcons name="calendar-today" size={20} color="#181c1e" />
                 <Text className="font-label-md text-label-md text-on-surface">Last 30 Days</Text>
               </Pressable>
-              <Pressable className="flex-row items-center gap-2 px-6 py-2.5 rounded-xl bg-primary active:scale-95" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12 }}>
+              <Pressable onPress={() => router.push('/(tabs)/ai-coach')} className="flex-row items-center gap-2 px-6 py-2.5 rounded-xl bg-primary active:scale-95" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12 }}>
                 <MaterialIcons name="file-download" size={20} color="#ffffff" />
                 <Text className="font-label-md text-label-md text-on-primary">Export Report</Text>
               </Pressable>
@@ -114,7 +116,7 @@ export default function SmeAnalytics() {
               </View>
               <View className="mt-8 pt-6 border-t border-white/10">
                 <Text className="text-caption text-white/70">You are outperforming 85% of regional SMEs in your sector.</Text>
-                <Pressable className="mt-4 flex-row items-center gap-1"><Text className="text-secondary-fixed font-label-md text-label-md">View detailed peer analysis</Text><MaterialIcons name="chevron-right" size={16} color="#58fbda" /></Pressable>
+                <Pressable onPress={() => router.push('/(tabs)/ai-coach')} className="mt-4 flex-row items-center gap-1"><Text className="text-secondary-fixed font-label-md text-label-md">View detailed peer analysis</Text><MaterialIcons name="chevron-right" size={16} color="#58fbda" /></Pressable>
               </View>
             </View>
             <View className="absolute -right-20 -bottom-20 w-64 h-64 bg-secondary/20 rounded-full" />
@@ -127,9 +129,9 @@ export default function SmeAnalytics() {
                 <Text className="text-caption text-on-surface-variant">Supply chain resilience and credit worthiness tracking</Text>
               </View>
               <View className="flex-row bg-surface-container-low rounded-lg p-1">
-                <Pressable className="px-4 py-1.5 bg-surface-container-lowest rounded-md shadow-sm"><Text className="font-label-md text-label-md text-primary">High Risk</Text></Pressable>
-                <Pressable className="px-4 py-1.5 rounded-md"><Text className="font-label-md text-label-md text-on-surface-variant">Reliable</Text></Pressable>
-                <Pressable className="px-4 py-1.5 rounded-md"><Text className="font-label-md text-label-md text-on-surface-variant">Watchlist</Text></Pressable>
+                <Pressable onPress={() => setVendorFilter('High Risk')} className={`px-4 py-1.5 rounded-md ${vendorFilter === 'High Risk' ? 'bg-surface-container-lowest shadow-sm' : ''}`}><Text className={`font-label-md text-label-md ${vendorFilter === 'High Risk' ? 'text-primary' : 'text-on-surface-variant'}`}>High Risk</Text></Pressable>
+                <Pressable onPress={() => setVendorFilter('Reliable')} className={`px-4 py-1.5 rounded-md ${vendorFilter === 'Reliable' ? 'bg-surface-container-lowest shadow-sm' : ''}`}><Text className={`font-label-md text-label-md ${vendorFilter === 'Reliable' ? 'text-primary' : 'text-on-surface-variant'}`}>Reliable</Text></Pressable>
+                <Pressable onPress={() => setVendorFilter('Watchlist')} className={`px-4 py-1.5 rounded-md ${vendorFilter === 'Watchlist' ? 'bg-surface-container-lowest shadow-sm' : ''}`}><Text className={`font-label-md text-label-md ${vendorFilter === 'Watchlist' ? 'text-primary' : 'text-on-surface-variant'}`}>Watchlist</Text></Pressable>
               </View>
             </View>
             <View className="-mx-6 px-6">
@@ -179,7 +181,7 @@ export default function SmeAnalytics() {
               <Text className="font-headline-md text-headline-md text-primary mb-1">AI Smart Recommendation</Text>
               <Text className="text-body-md text-on-surface-variant">&ldquo;{d.ai_recommendation}&rdquo;</Text>
             </View>
-            <Pressable className="px-8 py-3 bg-secondary rounded-xl active:scale-95" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12 }}>
+            <Pressable onPress={() => router.push('/(tabs)/ai-coach')} className="px-8 py-3 bg-secondary rounded-xl active:scale-95" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12 }}>
               <Text className="font-label-md text-label-md text-on-secondary">Execute Audit</Text>
             </Pressable>
           </View>

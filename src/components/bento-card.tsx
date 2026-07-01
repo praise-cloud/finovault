@@ -6,6 +6,8 @@ import {
   withSpring,
 } from 'react-native-reanimated';
 import Animated from 'react-native-reanimated';
+import { lightImpact } from '@/hooks/use-haptics';
+import { playSound } from '@/lib/sounds';
 
 type Props = PropsWithChildren<{
   className?: string;
@@ -21,13 +23,20 @@ export function BentoCard({ children, className = '', onPress }: Props) {
 
   const handlePressIn = () => {
     scale.value = withSpring(0.98, { damping: 15 });
+    lightImpact();
   };
+
   const handlePressOut = () => {
     scale.value = withSpring(1, { damping: 15 });
   };
 
+  const handlePress = () => {
+    playSound('open');
+    onPress?.();
+  };
+
   return (
-    <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
+    <Pressable onPress={handlePress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
       <Animated.View style={animatedStyle}>
         <View
           className={`bg-surface-container-lowest rounded-xl p-md border border-outline-variant/30 shadow-sm ${className}`}

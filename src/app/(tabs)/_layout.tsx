@@ -1,10 +1,11 @@
 import { Stack, router } from 'expo-router';
-import { useEffect, useState, createContext, useContext } from 'react';
+import { useEffect, useState, createContext, useContext, useRef } from 'react';
 import { View, Pressable, Text, Modal, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuthStore } from '@/stores/auth-store';
 import { useDashboardStore } from '@/stores/dashboard-store';
 import { BottomTabBar } from '@/components/bottom-tab-bar';
+import { playSound } from '@/lib/sounds';
 
 type SheetContent = {
   title: string;
@@ -28,12 +29,18 @@ export default function TabsLayout() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const loadSummary = useDashboardStore((s) => s.loadSummary);
 
+  const hasPlayedSound = useRef(false);
+
   useEffect(() => {
     if (!isAuthenticated) {
       router.replace('/');
       return;
     }
     loadSummary();
+    if (!hasPlayedSound.current) {
+      hasPlayedSound.current = true;
+      playSound('open');
+    }
   }, [isAuthenticated, loadSummary]);
 
   const handleTabPress = (key: string) => {
@@ -61,6 +68,9 @@ export default function TabsLayout() {
           <Stack.Screen name="index" />
           <Stack.Screen name="wealth-growth" />
           <Stack.Screen name="smart-savings" />
+          <Stack.Screen name="savings-goals" />
+          <Stack.Screen name="transactions" />
+          <Stack.Screen name="ai-coach" />
           <Stack.Screen name="fraud-protection" />
           <Stack.Screen name="sme-dashboard" />
           <Stack.Screen name="sme-analytics" />

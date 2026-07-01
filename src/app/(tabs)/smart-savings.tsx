@@ -2,6 +2,7 @@ import { View, Text, Pressable, ScrollView, Animated, ActivityIndicator, useWind
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRef, useEffect, useState } from 'react';
 import { useDashboardStore } from '@/stores/dashboard-store';
+import { router } from 'expo-router';
 
 export default function SmartSavings() {
   const { width } = useWindowDimensions();
@@ -63,7 +64,7 @@ export default function SmartSavings() {
               <Text className="text-secondary font-label-md text-label-md uppercase tracking-wider">Savings Overview</Text>
               <Text className="font-headline-lg text-headline-lg md:text-display-lg text-primary mt-xs">Smart Savings</Text>
             </View>
-            <Pressable className="bg-primary px-6 py-3 rounded-full active:scale-95 transition-all" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, elevation: 4 }}>
+            <Pressable onPress={() => router.push('/(tabs)/savings-goals')} className="bg-primary px-6 py-3 rounded-full active:scale-95 transition-all" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, elevation: 4 }}>
               <Text className="text-on-primary font-label-md text-label-md">Add Goal</Text>
             </Pressable>
           </View>
@@ -120,7 +121,7 @@ export default function SmartSavings() {
                 <Text className="font-headline-md text-headline-md text-on-primary mb-md">{d?.ai_suggestion?.title || 'No AI suggestions yet.'}</Text>
                 <Text className="text-body-md text-body-md text-on-primary-container mb-lg">{d?.ai_suggestion?.description || 'Start tracking your spending to get personalized savings tips.'}</Text>
               </View>
-              <Pressable className="w-full bg-secondary py-3 rounded-full items-center active:scale-95 transition-all">
+              <Pressable onPress={() => router.push('/(tabs)/ai-coach')} className="w-full bg-secondary py-3 rounded-full items-center active:scale-95 transition-all">
                 <Text className="text-on-secondary font-label-md text-label-md">Enable Auto-Budgeting</Text>
               </Pressable>
             </View>
@@ -151,7 +152,7 @@ export default function SmartSavings() {
                   </View>
                 ))}
               </View>
-              <Pressable className="w-full mt-md py-2 items-center"><Text className="text-on-surface-variant font-label-md text-label-md underline">View All Round-ups</Text></Pressable>
+              <Pressable onPress={() => router.push('/(tabs)/savings-goals')} className="w-full mt-md py-2 items-center"><Text className="text-on-surface-variant font-label-md text-label-md underline">View All Round-ups</Text></Pressable>
             </View>
 
             <View className="gap-gutter" style={isMd ? { flex: 5 } : { width: '100%' }}>

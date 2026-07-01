@@ -1,39 +1,53 @@
-import * as Haptics from 'expo-haptics';
 import { Platform } from 'react-native';
+import { requireOptionalNativeModule } from 'expo';
 
 const isNative = Platform.OS === 'ios' || Platform.OS === 'android';
 
+const ExpoHaptics: Record<string, (...args: any[]) => Promise<void>> | null =
+  isNative ? requireOptionalNativeModule('ExpoHaptics') : null;
+
+type ImpactStyle = 'light' | 'medium' | 'heavy' | 'soft' | 'rigid';
+type NotificationType = 'success' | 'warning' | 'error';
+
+async function call(method: string, ...args: any[]) {
+  if (!ExpoHaptics?.[method]) return;
+  try {
+    await ExpoHaptics[method](...args);
+  } catch {}
+}
+
 export function lightImpact() {
-  if (!isNative) return;
-  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  call('impactAsync', 'light' satisfies ImpactStyle);
 }
 
 export function mediumImpact() {
-  if (!isNative) return;
-  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+  call('impactAsync', 'medium' satisfies ImpactStyle);
 }
 
 export function heavyImpact() {
-  if (!isNative) return;
-  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+  call('impactAsync', 'heavy' satisfies ImpactStyle);
+}
+
+export function softImpact() {
+  call('impactAsync', 'soft' satisfies ImpactStyle);
+}
+
+export function rigidImpact() {
+  call('impactAsync', 'rigid' satisfies ImpactStyle);
 }
 
 export function successNotification() {
-  if (!isNative) return;
-  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  call('notificationAsync', 'success' satisfies NotificationType);
 }
 
 export function errorNotification() {
-  if (!isNative) return;
-  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+  call('notificationAsync', 'error' satisfies NotificationType);
 }
 
 export function warningNotification() {
-  if (!isNative) return;
-  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+  call('notificationAsync', 'warning' satisfies NotificationType);
 }
 
 export function selection() {
-  if (!isNative) return;
-  Haptics.selectionAsync();
+  call('selectionAsync');
 }

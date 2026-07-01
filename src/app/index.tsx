@@ -9,9 +9,12 @@ import Animated, {
   withDelay,
   withRepeat,
   withSequence,
+  withSpring,
   withTiming,
+  FadeInUp,
 } from 'react-native-reanimated';
 import { MaterialIcons } from '@expo/vector-icons';
+import { playSound } from '@/lib/sounds';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -77,6 +80,10 @@ export default function WelcomeTour() {
     return () => clearInterval(id);
   }, [goToSlide]);
 
+  useEffect(() => {
+    playSound('welcome');
+  }, []);
+
   const panResponder = useMemo(() => PanResponder.create({
     onMoveShouldSetPanResponder: (_, gs) => Math.abs(gs.dx) > 5 && Math.abs(gs.dx) > Math.abs(gs.dy),
     onPanResponderRelease: (_, gs) => {
@@ -137,16 +144,19 @@ export default function WelcomeTour() {
           ))}
         </View>
 
-        <View className="px-8 max-w-sm mx-auto w-full">
+        <Animated.View entering={FadeInUp.springify().damping(14).delay(300)} className="px-8 max-w-sm mx-auto w-full">
           <Pressable
-            onPress={() => router.replace('/getting-started')}
+            onPress={() => {
+              playSound('open');
+              router.replace('/getting-started');
+            }}
             className="w-full py-4 rounded-xl bg-white items-center justify-center flex-row active:scale-[0.98]"
             style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowRadius: 14, elevation: 4 }}
           >
             <Text className="font-label-md text-label-md text-primary mr-2 font-bold">Get Started</Text>
             <MaterialIcons name="arrow-forward" size={20} color="#006b5a" />
           </Pressable>
-        </View>
+        </Animated.View>
       </View>
     </View>
   );

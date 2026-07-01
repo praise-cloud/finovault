@@ -8,6 +8,7 @@ import { ToastProvider } from '@/components/toast';
 import { ActivityIndicator, View } from 'react-native';
 import { useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { preloadSounds } from '@/lib/sounds';
 
 export default function RootLayout() {
   const fontsLoaded = useFinovaultFonts();
@@ -17,6 +18,12 @@ export default function RootLayout() {
   useEffect(() => {
     initialize();
   }, [initialize]);
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      preloadSounds();
+    }
+  }, [fontsLoaded]);
 
   if (!fontsLoaded || isLoading) {
     return (
