@@ -52,11 +52,10 @@ export default function WelcomeTour() {
   const floatY1 = useSharedValue(0);
   const floatY2 = useSharedValue(0);
   const floatY3 = useSharedValue(0);
-  const floatStyles = [
-    useAnimatedStyle(() => ({ transform: [{ translateY: floatY1.value }] })),
-    useAnimatedStyle(() => ({ transform: [{ translateY: floatY2.value }] })),
-    useAnimatedStyle(() => ({ transform: [{ translateY: floatY3.value }] })),
-  ];
+  const floatStyle1 = useAnimatedStyle(() => ({ transform: [{ translateY: floatY1.value }] }));
+  const floatStyle2 = useAnimatedStyle(() => ({ transform: [{ translateY: floatY2.value }] }));
+  const floatStyle3 = useAnimatedStyle(() => ({ transform: [{ translateY: floatY3.value }] }));
+  const floatStyles = [floatStyle1, floatStyle2, floatStyle3];
 
   useEffect(() => {
     [floatY1, floatY2, floatY3].forEach((y, i) => {
@@ -66,8 +65,8 @@ export default function WelcomeTour() {
 
   const goToSlide = useCallback((index: number) => {
     currentIndexRef.current = index;
-    setCurrentIndex(index);
     translateX.value = withTiming(-index * SCREEN_WIDTH, { duration: 400, easing: Easing.inOut(Easing.ease) });
+    requestAnimationFrame(() => setCurrentIndex(index));
   }, [translateX]);
 
   const nextSlide = useCallback(() => goToSlide((currentIndexRef.current + 1) % SLIDES.length), [goToSlide]);
