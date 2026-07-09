@@ -1,34 +1,16 @@
-import { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Pressable, ActivityIndicator, Modal } from 'react-native';
+import { useEffect } from 'react';
+import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import { useDashboardStore } from '@/stores/dashboard-store';
 import { router } from 'expo-router';
 import { NotificationIcon, NotificationModal } from '@/components/notification-modal';
 import { UserAvatar } from '@/components/user-avatar';
-import * as FraudService from '@/lib/api/services/fraud';
 
 export default function FraudProtection() {
   const data = useDashboardStore((s) => s.fraudProtection);
   const isLoading = useDashboardStore((s) => s.isLoading);
   const load = useDashboardStore((s) => s.loadFraudProtection);
-  const [notifVisible, setNotifVisible] = useState(false);
-  const [logVisible, setLogVisible] = useState(false);
-  const [historicalEvents, setHistoricalEvents] = useState<FraudService.FraudEvent[]>([]);
-  const [logsLoading, setLogsLoading] = useState(false);
-
-  const loadHistoricalLogs = async () => {
-    setLogsLoading(true);
-    try {
-      const events = await FraudService.listEvents();
-      setHistoricalEvents(events || []);
-    } catch (e: any) {
-      console.error('Failed to load fraud events', e.message);
-    }
-    setLogsLoading(false);
-    setLogVisible(true);
-  };
-
   useEffect(() => { load(); }, [load]);
 
   if (!data) {
@@ -54,7 +36,7 @@ export default function FraudProtection() {
             <Text className="font-headline-md text-primary font-bold">Protection</Text>
           </View>
           <View className="flex-row items-center gap-3">
-            <NotificationIcon onPress={() => setNotifVisible(true)} count={2} />
+            <NotificationIcon />
             <UserAvatar size={36} />
           </View>
         </View>
@@ -123,7 +105,7 @@ export default function FraudProtection() {
         <View className="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant/20 mb-4">
           <View className="flex-row justify-between items-center mb-4">
             <Text className="font-headline-md text-primary font-bold">Real-time Monitoring</Text>
-            <Pressable onPress={loadHistoricalLogs} className="bg-surface-variant p-2 rounded-lg"><MaterialIcons name="filter-list" size={18} color="#43474d" /></Pressable>
+            <Pressable className="bg-surface-variant p-2 rounded-lg"><MaterialIcons name="filter-list" size={18} color="#43474d" /></Pressable>
           </View>
           {d.events.map((event, i) => (
             <View key={event.id || i} className="flex-row items-start gap-3 p-3.5 bg-surface-container-low rounded-xl mb-2.5" style={{ borderLeftWidth: 3, borderLeftColor: event.severity === 'critical' ? '#ba1a1a' : event.severity === 'warning' ? '#006b5a' : '#060045' }}>
@@ -139,7 +121,7 @@ export default function FraudProtection() {
               </View>
             </View>
           ))}
-          <Pressable onPress={loadHistoricalLogs} className="mt-2 w-full py-3 items-center rounded-xl active:scale-[0.98]"><Text className="text-secondary font-label-md font-bold">View Historical Logs</Text></Pressable>
+          <Pressable className="mt-2 w-full py-3 items-center rounded-xl active:scale-[0.98]"><Text className="text-secondary font-label-md font-bold">View Historical Logs</Text></Pressable>
         </View>
 
         <View className="bg-primary rounded-2xl overflow-hidden p-5 relative mb-4">
@@ -160,39 +142,7 @@ export default function FraudProtection() {
         </View>
       </ScrollView>
 
-      <Modal visible={logVisible} transparent animationType="slide" onRequestClose={() => setLogVisible(false)}>
-        <Pressable className="flex-1 bg-black/40" onPress={() => setLogVisible(false)}>
-          <Pressable className="flex-1 justify-end" onPress={() => {}}>
-            <Pressable className="bg-white rounded-t-3xl p-6" style={{ maxHeight: '80%' }} onPress={() => {}}>
-              <View className="items-center pt-3 pb-1">
-                <View className="w-10 h-1 rounded-full bg-outline/40" />
-              </View>
-              <Text className="font-headline-md text-primary font-bold mb-4">Historical Logs</Text>
-              {logsLoading ? (
-                <ActivityIndicator size="large" color="#006b5a" style={{ padding: 40 }} />
-              ) : historicalEvents.length === 0 ? (
-                <Text className="text-on-surface-variant text-body-md text-center py-8">No historical fraud events.</Text>
-              ) : (
-                <ScrollView>
-                  {historicalEvents.map((e) => (
-                    <View key={e.id} className="flex-row items-start gap-3 p-3.5 bg-surface-container-low rounded-xl mb-2.5" style={{ borderLeftWidth: 3, borderLeftColor: e.severity === 'critical' ? '#ba1a1a' : e.severity === 'warning' ? '#006b5a' : '#060045' }}>
-                      <View className={`p-2 rounded-full ${e.severity === 'critical' ? 'bg-error-container' : 'bg-secondary-container'}`}>
-                        <MaterialIcons name={e.severity === 'critical' ? 'warning' : 'verified-user'} size={18} color={e.severity === 'critical' ? '#ba1a1a' : '#00705e'} />
-                      </View>
-                      <View className="flex-1">
-                        <Text className="font-label-md font-bold text-primary">{e.event_type}</Text>
-                        <Text className="text-on-surface-variant text-body-md text-sm mt-0.5">{e.description}</Text>
-                        <Text className="text-caption text-on-surface-variant mt-1">{new Date(e.timestamp).toLocaleString()}</Text>
-                      </View>
-                    </View>
-                  ))}
-                </ScrollView>
-              )}
-            </Pressable>
-          </Pressable>
-        </Pressable>
-      </Modal>
-      <NotificationModal visible={notifVisible} onClose={() => setNotifVisible(false)} />
+      <NotificationModal />
     </View>
   );
 }

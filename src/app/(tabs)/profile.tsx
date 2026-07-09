@@ -8,7 +8,7 @@ import { router } from 'expo-router';
 import { NotificationIcon, NotificationModal } from '@/components/notification-modal';
 import { UserAvatar } from '@/components/user-avatar';
 import { useSettingsStore, CURRENCIES, LOCATIONS, LANGUAGES } from '@/stores/settings-store';
-import * as ProfileService from '@/lib/api/services/profile';
+import { useNotificationStore } from '@/stores/notification-store';
 
 const SETTINGS = [
   { icon: 'person' as const, label: 'Personal Info', route: null, active: true },
@@ -24,7 +24,7 @@ export default function Profile() {
   const load = useDashboardStore((s) => s.loadProfileData);
   const signOut = useAuthStore((s) => s.signOut);
   const { currency, location, language, setCurrency, setLocation, setLanguage } = useSettingsStore();
-  const [notifVisible, setNotifVisible] = useState(false);
+  const openNotifications = useNotificationStore((s) => s.open);
   const [editVisible, setEditVisible] = useState(false);
   const [editName, setEditName] = useState('');
   const [editEmail, setEditEmail] = useState('');
@@ -91,7 +91,7 @@ export default function Profile() {
             <Text className="font-headline-md text-primary font-bold">Profile</Text>
           </View>
           <View className="flex-row items-center gap-3">
-            <NotificationIcon onPress={() => setNotifVisible(true)} count={1} />
+            <NotificationIcon />
             <UserAvatar size={36} showBorder />
           </View>
         </View>
@@ -134,7 +134,7 @@ export default function Profile() {
                     key={item.label}
                     onPress={() => {
                       setActiveSection(item.label);
-                      if (item.label === 'Notifications') setNotifVisible(true);
+                      if (item.label === 'Notifications') openNotifications();
                       else if (item.route) router.push(item.route as any);
                     }}
                     className={`flex-row items-center gap-3 px-4 py-3.5 rounded-xl mb-1 ${isActive ? 'bg-secondary-container' : ''} active:scale-[0.98]`}
@@ -218,7 +218,7 @@ export default function Profile() {
                     <Text className="text-caption text-on-surface-variant text-xs">{new Date(d.security.last_login).toLocaleDateString()}</Text>
                   </View>
                 </Pressable>
-                <Pressable onPress={() => router.push('/(tabs)/last-login' as any)} className="flex-1 min-w-[140px] p-4 rounded-xl bg-surface-container-low border border-outline-variant/20 flex-row items-start gap-3 active:scale-[0.98]">
+                <Pressable className="flex-1 min-w-[140px] p-4 rounded-xl bg-surface-container-low border border-outline-variant/20 flex-row items-start gap-3 active:scale-[0.98]">
                   <MaterialIcons name="devices" size={18} color="#006b5a" />
                   <View className="flex-1">
                     <Text className="font-label-md font-bold text-primary">Active Devices</Text>
@@ -287,7 +287,7 @@ export default function Profile() {
                 </View>
                 <View className="bg-secondary-container/30 px-3 py-1 rounded-full"><Text className="text-secondary-fixed text-xs font-bold">ACTIVE</Text></View>
               </View>
-              <Pressable onPress={() => router.push('/(tabs)/ai-coach' as any)} className="w-full bg-primary py-3 rounded-xl items-center mt-4 active:scale-[0.98]">
+              <Pressable className="w-full bg-primary py-3 rounded-xl items-center mt-4 active:scale-[0.98]">
                 <Text className="text-on-primary font-label-md font-bold">Manage Subscription</Text>
               </Pressable>
             </View>
@@ -379,15 +379,7 @@ export default function Profile() {
               <Pressable onPress={() => setEditVisible(false)} className="flex-1 py-3.5 rounded-xl border border-outline-variant items-center active:scale-[0.98]">
                 <Text className="font-label-md text-on-surface font-bold">Cancel</Text>
               </Pressable>
-              <Pressable onPress={async () => {
-                try {
-                  await ProfileService.updateProfile('', { full_name: editName, phone: editPhone });
-                  setEditVisible(false);
-                  load();
-                } catch (e: any) {
-                  Alert.alert('Error', e.message);
-                }
-              }} className="flex-1 py-3.5 rounded-xl bg-primary items-center active:scale-[0.98]">
+              <Pressable onPress={() => setEditVisible(false)} className="flex-1 py-3.5 rounded-xl bg-primary items-center active:scale-[0.98]">
                 <Text className="font-label-md text-on-primary font-bold">Save Changes</Text>
               </Pressable>
             </View>
@@ -395,7 +387,7 @@ export default function Profile() {
         </View>
       </Modal>
 
-      <NotificationModal visible={notifVisible} onClose={() => setNotifVisible(false)} />
+      <NotificationModal />
 
       <Modal visible={showLocationPicker} transparent animationType="slide" onRequestClose={() => setShowLocationPicker(false)}>
         <View className="flex-1 bg-black/40 justify-end">

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useDashboardStore } from '@/stores/dashboard-store';
@@ -15,8 +15,6 @@ export default function IndividualDashboard() {
   const loadSummary = useDashboardStore((s) => s.loadSummary);
   const { currency, location, loaded: settingsLoaded, loadSettings } = useSettingsStore();
   const { showSheet } = useSheet();
-  const [notifVisible, setNotifVisible] = useState(false);
-
   useEffect(() => {
     loadSummary();
     if (!settingsLoaded) loadSettings();
@@ -55,7 +53,7 @@ export default function IndividualDashboard() {
             <Text className="font-headline-md text-primary font-bold">Dashboard</Text>
           </View>
           <View className="flex-row items-center gap-3">
-            <NotificationIcon onPress={() => setNotifVisible(true)} count={3} />
+            <NotificationIcon />
             <Pressable onPress={() => router.push('/(tabs)/profile')} className="active:scale-90">
               <UserAvatar size={36} />
             </Pressable>
@@ -196,7 +194,7 @@ export default function IndividualDashboard() {
         </View>
       </ScrollView>
 
-      <NotificationModal visible={notifVisible} onClose={() => setNotifVisible(false)} />
+      <NotificationModal />
     </View>
   );
 
