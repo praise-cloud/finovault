@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Pressable, Alert, ActivityIndicator } from 'react-native';
+import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { getLinkedAccounts } from '@/lib/api/services/settings';
@@ -36,7 +36,7 @@ export default function LinkedAccounts() {
             </Pressable>
             <Text className="font-headline-md text-primary font-bold">Linked Accounts</Text>
           </View>
-          <Pressable onPress={() => Alert.alert('Coming Soon', 'Bank linking via Plaid and MX will be available soon.')} className="bg-primary px-4 py-2 rounded-xl active:scale-95">
+          <Pressable onPress={() => router.push('/(tabs)/account-link')} className="bg-primary px-4 py-2 rounded-xl active:scale-95">
             <Text className="text-on-primary font-label-md font-bold">+ Link New</Text>
           </Pressable>
         </View>

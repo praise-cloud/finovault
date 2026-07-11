@@ -152,7 +152,7 @@ export default function SmartSavings() {
                   </View>
                 ))}
               </View>
-              <Pressable onPress={() => router.push('/(tabs)/savings-goals')} className="w-full mt-md py-2 items-center"><Text className="text-on-surface-variant font-label-md text-label-md underline">View All Round-ups</Text></Pressable>
+              <Pressable onPress={() => router.push('/(tabs)/round-up-details')} className="w-full mt-md py-2 items-center"><Text className="text-on-surface-variant font-label-md text-label-md underline">View All Round-ups</Text></Pressable>
             </View>
 
             <View className="gap-gutter" style={isMd ? { flex: 5 } : { width: '100%' }}>

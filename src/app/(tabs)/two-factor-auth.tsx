@@ -8,6 +8,23 @@ export default function TwoFactorAuth() {
   const [enabled, setEnabled] = useState(false);
   const [method, setMethod] = useState<'app' | 'sms'>('app');
   const [loading, setLoading] = useState(true);
+  const [recoveryCodes, setRecoveryCodes] = useState<string[]>(() =>
+    Array.from({ length: 5 }, () => {
+      const part1 = Math.random().toString(36).substring(2, 6).toUpperCase();
+      const part2 = Math.random().toString(36).substring(2, 6).toUpperCase();
+      return `${part1}-${part2}`;
+    })
+  );
+
+  const generateNewCodes = () => {
+    setRecoveryCodes(
+      Array.from({ length: 5 }, () => {
+        const part1 = Math.random().toString(36).substring(2, 6).toUpperCase();
+        const part2 = Math.random().toString(36).substring(2, 6).toUpperCase();
+        return `${part1}-${part2}`;
+      })
+    );
+  };
 
   useEffect(() => {
     getSecuritySettings()
@@ -122,11 +139,11 @@ export default function TwoFactorAuth() {
               </View>
               <Text className="text-body-md text-on-surface-variant text-sm mb-4">Save these recovery codes in a secure place. Each code can only be used once.</Text>
               <View className="bg-surface-container-low rounded-xl p-4">
-                {['X7K2-M9P4', 'R3D8-W6B1', 'F5H9-L2N7', 'T8Q1-V3C6', 'J4M2-P8K0'].map((code) => (
+                {recoveryCodes.map((code) => (
                   <Text key={code} className="font-mono text-sm text-primary tracking-widest py-0.5">{code}</Text>
                 ))}
               </View>
-              <Pressable className="mt-4 w-full py-3.5 bg-primary rounded-xl items-center active:scale-[0.98]">
+              <Pressable onPress={generateNewCodes} className="mt-4 w-full py-3.5 bg-primary rounded-xl items-center active:scale-[0.98]">
                 <Text className="text-on-primary font-label-md font-bold">Generate New Codes</Text>
               </Pressable>
             </View>

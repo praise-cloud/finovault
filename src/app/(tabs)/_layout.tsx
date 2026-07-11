@@ -83,8 +83,14 @@ export default function TabsLayout() {
           <Stack.Screen name="two-factor-auth" />
           <Stack.Screen name="last-login" />
           <Stack.Screen name="linked-accounts" />
+          <Stack.Screen name="account-link" />
           <Stack.Screen name="data-privacy" />
           <Stack.Screen name="ai-analysis" />
+          <Stack.Screen name="business-health" />
+          <Stack.Screen name="business-forecast" />
+          <Stack.Screen name="business-vendors" />
+          <Stack.Screen name="business-ai-advice" />
+          <Stack.Screen name="round-up-details" />
         </Stack>
 
         <BottomTabBar activeTab={activeTab} onTabPress={handleTabPress} />

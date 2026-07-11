@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator, TextInput } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { NotificationModal } from '@/components/notification-modal';
+import { NotificationIcon, NotificationModal } from '@/components/notification-modal';
 import { UserAvatar } from '@/components/user-avatar';
+import { useNotificationStore } from '@/stores/notification-store';
 import { AlertCard } from '@/components/alert-card';
 import * as AIService from '@/lib/api/services/ai';
 import * as TransactionsService from '@/lib/api/services/transactions';
@@ -23,6 +24,7 @@ export default function AiAnalysis() {
   ]);
   const [insights, setInsights] = useState<Insight[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { count: notifCount, open: openNotifications, visible: notifVisible, close: closeNotifications } = useNotificationStore();
   const [isAsking, setIsAsking] = useState(false);
   const [patternSummary, setPatternSummary] = useState<{ label: string; amount: number; pct: number; color: string }[]>([]);
   const [totalSpent, setTotalSpent] = useState(0);
@@ -117,6 +119,7 @@ export default function AiAnalysis() {
             <Pressable onPress={loadData} className="active:scale-90">
               <MaterialIcons name="refresh" size={24} color="#43474d" />
             </Pressable>
+            <NotificationIcon onPress={openNotifications} count={notifCount} />
             <Pressable onPress={() => router.push('/(tabs)/profile')} className="active:scale-90">
               <UserAvatar size={36} />
             </Pressable>
@@ -215,7 +218,7 @@ export default function AiAnalysis() {
         )}
       </ScrollView>
 
-      <NotificationModal />
+      <NotificationModal visible={notifVisible} onClose={closeNotifications} />
     </View>
   );
 }

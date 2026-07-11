@@ -9,6 +9,7 @@ import { NotificationIcon, NotificationModal } from '@/components/notification-m
 import { UserAvatar } from '@/components/user-avatar';
 import { useSettingsStore, CURRENCIES, LOCATIONS, LANGUAGES } from '@/stores/settings-store';
 import { useNotificationStore } from '@/stores/notification-store';
+import * as ProfileService from '@/lib/api/services/profile';
 
 const SETTINGS = [
   { icon: 'person' as const, label: 'Personal Info', route: null, active: true },
@@ -24,7 +25,7 @@ export default function Profile() {
   const load = useDashboardStore((s) => s.loadProfileData);
   const signOut = useAuthStore((s) => s.signOut);
   const { currency, location, language, setCurrency, setLocation, setLanguage } = useSettingsStore();
-  const openNotifications = useNotificationStore((s) => s.open);
+  const { count: notifCount, open: openNotifications, visible: notifVisible, close: closeNotifications } = useNotificationStore();
   const [editVisible, setEditVisible] = useState(false);
   const [editName, setEditName] = useState('');
   const [editEmail, setEditEmail] = useState('');
@@ -34,7 +35,23 @@ export default function Profile() {
   const [showLocationPicker, setShowLocationPicker] = useState(false);
   const [showLanguagePicker, setShowLanguagePicker] = useState(false);
 
+  const user = useAuthStore((s) => s.user);
+
   useEffect(() => { load(); }, [load]);
+
+  const handleSaveProfile = async () => {
+    try {
+      await ProfileService.updateProfile(user?.id, {
+        full_name: editName,
+        email: editEmail,
+        phone: editPhone,
+      });
+      setEditVisible(false);
+      load();
+    } catch (e: any) {
+      Alert.alert('Error', e.message || 'Failed to save profile');
+    }
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -91,7 +108,7 @@ export default function Profile() {
             <Text className="font-headline-md text-primary font-bold">Profile</Text>
           </View>
           <View className="flex-row items-center gap-3">
-            <NotificationIcon />
+            <NotificationIcon onPress={openNotifications} count={notifCount} />
             <UserAvatar size={36} showBorder />
           </View>
         </View>
@@ -379,7 +396,7 @@ export default function Profile() {
               <Pressable onPress={() => setEditVisible(false)} className="flex-1 py-3.5 rounded-xl border border-outline-variant items-center active:scale-[0.98]">
                 <Text className="font-label-md text-on-surface font-bold">Cancel</Text>
               </Pressable>
-              <Pressable onPress={() => setEditVisible(false)} className="flex-1 py-3.5 rounded-xl bg-primary items-center active:scale-[0.98]">
+              <Pressable onPress={handleSaveProfile} className="flex-1 py-3.5 rounded-xl bg-primary items-center active:scale-[0.98]">
                 <Text className="font-label-md text-on-primary font-bold">Save Changes</Text>
               </Pressable>
             </View>
@@ -387,7 +404,7 @@ export default function Profile() {
         </View>
       </Modal>
 
-      <NotificationModal />
+      <NotificationModal visible={notifVisible} onClose={closeNotifications} />
 
       <Modal visible={showLocationPicker} transparent animationType="slide" onRequestClose={() => setShowLocationPicker(false)}>
         <View className="flex-1 bg-black/40 justify-end">

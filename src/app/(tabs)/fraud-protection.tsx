@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
@@ -6,6 +6,7 @@ import { useDashboardStore } from '@/stores/dashboard-store';
 import { router } from 'expo-router';
 import { NotificationIcon, NotificationModal } from '@/components/notification-modal';
 import { UserAvatar } from '@/components/user-avatar';
+import { useNotificationStore } from '@/stores/notification-store';
 
 export default function FraudProtection() {
   const data = useDashboardStore((s) => s.fraudProtection);
@@ -13,16 +14,18 @@ export default function FraudProtection() {
   const load = useDashboardStore((s) => s.loadFraudProtection);
   useEffect(() => { load(); }, [load]);
 
+  const { count: notifCount, open: openNotifications, visible: notifVisible, close: closeNotifications } = useNotificationStore();
+
   if (!data) {
     return <View className="flex-1 bg-background items-center justify-center"><ActivityIndicator size="large" color="#006b5a" /></View>;
   }
 
   const d = data;
   const statusCards = [
-    { icon: 'lock-open' as const, label: 'Encryption', value: 'End-to-End Tunnel', status: 'Active', bg: 'bg-primary-container', color: '#768dad', dot: 'bg-secondary' },
-    { icon: 'psychology' as const, label: 'AI Monitoring', value: 'Neural Engine v4.2', status: 'Learning', bg: 'bg-secondary-container', color: '#00705e', dot: 'bg-secondary' },
-    { icon: 'key' as const, label: 'Key Custody', value: 'Hardware Isolated', status: 'Protected', bg: 'bg-tertiary-fixed', color: '#321ed2', dot: 'bg-secondary' },
-    { icon: 'verified-user' as const, label: 'Identity', value: 'Verified Account', status: 'Confirmed', bg: 'bg-primary-container', color: '#000f22', dot: 'bg-secondary' },
+    { icon: 'lock-open' as const, label: 'Encryption', value: d.metrics?.encryption_level || 'Active', status: 'Active', bg: 'bg-primary-container', color: '#768dad', dot: 'bg-secondary' },
+    { icon: 'psychology' as const, label: 'AI Monitoring', value: 'Pattern Detection', status: 'Active', bg: 'bg-secondary-container', color: '#00705e', dot: 'bg-secondary' },
+    { icon: 'key' as const, label: 'Key Custody', value: 'Secure Enclave', status: 'Protected', bg: 'bg-tertiary-fixed', color: '#321ed2', dot: 'bg-secondary' },
+    { icon: 'verified-user' as const, label: 'Identity', value: d.metrics?.identity_verified ? 'Verified Account' : 'Unverified', status: d.metrics?.identity_verified ? 'Confirmed' : 'Action Needed', bg: 'bg-primary-container', color: '#000f22', dot: 'bg-secondary' },
   ];
 
   return (
@@ -36,7 +39,7 @@ export default function FraudProtection() {
             <Text className="font-headline-md text-primary font-bold">Protection</Text>
           </View>
           <View className="flex-row items-center gap-3">
-            <NotificationIcon />
+            <NotificationIcon onPress={openNotifications} count={notifCount} />
             <UserAvatar size={36} />
           </View>
         </View>
@@ -142,7 +145,7 @@ export default function FraudProtection() {
         </View>
       </ScrollView>
 
-      <NotificationModal />
+      <NotificationModal visible={notifVisible} onClose={closeNotifications} />
     </View>
   );
 }

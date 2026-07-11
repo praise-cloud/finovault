@@ -114,7 +114,64 @@ export async function listVendors(userId: string) {
     return [];
   }
 
-  return data || [];
+  return { vendors: data || [] };
+}
+
+export async function addVendor(userId: string, input: { name: string; category?: string; monthly_spend?: number; health_score?: number }) {
+  const supabase = getSupabase();
+
+  const { data, error } = await supabase
+    .from('vendors')
+    .insert({
+      user_id: userId,
+      name: input.name,
+      category: input.category || '',
+      monthly_spend: input.monthly_spend || 0,
+      health_score: input.health_score ?? 50,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    log.error('Add vendor failed', { userId, error: error.message });
+    throw error;
+  }
+
+  return data;
+}
+
+export async function updateVendor(userId: string, vendorId: string, input: Record<string, any>) {
+  const supabase = getSupabase();
+
+  const { data, error } = await supabase
+    .from('vendors')
+    .update(input)
+    .eq('id', vendorId)
+    .eq('user_id', userId)
+    .select()
+    .single();
+
+  if (error) {
+    log.error('Update vendor failed', { userId, vendorId, error: error.message });
+    throw error;
+  }
+
+  return data;
+}
+
+export async function deleteVendor(userId: string, vendorId: string) {
+  const supabase = getSupabase();
+
+  const { error } = await supabase
+    .from('vendors')
+    .delete()
+    .eq('id', vendorId)
+    .eq('user_id', userId);
+
+  if (error) {
+    log.error('Delete vendor failed', { userId, vendorId, error: error.message });
+    throw error;
+  }
 }
 
 export async function getAiAdvice(userId: string, question: string, _businessData?: Record<string, unknown>) {
@@ -165,5 +222,38 @@ export async function getAiAdvice(userId: string, question: string, _businessDat
       expenses,
       vendor_count: vendors.length,
     },
+  };
+}
+
+export async function getExistingAdvice(userId: string) {
+  const supabase = getSupabase();
+
+  const [txRes, vendorRes] = await Promise.all([
+    supabase.from('transactions').select('*').eq('user_id', userId).limit(50),
+    supabase.from('vendors').select('*').eq('user_id', userId),
+  ]);
+
+  const revenue = (txRes.data || [])
+    .filter((t: any) => t.type === 'income')
+    .reduce((s: number, t: any) => s + Number(t.amount), 0);
+
+  const expenses = (txRes.data || [])
+    .filter((t: any) => t.type === 'expense')
+    .reduce((s: number, t: any) => s + Number(t.amount), 0);
+
+  const vendors = vendorRes.data || [];
+
+  return {
+    summary: `Your business has $${revenue.toLocaleString()} in revenue and $${expenses.toLocaleString()} in expenses with ${vendors.length} active vendors.`,
+    recommendations: [
+      { title: 'Optimize Expenses', description: `Your expense ratio is ${revenue > 0 ? ((expenses / revenue) * 100).toFixed(1) : 'N/A'}%. Consider reviewing vendor contracts.` },
+      { title: 'Revenue Growth', description: revenue > 10000 ? 'Your revenue is strong. Consider expanding to new markets.' : 'Focus on increasing revenue streams.' },
+      { title: 'Vendor Health', description: vendors.length > 3 ? 'You have a diverse vendor base. Monitor performance regularly.' : 'Consider diversifying your suppliers.' },
+    ],
+    action_items: [
+      'Review monthly vendor spend',
+      'Set up automated expense tracking',
+      'Schedule quarterly financial review',
+    ],
   };
 }

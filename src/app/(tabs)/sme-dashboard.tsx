@@ -3,12 +3,15 @@ import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-nati
 import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import { useDashboardStore } from '@/stores/dashboard-store';
+import { useAuthStore } from '@/stores/auth-store';
 import { router } from 'expo-router';
 
 export default function SmeDashboard() {
   const data = useDashboardStore((s) => s.smeDashboard);
   const isLoading = useDashboardStore((s) => s.isLoading);
   const load = useDashboardStore((s) => s.loadSmeDashboard);
+  const user = useAuthStore((s) => s.user);
+  const userName = user?.user_metadata?.full_name?.split(' ')[0] || 'User';
 
   useEffect(() => { load(); }, [load]);
 
@@ -39,7 +42,7 @@ export default function SmeDashboard() {
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }}>
         <View className="mt-6 mb-8 flex-row items-end justify-between">
           <View className="flex-1">
-            <Text className="font-headline-lg text-headline-lg text-primary mb-2">Good Morning, Alex</Text>
+            <Text className="font-headline-lg text-headline-lg text-primary mb-2">Good Morning, {userName}</Text>
             <Text className="text-on-surface-variant text-body-md">Here&apos;s your SME health overview.</Text>
           </View>
           <Pressable onPress={() => router.push('/(tabs)/transactions')} className="bg-secondary px-6 py-2 rounded-full flex-row items-center gap-2 active:scale-95 transition-transform ml-4">
@@ -145,6 +148,32 @@ export default function SmeDashboard() {
           </View>
         </View>
 
+        <View className="mt-8">
+          <Text className="font-headline-md text-headline-md text-primary font-bold mb-4">Quick Actions</Text>
+          <View className="flex-row flex-wrap" style={{ gap: 12 }}>
+            <Pressable onPress={() => router.push('/(tabs)/business-health')} className="flex-1 min-w-[140px] bg-surface-container-lowest rounded-xl p-4 border border-outline-variant active:scale-95" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04 }}>
+              <MaterialIcons name="monitor-heart" size={24} color="#006b5a" />
+              <Text className="font-label-md text-label-md text-primary font-bold mt-2">Health</Text>
+              <Text className="text-caption text-on-surface-variant">Business health score</Text>
+            </Pressable>
+            <Pressable onPress={() => router.push('/(tabs)/business-forecast')} className="flex-1 min-w-[140px] bg-surface-container-lowest rounded-xl p-4 border border-outline-variant active:scale-95" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04 }}>
+              <MaterialIcons name="insights" size={24} color="#006b5a" />
+              <Text className="font-label-md text-label-md text-primary font-bold mt-2">Forecast</Text>
+              <Text className="text-caption text-on-surface-variant">Revenue projections</Text>
+            </Pressable>
+            <Pressable onPress={() => router.push('/(tabs)/business-vendors')} className="flex-1 min-w-[140px] bg-surface-container-lowest rounded-xl p-4 border border-outline-variant active:scale-95" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04 }}>
+              <MaterialIcons name="store" size={24} color="#006b5a" />
+              <Text className="font-label-md text-label-md text-primary font-bold mt-2">Vendors</Text>
+              <Text className="text-caption text-on-surface-variant">Manage vendors</Text>
+            </Pressable>
+            <Pressable onPress={() => router.push('/(tabs)/business-ai-advice')} className="flex-1 min-w-[140px] bg-surface-container-lowest rounded-xl p-4 border border-outline-variant active:scale-95" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04 }}>
+              <MaterialIcons name="psychology" size={24} color="#006b5a" />
+              <Text className="font-label-md text-label-md text-primary font-bold mt-2">AI Advice</Text>
+              <Text className="text-caption text-on-surface-variant">AI recommendations</Text>
+            </Pressable>
+          </View>
+        </View>
+
         <View className="flex-row flex-wrap mt-6" style={{ gap: 24 }}>
           <View className="bg-primary-container rounded-xl p-6 flex-1 min-w-[260px]">
             <Text className="font-headline-md text-headline-md text-white mb-2">Growth Pulse AI</Text>
@@ -186,29 +215,11 @@ export default function SmeDashboard() {
                   <MaterialIcons name={event.severity === 'critical' ? 'warning' : 'verified'} size={20} color={event.severity === 'critical' ? '#ba1a1a' : '#006b5a'} />
                 </View>
               )) : (
-                <>
-                  <View className="flex-row items-center justify-between p-4 bg-surface-bright rounded-xl border border-outline-variant">
-                    <View className="flex-row items-center gap-4 flex-1">
-                      <View className="w-2 h-2 rounded-full bg-secondary" />
-                      <View className="flex-1"><Text className="font-label-md text-label-md font-bold">B2B Invoice Validation</Text><Text className="text-caption text-on-surface-variant">Verified 14 incoming invoices in the last 24h.</Text></View>
-                    </View>
-                    <MaterialIcons name="verified" size={20} color="#006b5a" />
-                  </View>
-                  <View className="flex-row items-center justify-between p-4 bg-surface-bright rounded-xl border border-outline-variant">
-                    <View className="flex-row items-center gap-4 flex-1">
-                      <View className="w-2 h-2 rounded-full bg-secondary" />
-                      <View className="flex-1"><Text className="font-label-md text-label-md font-bold">Identity Sync Check</Text><Text className="text-caption text-on-surface-variant">All 3 administrative logins confirmed from recognized devices.</Text></View>
-                    </View>
-                    <MaterialIcons name="verified" size={20} color="#006b5a" />
-                  </View>
-                  <View className="flex-row items-center justify-between p-4 bg-error-container/10 rounded-xl border border-error/20">
-                    <View className="flex-row items-center gap-4 flex-1">
-                      <View className="w-2 h-2 rounded-full bg-error" />
-                      <View className="flex-1"><Text className="font-label-md text-label-md font-bold text-error">Unusual Transaction Flagged</Text><Text className="text-caption text-on-surface-variant">A $4,500 outgoing wire requires your verbal confirmation.</Text></View>
-                    </View>
-                    <Pressable onPress={() => router.push('/(tabs)/transactions')} className="bg-error px-4 py-1.5 rounded-full active:scale-95"><Text className="text-white text-caption font-bold">Review</Text></Pressable>
-                  </View>
-                </>
+                <View className="py-8 items-center">
+                  <MaterialIcons name="security" size={40} color="#c4c7cb" />
+                  <Text className="text-on-surface-variant text-body-md mt-3">No fraud events detected.</Text>
+                  <Text className="text-caption text-on-surface-variant">Your account is secure.</Text>
+                </View>
               )}
             </View>
           </View>

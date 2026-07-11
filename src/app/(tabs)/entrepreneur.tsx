@@ -1,5 +1,6 @@
 import { BentoCard } from "@/components/bento-card";
 import { useDashboardStore } from "@/stores/dashboard-store";
+import { useAuthStore } from "@/stores/auth-store";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import {
@@ -15,6 +16,8 @@ export default function EntrepreneurDashboard() {
   const data = useDashboardStore((s) => s.entrepreneur);
   const isLoading = useDashboardStore((s) => s.isLoading);
   const load = useDashboardStore((s) => s.loadEntrepreneur);
+  const user = useAuthStore((s) => s.user);
+  const userName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User";
 
   useEffect(() => {
     load();
@@ -75,7 +78,7 @@ export default function EntrepreneurDashboard() {
       >
         <View className="mt-6 mb-8">
           <Text className="font-headline-lg text-headline-lg text-primary mb-2">
-            Welcome back, Alex.
+            Welcome back, {userName}.
           </Text>
           <Text
             className="font-body-lg text-body-lg text-on-surface-variant"

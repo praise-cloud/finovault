@@ -7,6 +7,11 @@ export async function listGoals(req: Request, res: Response): Promise<void> {
   sendSuccess(res, result);
 }
 
+export async function getGoal(req: Request, res: Response): Promise<void> {
+  const result = await savingsService.getGoal(req.user!.id, req.params.id as string);
+  sendSuccess(res, result);
+}
+
 export async function createGoal(req: Request, res: Response): Promise<void> {
   const result = await savingsService.createGoal(req.user!.id, req.body);
   sendSuccess(res, result, 201);

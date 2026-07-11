@@ -1,5 +1,3 @@
-import { Audio } from 'expo-av';
-
 export type SoundName = 'welcome' | 'open' | 'lock';
 
 const SOUND_FILES: Record<SoundName, number> = {
@@ -8,10 +6,32 @@ const SOUND_FILES: Record<SoundName, number> = {
   lock: require('@/assets/audio/lock_safe_sound.mpeg'),
 };
 
-const loadedSounds = new Map<SoundName, Audio.Sound>();
+let AudioModule: any = null;
+const loadedSounds = new Map<SoundName, any>();
+
+async function getAudio() {
+  if (!AudioModule) {
+    try {
+      // @ts-ignore - expo-av may not be installed
+      AudioModule = await import('expo-av');
+    } catch {
+      console.warn('expo-av not available, sounds disabled');
+      return null;
+    }
+  }
+  return AudioModule.Audio;
+}
 
 export async function preloadSounds() {
-  await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+  const Audio = await getAudio();
+  if (!Audio) return;
+
+  try {
+    await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+  } catch {
+    // ignore
+  }
+
   const entries = Object.entries(SOUND_FILES) as [SoundName, number][];
   const results = await Promise.allSettled(
     entries.map(async ([name, source]) => {

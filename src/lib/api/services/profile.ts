@@ -20,11 +20,11 @@ export async function savePreferences(_userId: string, prefs: Record<string, any
   return apiClient.put(ENDPOINTS.profile.preferences, prefs);
 }
 
-export async function getPreferences(_userId?: string) {
+export async function getPreferences(_userId?: string): Promise<Record<string, any>> {
   return apiClient.get(ENDPOINTS.profile.preferences);
 }
 
-export async function getLinkedAccounts(_userId?: string) {
+export async function getProfileLinkedAccounts(_userId?: string) {
   return apiClient.get(ENDPOINTS.profile.linkedAccounts);
 }
 

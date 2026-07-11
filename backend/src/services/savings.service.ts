@@ -20,6 +20,23 @@ export async function listGoals(userId: string) {
   return data || [];
 }
 
+export async function getGoal(userId: string, goalId: string) {
+  const supabase = getSupabase();
+
+  const { data, error } = await supabase
+    .from('savings_goals')
+    .select('*')
+    .eq('id', goalId)
+    .eq('user_id', userId)
+    .single();
+
+  if (error) {
+    throw new NotFoundError('Savings goal');
+  }
+
+  return data;
+}
+
 export async function createGoal(userId: string, input: { name: string; target_amount: number; current_amount?: number; goal_type?: string }) {
   const supabase = getSupabase();
 

@@ -8,6 +8,7 @@ import { NotificationIcon, NotificationModal } from '@/components/notification-m
 import { UserAvatar } from '@/components/user-avatar';
 import { formatCurrency, convertAmount } from '@/lib/format-currency';
 import { useSheet } from './_layout';
+import { useNotificationStore } from '@/stores/notification-store';
 
 export default function IndividualDashboard() {
   const summary = useDashboardStore((s) => s.summary);
@@ -15,6 +16,7 @@ export default function IndividualDashboard() {
   const loadSummary = useDashboardStore((s) => s.loadSummary);
   const { currency, location, loaded: settingsLoaded, loadSettings } = useSettingsStore();
   const { showSheet } = useSheet();
+  const { count: notifCount, open: openNotifications, visible: notifVisible, close: closeNotifications } = useNotificationStore();
   useEffect(() => {
     loadSummary();
     if (!settingsLoaded) loadSettings();
@@ -53,7 +55,7 @@ export default function IndividualDashboard() {
             <Text className="font-headline-md text-primary font-bold">Dashboard</Text>
           </View>
           <View className="flex-row items-center gap-3">
-            <NotificationIcon />
+            <NotificationIcon onPress={openNotifications} count={notifCount} />
             <Pressable onPress={() => router.push('/(tabs)/profile')} className="active:scale-90">
               <UserAvatar size={36} />
             </Pressable>
@@ -194,7 +196,7 @@ export default function IndividualDashboard() {
         </View>
       </ScrollView>
 
-      <NotificationModal />
+      <NotificationModal visible={notifVisible} onClose={closeNotifications} />
     </View>
   );
 

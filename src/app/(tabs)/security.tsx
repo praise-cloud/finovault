@@ -6,11 +6,15 @@ import { getSecuritySettings } from '@/lib/api/services/settings';
 
 export default function Security() {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [activeDevices, setActiveDevices] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getSecuritySettings()
-      .then((data) => setTwoFactorEnabled(data.two_factor_enabled))
+      .then((data) => {
+        setTwoFactorEnabled(data.two_factor_enabled);
+        setActiveDevices(data.active_devices != null ? `${data.active_devices} devices` : null);
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -18,7 +22,7 @@ export default function Security() {
   const items = [
     { icon: 'lock-open' as const, label: 'Two-Factor Authentication', description: 'Add an extra layer of security to your account', route: '/(tabs)/two-factor-auth', status: loading ? null : (twoFactorEnabled ? 'Enabled' : 'Disabled') },
     { icon: 'history' as const, label: 'Last Login', description: 'View your recent login activity', route: '/(tabs)/last-login', status: null },
-    { icon: 'devices' as const, label: 'Active Devices', description: 'Manage devices connected to your account', route: null, status: '2 devices' },
+    { icon: 'devices' as const, label: 'Active Devices', description: 'Manage devices connected to your account', route: null, status: activeDevices },
     { icon: 'key' as const, label: 'Passkeys & Security Keys', description: 'Manage hardware security keys', route: null, status: null },
     { icon: 'lock' as const, label: 'Password & PIN', description: 'Update your password or set a transaction PIN', route: null, status: null },
     { icon: 'devices-other' as const, label: 'Active Sessions', description: 'Review and manage your active sessions', route: null, status: null },

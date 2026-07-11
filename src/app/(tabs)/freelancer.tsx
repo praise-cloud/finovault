@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useDashboardStore } from '@/stores/dashboard-store';
+import { useAuthStore } from '@/stores/auth-store';
 import { router } from 'expo-router';
 
 type IconName = React.ComponentProps<typeof MaterialIcons>['name'];
@@ -18,6 +19,8 @@ export default function FreelancerDashboard() {
   const data = useDashboardStore((s) => s.freelancer);
   const isLoading = useDashboardStore((s) => s.isLoading);
   const load = useDashboardStore((s) => s.loadFreelancer);
+  const user = useAuthStore((s) => s.user);
+  const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
 
   useEffect(() => { load(); }, [load]);
 
@@ -35,7 +38,7 @@ export default function FreelancerDashboard() {
             <Text className="font-headline-md text-headline-md text-primary font-bold">Finovault AI</Text>
           </View>
           <View className="flex-row items-center gap-4">
-            <Text className="hidden md:block font-label-md text-label-md text-on-surface-variant">Welcome, Alex</Text>
+            <Text className="hidden md:block font-label-md text-label-md text-on-surface-variant">Welcome, {userName}</Text>
             <View className="w-8 h-8 rounded-full border-2 border-primary-fixed items-center justify-center bg-surface-container-high"><MaterialIcons name="person" size={18} color="#43474d" /></View>
           </View>
         </View>
@@ -45,7 +48,7 @@ export default function FreelancerDashboard() {
         <View className="hidden md:flex w-80 bg-surface-container rounded-r-xl py-6" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.08, shadowRadius: 40, elevation: 8 }}>
           <View className="px-6 mb-8 flex-row items-center gap-3">
             <View className="w-10 h-10 rounded-full bg-surface-container-high items-center justify-center"><MaterialIcons name="person" size={22} color="#43474d" /></View>
-            <View><Text className="font-label-md font-bold text-on-surface">Alex Morgan</Text><Text className="text-[12px] text-on-surface-variant">Individual Pro Plan • Verified</Text></View>
+            <View><Text className="font-label-md font-bold text-on-surface">{userName}</Text><Text className="text-[12px] text-on-surface-variant">Individual Pro Plan • Verified</Text></View>
           </View>
           <View className="flex-1 gap-1">
             {navItems.map((item) => (
