@@ -45,6 +45,7 @@ example
 /android
 
 
-# files and folders
+# documents and design assets
+*.docx
 stitch_finovault_ai_onboarding_flow
-deign_ui
+design_ui
