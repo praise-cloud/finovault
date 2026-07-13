@@ -65,7 +65,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   setCurrency: (code) => {
     const currency = CURRENCIES.find((c) => c.code === code) || CURRENCIES[0];
     set({ currency });
-    get().saveSettings();
+    get().saveSettings().catch(() => {});
   },
 
   setLocation: (value) => {
@@ -74,12 +74,12 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       const currency = CURRENCIES.find((c) => c.code === loc.currency) || CURRENCIES[0];
       set({ location: value, currency, language: loc.lang });
     }
-    get().saveSettings();
+    get().saveSettings().catch(() => {});
   },
 
   setLanguage: (value) => {
     set({ language: value });
-    get().saveSettings();
+    get().saveSettings().catch(() => {});
   },
 
   loadSettings: async () => {

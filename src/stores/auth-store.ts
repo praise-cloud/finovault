@@ -40,23 +40,33 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signUp: async (params) => {
-    const result = await AuthService.signUpWithEmail(params);
-    if (result.error) return result.error;
-    if (result.session) setApiToken(result.session.access_token);
-    set({ user: result.user, session: result.session, isAuthenticated: true });
-    return null;
+    try {
+      const result = await AuthService.signUpWithEmail(params);
+      if (result.error) return result.error;
+      if (result.session) setApiToken(result.session.access_token);
+      set({ user: result.user, session: result.session, isAuthenticated: true });
+      return null;
+    } catch (e: any) {
+      return e.message || 'Sign up failed';
+    }
   },
 
   signIn: async (params) => {
-    const result = await AuthService.signInWithEmail(params);
-    if (result.error) return result.error;
-    if (result.session) setApiToken(result.session.access_token);
-    set({ user: result.user, session: result.session, isAuthenticated: true });
-    return null;
+    try {
+      const result = await AuthService.signInWithEmail(params);
+      if (result.error) return result.error;
+      if (result.session) setApiToken(result.session.access_token);
+      set({ user: result.user, session: result.session, isAuthenticated: true });
+      return null;
+    } catch (e: any) {
+      return e.message || 'Sign in failed';
+    }
   },
 
   signInWithGoogle: async () => {
-    await AuthService.signInWithGoogle();
+    try {
+      await AuthService.signInWithGoogle();
+    } catch {}
   },
 
   signOut: async () => {

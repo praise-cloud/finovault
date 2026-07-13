@@ -148,7 +148,7 @@ export default function FreelancerDashboard() {
                   <Text className="flex-[1] font-label-md text-on-surface-variant">Status</Text>
                   <View className="w-8" />
                 </View>
-                {d.projects.map((proj) => (
+                {(d.projects || []).map((proj) => (
                   <View key={proj.id} className="flex-row items-center px-md py-4 border-b border-outline-variant/50">
                     <Text className="flex-[2] font-label-md font-bold">{proj.name}</Text>
                     <Text className="flex-[1.5] font-body-md text-on-surface-variant">{proj.client}</Text>

@@ -23,7 +23,8 @@ export default function TransactionsScreen() {
       if (filterType) params.type = filterType;
       if (filterStatus) params.status = filterStatus;
       const res = await TransactionsService.listTransactions(params);
-      setTransactions(res.data);
+      const items = Array.isArray(res) ? res : (res?.data ?? []);
+      setTransactions(items);
     } catch (e: any) {
       console.error('Failed to load transactions', e.message);
     }
@@ -36,7 +37,11 @@ export default function TransactionsScreen() {
     Alert.alert('Delete Transaction', 'Are you sure?', [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Delete', style: 'destructive', onPress: async () => {
-        await TransactionsService.deleteTransaction(id);
+        try {
+          await TransactionsService.deleteTransaction(id);
+        } catch (e: any) {
+          Alert.alert('Error', e.message || 'Failed to delete');
+        }
         load();
       }},
     ]);

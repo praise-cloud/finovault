@@ -74,7 +74,7 @@ export default function WealthGrowth() {
               <View className="h-80 w-full relative overflow-hidden rounded-lg bg-surface-bright flex items-end px-4 pb-8">
                 <View className="absolute inset-0 opacity-10 bg-surface-bright"><View className="h-full w-full" style={{ backgroundColor: '#006b5a' }} /></View>
                 <View className="flex-row items-end justify-between w-full h-full gap-2 z-10">
-                  {d.performance_forecast.map((h, i) => (
+                  {(d.performance_forecast || []).map((h, i) => (
                     <View key={i} className="flex-1 rounded-t-sm" style={{ height: `${h}%`, backgroundColor: i > 5 ? '#006b5a' : '#0a2540', opacity: i > 5 ? 0.8 : 0.2 + (i * 0.1) }} />
                   ))}
                 </View>
@@ -100,7 +100,7 @@ export default function WealthGrowth() {
                   </View>
                 </View>
               </View>
-              {d.allocations.map((item) => (
+              {(d.allocations || []).map((item) => (
                 <View key={item.id} className="flex-row items-center justify-between py-2">
                   <View className="flex-row items-center gap-3">
                     <View className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
@@ -118,7 +118,7 @@ export default function WealthGrowth() {
                 <Text className="font-headline-md text-primary">Market Intelligence</Text>
                 <MaterialIcons name="psychology" size={24} color="#006b5a" />
               </View>
-              {d.market_insights.map((item, i) => (
+              {(d.market_insights || []).map((item, i) => (
                 <View key={item.id || i} className="flex-row gap-md items-start p-sm rounded-lg">
                   <View className="w-20 h-20 rounded-xl overflow-hidden bg-surface-container-high flex-shrink-0" />
                   <View className="flex-1">

@@ -25,16 +25,20 @@ export default function BusinessVendors() {
 
   const handleAdd = async () => {
     if (!newVendorName.trim()) return;
-    await addVendor({ name: newVendorName, category: newVendorCategory });
-    setNewVendorName('');
-    setNewVendorCategory('');
-    setShowAdd(false);
-    loadVendors();
+    try {
+      await addVendor({ name: newVendorName, category: newVendorCategory });
+      setNewVendorName('');
+      setNewVendorCategory('');
+      setShowAdd(false);
+      loadVendors();
+    } catch {}
   };
 
   const handleDelete = async (id: string) => {
-    await deleteVendor(id);
-    loadVendors();
+    try {
+      await deleteVendor(id);
+      loadVendors();
+    } catch {}
   };
 
   if (loading) {

@@ -1,4 +1,4 @@
-import { apiClient } from '../client';
+import { apiClient, getApiToken } from '../client';
 import { ENDPOINTS } from '../endpoints';
 
 export interface SignUpParams {
@@ -70,7 +70,6 @@ export async function signOut(): Promise<void> {
 }
 
 export async function getCurrentSession(): Promise<any> {
-  const { getApiToken } = await import('../client');
   const token = getApiToken();
   if (!token) return null;
 

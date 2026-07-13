@@ -239,7 +239,7 @@ export default function EntrepreneurDashboard() {
                 </Text>
                 <Pressable onPress={() => router.push("/(tabs)/transactions")}><Text className="text-caption text-secondary">View All</Text></Pressable>
               </View>
-              {d.network.map((person) => (
+              {(d.network || []).map((person) => (
                 <View
                   key={person.id}
                   className="flex-row items-center gap-4 mb-6"

@@ -82,7 +82,7 @@ export default function FraudProtection() {
             <View className="flex-1 flex-row items-center gap-2 p-2.5 bg-surface-container rounded-xl">
               <MaterialIcons name="check-circle" size={16} color="#006b5a" />
               <Text className="text-body-md text-xs flex-1">Encryption</Text>
-              <Text className="text-secondary font-bold text-xs">{d.metrics.encryption_level}</Text>
+              <Text className="text-secondary font-bold text-xs">{d?.metrics?.encryption_level ?? 'Active'}</Text>
             </View>
           </View>
         </View>
@@ -110,7 +110,7 @@ export default function FraudProtection() {
             <Text className="font-headline-md text-primary font-bold">Real-time Monitoring</Text>
             <Pressable className="bg-surface-variant p-2 rounded-lg"><MaterialIcons name="filter-list" size={18} color="#43474d" /></Pressable>
           </View>
-          {d.events.map((event, i) => (
+          {(d.events || []).map((event, i) => (
             <View key={event.id || i} className="flex-row items-start gap-3 p-3.5 bg-surface-container-low rounded-xl mb-2.5" style={{ borderLeftWidth: 3, borderLeftColor: event.severity === 'critical' ? '#ba1a1a' : event.severity === 'warning' ? '#006b5a' : '#060045' }}>
               <View className={`p-2 rounded-full ${event.severity === 'critical' ? 'bg-error-container' : 'bg-secondary-container'}`}>
                 <MaterialIcons name={event.severity === 'critical' ? 'warning' : 'verified-user'} size={18} color={event.severity === 'critical' ? '#ba1a1a' : '#00705e'} />

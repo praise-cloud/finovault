@@ -41,7 +41,8 @@ export default function Profile() {
 
   const handleSaveProfile = async () => {
     try {
-      await ProfileService.updateProfile(user?.id, {
+      if (!user?.id) return;
+      await ProfileService.updateProfile(user.id, {
         full_name: editName,
         email: editEmail,
         phone: editPhone,
@@ -258,8 +259,8 @@ export default function Profile() {
                   <Text className="font-label-md font-bold text-sm">Link Bank</Text>
                 </Pressable>
               </View>
-              {d.linked_accounts.length > 0 ? (
-                d.linked_accounts.map((account) => (
+              {(d.linked_accounts?.length ?? 0) > 0 ? (
+                (d.linked_accounts || []).map((account) => (
                   <Pressable key={account.id} onPress={() => router.push('/(tabs)/linked-accounts' as any)} className="flex-row items-center justify-between p-3.5 bg-surface-container-low rounded-xl mb-2 border border-outline-variant/10 active:scale-[0.98]">
                     <View className="flex-row items-center gap-3">
                       <View className="w-10 h-10 bg-surface-container items-center justify-center rounded-xl">

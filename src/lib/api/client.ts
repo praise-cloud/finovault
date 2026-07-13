@@ -1,10 +1,6 @@
 let _token: string | null = null;
 let _baseUrl: string = process.env.EXPO_PUBLIC_API_URL || 'https://finovault.onrender.com/api/v1';
 
-export function setApiBaseUrl(url: string) {
-  _baseUrl = url;
-}
-
 export function setApiToken(token: string | null) {
   _token = token;
 }
@@ -49,14 +45,23 @@ class ApiClient {
       headers,
     });
 
-    const json = await response.json();
-
     if (!response.ok) {
-      const message = json?.error?.message || `API Error ${response.status}`;
+      let message = `API Error ${response.status}`;
+      try {
+        const errorBody = await response.json();
+        message = errorBody?.error?.message || message;
+      } catch {}
       throw new Error(message);
     }
 
-    return json.data !== undefined ? json.data : json;
+    const json = await response.json();
+
+    const paginationKeys = ['total', 'page', 'limit', 'has_more', 'next_cursor', 'previous_cursor'];
+    const hasPagination = paginationKeys.some((key) => key in json);
+    if (json.data !== undefined && !hasPagination) {
+      return json.data;
+    }
+    return json;
   }
 
   get<T>(endpoint: string, options?: FetchOptions) {

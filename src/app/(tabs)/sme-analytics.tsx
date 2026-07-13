@@ -71,7 +71,7 @@ export default function SmeAnalytics() {
             </View>
             <View className="h-64 relative mb-6">
               <View className="absolute inset-0 flex-row items-end justify-between px-2">
-                {d.cashflow_forensics.chart_data.map((h, i) => (
+                {(d.cashflow_forensics?.chart_data || []).map((h, i) => (
                   <View key={i} className="w-[10%] rounded-t-lg" style={{ height: `${h}%`, backgroundColor: ['#d2e4ff', '#b0c8eb', '#d2e4ff', '#000f22', '#d2e4ff', '#b0c8eb', '#d2e4ff', '#b0c8eb'][i] }} />
                 ))}
               </View>
@@ -142,7 +142,7 @@ export default function SmeAnalytics() {
                 <View className="flex-1"><Text className="font-label-md text-label-md text-on-surface-variant">Finovault Score</Text></View>
                 <View className="flex-1"><Text className="font-label-md text-label-md text-on-surface-variant">Status</Text></View>
               </View>
-              {d.vendors.map((row) => (
+              {(d.vendors || []).map((row) => (
                 <View key={row.id} className="flex-row items-center py-4 border-b border-surface-variant">
                   <View className="flex-[2] flex-row items-center gap-3">
                     <View className="w-10 h-10 rounded-lg bg-surface-variant items-center justify-center">

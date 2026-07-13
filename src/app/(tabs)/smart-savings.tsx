@@ -13,6 +13,10 @@ export default function SmartSavings() {
 
   useEffect(() => {
     load();
+  }, [load]);
+
+  useEffect(() => {
+    if (!data) return;
     const goalPct = data?.rainy_day_fund ? (data.rainy_day_fund.current_amount / data.rainy_day_fund.target_amount) * 100 : 70;
     Animated.spring(progressAnim, {
       toValue: goalPct,
@@ -20,7 +24,7 @@ export default function SmartSavings() {
       tension: 40,
       friction: 7,
     }).start();
-  }, [load]);
+  }, [data]);
 
   if (!data) {
     return <View className="flex-1 bg-surface-bright items-center justify-center"><ActivityIndicator size="large" color="#006b5a" /></View>;

@@ -30,7 +30,9 @@ export default function SavingsGoalsScreen() {
     Alert.alert('Delete Goal', 'Are you sure?', [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Delete', style: 'destructive', onPress: async () => {
-        await SavingsService.deleteGoal(id);
+        try {
+          await SavingsService.deleteGoal(id);
+        } catch {}
         load();
       }},
     ]);

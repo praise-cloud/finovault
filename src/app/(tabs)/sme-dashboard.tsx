@@ -72,7 +72,7 @@ export default function SmeDashboard() {
                 <Text className="text-caption text-on-primary-container uppercase mb-1 tracking-wider">Net Position</Text>
                 <Text className="font-headline-md text-headline-md text-white">${d.cashflow.net_position.toLocaleString('en-US', { minimumFractionDigits: 2 })}</Text>
                 <View className="w-full bg-white/20 h-1 rounded-full mt-4 overflow-hidden">
-                  <View className="bg-secondary-fixed h-full" style={{ width: `${Math.min((d.cashflow.net_position / d.cashflow.incoming) * 100, 100)}%` }} />
+                  <View className="bg-secondary-fixed h-full" style={{ width: `${d.cashflow.incoming > 0 ? Math.min((d.cashflow.net_position / d.cashflow.incoming) * 100, 100) : 0}%` }} />
                 </View>
               </View>
             </View>
@@ -80,7 +80,7 @@ export default function SmeDashboard() {
               <View className="absolute top-4 left-6"><Text className="text-caption font-bold text-primary">Monthly AI Forecast Overlay</Text></View>
               <View className="absolute inset-0 flex items-end p-6">
                 <View className="w-full flex-row items-end justify-between gap-1 h-32">
-                  {d.cashflow.forecast.map((h, i) => (
+                  {(d.cashflow?.forecast || []).map((h, i) => (
                     <View key={i} className={`flex-1 rounded-t-sm ${i === 5 ? 'bg-secondary' : 'bg-secondary/40'}`} style={{ height: `${h}%` }} />
                   ))}
                 </View>
@@ -91,7 +91,7 @@ export default function SmeDashboard() {
           <View className="bg-surface-container-lowest rounded-xl p-6 border border-[#E6EBF1] flex-1 min-w-[260px]" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}>
             <Text className="font-headline-md text-headline-md flex-row items-center gap-2 mb-6"><MaterialIcons name="event-note" size={22} color="#060045" />{' Payroll Tasks'}</Text>
             <View className="gap-4">
-              {d.payroll_tasks.map((task) => (
+              {(d.payroll_tasks || []).map((task) => (
                 <View key={task.id} className={`p-4 rounded-xl ${task.status === 'overdue' ? 'bg-error-container/30 border-l-4 border-error' : 'bg-surface-bright border border-outline-variant'}`}>
                   <View className="flex-row gap-4">
                     <View className={`p-2 rounded-lg ${task.status === 'overdue' ? 'bg-error' : task.status === 'completed' ? 'bg-secondary-container' : 'bg-tertiary-fixed'}`}>
@@ -131,7 +131,7 @@ export default function SmeDashboard() {
             </View>
           </View>
           <View className="flex-row flex-wrap" style={{ gap: 16 }}>
-            {d.vendors.map((v) => (
+            {(d.vendors || []).map((v) => (
               <View key={v.id} className="flex-1 min-w-[160px] bg-surface-bright p-4 rounded-xl border border-outline-variant">
                 <View className="flex-row justify-between items-start mb-4">
                   <View className="w-10 h-10 rounded-lg bg-surface-container items-center justify-center"><MaterialIcons name={v.icon as any} size={18} color="#000f22" /></View>
