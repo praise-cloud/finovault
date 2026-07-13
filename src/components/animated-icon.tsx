@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, withDelay, Easing, withCallback, runOnJS } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, withDelay, Easing, runOnJS } from 'react-native-reanimated';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('screen');
 const DURATION = 600;

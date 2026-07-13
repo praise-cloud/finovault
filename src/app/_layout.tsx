@@ -4,6 +4,9 @@ import { StatusBar } from 'expo-status-bar';
 import { FinovaultProvider } from '@/lib/gluestack-provider';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { useFinovaultFonts } from '@/hooks/use-fonts';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
 import { ToastProvider } from '@/components/toast';
 import { ActivityIndicator, View } from 'react-native';
 import { useEffect } from 'react';
@@ -22,6 +25,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (fontsLoaded) {
       preloadSounds();
+      SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
 
