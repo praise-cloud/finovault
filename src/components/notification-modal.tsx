@@ -84,7 +84,7 @@ export function NotificationModal({ visible, onClose }: { visible: boolean; onCl
             <View className="flex-row items-center gap-3">
               <Text className="font-headline-md text-primary font-bold">Notifications</Text>
               {unreadCount > 0 && (
-                <View className="bg-error px-2 py-0.5 rounded-full"><Text className="text-white text-xs font-bold">{unreadCount} new</Text></Animated.View>
+                <View className="bg-error px-2 py-0.5 rounded-full"><Text className="text-white text-xs font-bold">{unreadCount} new</Text></View>
               )}
             </View>
             <Pressable onPress={onClose} className="w-8 h-8 rounded-full bg-surface-variant items-center justify-center active:scale-90">

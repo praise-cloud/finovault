@@ -155,7 +155,6 @@ export default function WelcomeTour() {
             <Text className="font-label-md text-label-md text-primary mr-2 font-bold">Get Started</Text>
             <MaterialIcons name="arrow-forward" size={20} color="#006b5a" />
           </Pressable>
-          </View>
         </View>
       </View>
     </View>
