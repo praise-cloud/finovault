@@ -1,15 +1,15 @@
 import { router } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Dimensions, PanResponder, Pressable, Text, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Dimensions, Pressable, Text, View } from 'react-native';
 import { useAuthStore } from '@/stores/auth-store';
 import Animated, {
   Easing,
+  runOnUI,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
   withRepeat,
   withSequence,
-  withSpring,
   withTiming,
 } from 'react-native-reanimated';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -41,7 +41,6 @@ const SLIDES = [
 export default function WelcomeTour() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const skipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -63,16 +62,16 @@ export default function WelcomeTour() {
     [floatY1, floatY2, floatY3].forEach((y, i) => {
       y.value = withDelay(i * 1000, withRepeat(withSequence(withTiming(-15, { duration: 3000, easing: Easing.inOut(Easing.sin) }), withTiming(0, { duration: 3000, easing: Easing.inOut(Easing.sin) })), -1, true));
     });
-  }, []);
+  }, [floatY1, floatY2, floatY3]);
 
   const goToSlide = useCallback((index: number) => {
     currentIndexRef.current = index;
-    translateX.value = withTiming(-index * SCREEN_WIDTH, { duration: 400, easing: Easing.inOut(Easing.ease) });
-    requestAnimationFrame(() => setCurrentIndex(index));
+    runOnUI((nextIndex: number) => {
+      'worklet';
+      translateX.value = withTiming(-nextIndex * SCREEN_WIDTH, { duration: 400, easing: Easing.inOut(Easing.ease) });
+    })(index);
+    setCurrentIndex(index);
   }, [translateX]);
-
-  const nextSlide = useCallback(() => goToSlide((currentIndexRef.current + 1) % SLIDES.length), [goToSlide]);
-  const prevSlide = useCallback(() => goToSlide((currentIndexRef.current - 1 + SLIDES.length) % SLIDES.length), [goToSlide]);
 
   useEffect(() => {
     const id = setInterval(() => goToSlide((currentIndexRef.current + 1) % SLIDES.length), 5000);
@@ -82,16 +81,6 @@ export default function WelcomeTour() {
   useEffect(() => {
     playSound('welcome');
   }, []);
-
-  const panResponder = useMemo(() => PanResponder.create({
-    onMoveShouldSetPanResponder: (_, gs) => Math.abs(gs.dx) > 5 && Math.abs(gs.dx) > Math.abs(gs.dy),
-    onPanResponderRelease: (_, gs) => {
-      if (Math.abs(gs.dx) > 50) {
-        if (gs.dx > 0) prevSlide();
-        else nextSlide();
-      }
-    },
-  }), [prevSlide, nextSlide]);
 
   const carouselStyle = useAnimatedStyle(() => ({ transform: [{ translateX: translateX.value }] }));
 
@@ -117,7 +106,7 @@ export default function WelcomeTour() {
           <Text className="font-headline-lg text-headline-lg text-white font-bold">Finovault AI</Text>
         </View>
 
-        <View className="overflow-hidden" style={{ height: 360 }} {...panResponder.panHandlers}>
+        <View className="overflow-hidden" style={{ height: 360 }}>
           <Animated.View className="flex-row" style={[{ width: SCREEN_WIDTH * SLIDES.length }, carouselStyle]}>
             {SLIDES.map((slide, index) => (
               <View key={index} style={{ width: SCREEN_WIDTH }} className="items-center justify-center px-8 py-8">

@@ -10,7 +10,6 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
-// import { preloadSounds } from '@/lib/sounds';
 
 try {
   SplashScreen.preventAutoHideAsync();
@@ -22,14 +21,11 @@ export default function RootLayout() {
   const isLoading = useAuthStore((s) => s.isLoading);
 
   useEffect(() => {
-    initialize();
+    void initialize();
   }, [initialize]);
 
   useEffect(() => {
     if (fontsLoaded) {
-      // Sound preloading can crash on some Android devices/builds.
-      // Keeping the app boot-safe; sounds will still work when triggered later.
-      // preloadSounds();
       try {
         SplashScreen.hideAsync();
       } catch {}

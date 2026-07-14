@@ -1,6 +1,5 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { View, Text } from 'react-native';
-import { View } from 'react-native';
 
 type Props = {
   label: string;
