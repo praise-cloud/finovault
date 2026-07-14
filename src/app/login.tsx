@@ -5,7 +5,7 @@ import { View, Text, Pressable, ScrollView, Alert, ActivityIndicator } from 'rea
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/stores/auth-store';
 import { signInWithGoogle } from '@/lib/api/services/auth';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, FadeInDown } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { mediumImpact, successNotification, errorNotification } from '@/hooks/use-haptics';
 import { playSound } from '@/lib/sounds';
 
@@ -76,52 +76,45 @@ export default function Login() {
       <ScrollView className="flex-1 w-full md:w-1/2 bg-surface">
         <View className="px-margin-mobile md:px-margin-desktop py-lg pb-[60px] items-center">
           <View className="w-full max-w-md">
-            <Animated.View entering={FadeInDown.springify().damping(14).delay(100)}>
-              <View className="md:hidden mb-lg">
-                <Text className="font-headline-lg-mobile text-headline-lg-mobile text-primary font-semibold">Finovault AI</Text>
-                <Text className="font-headline-lg-mobile text-headline-lg-mobile text-on-background mb-xs">Welcome back</Text>
-              </View>
-            </Animated.View>
+            <View className="md:hidden mb-lg">
+              <Text className="font-headline-lg-mobile text-headline-lg-mobile text-primary font-semibold">Finovault AI</Text>
+              <Text className="font-headline-lg-mobile text-headline-lg-mobile text-on-background mb-xs">Welcome back</Text>
+            </View>
             <View className="hidden md:block mb-lg">
               <Text className="font-headline-lg text-headline-lg text-on-background">Log in</Text>
               <Text className="font-body-md text-body-md text-on-surface-variant">Welcome back to Finovault AI.</Text>
             </View>
 
-            <Animated.View entering={FadeInDown.springify().damping(14).delay(200)}>
-              <View className="mb-gutter">
-                <Text className="font-label-md text-label-md text-on-surface mb-xs">Email address</Text>
-                <Input variant="outline" size="md" className={`bg-surface-container-lowest rounded-lg ${getFocusBorder('email')}`}>
-                  <InputField placeholder="name@example.com" value={email} onChangeText={setEmail} keyboardType="email-address" className="text-body-md placeholder:text-outline/50" onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)} />
+            <View className="mb-gutter">
+              <Text className="font-label-md text-label-md text-on-surface mb-xs">Email address</Text>
+              <Input variant="outline" size="md" className={`bg-surface-container-lowest rounded-lg ${getFocusBorder('email')}`}>
+                <InputField placeholder="name@example.com" value={email} onChangeText={setEmail} keyboardType="email-address" className="text-body-md placeholder:text-outline/50" onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)} />
+              </Input>
+              {errors.email && <Text className="text-error text-caption mt-xs">{errors.email}</Text>}
+            </View>
+
+            <View className="mb-gutter">
+              <Text className="font-label-md text-label-md text-on-surface mb-xs">Password</Text>
+              <View className="relative">
+                <Input variant="outline" size="md" className={`bg-surface-container-lowest rounded-lg ${getFocusBorder('password')}`}>
+                  <InputField placeholder="••••••••" value={password} onChangeText={setPassword} secureTextEntry={!showPassword} className="text-body-md placeholder:text-outline/50" onFocus={() => setFocusedField('password')} onBlur={() => setFocusedField(null)} />
                 </Input>
-                {errors.email && <Text className="text-error text-caption mt-xs">{errors.email}</Text>}
+                <Pressable onPress={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 active:scale-95">
+                  <MaterialIcons name={showPassword ? 'visibility-off' : 'visibility'} size={20} color="#74777e" />
+                </Pressable>
               </View>
-            </Animated.View>
+              {errors.password && <Text className="text-error text-caption mt-xs">{errors.password}</Text>}
+            </View>
 
-            <Animated.View entering={FadeInDown.springify().damping(14).delay(300)}>
-              <View className="mb-gutter">
-                <Text className="font-label-md text-label-md text-on-surface mb-xs">Password</Text>
-                <View className="relative">
-                  <Input variant="outline" size="md" className={`bg-surface-container-lowest rounded-lg ${getFocusBorder('password')}`}>
-                    <InputField placeholder="••••••••" value={password} onChangeText={setPassword} secureTextEntry={!showPassword} className="text-body-md placeholder:text-outline/50" onFocus={() => setFocusedField('password')} onBlur={() => setFocusedField(null)} />
-                  </Input>
-                  <Pressable onPress={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 active:scale-95">
-                    <MaterialIcons name={showPassword ? 'visibility-off' : 'visibility'} size={20} color="#74777e" />
-                  </Pressable>
-                </View>
-                {errors.password && <Text className="text-error text-caption mt-xs">{errors.password}</Text>}
-              </View>
-            </Animated.View>
-
-            <Animated.View entering={FadeInDown.springify().damping(14).delay(400)}>
-              <Pressable
-                onPressIn={() => { buttonScale.value = withSpring(0.96, { damping: 15 }); }}
-                onPressOut={() => { buttonScale.value = withSpring(1, { damping: 15 }); }}
-                onPress={handleLogin}
-                disabled={isSubmitting}
-              >
-                <Animated.View
-                  style={[buttonAnimatedStyle, { shadowColor: 'rgba(0,107,90,0.25)', shadowOffset: { width: 0, height: 4 }, shadowRadius: 14, elevation: 4 }]}
-                  className="w-full py-md rounded-lg bg-secondary bg-gradient-to-r from-secondary to-[#005143] flex-row items-center justify-center gap-sm"
+            <Pressable
+              onPressIn={() => { buttonScale.value = withSpring(0.96, { damping: 15 }); }}
+              onPressOut={() => { buttonScale.value = withSpring(1, { damping: 15 }); }}
+              onPress={handleLogin}
+              disabled={isSubmitting}
+            >
+              <Animated.View
+                style={[buttonAnimatedStyle, { shadowColor: 'rgba(0,107,90,0.25)', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 14, elevation: 4 }]}
+                className="w-full py-md rounded-lg bg-secondary bg-gradient-to-r from-secondary to-[#005143] flex-row items-center justify-center gap-sm"
                 >
                   {isSubmitting ? (
                     <ActivityIndicator size="small" color="#ffffff" />

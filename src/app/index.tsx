@@ -11,7 +11,6 @@ import Animated, {
   withSequence,
   withSpring,
   withTiming,
-  FadeInUp,
 } from 'react-native-reanimated';
 import { MaterialIcons } from '@expo/vector-icons';
 import { playSound } from '@/lib/sounds';
@@ -144,7 +143,7 @@ export default function WelcomeTour() {
           ))}
         </View>
 
-        <Animated.View entering={FadeInUp.springify().damping(14).delay(300)} className="px-8 max-w-sm mx-auto w-full">
+        <View className="px-8 max-w-sm mx-auto w-full">
           <Pressable
             onPress={() => {
               playSound('open');
@@ -156,7 +155,8 @@ export default function WelcomeTour() {
             <Text className="font-label-md text-label-md text-primary mr-2 font-bold">Get Started</Text>
             <MaterialIcons name="arrow-forward" size={20} color="#006b5a" />
           </Pressable>
-        </Animated.View>
+          </View>
+        </View>
       </View>
     </View>
   );
