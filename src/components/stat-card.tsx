@@ -1,6 +1,6 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { View, Text } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import { View } from 'react-native';
 
 type Props = {
   label: string;
@@ -12,8 +12,7 @@ type Props = {
 
 export function StatCard({ label, value, trend, className = '', index = 0 }: Props) {
   return (
-    <Animated.View
-      entering={FadeInDown.springify().damping(14).stiffness(100).delay(index * 100)}
+    <View
       className={`p-4 rounded-xl bg-surface-bright border border-outline-variant ${className}`}
     >
       <Text className="text-caption text-on-surface-variant uppercase tracking-wider mb-1">{label}</Text>
@@ -30,6 +29,6 @@ export function StatCard({ label, value, trend, className = '', index = 0 }: Pro
           </Text>
         </View>
       )}
-    </Animated.View>
+    </View>
   );
 }

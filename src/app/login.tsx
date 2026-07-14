@@ -126,7 +126,6 @@ export default function Login() {
                   )}
                 </Animated.View>
               </Pressable>
-            </Animated.View>
 
             <View className="flex-row items-center my-xl">
               <View className="flex-1 h-[1px] bg-outline-variant/30" />
