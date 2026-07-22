@@ -43,13 +43,13 @@ export default function AICoachScreen() {
       <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, elevation: 4 }}>
         <View className="flex-row items-center gap-3">
           <Pressable onPress={() => router.back()} className="active:scale-90">
-            <MaterialIcons name="arrow-back" size={24} color="#000f22" />
+            <MaterialIcons name="arrow-back" size={24} color="#0A1F5C" />
           </Pressable>
           <View className="flex-1">
             <Text className="font-headline-md text-primary font-bold">AI Coach</Text>
             <Text className="text-caption text-on-surface-variant">Your personal financial advisor</Text>
           </View>
-          <MaterialIcons name="auto-awesome" size={24} color="#006b5a" />
+          <MaterialIcons name="auto-awesome" size={24} color="#D4AF37" />
         </View>
       </View>
 

@@ -44,14 +44,11 @@ export default function Preferences() {
 
   return (
     <View className="flex-1 bg-background">
-      <View className="flex-row items-center px-margin-mobile pt-14 pb-4 bg-background">
+        <View className="flex-row items-center px-margin-mobile pt-14 pb-4 bg-background">
         <Pressable onPress={() => router.back()} className="mr-2">
-          <MaterialIcons name="arrow-back" size={24} color="#ffffff" />
+          <MaterialIcons name="arrow-back" size={24} color="#1A1A1A" />
         </Pressable>
         <Text className="flex-1 text-headline-lg-mobile text-primary font-semibold">Finovault AI</Text>
-        <View className="h-1 w-24 bg-surface-container-high rounded-full overflow-hidden">
-          <View className="h-full w-2/3 bg-secondary rounded-full" />
-        </View>
       </View>
 
       <ScrollView className="flex-1 px-margin-mobile" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 160, paddingTop: 24 }}>
@@ -73,7 +70,7 @@ export default function Preferences() {
                     style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2, transform: [{ scale: selected ? 0.98 : 1 }] }}
                   >
                     <View className={`w-12 h-12 rounded-full items-center justify-center mb-4 ${selected ? 'bg-secondary-container' : 'bg-surface-container'}`}>
-                      <MaterialIcons name={role.icon} size={24} color="#006b5a" />
+                      <MaterialIcons name={role.icon} size={24} color="#D4AF37" />
                     </View>
                     <Text className="text-label-md text-on-surface text-center">{role.label}</Text>
                   </Pressable>
@@ -101,11 +98,11 @@ export default function Preferences() {
                         <Text className="text-headline-md text-primary mb-1">{goal.label}</Text>
                         <Text className="text-body-md text-on-surface-variant">{goal.desc}</Text>
                       </View>
-                      <MaterialIcons name={goal.icon} size={40} color="#006b5a" />
+                      <MaterialIcons name={goal.icon} size={40} color="#D4AF37" />
                     </View>
                   ) : (
                     <>
-                      <MaterialIcons name={goal.icon} size={28} color="#006b5a" style={{ marginBottom: 8 }} />
+                      <MaterialIcons name={goal.icon} size={28} color="#D4AF37" style={{ marginBottom: 8 }} />
                       <Text className="text-headline-md text-primary mb-1">{goal.label}</Text>
                       <Text className="text-body-md text-on-surface-variant">{goal.desc}</Text>
                     </>
@@ -129,7 +126,7 @@ export default function Preferences() {
                   <Text className="text-caption text-on-surface-variant mt-0.5">Receive personalized suggestions based on your spending.</Text>
                 </View>
               </View>
-              <Switch value={aiInsights} onValueChange={() => setAiInsights(!aiInsights)} trackColor={{ false: '#e0e3e6', true: '#54f8d7' }} thumbColor="#ffffff" />
+              <Switch value={aiInsights} onValueChange={() => setAiInsights(!aiInsights)} trackColor={{ false: '#e0e3e6', true: '#F4D35E' }} thumbColor="#ffffff" />
             </View>
             <View className="h-[1px] bg-surface-variant opacity-50 my-6" />
             <View className="flex-row items-center justify-between">
@@ -142,7 +139,7 @@ export default function Preferences() {
                   <Text className="text-caption text-on-surface-variant mt-0.5">Instant notification for large transactions or login attempts.</Text>
                 </View>
               </View>
-              <Switch value={securityAlerts} onValueChange={() => setSecurityAlerts(!securityAlerts)} trackColor={{ false: '#e0e3e6', true: '#54f8d7' }} thumbColor="#ffffff" />
+              <Switch value={securityAlerts} onValueChange={() => setSecurityAlerts(!securityAlerts)} trackColor={{ false: '#e0e3e6', true: '#F4D35E' }} thumbColor="#ffffff" />
             </View>
           </View>
         </View>
@@ -153,7 +150,7 @@ export default function Preferences() {
           onPress={handleContinue}
           disabled={isSaving}
           className="w-full py-4 rounded-xl items-center justify-center flex-row gap-2"
-          style={{ backgroundColor: '#006b5a', shadowColor: 'rgba(0,107,90,0.2)', shadowOffset: { width: 0, height: 4 }, shadowRadius: 12, elevation: 4 }}
+          style={{ backgroundColor: '#D4AF37', shadowColor: 'rgba(212,175,55,0.2)', shadowOffset: { width: 0, height: 4 }, shadowRadius: 12, elevation: 4 }}
         >
           {isSaving ? (
             <ActivityIndicator size="small" color="#ffffff" />
@@ -164,7 +161,7 @@ export default function Preferences() {
             </>
           )}
         </Pressable>
-        <Text className="text-caption text-outline text-center mt-3">Step 2 of 4 • Preferences</Text>
+        <Text className="text-caption text-outline text-center mt-3">Set your preferences</Text>
       </View>
     </View>
   );

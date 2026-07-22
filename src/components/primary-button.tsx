@@ -3,7 +3,6 @@ import { Pressable } from 'react-native';
 import { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import Animated from 'react-native-reanimated';
 import { mediumImpact } from '@/hooks/use-haptics';
-import { playSound } from '@/lib/sounds';
 
 type Props = {
   title: string;
@@ -29,7 +28,6 @@ export function PrimaryButton({ title, onPress, className = '', disabled }: Prop
   };
 
   const handlePress = () => {
-    playSound('open');
     onPress?.();
   };
 
@@ -41,10 +39,10 @@ export function PrimaryButton({ title, onPress, className = '', disabled }: Prop
       disabled={disabled}
     >
       <Animated.View
-        style={[animatedStyle, { shadowColor: 'rgba(0,107,90,0.25)', shadowOffset: { width: 0, height: 4 }, shadowRadius: 14, elevation: 4 }]}
-        className={`bg-gradient-to-r from-secondary to-[#005143] rounded-xl py-4 shadow-lg ${className}`}
+        style={[animatedStyle, { shadowColor: 'rgba(212,175,55,0.25)', shadowOffset: { width: 0, height: 4 }, shadowRadius: 14, elevation: 4 }]}
+        className={`bg-[#D4AF37] rounded-xl py-4 shadow-lg ${className}`}
       >
-        <ButtonText className="text-on-primary font-label-md font-bold text-center">{title}</ButtonText>
+        <ButtonText className="text-[#1A1A1A] font-label-md font-bold text-center">{title}</ButtonText>
       </Animated.View>
     </Pressable>
   );

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -15,23 +15,30 @@ export default function TransactionsScreen() {
   const [filterType, setFilterType] = useState<string>('');
   const [filterStatus, setFilterStatus] = useState<string>('');
   const { currency } = useSettingsStore();
+  const abortRef = useRef<AbortController | null>(null);
 
   const load = useCallback(async () => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setIsLoading(true);
     try {
       const params: any = {};
       if (filterType) params.type = filterType;
       if (filterStatus) params.status = filterStatus;
-      const res = await TransactionsService.listTransactions(params);
+      const res = await TransactionsService.listTransactions(params, { signal: controller.signal });
+      if (controller.signal.aborted) return;
       const items = Array.isArray(res) ? res : (res?.data ?? []);
       setTransactions(items);
     } catch (e: any) {
+      if (e?.name === 'AbortError') return;
       console.error('Failed to load transactions', e.message);
     }
     setIsLoading(false);
   }, [filterType, filterStatus]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { load(); return () => abortRef.current?.abort(); }, [load]);
 
   const handleDelete = (id: string) => {
     Alert.alert('Delete Transaction', 'Are you sure?', [
@@ -53,7 +60,7 @@ export default function TransactionsScreen() {
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
             <Pressable onPress={() => router.back()} className="active:scale-90">
-              <MaterialIcons name="arrow-back" size={24} color="#000f22" />
+              <MaterialIcons name="arrow-back" size={24} color="#0A1F5C" />
             </Pressable>
             <Text className="font-headline-md text-primary font-bold">Transactions</Text>
           </View>
@@ -71,7 +78,7 @@ export default function TransactionsScreen() {
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }}>
         {isLoading ? (
           <View className="flex-1 items-center justify-center py-20">
-            <ActivityIndicator size="large" color="#006b5a" />
+            <ActivityIndicator size="large" color="#D4AF37" />
           </View>
         ) : transactions.length === 0 ? (
           <View className="flex-1 items-center justify-center py-20">
@@ -89,7 +96,7 @@ export default function TransactionsScreen() {
                   <MaterialIcons
                     name={tx.type === 'income' ? 'arrow-downward' : tx.type === 'expense' ? 'arrow-upward' : 'swap-horiz'}
                     size={20}
-                    color={tx.type === 'income' ? '#00705e' : tx.type === 'expense' ? '#ba1a1a' : '#006b5a'}
+                    color={tx.type === 'income' ? '#D4AF37' : tx.type === 'expense' ? '#ba1a1a' : '#D4AF37'}
                   />
                 </View>
                 <View className="flex-1">

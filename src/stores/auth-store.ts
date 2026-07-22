@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { setApiToken } from '@/lib/api/client';
+import { setApiToken, loadStoredToken, getApiToken } from '@/lib/api/client';
 import * as AuthService from '@/lib/api/services/auth';
 
 interface AuthState {
@@ -27,14 +27,20 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   initialize: async () => {
     try {
+      const storedToken = await loadStoredToken();
+      if (!storedToken || !getApiToken()) {
+        set({ isLoading: false });
+        return;
+      }
       const session = await AuthService.getCurrentSession();
       if (session) {
-        setApiToken(session.access_token);
         set({ user: session.user, session, isAuthenticated: true, isLoading: false });
       } else {
+        await setApiToken(null);
         set({ isLoading: false });
       }
     } catch {
+      await setApiToken(null);
       set({ isLoading: false });
     }
   },

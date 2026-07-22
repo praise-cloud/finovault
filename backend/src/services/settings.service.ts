@@ -1,7 +1,22 @@
+import crypto from 'node:crypto';
 import { getSupabase } from '../config/supabase';
 import { createContextLogger } from '../utils/logger';
 
 const log = createContextLogger('SettingsService');
+
+function hashCode(code: string): string {
+  return crypto.createHash('sha256').update(code).digest('hex');
+}
+
+function generateRecoveryCodes(): string[] {
+  const codes: string[] = [];
+  for (let i = 0; i < 8; i++) {
+    const part1 = crypto.randomBytes(2).toString('hex').toUpperCase();
+    const part2 = crypto.randomBytes(2).toString('hex').toUpperCase();
+    codes.push(`${part1}-${part2}`);
+  }
+  return codes;
+}
 
 export async function getSecuritySettings(userId: string) {
   const supabase = getSupabase();
@@ -20,7 +35,7 @@ export async function getSecuritySettings(userId: string) {
     two_factor_method: settingsRes.data?.two_factor_method || 'app',
     guardrails: settingsRes.data?.guardrails || [],
     privacy_toggles: settingsRes.data?.privacy_toggles || [],
-    recovery_codes: settingsRes.data?.two_factor_enabled ? ['X7K2-M9P4', 'R3D8-W6B1', 'F5H9-L2N7', 'T8Q1-V3C6', 'J4M2-P8K0'] : [],
+    recovery_codes: [],
     recent_events: auditRes.data || [],
   };
 }
@@ -61,6 +76,64 @@ export async function updateTwoFactor(userId: string, updates: { enabled: boolea
   );
 
   return { message: 'Two-factor authentication updated' };
+}
+
+export async function enableTwoFactorWithCodes(userId: string, method?: string): Promise<{ message: string; recovery_codes: string[] }> {
+  const supabase = getSupabase();
+
+  await supabase.from('security_settings').upsert(
+    { user_id: userId, two_factor_enabled: true, two_factor_method: method || 'app', updated_at: new Date().toISOString() },
+    { onConflict: 'user_id' }
+  );
+
+  const codes = generateRecoveryCodes();
+  const hashed = codes.map((code) => ({ user_id: userId, code_hash: hashCode(code) }));
+
+  await supabase.from('recovery_codes').delete().eq('user_id', userId);
+  const { error } = await supabase.from('recovery_codes').insert(hashed);
+  if (error) {
+    log.error('storeRecoveryCodes error', { error: error.message });
+    throw new Error('Failed to store recovery codes');
+  }
+
+  return { message: 'Two-factor authentication enabled', recovery_codes: codes };
+}
+
+export async function verifyRecoveryCode(userId: string, code: string): Promise<boolean> {
+  const supabase = getSupabase();
+
+  const hashed = hashCode(code);
+  const { data, error } = await supabase
+    .from('recovery_codes')
+    .select('id, used')
+    .eq('user_id', userId)
+    .eq('code_hash', hashed)
+    .maybeSingle();
+
+  if (error || !data || data.used) {
+    return false;
+  }
+
+  await supabase.from('recovery_codes').update({ used: true }).eq('id', data.id);
+  return true;
+}
+
+export async function getRecoveryCodesStatus(userId: string): Promise<{ total: number; remaining: number }> {
+  const supabase = getSupabase();
+
+  const { data, error } = await supabase
+    .from('recovery_codes')
+    .select('used')
+    .eq('user_id', userId);
+
+  if (error || !data) {
+    return { total: 0, remaining: 0 };
+  }
+
+  return {
+    total: data.length,
+    remaining: data.filter((c) => !c.used).length,
+  };
 }
 
 export async function updateGuardrails(userId: string, guardrails: any[]) {

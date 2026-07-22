@@ -27,8 +27,8 @@ const MOCK_NOTIFICATIONS: Notification[] = [
 
 const TYPE_CONFIG = {
   alert: { icon: 'warning' as const, bg: 'bg-error-container', color: '#ba1a1a' },
-  insight: { icon: 'auto-awesome' as const, bg: 'bg-secondary-container', color: '#00705e' },
-  transaction: { icon: 'account-balance' as const, bg: 'bg-primary-container', color: '#000f22' },
+  insight: { icon: 'auto-awesome' as const, bg: 'bg-secondary-container', color: '#1A1A1A' },
+  transaction: { icon: 'account-balance' as const, bg: 'bg-primary-container', color: '#0A1F5C' },
   security: { icon: 'verified-user' as const, bg: 'bg-tertiary-container', color: '#321ed2' },
 };
 

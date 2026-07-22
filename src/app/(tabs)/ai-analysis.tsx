@@ -64,7 +64,7 @@ export default function AiAnalysis() {
         const c = t.category || 'General';
         cats.set(c, (cats.get(c) || 0) + t.amount);
       });
-      const colors = ['#006b5a', '#0a2540', '#321ed2', '#ba1a1a', '#00705e', '#43474d', '#150082', '#005143'];
+      const colors = ['#D4AF37', '#08142E', '#321ed2', '#ba1a1a', '#1A1A1A', '#43474d', '#150082', '#C8A030'];
       let i = 0;
       const breakdown = Array.from(cats.entries())
         .sort(([, a], [, b]) => b - a)
@@ -99,9 +99,9 @@ export default function AiAnalysis() {
 
   const getTypeStyle = (type: string) => {
     switch (type) {
-      case 'opportunity': return { icon: 'trending-up' as const, bg: 'bg-secondary-container', color: '#00705e' };
+      case 'opportunity': return { icon: 'trending-up' as const, bg: 'bg-secondary-container', color: '#1A1A1A' };
       case 'alert': return { icon: 'warning' as const, bg: 'bg-error-container', color: '#ba1a1a' };
-      default: return { icon: 'lightbulb' as const, bg: 'bg-primary-container', color: '#000f22' };
+      default: return { icon: 'lightbulb' as const, bg: 'bg-primary-container', color: '#0A1F5C' };
     }
   };
 
@@ -128,7 +128,7 @@ export default function AiAnalysis() {
       </View>
 
       <ScrollView ref={scrollRef} className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
-        <View className="bg-gradient-to-br from-secondary to-[#005143] rounded-2xl p-5 mt-4 mb-4 relative overflow-hidden">
+        <View className="bg-[#D4AF37] rounded-2xl p-5 mt-4 mb-4 relative overflow-hidden">
           <View className="absolute -top-8 -right-8 w-32 h-32 bg-white/5 rounded-full" />
           <View className="flex-row items-center gap-2 mb-2">
             <MaterialIcons name="auto-awesome" size={20} color="#fff" />
@@ -144,7 +144,7 @@ export default function AiAnalysis() {
               onChangeText={setQuestion}
             />
             <Pressable onPress={handleAsk} disabled={isAsking} className="w-12 h-12 bg-white rounded-xl items-center justify-center active:scale-90">
-              {isAsking ? <ActivityIndicator size="small" color="#006b5a" /> : <MaterialIcons name="send" size={20} color="#006b5a" />}
+              {isAsking ? <ActivityIndicator size="small" color="#D4AF37" /> : <MaterialIcons name="send" size={20} color="#D4AF37" />}
             </Pressable>
           </View>
         </View>
@@ -164,7 +164,7 @@ export default function AiAnalysis() {
         )}
 
         {isLoading ? (
-          <View className="items-center py-12"><ActivityIndicator size="large" color="#006b5a" /></View>
+          <View className="items-center py-12"><ActivityIndicator size="large" color="#D4AF37" /></View>
         ) : (
           <>
             {patternSummary.length > 0 && (

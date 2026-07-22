@@ -49,7 +49,7 @@ export default function DataPrivacy() {
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {loading ? (
           <View className="flex-1 items-center justify-center mt-20">
-            <ActivityIndicator size="large" color="#00705e" />
+            <ActivityIndicator size="large" color="#1A1A1A" />
           </View>
         ) : (
           <View className="mt-4 mb-6">
@@ -65,7 +65,7 @@ export default function DataPrivacy() {
               </View>
               <View className="bg-primary-container/30 rounded-xl p-3">
                 <View className="flex-row items-center gap-2">
-                  <MaterialIcons name="verified-user" size={16} color="#006b5a" />
+                  <MaterialIcons name="verified-user" size={16} color="#D4AF37" />
                   <Text className="text-secondary font-label-md text-sm font-bold">Your data is encrypted end-to-end</Text>
                 </View>
               </View>
@@ -76,7 +76,7 @@ export default function DataPrivacy() {
               {toggles.map((item, i) => (
                 <View key={item.key} className={`flex-row items-center gap-3 p-4 ${i < toggles.length - 1 ? 'border-b border-outline-variant/10' : ''}`}>
                   <View className={`w-10 h-10 rounded-xl items-center justify-center ${item.enabled ? 'bg-secondary-container' : 'bg-surface-variant'}`}>
-                    <MaterialIcons name={item.icon} size={20} color={item.enabled ? '#00705e' : '#9ea0a5'} />
+                    <MaterialIcons name={item.icon} size={20} color={item.enabled ? '#1A1A1A' : '#9ea0a5'} />
                   </View>
                   <View className="flex-1">
                     <Text className={`font-label-md font-bold ${item.enabled ? 'text-primary' : 'text-on-surface-variant'}`}>{item.label}</Text>
@@ -94,7 +94,7 @@ export default function DataPrivacy() {
 
             <View className="bg-white border border-outline-variant/20 rounded-2xl p-5 mb-4">
               <View className="flex-row items-center gap-2 mb-4">
-                <MaterialIcons name="download" size={16} color="#006b5a" />
+                <MaterialIcons name="download" size={16} color="#D4AF37" />
                 <Text className="font-label-md font-bold text-primary">Your Data</Text>
               </View>
               <Text className="text-body-md text-on-surface-variant text-sm mb-4">You can request a copy of all data we have stored or delete your account permanently.</Text>

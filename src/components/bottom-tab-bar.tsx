@@ -1,5 +1,5 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import { View, Pressable, Text } from 'react-native';
+import { View, Pressable, Text, useColorScheme } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useEffect } from 'react';
 import { selection } from '@/hooks/use-haptics';
@@ -23,7 +23,7 @@ type Props = {
   onTabPress: (key: string) => void;
 };
 
-function TabItem({ tab, isActive, onPress }: { tab: Tab; isActive: boolean; onPress: () => void }) {
+function TabItem({ tab, isActive, onPress, isDark }: { tab: Tab; isActive: boolean; onPress: () => void; isDark: boolean }) {
   const scale = useSharedValue(isActive ? 1 : 0.85);
   const opacity = useSharedValue(isActive ? 1 : 0.6);
 
@@ -53,7 +53,7 @@ function TabItem({ tab, isActive, onPress }: { tab: Tab; isActive: boolean; onPr
         <MaterialIcons
           name={(isActive && tab.activeIcon ? tab.activeIcon : tab.icon) as any}
           size={24}
-          color={isActive ? '#00705e' : '#43474d'}
+          color={isActive ? '#1A1A1A' : isDark ? '#FFFFFF80' : '#43474d'}
         />
         <Text className={`font-label-md text-xs ${isActive ? 'text-on-secondary-container font-bold' : 'text-on-surface-variant'}`}>
           {tab.label}
@@ -64,9 +64,12 @@ function TabItem({ tab, isActive, onPress }: { tab: Tab; isActive: boolean; onPr
 }
 
 export function BottomTabBar({ activeTab, onTabPress }: Props) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
   return (
     <View
-      className="md:hidden absolute bottom-0 left-0 right-0 z-50 flex-row justify-around items-center h-20 px-margin-mobile bg-surface-container-lowest"
+      className={`md:hidden absolute bottom-0 left-0 right-0 z-50 flex-row justify-around items-center h-20 px-margin-mobile ${isDark ? 'bg-[#0A1F5C]' : 'bg-surface-container-lowest'}`}
       style={{ shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 8 }}
     >
       {TABS.map((tab) => (
@@ -75,6 +78,7 @@ export function BottomTabBar({ activeTab, onTabPress }: Props) {
           tab={tab}
           isActive={activeTab === tab.key}
           onPress={() => onTabPress(tab.key)}
+          isDark={isDark}
         />
       ))}
     </View>

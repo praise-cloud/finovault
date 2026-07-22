@@ -15,7 +15,7 @@ export function TopAppBar({ title = 'Finovault AI', showBack, onBackPress, right
       <View className="flex-row items-center gap-3">
         {showBack && (
           <Pressable onPress={onBackPress} className="active:scale-95">
-            <MaterialIcons name="arrow-back" size={24} color="#000f22" />
+            <MaterialIcons name="arrow-back" size={24} color="#0A1F5C" />
           </Pressable>
         )}
         <Text className="font-headline-md text-primary font-bold">{title}</Text>

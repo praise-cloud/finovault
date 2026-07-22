@@ -1,11 +1,10 @@
 import { Stack, router } from 'expo-router';
-import { useEffect, useState, createContext, useContext, useRef } from 'react';
-import { View, Pressable, Text, Modal, ScrollView } from 'react-native';
+import { useEffect, useState, createContext, useContext } from 'react';
+import { View, Pressable, Text, Modal, ScrollView, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuthStore } from '@/stores/auth-store';
 import { useDashboardStore } from '@/stores/dashboard-store';
 import { BottomTabBar } from '@/components/bottom-tab-bar';
-import { playSound } from '@/lib/sounds';
 
 type SheetContent = {
   title: string;
@@ -28,8 +27,8 @@ export default function TabsLayout() {
   const [sheetContent, setSheetContent] = useState<SheetContent>(null);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const loadSummary = useDashboardStore((s) => s.loadSummary);
-
-  const hasPlayedSound = useRef(false);
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -37,10 +36,6 @@ export default function TabsLayout() {
       return;
     }
     loadSummary();
-    if (!hasPlayedSound.current) {
-      hasPlayedSound.current = true;
-      playSound('open');
-    }
   }, [isAuthenticated, loadSummary]);
 
   const handleTabPress = (key: string) => {
@@ -63,7 +58,7 @@ export default function TabsLayout() {
 
   return (
     <SheetContext.Provider value={{ showSheet: setSheetContent, hideSheet: () => setSheetContent(null) }}>
-      <View className="flex-1 bg-surface-bright">
+      <View className={`flex-1 ${isDark ? 'bg-[#0A1F5C]' : 'bg-surface-bright'}`}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="wealth-growth" />
@@ -100,7 +95,7 @@ export default function TabsLayout() {
             <Pressable className="flex-1 bg-black/40" onPress={() => setSheetContent(null)}>
               <Pressable className="flex-1 justify-end" onPress={() => {}}>
                 <Pressable
-                  className="bg-white rounded-t-3xl"
+                  className={`${isDark ? 'bg-[#1A1A1A]' : 'bg-white'} rounded-t-3xl`}
                   style={{ maxHeight: '80%', shadowColor: '#000', shadowOffset: { width: 0, height: -8 }, shadowOpacity: 0.1, shadowRadius: 24, elevation: 16 }}
                   onPress={() => {}}
                 >

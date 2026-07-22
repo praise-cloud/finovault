@@ -16,7 +16,7 @@ export default function SmeDashboard() {
   useEffect(() => { load(); }, [load]);
 
   if (!data) {
-    return <View className="flex-1 bg-surface-bright items-center justify-center"><ActivityIndicator size="large" color="#006b5a" /></View>;
+    return <View className="flex-1 bg-surface-bright items-center justify-center"><ActivityIndicator size="large" color="#D4AF37" /></View>;
   }
 
   const d = data;
@@ -54,14 +54,14 @@ export default function SmeDashboard() {
         <View className="flex-row flex-wrap" style={{ gap: 24 }}>
           <View className="bg-surface-container-lowest rounded-xl p-6 border border-[#E6EBF1] flex-[2] min-w-[300px]" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}>
             <View className="flex-row justify-between items-center mb-6">
-              <Text className="font-headline-md text-headline-md flex-row items-center gap-2"><MaterialIcons name="payments" size={22} color="#006b5a" />{' Cash Flow Analysis'}</Text>
+              <Text className="font-headline-md text-headline-md flex-row items-center gap-2"><MaterialIcons name="payments" size={22} color="#D4AF37" />{' Cash Flow Analysis'}</Text>
               <View className="bg-secondary-container px-3 py-1 rounded-full"><Text className="text-on-secondary-container text-caption font-bold">LIVE</Text></View>
             </View>
             <View className="flex-row flex-wrap" style={{ gap: 24 }}>
               <View className="flex-1 min-w-[120px] p-4 rounded-xl bg-surface-bright border border-outline-variant">
                 <Text className="text-caption text-on-surface-variant uppercase mb-1 tracking-wider">Incoming</Text>
                 <Text className="font-headline-md text-headline-md text-secondary">${d.cashflow.incoming.toLocaleString('en-US', { minimumFractionDigits: 2 })}</Text>
-                <View className="flex-row items-center gap-1 mt-2"><MaterialIcons name="trending-up" size={14} color="#006b5a" /><Text className="text-caption text-secondary">+{d.cashflow.incoming_change}% vs last month</Text></View>
+                <View className="flex-row items-center gap-1 mt-2"><MaterialIcons name="trending-up" size={14} color="#D4AF37" /><Text className="text-caption text-secondary">+{d.cashflow.incoming_change}% vs last month</Text></View>
               </View>
               <View className="flex-1 min-w-[120px] p-4 rounded-xl bg-surface-bright border border-outline-variant">
                 <Text className="text-caption text-on-surface-variant uppercase mb-1 tracking-wider">Outgoing</Text>
@@ -95,7 +95,7 @@ export default function SmeDashboard() {
                 <View key={task.id} className={`p-4 rounded-xl ${task.status === 'overdue' ? 'bg-error-container/30 border-l-4 border-error' : 'bg-surface-bright border border-outline-variant'}`}>
                   <View className="flex-row gap-4">
                     <View className={`p-2 rounded-lg ${task.status === 'overdue' ? 'bg-error' : task.status === 'completed' ? 'bg-secondary-container' : 'bg-tertiary-fixed'}`}>
-                      <MaterialIcons name={task.status === 'overdue' ? 'priority-high' : task.status === 'completed' ? 'check-circle' : 'person-add'} size={18} color={task.status === 'overdue' ? '#ffffff' : task.status === 'completed' ? '#00705e' : '#321ed2'} />
+                      <MaterialIcons name={task.status === 'overdue' ? 'priority-high' : task.status === 'completed' ? 'check-circle' : 'person-add'} size={18} color={task.status === 'overdue' ? '#ffffff' : task.status === 'completed' ? '#1A1A1A' : '#321ed2'} />
                     </View>
                     <View className="flex-1">
                       <Text className="font-label-md text-label-md text-primary font-bold">{task.title}</Text>
@@ -112,7 +112,7 @@ export default function SmeDashboard() {
                 <View className="relative w-12 h-12 items-center justify-center">
                   <Svg width={48} height={48} viewBox="0 0 48 48">
                     <Circle cx={24} cy={24} r={20} fill="transparent" stroke="#e0e3e6" strokeWidth={4} />
-                    <Circle cx={24} cy={24} r={20} fill="transparent" stroke="#006b5a" strokeDasharray="125.6" strokeDashoffset={125.6 - (125.6 * d.payroll_health_score / 100)} strokeWidth={4} />
+                    <Circle cx={24} cy={24} r={20} fill="transparent" stroke="#D4AF37" strokeDasharray="125.6" strokeDashoffset={125.6 - (125.6 * d.payroll_health_score / 100)} strokeWidth={4} />
                   </Svg>
                   <Text className="absolute text-[10px] font-bold">{d.payroll_health_score}%</Text>
                 </View>
@@ -124,7 +124,7 @@ export default function SmeDashboard() {
 
         <View className="bg-surface-container-lowest rounded-xl p-6 border border-[#E6EBF1] mt-6" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}>
           <View className="flex-row justify-between items-center mb-6">
-            <Text className="font-headline-md text-headline-md flex-row items-center gap-2"><MaterialIcons name="business" size={22} color="#006b5a" />{' B2B Vendor Ecosystem'}</Text>
+            <Text className="font-headline-md text-headline-md flex-row items-center gap-2"><MaterialIcons name="business" size={22} color="#D4AF37" />{' B2B Vendor Ecosystem'}</Text>
             <View className="flex-row items-center gap-2">
               <Text className="text-caption text-on-surface-variant">Sort by:</Text>
               <View className="flex-row items-center"><Text className="font-label-md text-label-md">Health Score</Text><MaterialIcons name="arrow-drop-down" size={20} color="#43474d" /></View>
@@ -134,8 +134,8 @@ export default function SmeDashboard() {
             {(d.vendors || []).map((v) => (
               <View key={v.id} className="flex-1 min-w-[160px] bg-surface-bright p-4 rounded-xl border border-outline-variant">
                 <View className="flex-row justify-between items-start mb-4">
-                  <View className="w-10 h-10 rounded-lg bg-surface-container items-center justify-center"><MaterialIcons name={v.icon as any} size={18} color="#000f22" /></View>
-                  <View className="items-end"><Text className="text-[20px] font-bold" style={{ color: v.health_score >= 80 ? '#006b5a' : v.health_score >= 50 ? '#181c1e' : '#ba1a1a' }}>{v.health_score}</Text><Text className="text-[8px] uppercase font-bold text-on-surface-variant">Score</Text></View>
+                  <View className="w-10 h-10 rounded-lg bg-surface-container items-center justify-center"><MaterialIcons name={v.icon as any} size={18} color="#0A1F5C" /></View>
+                  <View className="items-end"><Text className="text-[20px] font-bold" style={{ color: v.health_score >= 80 ? '#D4AF37' : v.health_score >= 50 ? '#181c1e' : '#ba1a1a' }}>{v.health_score}</Text><Text className="text-[8px] uppercase font-bold text-on-surface-variant">Score</Text></View>
                 </View>
                 <Text className="font-label-md text-label-md font-bold mb-1">{v.name}</Text>
                 <Text className="text-caption text-on-surface-variant mb-4">{v.description}</Text>
@@ -152,22 +152,22 @@ export default function SmeDashboard() {
           <Text className="font-headline-md text-headline-md text-primary font-bold mb-4">Quick Actions</Text>
           <View className="flex-row flex-wrap" style={{ gap: 12 }}>
             <Pressable onPress={() => router.push('/(tabs)/business-health')} className="flex-1 min-w-[140px] bg-surface-container-lowest rounded-xl p-4 border border-outline-variant active:scale-95" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04 }}>
-              <MaterialIcons name="monitor-heart" size={24} color="#006b5a" />
+              <MaterialIcons name="monitor-heart" size={24} color="#D4AF37" />
               <Text className="font-label-md text-label-md text-primary font-bold mt-2">Health</Text>
               <Text className="text-caption text-on-surface-variant">Business health score</Text>
             </Pressable>
             <Pressable onPress={() => router.push('/(tabs)/business-forecast')} className="flex-1 min-w-[140px] bg-surface-container-lowest rounded-xl p-4 border border-outline-variant active:scale-95" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04 }}>
-              <MaterialIcons name="insights" size={24} color="#006b5a" />
+              <MaterialIcons name="insights" size={24} color="#D4AF37" />
               <Text className="font-label-md text-label-md text-primary font-bold mt-2">Forecast</Text>
               <Text className="text-caption text-on-surface-variant">Revenue projections</Text>
             </Pressable>
             <Pressable onPress={() => router.push('/(tabs)/business-vendors')} className="flex-1 min-w-[140px] bg-surface-container-lowest rounded-xl p-4 border border-outline-variant active:scale-95" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04 }}>
-              <MaterialIcons name="store" size={24} color="#006b5a" />
+              <MaterialIcons name="store" size={24} color="#D4AF37" />
               <Text className="font-label-md text-label-md text-primary font-bold mt-2">Vendors</Text>
               <Text className="text-caption text-on-surface-variant">Manage vendors</Text>
             </Pressable>
             <Pressable onPress={() => router.push('/(tabs)/business-ai-advice')} className="flex-1 min-w-[140px] bg-surface-container-lowest rounded-xl p-4 border border-outline-variant active:scale-95" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04 }}>
-              <MaterialIcons name="psychology" size={24} color="#006b5a" />
+              <MaterialIcons name="psychology" size={24} color="#D4AF37" />
               <Text className="font-label-md text-label-md text-primary font-bold mt-2">AI Advice</Text>
               <Text className="text-caption text-on-surface-variant">AI recommendations</Text>
             </Pressable>
@@ -197,7 +197,7 @@ export default function SmeDashboard() {
           <View className="bg-surface-container-lowest rounded-xl p-6 border border-[#E6EBF1] flex-[2] min-w-[300px]" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}>
             <View className="flex-row items-center justify-between mb-6">
               <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 rounded-full bg-secondary-container items-center justify-center"><MaterialIcons name="security" size={20} color="#00705e" /></View>
+                <View className="w-10 h-10 rounded-full bg-secondary-container items-center justify-center"><MaterialIcons name="security" size={20} color="#1A1A1A" /></View>
                 <Text className="font-headline-md text-headline-md">Fraud Protection</Text>
               </View>
               <View className="bg-surface-variant px-3 py-1 rounded-full"><Text className="text-on-surface-variant text-caption font-bold">24/7 MONITORING ACTIVE</Text></View>
@@ -212,7 +212,7 @@ export default function SmeDashboard() {
                       <Text className="text-caption text-on-surface-variant">{event.description}</Text>
                     </View>
                   </View>
-                  <MaterialIcons name={event.severity === 'critical' ? 'warning' : 'verified'} size={20} color={event.severity === 'critical' ? '#ba1a1a' : '#006b5a'} />
+                  <MaterialIcons name={event.severity === 'critical' ? 'warning' : 'verified'} size={20} color={event.severity === 'critical' ? '#ba1a1a' : '#D4AF37'} />
                 </View>
               )) : (
                 <View className="py-8 items-center">

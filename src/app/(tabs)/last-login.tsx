@@ -52,7 +52,7 @@ export default function LastLogin() {
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {loading ? (
           <View className="flex-1 items-center justify-center mt-20">
-            <ActivityIndicator size="large" color="#00705e" />
+            <ActivityIndicator size="large" color="#1A1A1A" />
           </View>
         ) : (
           <View className="mt-4 mb-6">
@@ -84,7 +84,7 @@ export default function LastLogin() {
                 logins.map((entry, i) => (
                   <View key={entry.id} className={`flex-row items-center gap-3 p-4 ${i < logins.length - 1 ? 'border-b border-outline-variant/10' : ''}`}>
                     <View className={`w-10 h-10 rounded-xl items-center justify-center ${entry.successful ? 'bg-secondary-container' : 'bg-error-container'}`}>
-                      <MaterialIcons name={entry.successful ? 'computer' : 'warning'} size={20} color={entry.successful ? '#00705e' : '#ba1a1a'} />
+                      <MaterialIcons name={entry.successful ? 'computer' : 'warning'} size={20} color={entry.successful ? '#1A1A1A' : '#ba1a1a'} />
                     </View>
                     <View className="flex-1">
                       <View className="flex-row items-center gap-2">
@@ -101,7 +101,7 @@ export default function LastLogin() {
 
             <View className="bg-white border border-outline-variant/20 rounded-2xl p-5 mt-4">
               <View className="flex-row items-center gap-2 mb-3">
-                <MaterialIcons name="info" size={16} color="#006b5a" />
+                <MaterialIcons name="info" size={16} color="#D4AF37" />
                 <Text className="font-label-md font-bold text-primary">Security Tip</Text>
               </View>
               <Text className="text-body-md text-on-surface-variant text-sm">If you notice any unrecognized login attempts, change your password immediately and enable two-factor authentication.</Text>

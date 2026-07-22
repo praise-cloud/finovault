@@ -7,7 +7,6 @@ import {
 } from 'react-native-reanimated';
 import Animated from 'react-native-reanimated';
 import { lightImpact } from '@/hooks/use-haptics';
-import { playSound } from '@/lib/sounds';
 
 type Props = PropsWithChildren<{
   className?: string;
@@ -31,7 +30,6 @@ export function BentoCard({ children, className = '', onPress }: Props) {
   };
 
   const handlePress = () => {
-    playSound('open');
     onPress?.();
   };
 

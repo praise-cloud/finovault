@@ -33,7 +33,7 @@ export default function BusinessAiAdvice() {
   if (loading) {
     return (
       <View className="flex-1 bg-surface-bright items-center justify-center">
-        <ActivityIndicator size="large" color="#006b5a" />
+        <ActivityIndicator size="large" color="#D4AF37" />
       </View>
     );
   }
@@ -55,7 +55,7 @@ export default function BusinessAiAdvice() {
       <ScrollView
         className="flex-1 px-margin-mobile"
         contentContainerStyle={{ paddingBottom: 120 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#006b5a" />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#D4AF37" />}
       >
         <View className="mt-6 mb-8">
           <Text className="font-headline-lg text-headline-lg text-primary mb-2">AI-Powered Insights</Text>
@@ -66,7 +66,7 @@ export default function BusinessAiAdvice() {
           <View className="bg-surface-container-low rounded-2xl p-6 mb-6" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
             <View className="flex-row items-center gap-3 mb-4">
               <View className="w-10 h-10 rounded-full bg-secondary-container items-center justify-center">
-                <MaterialIcons name="psychology" size={22} color="#00705e" />
+                <MaterialIcons name="psychology" size={22} color="#1A1A1A" />
               </View>
               <Text className="font-headline-md text-headline-md text-primary font-bold flex-1">Overview</Text>
             </View>
@@ -100,7 +100,7 @@ export default function BusinessAiAdvice() {
             <Text className="font-headline-md text-headline-md text-primary font-bold mb-4">Action Items</Text>
             {advice.action_items.map((item: string, i: number) => (
               <View key={i} className="bg-surface-container-low rounded-2xl p-4 flex-row items-center gap-3 mb-3" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
-                <MaterialIcons name="check-circle-outline" size={22} color="#006b5a" />
+                <MaterialIcons name="check-circle-outline" size={22} color="#D4AF37" />
                 <Text className="font-body-md text-body-md text-on-surface flex-1">{item}</Text>
               </View>
             ))}

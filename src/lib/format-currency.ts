@@ -12,5 +12,6 @@ export function formatCurrency(amount: number, currencyCode: string = 'USD'): st
 }
 
 export function convertAmount(amountInUsd: number, rate: number): number {
+  if (!rate || rate === 0) return 0;
   return amountInUsd * rate;
 }

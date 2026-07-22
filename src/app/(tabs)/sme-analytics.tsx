@@ -14,7 +14,7 @@ export default function SmeAnalytics() {
   useEffect(() => { load(); }, [load]);
 
   if (!data) {
-    return <View className="flex-1 bg-surface-bright items-center justify-center"><ActivityIndicator size="large" color="#006b5a" /></View>;
+    return <View className="flex-1 bg-surface-bright items-center justify-center"><ActivityIndicator size="large" color="#D4AF37" /></View>;
   }
 
   const d = data;
@@ -38,7 +38,7 @@ export default function SmeAnalytics() {
 
       <ScrollView className="flex-1 px-margin-mobile md:px-margin-desktop" contentContainerStyle={{ paddingBottom: 120 }}>
         <View className="my-6 md:my-8">
-          <View className="flex-row items-center gap-2 mb-2"><MaterialIcons name="analytics" size={18} color="#006b5a" /><Text className="font-label-md text-label-md text-secondary uppercase tracking-wider">Business Intelligence</Text></View>
+          <View className="flex-row items-center gap-2 mb-2"><MaterialIcons name="analytics" size={18} color="#D4AF37" /><Text className="font-label-md text-label-md text-secondary uppercase tracking-wider">Business Intelligence</Text></View>
           <View className="flex-col md:flex-row md:items-end justify-between gap-4">
             <View>
               <Text className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">SME Analytics Dashboard</Text>
@@ -72,7 +72,7 @@ export default function SmeAnalytics() {
             <View className="h-64 relative mb-6">
               <View className="absolute inset-0 flex-row items-end justify-between px-2">
                 {(d.cashflow_forensics?.chart_data || []).map((h, i) => (
-                  <View key={i} className="w-[10%] rounded-t-lg" style={{ height: `${h}%`, backgroundColor: ['#d2e4ff', '#b0c8eb', '#d2e4ff', '#000f22', '#d2e4ff', '#b0c8eb', '#d2e4ff', '#b0c8eb'][i] }} />
+                  <View key={i} className="w-[10%] rounded-t-lg" style={{ height: `${h}%`, backgroundColor: ['#d2e4ff', '#b0c8eb', '#d2e4ff', '#0A1F5C', '#d2e4ff', '#b0c8eb', '#d2e4ff', '#b0c8eb'][i] }} />
                 ))}
               </View>
               <View className="absolute inset-x-0 bottom-0 border-t border-outline-variant" />
@@ -81,7 +81,7 @@ export default function SmeAnalytics() {
               <View className="flex-1">
                 <Text className="text-caption text-on-surface-variant uppercase tracking-tighter">Net Inflow</Text>
                 <Text className="font-headline-md text-headline-md text-primary">${d.cashflow_forensics.net_inflow.toLocaleString()}</Text>
-                <View className="flex-row items-center gap-1"><MaterialIcons name="trending-up" size={14} color="#006b5a" /><Text className="text-caption text-secondary">+{d.cashflow_forensics.inflow_change}%</Text></View>
+                <View className="flex-row items-center gap-1"><MaterialIcons name="trending-up" size={14} color="#D4AF37" /><Text className="text-caption text-secondary">+{d.cashflow_forensics.inflow_change}%</Text></View>
               </View>
               <View className="flex-1">
                 <Text className="text-caption text-on-surface-variant uppercase tracking-tighter">Burn Rate</Text>
@@ -91,7 +91,7 @@ export default function SmeAnalytics() {
               <View className="flex-1">
                 <Text className="text-caption text-on-surface-variant uppercase tracking-tighter">Runway</Text>
                 <Text className="font-headline-md text-headline-md text-primary">{d.cashflow_forensics.runway_months} Mo</Text>
-                <View className="flex-row items-center gap-1"><MaterialIcons name="verified" size={14} color="#006b5a" /><Text className="text-caption text-secondary">High Security</Text></View>
+                <View className="flex-row items-center gap-1"><MaterialIcons name="verified" size={14} color="#D4AF37" /><Text className="text-caption text-secondary">High Security</Text></View>
               </View>
             </View>
           </BentoCard>
@@ -116,7 +116,7 @@ export default function SmeAnalytics() {
               </View>
               <View className="mt-8 pt-6 border-t border-white/10">
                 <Text className="text-caption text-white/70">You are outperforming 85% of regional SMEs in your sector.</Text>
-                <Pressable onPress={() => router.push('/(tabs)/ai-coach')} className="mt-4 flex-row items-center gap-1"><Text className="text-secondary-fixed font-label-md text-label-md">View detailed peer analysis</Text><MaterialIcons name="chevron-right" size={16} color="#58fbda" /></Pressable>
+                <Pressable onPress={() => router.push('/(tabs)/ai-coach')} className="mt-4 flex-row items-center gap-1"><Text className="text-secondary-fixed font-label-md text-label-md">View detailed peer analysis</Text><MaterialIcons name="chevron-right" size={16} color="#F4D35E" /></Pressable>
               </View>
             </View>
             <View className="absolute -right-20 -bottom-20 w-64 h-64 bg-secondary/20 rounded-full" />
@@ -156,17 +156,17 @@ export default function SmeAnalytics() {
                   <View className="flex-1"><Text className="text-body-md">${row.monthly_spend.toLocaleString()}</Text></View>
                   <View className="flex-1 flex-row gap-1">
                     {[1, 2, 3, 4].map((j) => (
-                      <View key={j} className="w-6 h-1 rounded-full" style={{ backgroundColor: row.health_score >= 80 ? '#006b5a' : row.health_score >= 50 ? '#181c1e' : '#ba1a1a', opacity: j <= Math.round(row.health_score / 25) ? 1 : 0.2 }} />
+                      <View key={j} className="w-6 h-1 rounded-full" style={{ backgroundColor: row.health_score >= 80 ? '#D4AF37' : row.health_score >= 50 ? '#181c1e' : '#ba1a1a', opacity: j <= Math.round(row.health_score / 25) ? 1 : 0.2 }} />
                     ))}
                   </View>
                   <View className="flex-1">
-                    <View className="self-start px-2 py-0.5 rounded-md" style={{ backgroundColor: row.health_score >= 80 ? 'rgba(0,107,90,0.2)' : row.health_score >= 50 ? 'rgba(24,28,30,0.1)' : 'rgba(186,26,26,0.2)' }}>
-                      <Text className="font-bold text-label-md" style={{ color: row.health_score >= 80 ? '#006b5a' : row.health_score >= 50 ? '#181c1e' : '#ba1a1a' }}>{row.health_score}/100</Text>
+                    <View className="self-start px-2 py-0.5 rounded-md" style={{ backgroundColor: row.health_score >= 80 ? 'rgba(212,175,55,0.2)' : row.health_score >= 50 ? 'rgba(24,28,30,0.1)' : 'rgba(186,26,26,0.2)' }}>
+                      <Text className="font-bold text-label-md" style={{ color: row.health_score >= 80 ? '#D4AF37' : row.health_score >= 50 ? '#181c1e' : '#ba1a1a' }}>{row.health_score}/100</Text>
                     </View>
                   </View>
                   <View className="flex-1 flex-row items-center gap-1.5">
-                    <View className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: row.health_score >= 80 ? '#006b5a' : row.health_score >= 50 ? '#181c1e' : '#ba1a1a' }} />
-                    <Text className="text-caption" style={{ color: row.health_score >= 80 ? '#006b5a' : row.health_score >= 50 ? '#181c1e' : '#ba1a1a' }}>{row.health_score >= 80 ? 'Optimal' : row.health_score >= 50 ? 'Stable' : 'Delayed Risk'}</Text>
+                    <View className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: row.health_score >= 80 ? '#D4AF37' : row.health_score >= 50 ? '#181c1e' : '#ba1a1a' }} />
+                    <Text className="text-caption" style={{ color: row.health_score >= 80 ? '#D4AF37' : row.health_score >= 50 ? '#181c1e' : '#ba1a1a' }}>{row.health_score >= 80 ? 'Optimal' : row.health_score >= 50 ? 'Stable' : 'Delayed Risk'}</Text>
                   </View>
                 </View>
               ))}

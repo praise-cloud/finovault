@@ -45,7 +45,7 @@ export default function LinkedAccounts() {
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {loading ? (
           <View className="flex-1 items-center justify-center mt-20">
-            <ActivityIndicator size="large" color="#00705e" />
+            <ActivityIndicator size="large" color="#1A1A1A" />
           </View>
         ) : (
           <View className="mt-4 mb-6">
@@ -86,7 +86,7 @@ export default function LinkedAccounts() {
 
             <View className="bg-white border border-outline-variant/20 rounded-2xl p-5 mt-4">
               <View className="flex-row items-center gap-2 mb-3">
-                <MaterialIcons name="info" size={16} color="#006b5a" />
+                <MaterialIcons name="info" size={16} color="#D4AF37" />
                 <Text className="font-label-md font-bold text-primary">Link a New Bank</Text>
               </View>
               <Text className="text-body-md text-on-surface-variant text-sm mb-4">Connect your bank accounts to get a complete view of your finances. We use bank-grade encryption (AES-256) to protect your data.</Text>

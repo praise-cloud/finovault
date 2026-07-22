@@ -34,7 +34,7 @@ export default function FinancialInterview() {
       setLoading(true);
       try {
         await submitFinancialInterview(answers);
-        router.replace('/preferences');
+        router.replace('/signup');
       } catch {
         // silently fail
       } finally {
@@ -179,7 +179,7 @@ export default function FinancialInterview() {
         <View className="mb-8">
           <View className="flex-row items-center gap-3 mb-2">
             <View className="w-10 h-10 rounded-full bg-secondary-container items-center justify-center">
-              <MaterialIcons name={STEPS[step].icon as any} size={20} color="#00705e" />
+              <MaterialIcons name={STEPS[step].icon as any} size={20} color="#1A1A1A" />
             </View>
             <Text className="font-headline-lg text-headline-lg text-primary font-bold">{STEPS[step].title}</Text>
           </View>

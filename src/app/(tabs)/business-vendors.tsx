@@ -44,7 +44,7 @@ export default function BusinessVendors() {
   if (loading) {
     return (
       <View className="flex-1 bg-surface-bright items-center justify-center">
-        <ActivityIndicator size="large" color="#006b5a" />
+        <ActivityIndicator size="large" color="#D4AF37" />
       </View>
     );
   }
@@ -108,7 +108,7 @@ export default function BusinessVendors() {
           {vendors.map((vendor: any, i: number) => (
             <View key={vendor.id || i} className="bg-surface-container-low rounded-2xl p-4 flex-row items-center gap-4" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
               <View className="w-12 h-12 rounded-full bg-secondary-container items-center justify-center">
-                <MaterialIcons name="business" size={22} color="#00705e" />
+                <MaterialIcons name="business" size={22} color="#1A1A1A" />
               </View>
               <View className="flex-1">
                 <Text className="font-label-md text-label-md text-primary font-bold">{vendor.name}</Text>

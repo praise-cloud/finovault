@@ -7,24 +7,24 @@ logger = setup_logger("financial_coach")
 
 
 class FinancialCoach:
-    async def answer(self, request: CoachRequest) -> CoachResponse:
+    async def answer(self, request: CoachRequest, user_id: str) -> CoachResponse:
         supabase = get_supabase()
 
         profile = supabase.table("profiles") \
             .select("*") \
-            .eq("id", request.user_id) \
+            .eq("id", user_id) \
             .execute()
 
         transactions = supabase.table("transactions") \
             .select("type, amount, category, merchant, date") \
-            .eq("user_id", request.user_id) \
+            .eq("user_id", user_id) \
             .order("date", desc=True) \
             .limit(30) \
             .execute()
 
         goals = supabase.table("savings_goals") \
             .select("*") \
-            .eq("user_id", request.user_id) \
+            .eq("user_id", user_id) \
             .execute()
 
         user_name = profile.data[0]["full_name"] if profile.data else "User"
@@ -100,18 +100,22 @@ class FinancialCoach:
                 f"What specific area would you like to focus on?"
             )
 
-        supabase.table("ai_conversations").insert({
-            "user_id": request.user_id,
-            "session_id": request.user_id,
-            "role": "assistant",
-            "content": answer,
-            "context": {
-                "user_name": user_name,
-                "total_spent": total_spent,
-                "total_income": total_income,
-                "total_saved": total_saved,
-                "question_asked": request.question,
-            },
-        }).execute()
+        # Insert placeholder before returning, so a DB failure doesn't lose the response
+        try:
+            supabase.table("ai_conversations").insert({
+                "user_id": user_id,
+                "session_id": user_id,
+                "role": "assistant",
+                "content": answer,
+                "context": {
+                    "user_name": user_name,
+                    "total_spent": total_spent,
+                    "total_income": total_income,
+                    "total_saved": total_saved,
+                    "question_asked": request.question,
+                },
+            }).execute()
+        except Exception as db_err:
+            logger.warning(f"Failed to persist conversation for user {user_id}: {db_err}")
 
         return CoachResponse(answer=answer, suggestions=suggestions)

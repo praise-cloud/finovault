@@ -6,18 +6,18 @@ logger = setup_logger("business_advisor")
 
 
 class BusinessAdvisor:
-    async def advise(self, request: BusinessAdviceRequest) -> BusinessAdviceResponse:
+    async def advise(self, request: BusinessAdviceRequest, user_id: str) -> BusinessAdviceResponse:
         supabase = get_supabase()
 
         tx_result = supabase.table("transactions") \
             .select("type, amount") \
-            .eq("user_id", request.user_id) \
+            .eq("user_id", user_id) \
             .limit(100) \
             .execute()
 
         vendor_result = supabase.table("vendors") \
             .select("*") \
-            .eq("user_id", request.user_id) \
+            .eq("user_id", user_id) \
             .execute()
 
         transactions = tx_result.data or []

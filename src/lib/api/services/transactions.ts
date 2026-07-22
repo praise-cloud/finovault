@@ -49,11 +49,11 @@ export async function listTransactions(params?: {
   start_date?: string;
   end_date?: string;
   status?: string;
-}): Promise<TransactionListResponse> {
+}, options?: { signal?: AbortSignal }): Promise<TransactionListResponse> {
   const query = params ? '?' + new URLSearchParams(
     Object.fromEntries(Object.entries(params).filter(([_, v]) => v != null).map(([k, v]) => [k, String(v)]))
   ).toString() : '';
-  return apiClient.get<TransactionListResponse>(`${ENDPOINTS.transactions.list}${query}`);
+  return apiClient.get<TransactionListResponse>(`${ENDPOINTS.transactions.list}${query}`, options);
 }
 
 export async function getTransaction(id: string): Promise<Transaction> {

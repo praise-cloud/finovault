@@ -14,9 +14,10 @@ export function errorHandler(err: Error, _req: Request, res: Response, _next: Ne
     return;
   }
 
-  logger.error('Unexpected error', {
+  logger.error('Unexpected error — restart recommended', {
     message: err.message,
     stack: err.stack,
+    name: err.name,
   });
 
   sendError(res, 500, 'INTERNAL_ERROR', 'An unexpected error occurred');

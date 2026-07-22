@@ -49,7 +49,7 @@ export function AnimatedIcon() {
 const styles = StyleSheet.create({
   backgroundSolidColor: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: '#208AEF',
+    backgroundColor: '#0A1F5C',
     zIndex: 1000,
   },
 });

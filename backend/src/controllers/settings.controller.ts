@@ -20,6 +20,24 @@ export async function updateTwoFactor(req: Request, res: Response): Promise<void
   sendSuccess(res, result);
 }
 
+export async function enableTwoFactorWithCodes(req: Request, res: Response): Promise<void> {
+  const userId = req.user!.id;
+  const result = await settingsService.enableTwoFactorWithCodes(userId, req.body.method);
+  sendSuccess(res, result);
+}
+
+export async function verifyRecoveryCode(req: Request, res: Response): Promise<void> {
+  const userId = req.user!.id;
+  const valid = await settingsService.verifyRecoveryCode(userId, req.body.code);
+  sendSuccess(res, { valid });
+}
+
+export async function getRecoveryCodesStatus(req: Request, res: Response): Promise<void> {
+  const userId = req.user!.id;
+  const result = await settingsService.getRecoveryCodesStatus(userId);
+  sendSuccess(res, result);
+}
+
 export async function updateGuardrails(req: Request, res: Response): Promise<void> {
   const userId = req.user!.id;
   const result = await settingsService.updateGuardrails(userId, req.body.guardrails);

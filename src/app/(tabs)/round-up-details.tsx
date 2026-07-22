@@ -20,7 +20,7 @@ export default function RoundUpDetails() {
   if (loading) {
     return (
       <View className="flex-1 bg-surface-bright items-center justify-center">
-        <ActivityIndicator size="large" color="#006b5a" />
+        <ActivityIndicator size="large" color="#D4AF37" />
       </View>
     );
   }
@@ -41,14 +41,14 @@ export default function RoundUpDetails() {
         <View className="flex-row gap-4 mt-6 mb-8">
           <View className="flex-1 bg-surface-container-low rounded-2xl p-5" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
             <View className="flex-row items-center gap-2 mb-3">
-              <MaterialIcons name="savings" size={20} color="#006b5a" />
+              <MaterialIcons name="savings" size={20} color="#D4AF37" />
               <Text className="font-label-md text-label-md text-on-surface-variant">Total Saved</Text>
             </View>
             <Text className="font-display-md text-display-md text-primary font-bold">${totalSaved.toFixed(2)}</Text>
           </View>
           <View className="flex-1 bg-surface-container-low rounded-2xl p-5" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
             <View className="flex-row items-center gap-2 mb-3">
-              <MaterialIcons name="receipt-long" size={20} color="#006b5a" />
+              <MaterialIcons name="receipt-long" size={20} color="#D4AF37" />
               <Text className="font-label-md text-label-md text-on-surface-variant">Round-ups</Text>
             </View>
             <Text className="font-display-md text-display-md text-primary font-bold">{roundUps.length}</Text>
@@ -62,12 +62,12 @@ export default function RoundUpDetails() {
             <View key={item.id} className="bg-surface-container-low rounded-2xl p-4" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
               <View className="flex-row items-center justify-between mb-2">
                 <Text className="font-label-md text-label-md text-primary font-bold flex-1">Round-up Saving</Text>
-                <Text className="font-label-md text-label-md font-bold" style={{ color: '#006b5a' }}>+${Number(item.amount).toFixed(2)}</Text>
+                <Text className="font-label-md text-label-md font-bold" style={{ color: '#D4AF37' }}>+${Number(item.amount).toFixed(2)}</Text>
               </View>
               <View className="flex-row items-center justify-between">
                 <Text className="text-caption text-on-surface-variant">{new Date(item.date).toLocaleDateString()}</Text>
-                <View className="px-2 py-0.5 rounded-full bg-[#006b5a20]">
-                  <Text className="text-caption text-[#006b5a]">Saved</Text>
+                <View className="px-2 py-0.5 rounded-full bg-[#D4AF3720]">
+                  <Text className="text-caption text-[#D4AF37]">Saved</Text>
                 </View>
               </View>
             </View>

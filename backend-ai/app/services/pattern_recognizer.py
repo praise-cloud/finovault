@@ -7,12 +7,12 @@ logger = setup_logger("pattern_recognizer")
 
 
 class PatternRecognizer:
-    async def analyze(self, request: PatternAnalysisRequest) -> PatternAnalysisResponse:
+    async def analyze(self, request: PatternAnalysisRequest, user_id: str) -> PatternAnalysisResponse:
         supabase = get_supabase()
 
         result = supabase.table("transactions") \
             .select("*") \
-            .eq("user_id", request.user_id) \
+            .eq("user_id", user_id) \
             .order("date", desc=True) \
             .limit(500) \
             .execute()
@@ -36,7 +36,7 @@ class PatternRecognizer:
 
         for p in patterns:
             supabase.table("behavior_patterns").upsert({
-                "user_id": request.user_id,
+                "user_id": user_id,
                 "pattern_type": p["type"],
                 "pattern_name": p["name"],
                 "description": p["description"],

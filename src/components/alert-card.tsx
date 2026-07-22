@@ -17,7 +17,7 @@ const CONFIG = {
     icon: 'check-circle' as const,
     bg: 'bg-secondary-container',
     border: 'border-secondary',
-    iconColor: '#00705e',
+    iconColor: '#1A1A1A',
     titleColor: 'text-on-secondary-container',
   },
   error: {
@@ -38,7 +38,7 @@ const CONFIG = {
     icon: 'info' as const,
     bg: 'bg-primary-container',
     border: 'border-primary',
-    iconColor: '#000f22',
+    iconColor: '#0A1F5C',
     titleColor: 'text-on-primary-container',
   },
 };

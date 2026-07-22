@@ -44,7 +44,7 @@ export default function FinancialProfile() {
   if (loading) {
     return (
       <View className="flex-1 bg-surface-bright items-center justify-center">
-        <ActivityIndicator size="large" color="#006b5a" />
+        <ActivityIndicator size="large" color="#D4AF37" />
       </View>
     );
   }

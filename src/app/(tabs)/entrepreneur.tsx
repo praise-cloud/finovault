@@ -26,7 +26,7 @@ export default function EntrepreneurDashboard() {
   if (!data) {
     return (
       <View className="flex-1 bg-surface-bright items-center justify-center">
-        <ActivityIndicator size="large" color="#006b5a" />
+        <ActivityIndicator size="large" color="#D4AF37" />
       </View>
     );
   }
@@ -66,7 +66,7 @@ export default function EntrepreneurDashboard() {
               </Text>
             </View>
             <View className="w-10 h-10 rounded-full bg-secondary-container border-2 border-white items-center justify-center overflow-hidden">
-              <MaterialIcons name="person" size={20} color="#00705e" />
+              <MaterialIcons name="person" size={20} color="#1A1A1A" />
             </View>
           </View>
         </View>
@@ -124,7 +124,7 @@ export default function EntrepreneurDashboard() {
                       <MaterialIcons
                         name="arrow-upward"
                         size={18}
-                        color="#00705e"
+                        color="#1A1A1A"
                       />
                       <Text className="text-on-secondary-container font-label-md">
                         {d.mrr_growth}% vs LY
@@ -168,7 +168,7 @@ export default function EntrepreneurDashboard() {
               <View className="relative overflow-hidden">
                 <View className="relative z-10">
                   <View className="flex-row items-center gap-2 mb-6">
-                    <MaterialIcons name="stars" size={20} color="#58fbda" />
+                    <MaterialIcons name="stars" size={20} color="#F4D35E" />
                     <Text className="font-label-md text-on-primary-container uppercase tracking-widest">
                       Grant Insight
                     </Text>
@@ -208,7 +208,7 @@ export default function EntrepreneurDashboard() {
 
             <BentoCard>
               <View className="flex-row items-center gap-2 mb-4">
-                <MaterialIcons name="verified-user" size={20} color="#006b5a" />
+                <MaterialIcons name="verified-user" size={20} color="#D4AF37" />
                 <Text className="font-label-md text-primary">
                   Smart Savings
                 </Text>
@@ -255,7 +255,7 @@ export default function EntrepreneurDashboard() {
                       {person.role}
                     </Text>
                   </View>
-                  <MaterialIcons name="chat" size={20} color="#000f22" />
+                  <MaterialIcons name="chat" size={20} color="#0A1F5C" />
                 </View>
               ))}
               <View className="mt-8 pt-6 border-t border-surface-variant/50">
@@ -364,7 +364,7 @@ export default function EntrepreneurDashboard() {
                       <MaterialIcons
                         name="tips-and-updates"
                         size={18}
-                        color="#00705e"
+                        color="#1A1A1A"
                       />{" "}
                       Rebalancing suggested for Q4 based on female-led VC
                       trends.

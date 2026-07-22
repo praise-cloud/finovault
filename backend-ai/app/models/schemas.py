@@ -1,15 +1,21 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import Any
 
 
 class FraudCheckRequest(BaseModel):
-    user_id: str
-    amount: float
-    merchant: str | None = None
-    category: str | None = None
-    location: str | None = None
+    amount: float = Field(gt=0)
+    merchant: str | None = Field(None, max_length=200)
+    category: str | None = Field(None, max_length=100)
+    location: str | None = Field(None, max_length=200)
     device_id: str | None = None
-    receiver: str | None = None
+    receiver: str | None = Field(None, max_length=200)
+
+    @field_validator("amount")
+    @classmethod
+    def validate_amount(cls, v: float) -> float:
+        if v <= 0:
+            raise ValueError("amount must be positive")
+        return round(v, 2)
 
 
 class FraudCheckResponse(BaseModel):
@@ -21,8 +27,7 @@ class FraudCheckResponse(BaseModel):
 
 
 class CoachRequest(BaseModel):
-    user_id: str
-    question: str
+    question: str = Field(min_length=1, max_length=2000)
     context: dict[str, Any] | None = None
 
 
@@ -32,7 +37,6 @@ class CoachResponse(BaseModel):
 
 
 class PatternAnalysisRequest(BaseModel):
-    user_id: str
     force: bool = False
 
 
@@ -42,8 +46,7 @@ class PatternAnalysisResponse(BaseModel):
 
 
 class BusinessAdviceRequest(BaseModel):
-    user_id: str
-    question: str
+    question: str = Field(min_length=1, max_length=2000)
     business_data: dict[str, Any] | None = None
 
 

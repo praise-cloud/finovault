@@ -15,7 +15,7 @@ class FraudDetector:
             n_estimators=100,
         )
 
-    async def analyze(self, request: FraudCheckRequest) -> FraudCheckResponse:
+    async def analyze(self, request: FraudCheckRequest, user_id: str) -> FraudCheckResponse:
         signals = []
         risk_score = 0.0
 
@@ -23,7 +23,7 @@ class FraudDetector:
 
         result = supabase.table("transactions") \
             .select("amount") \
-            .eq("user_id", request.user_id) \
+            .eq("user_id", user_id) \
             .order("date", desc=True) \
             .limit(100) \
             .execute()
@@ -54,7 +54,7 @@ class FraudDetector:
         if request.device_id:
             metrics = supabase.table("security_metrics") \
                 .select("active_devices") \
-                .eq("user_id", request.user_id) \
+                .eq("user_id", user_id) \
                 .execute()
 
             if metrics.data:

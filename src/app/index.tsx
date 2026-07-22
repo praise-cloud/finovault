@@ -13,7 +13,6 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { MaterialIcons } from '@expo/vector-icons';
-import { playSound } from '@/lib/sounds';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -22,19 +21,16 @@ const SLIDES = [
     title: 'Smart Financial AI',
     subtitle: 'Finovault uses advanced AI to analyze your finances, predict market trends, and optimize your wealth in real time.',
     icon: 'auto-awesome' as const,
-    animationDelay: 0,
   },
   {
     title: 'Bank-Grade Protection',
     subtitle: 'Enterprise-level fraud detection and AES-256 encryption keep your assets safe, monitored 24/7 by our neural network.',
     icon: 'shield' as const,
-    animationDelay: 1000,
   },
   {
     title: 'Intelligent Growth',
     subtitle: 'Personalized AI-driven suggestions, smart savings automation, and a complete view of your financial health in one place.',
-    icon: 'auto-awesome' as const,
-    animationDelay: 2000,
+    icon: 'trending-up' as const,
   },
 ];
 
@@ -78,10 +74,6 @@ export default function WelcomeTour() {
     return () => clearInterval(id);
   }, [goToSlide]);
 
-  useEffect(() => {
-    playSound('welcome');
-  }, []);
-
   const carouselStyle = useAnimatedStyle(() => ({ transform: [{ translateX: translateX.value }] }));
 
   const handleSkip = () => {
@@ -89,19 +81,19 @@ export default function WelcomeTour() {
   };
 
   return (
-    <View className="flex-1 bg-primary">
-      <View className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-white/5" />
-      <View className="absolute top-1/3 -left-20 w-56 h-56 rounded-full bg-white/5" />
-      <View className="absolute bottom-40 -right-16 w-48 h-48 rounded-full bg-white/5" />
+    <View className="flex-1 bg-[#0A1F5C]">
+      <View className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[#08142E]" />
+      <View className="absolute top-1/3 -left-20 w-56 h-56 rounded-full bg-[#08142E]" />
+      <View className="absolute bottom-40 -right-16 w-48 h-48 rounded-full bg-[#08142E]" />
 
-      <Pressable onPress={handleSkip} className="absolute top-14 right-5 z-10 px-5 py-2 rounded-full bg-white/15 active:scale-95">
+      <Pressable onPress={handleSkip} className="absolute top-14 right-5 z-10 px-5 py-2 rounded-full border border-[#D4AF37]/30 active:scale-95">
         <Text className="text-white font-label-md font-bold">Skip</Text>
       </Pressable>
 
       <View className="flex-1 justify-center">
         <View className="items-center mt-16 mb-6">
-          <View className="w-20 h-20 rounded-2xl bg-white/20 items-center justify-center mb-3" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.2, shadowRadius: 24, elevation: 8 }}>
-            <Text className="text-white font-bold text-4xl">F</Text>
+          <View className="w-20 h-20 rounded-2xl bg-[#D4AF37]/20 items-center justify-center mb-3" style={{ shadowColor: '#D4AF37', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.2, shadowRadius: 24, elevation: 8 }}>
+            <Text className="text-[#D4AF37] font-bold text-4xl">F</Text>
           </View>
           <Text className="font-headline-lg text-headline-lg text-white font-bold">Finovault AI</Text>
         </View>
@@ -112,8 +104,8 @@ export default function WelcomeTour() {
               <View key={index} style={{ width: SCREEN_WIDTH }} className="items-center justify-center px-8 py-8">
                 <View className="items-center">
                   <Animated.View style={[floatStyles[index], { marginBottom: 24 }]}>
-                    <View className="w-36 h-36 rounded-full bg-white/15 items-center justify-center">
-                      <MaterialIcons name={slide.icon} size={56} color="#ffffff" />
+                    <View className="w-36 h-36 rounded-full bg-[#D4AF37]/10 items-center justify-center">
+                      <MaterialIcons name={slide.icon} size={56} color="#D4AF37" />
                     </View>
                   </Animated.View>
                   <Text className="font-headline-md text-headline-md text-white font-bold mb-3 text-center">{slide.title}</Text>
@@ -127,7 +119,7 @@ export default function WelcomeTour() {
         <View className="flex-row justify-center gap-2 mt-4 mb-8">
           {SLIDES.map((_, index) => (
             <Pressable key={index} onPress={() => goToSlide(index)}>
-              <View className={`rounded-full ${index === currentIndex ? 'w-6 bg-white' : 'w-2 h-2 bg-white/30'}`} style={{ height: 8 }} />
+              <View className={`rounded-full ${index === currentIndex ? 'w-6 bg-[#D4AF37]' : 'w-2 h-2 bg-white/30'}`} style={{ height: 8 }} />
             </Pressable>
           ))}
         </View>
@@ -135,14 +127,13 @@ export default function WelcomeTour() {
         <View className="px-8 max-w-sm mx-auto w-full">
           <Pressable
             onPress={() => {
-              playSound('open');
               router.replace('/getting-started');
             }}
-            className="w-full py-4 rounded-xl bg-white items-center justify-center flex-row active:scale-[0.98]"
-            style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowRadius: 14, elevation: 4 }}
+            className="w-full py-4 rounded-xl bg-[#D4AF37] items-center justify-center flex-row active:scale-[0.98]"
+            style={{ shadowColor: '#D4AF37', shadowOffset: { width: 0, height: 4 }, shadowRadius: 14, elevation: 4 }}
           >
-            <Text className="font-label-md text-label-md text-primary mr-2 font-bold">Get Started</Text>
-            <MaterialIcons name="arrow-forward" size={20} color="#006b5a" />
+            <Text className="font-label-md text-label-md text-[#1A1A1A] mr-2 font-bold">Get Started</Text>
+            <MaterialIcons name="arrow-forward" size={20} color="#1A1A1A" />
           </Pressable>
         </View>
       </View>

@@ -18,7 +18,7 @@ export default function BusinessForecast() {
   if (loading) {
     return (
       <View className="flex-1 bg-surface-bright items-center justify-center">
-        <ActivityIndicator size="large" color="#006b5a" />
+        <ActivityIndicator size="large" color="#D4AF37" />
       </View>
     );
   }
@@ -44,7 +44,7 @@ export default function BusinessForecast() {
         {forecast?.summary && (
           <View className="bg-surface-container-low rounded-2xl p-6 mb-6" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
             <View className="flex-row items-center gap-3 mb-4">
-              <MaterialIcons name="insights" size={28} color="#006b5a" />
+              <MaterialIcons name="insights" size={28} color="#D4AF37" />
               <Text className="font-headline-md text-headline-md text-primary font-bold">Summary</Text>
             </View>
             <Text className="font-body-md text-body-md text-on-surface">{forecast.summary}</Text>
@@ -59,8 +59,8 @@ export default function BusinessForecast() {
             </Text>
             {forecast.growth_rate !== undefined && (
               <View className="flex-row items-center gap-1 mt-2">
-                <MaterialIcons name={forecast.growth_rate >= 0 ? 'arrow-upward' : 'arrow-downward'} size={16} color={forecast.growth_rate >= 0 ? '#006b5a' : '#9f4e3c'} />
-                <Text className="font-label-md text-label-md" style={{ color: forecast.growth_rate >= 0 ? '#006b5a' : '#9f4e3c' }}>
+                <MaterialIcons name={forecast.growth_rate >= 0 ? 'arrow-upward' : 'arrow-downward'} size={16} color={forecast.growth_rate >= 0 ? '#D4AF37' : '#9f4e3c'} />
+                <Text className="font-label-md text-label-md" style={{ color: forecast.growth_rate >= 0 ? '#D4AF37' : '#9f4e3c' }}>
                   {forecast.growth_rate >= 0 ? '+' : ''}{forecast.growth_rate.toFixed(1)}% vs last period
                 </Text>
               </View>
@@ -76,7 +76,7 @@ export default function BusinessForecast() {
                 <View key={i} className="bg-surface-container-low rounded-2xl p-4" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
                   <View className="flex-row items-center justify-between mb-2">
                     <Text className="font-label-md text-label-md text-primary font-bold">{month.month}</Text>
-                    <Text className="font-label-md text-label-md font-bold" style={{ color: month.revenue >= 0 ? '#006b5a' : '#9f4e3c' }}>
+                    <Text className="font-label-md text-label-md font-bold" style={{ color: month.revenue >= 0 ? '#D4AF37' : '#9f4e3c' }}>
                       ${month.revenue.toLocaleString()}
                     </Text>
                   </View>
@@ -94,7 +94,7 @@ export default function BusinessForecast() {
             <Text className="font-headline-md text-headline-md text-primary font-bold mb-4">Recommendations</Text>
             {forecast.recommendations.map((rec: string, i: number) => (
               <View key={i} className="bg-surface-container-low rounded-2xl p-4 flex-row items-start gap-3 mb-3" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
-                <MaterialIcons name="check-circle" size={20} color="#006b5a" style={{ marginTop: 2 }} />
+                <MaterialIcons name="check-circle" size={20} color="#D4AF37" style={{ marginTop: 2 }} />
                 <Text className="font-body-md text-body-md text-on-surface flex-1">{rec}</Text>
               </View>
             ))}

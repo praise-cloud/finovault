@@ -67,7 +67,7 @@ export default function TwoFactorAuth() {
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {loading ? (
           <View className="flex-1 items-center justify-center mt-20">
-            <ActivityIndicator size="large" color="#00705e" />
+            <ActivityIndicator size="large" color="#1A1A1A" />
           </View>
         ) : (
           <View className="mt-4">
@@ -75,7 +75,7 @@ export default function TwoFactorAuth() {
               <View className="flex-row items-center justify-between mb-4">
                 <View className="flex-row items-center gap-2">
                   <View className="w-10 h-10 rounded-xl bg-secondary-container items-center justify-center">
-                    <MaterialIcons name="lock-open" size={20} color="#00705e" />
+                    <MaterialIcons name="lock-open" size={20} color="#1A1A1A" />
                   </View>
                   <View>
                     <Text className="font-headline-md text-primary font-bold">Status</Text>
@@ -92,7 +92,7 @@ export default function TwoFactorAuth() {
 
               {enabled && (
                 <View className="bg-surface-container-low rounded-xl p-3 flex-row items-center gap-2">
-                  <MaterialIcons name="check-circle" size={16} color="#006b5a" />
+                  <MaterialIcons name="check-circle" size={16} color="#D4AF37" />
                   <Text className="text-secondary font-label-md text-sm font-bold">Two-factor authentication is active</Text>
                 </View>
               )}
@@ -108,7 +108,7 @@ export default function TwoFactorAuth() {
                   {method === 'app' && <View className="w-3 h-3 rounded-full bg-secondary" />}
                 </View>
                 <View className="w-10 h-10 rounded-xl bg-primary-container items-center justify-center">
-                  <MaterialIcons name="smartphone" size={20} color="#000f22" />
+                  <MaterialIcons name="smartphone" size={20} color="#0A1F5C" />
                 </View>
                 <View className="flex-1">
                   <Text className="font-label-md font-bold text-primary">Authenticator App</Text>
@@ -123,7 +123,7 @@ export default function TwoFactorAuth() {
                   {method === 'sms' && <View className="w-3 h-3 rounded-full bg-secondary" />}
                 </View>
                 <View className="w-10 h-10 rounded-xl bg-primary-container items-center justify-center">
-                  <MaterialIcons name="sms" size={20} color="#000f22" />
+                  <MaterialIcons name="sms" size={20} color="#0A1F5C" />
                 </View>
                 <View className="flex-1">
                   <Text className="font-label-md font-bold text-primary">SMS Text Message</Text>
@@ -134,7 +134,7 @@ export default function TwoFactorAuth() {
 
             <View className="bg-white border border-outline-variant/20 rounded-2xl p-5 mb-4">
               <View className="flex-row items-center gap-2 mb-3">
-                <MaterialIcons name="info" size={16} color="#006b5a" />
+                <MaterialIcons name="info" size={16} color="#D4AF37" />
                 <Text className="font-label-md font-bold text-primary">Recovery Codes</Text>
               </View>
               <Text className="text-body-md text-on-surface-variant text-sm mb-4">Save these recovery codes in a secure place. Each code can only be used once.</Text>

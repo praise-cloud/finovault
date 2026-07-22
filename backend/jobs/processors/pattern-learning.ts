@@ -9,7 +9,11 @@ export async function processPatternLearning(job: Job) {
 
   log.info(`Learning patterns for user ${userId}`);
 
-  await analyzeUserPatterns(userId);
-
-  return { completed: true };
+  try {
+    await analyzeUserPatterns(userId);
+    return { completed: true };
+  } catch (error: any) {
+    log.error(`Pattern learning failed for user ${userId}`, { error: error.message });
+    throw error;
+  }
 }

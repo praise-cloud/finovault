@@ -44,7 +44,7 @@ export default function SavingsGoalsScreen() {
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
             <Pressable onPress={() => router.back()} className="active:scale-90">
-              <MaterialIcons name="arrow-back" size={24} color="#000f22" />
+              <MaterialIcons name="arrow-back" size={24} color="#0A1F5C" />
             </Pressable>
             <Text className="font-headline-md text-primary font-bold">Savings Goals</Text>
           </View>
@@ -58,7 +58,7 @@ export default function SavingsGoalsScreen() {
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }}>
         {isLoading ? (
           <View className="flex-1 items-center justify-center py-20">
-            <ActivityIndicator size="large" color="#006b5a" />
+            <ActivityIndicator size="large" color="#D4AF37" />
           </View>
         ) : goals.length === 0 ? (
           <View className="flex-1 items-center justify-center py-20">
@@ -79,7 +79,7 @@ export default function SavingsGoalsScreen() {
                       <View className="flex-row items-center gap-2">
                         <Text className="font-headline-md text-primary font-bold">{goal.name}</Text>
                         {goal.status === 'completed' && (
-                          <MaterialIcons name="check-circle" size={18} color="#006b5a" />
+                          <MaterialIcons name="check-circle" size={18} color="#D4AF37" />
                         )}
                       </View>
                       <Text className="text-caption text-on-surface-variant mt-1">

@@ -27,7 +27,7 @@ export default function SmartSavings() {
   }, [data]);
 
   if (!data) {
-    return <View className="flex-1 bg-surface-bright items-center justify-center"><ActivityIndicator size="large" color="#006b5a" /></View>;
+    return <View className="flex-1 bg-surface-bright items-center justify-center"><ActivityIndicator size="large" color="#D4AF37" /></View>;
   }
 
   const d = data;
@@ -77,10 +77,10 @@ export default function SmartSavings() {
         <View className="gap-gutter">
           <View className="flex-row flex-wrap" style={{ gap: 24 }}>
             <View className="bg-surface-container-lowest rounded-xl p-md border border-outline-variant/30 relative overflow-hidden" style={[{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }, isMd ? { flex: 2 } : { width: '100%' }]}>
-              <View className="absolute top-0 right-0 p-md opacity-10"><MaterialIcons name="umbrella" size={120} color="#006b5a" /></View>
+              <View className="absolute top-0 right-0 p-md opacity-10"><MaterialIcons name="umbrella" size={120} color="#D4AF37" /></View>
               <View>
                 <View className="flex-row items-center gap-2 mb-md">
-                  <MaterialIcons name="water" size={24} color="#006b5a" />
+                  <MaterialIcons name="water" size={24} color="#D4AF37" />
                   <Text className="font-headline-md text-headline-md">Rainy Day Fund</Text>
                 </View>
                 <View className="mb-lg">
@@ -89,7 +89,7 @@ export default function SmartSavings() {
                     <Text className="font-label-md text-label-md text-on-surface-variant mb-2">Goal: ${d?.rainy_day_fund.target_amount.toLocaleString() || '$12,000'}</Text>
                   </View>
                   <View className="w-full bg-surface-container-high h-4 rounded-full overflow-hidden">
-                    <Animated.View className="h-full rounded-full" style={{ width: progressWidth, backgroundColor: '#58fbda' }} />
+                    <Animated.View className="h-full rounded-full" style={{ width: progressWidth, backgroundColor: '#F4D35E' }} />
                   </View>
                   <View className="flex-row justify-between mt-sm">
                     <Text className="font-label-md text-label-md text-secondary">{Math.round(goalPct)}% Reached</Text>
@@ -106,7 +106,7 @@ export default function SmartSavings() {
                   </View>
                 </View>
                 <View className="flex-row items-center gap-3 bg-surface-container px-4 py-2 rounded-lg">
-                  <MaterialIcons name="lock" size={18} color="#0a2540" />
+                  <MaterialIcons name="lock" size={18} color="#08142E" />
                   <View>
                     <Text className="text-caption font-caption text-on-surface-variant">Status</Text>
                     <Text className="font-label-md text-label-md text-secondary">Safe & Growing</Text>
@@ -116,10 +116,10 @@ export default function SmartSavings() {
             </View>
 
             <View className="bg-primary-container rounded-xl p-md relative overflow-hidden" style={isMd ? { flex: 1 } : { width: '100%' }}>
-              <View style={{ position: 'absolute', top: -48, right: -48, width: 192, height: 192, borderRadius: 96, backgroundColor: '#006b5a', opacity: 0.2 }} />
+              <View style={{ position: 'absolute', top: -48, right: -48, width: 192, height: 192, borderRadius: 96, backgroundColor: '#D4AF37', opacity: 0.2 }} />
               <View>
                 <View className="flex-row items-center gap-2 mb-md">
-                  <MaterialIcons name="auto-awesome" size={20} color="#58fbda" />
+                  <MaterialIcons name="auto-awesome" size={20} color="#F4D35E" />
                   <Text className="font-label-md text-label-md text-secondary-fixed uppercase font-bold tracking-widest">AI Suggestion</Text>
                 </View>
                 <Text className="font-headline-md text-headline-md text-on-primary mb-md">{d?.ai_suggestion?.title || 'No AI suggestions yet.'}</Text>
@@ -161,12 +161,12 @@ export default function SmartSavings() {
 
             <View className="gap-gutter" style={isMd ? { flex: 5 } : { width: '100%' }}>
               <View className="bg-surface-container-lowest rounded-xl p-md border border-outline-variant/30 items-center" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}>
-                <View className="mb-sm"><MaterialIcons name="savings" size={48} color="#006b5a" /></View>
+                <View className="mb-sm"><MaterialIcons name="savings" size={48} color="#D4AF37" /></View>
                 <Text className="font-label-md text-label-md text-on-surface-variant mb-1">Total Savings Impact</Text>
                 <Text className="font-headline-lg text-headline-lg text-primary">${(d?.total_savings_impact || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</Text>
                 {d?.savings_trend ? (
                 <View className="flex-row items-center gap-1 mt-2">
-                  <MaterialIcons name="arrow-upward" size={14} color="#006b5a" />
+                  <MaterialIcons name="arrow-upward" size={14} color="#D4AF37" />
                   <Text className="text-caption font-caption text-secondary">{d.savings_trend}% increase from last quarter</Text>
                 </View>
                 ) : null}

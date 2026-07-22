@@ -42,14 +42,14 @@ export default function Security() {
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {loading ? (
           <View className="flex-1 items-center justify-center mt-20">
-            <ActivityIndicator size="large" color="#00705e" />
+            <ActivityIndicator size="large" color="#1A1A1A" />
           </View>
         ) : (
           <View className="mt-4 mb-6">
             <View className="bg-white border border-outline-variant/20 rounded-2xl p-5 mb-4">
               <View className="flex-row items-center gap-3 mb-4">
                 <View className="w-12 h-12 rounded-full bg-secondary-container items-center justify-center">
-                  <MaterialIcons name="shield-moon" size={24} color="#00705e" />
+                  <MaterialIcons name="shield-moon" size={24} color="#1A1A1A" />
                 </View>
                 <View className="flex-1">
                   <Text className="font-headline-md text-primary font-bold">Security Status</Text>

@@ -37,7 +37,7 @@ export default function AccountLink() {
   if (loading) {
     return (
       <View className="flex-1 bg-surface-bright items-center justify-center">
-        <ActivityIndicator size="large" color="#006b5a" />
+        <ActivityIndicator size="large" color="#D4AF37" />
       </View>
     );
   }
@@ -65,7 +65,7 @@ export default function AccountLink() {
             <Text className="font-label-md text-label-md text-primary font-bold mb-3">Already Linked</Text>
             {linkedAccounts.map((acct: any, i: number) => (
               <View key={i} className="bg-surface-container-low rounded-2xl p-4 flex-row items-center gap-3 mb-2" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
-                <MaterialIcons name="check-circle" size={20} color="#006b5a" />
+                <MaterialIcons name="check-circle" size={20} color="#D4AF37" />
                 <View className="flex-1">
                   <Text className="font-label-md text-label-md text-primary font-bold">{acct.bank_name || acct.name || 'Linked Account'}</Text>
                   <Text className="text-caption text-on-surface-variant">
@@ -98,7 +98,7 @@ export default function AccountLink() {
         {selected && (
           <View className="bg-surface-container-low rounded-2xl p-5 mb-6" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
             <View className="flex-row items-center gap-3 mb-4">
-              <MaterialIcons name="security" size={22} color="#006b5a" />
+              <MaterialIcons name="security" size={22} color="#D4AF37" />
               <Text className="font-label-md text-label-md text-primary font-bold">Secure Connection</Text>
             </View>
             <Text className="font-body-md text-body-md text-on-surface-variant mb-4">

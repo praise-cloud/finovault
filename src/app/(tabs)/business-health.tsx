@@ -18,15 +18,15 @@ export default function BusinessHealth() {
   if (loading) {
     return (
       <View className="flex-1 bg-surface-bright items-center justify-center">
-        <ActivityIndicator size="large" color="#006b5a" />
+        <ActivityIndicator size="large" color="#D4AF37" />
       </View>
     );
   }
 
   const metrics = [
-    { label: 'Cash Flow', value: health?.cash_flow, icon: 'account-balance', color: '#006b5a' },
+    { label: 'Cash Flow', value: health?.cash_flow, icon: 'account-balance', color: '#D4AF37' },
     { label: 'Profit Margin', value: health?.profit_margin, icon: 'trending-up', color: '#1b7f63' },
-    { label: 'Revenue Growth', value: health?.revenue_growth, icon: 'bar-chart', color: '#006b5a' },
+    { label: 'Revenue Growth', value: health?.revenue_growth, icon: 'bar-chart', color: '#D4AF37' },
     { label: 'Expense Ratio', value: health?.expense_ratio, icon: 'receipt', color: '#9f4e3c' },
   ];
 
@@ -68,7 +68,7 @@ export default function BusinessHealth() {
           <View className="bg-surface-container-low rounded-2xl p-6 mb-6" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
             <Text className="font-headline-md text-headline-md text-primary font-bold mb-2">Overall Health Score</Text>
             <View className="flex-row items-end gap-3">
-              <Text className="font-display-xl text-display-xl font-bold" style={{ color: health.score >= 70 ? '#006b5a' : health.score >= 40 ? '#b8860b' : '#9f4e3c' }}>
+              <Text className="font-display-xl text-display-xl font-bold" style={{ color: health.score >= 70 ? '#D4AF37' : health.score >= 40 ? '#b8860b' : '#9f4e3c' }}>
                 {health.score}
               </Text>
               <Text className="font-label-md text-label-md text-on-surface-variant mb-2">/ 100</Text>
@@ -78,7 +78,7 @@ export default function BusinessHealth() {
                 className="h-full rounded-full"
                 style={{
                   width: `${health.score}%`,
-                  backgroundColor: health.score >= 70 ? '#006b5a' : health.score >= 40 ? '#b8860b' : '#9f4e3c',
+                  backgroundColor: health.score >= 70 ? '#D4AF37' : health.score >= 40 ? '#b8860b' : '#9f4e3c',
                 }}
               />
             </View>
@@ -90,7 +90,7 @@ export default function BusinessHealth() {
             <Text className="font-headline-md text-headline-md text-primary font-bold mb-2">Insights</Text>
             {health.insights.map((insight: string, i: number) => (
               <View key={i} className="bg-surface-container-low rounded-2xl p-4 flex-row items-start gap-3" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
-                <MaterialIcons name="lightbulb" size={20} color="#006b5a" style={{ marginTop: 2 }} />
+                <MaterialIcons name="lightbulb" size={20} color="#D4AF37" style={{ marginTop: 2 }} />
                 <Text className="font-body-md text-body-md text-on-surface flex-1">{insight}</Text>
               </View>
             ))}

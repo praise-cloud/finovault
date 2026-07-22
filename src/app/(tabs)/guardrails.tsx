@@ -58,7 +58,7 @@ export default function Guardrails() {
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {loading ? (
           <View className="flex-1 items-center justify-center mt-20">
-            <ActivityIndicator size="large" color="#00705e" />
+            <ActivityIndicator size="large" color="#1A1A1A" />
           </View>
         ) : (
           <>
@@ -70,7 +70,7 @@ export default function Guardrails() {
               {guardrails.map((g, i) => (
                 <View key={g.key} className={`flex-row items-center gap-3 p-4 ${i < guardrails.length - 1 ? 'border-b border-outline-variant/10' : ''}`}>
                   <View className={`w-10 h-10 rounded-xl items-center justify-center ${g.enabled ? 'bg-secondary-container' : 'bg-surface-variant'}`}>
-                    <MaterialIcons name={g.icon} size={20} color={g.enabled ? '#00705e' : '#9ea0a5'} />
+                    <MaterialIcons name={g.icon} size={20} color={g.enabled ? '#1A1A1A' : '#9ea0a5'} />
                   </View>
                   <View className="flex-1">
                     <Text className={`font-label-md font-bold ${g.enabled ? 'text-primary' : 'text-on-surface-variant'}`}>{g.label}</Text>

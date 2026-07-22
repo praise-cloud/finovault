@@ -1,12 +1,32 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const TOKEN_KEY = 'finovault_auth_token';
+
 let _token: string | null = null;
 let _baseUrl: string = process.env.EXPO_PUBLIC_API_URL || 'https://finovault.onrender.com/api/v1';
 
-export function setApiToken(token: string | null) {
+export async function setApiToken(token: string | null) {
   _token = token;
+  if (token) {
+    await AsyncStorage.setItem(TOKEN_KEY, token).catch(() => {});
+  } else {
+    await AsyncStorage.removeItem(TOKEN_KEY).catch(() => {});
+  }
 }
 
 export function getApiToken(): string | null {
   return _token;
+}
+
+export async function loadStoredToken(): Promise<string | null> {
+  try {
+    const stored = await AsyncStorage.getItem(TOKEN_KEY);
+    if (stored) {
+      _token = stored;
+      return stored;
+    }
+  } catch {}
+  return null;
 }
 
 interface FetchOptions extends RequestInit {

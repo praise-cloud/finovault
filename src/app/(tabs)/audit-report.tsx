@@ -26,7 +26,7 @@ export default function AuditReport() {
   const getSeverityColor = (s: string) => {
     switch (s) {
       case 'critical': return { bg: 'bg-error-container', text: '#ba1a1a', icon: 'error' as const };
-      case 'warning': return { bg: 'bg-secondary-container', text: '#00705e', icon: 'warning' as const };
+      case 'warning': return { bg: 'bg-secondary-container', text: '#1A1A1A', icon: 'warning' as const };
       default: return { bg: 'bg-primary-container', text: '#ffffff', icon: 'info' as const };
     }
   };
@@ -47,7 +47,7 @@ export default function AuditReport() {
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {loading ? (
           <View className="flex-1 items-center justify-center mt-20">
-            <ActivityIndicator size="large" color="#00705e" />
+            <ActivityIndicator size="large" color="#1A1A1A" />
           </View>
         ) : (
           <>
