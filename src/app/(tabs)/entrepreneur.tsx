@@ -26,7 +26,7 @@ export default function EntrepreneurDashboard() {
   if (!data) {
     return (
       <View className="flex-1 bg-surface-bright items-center justify-center">
-        <ActivityIndicator size="large" color="#D4AF37" />
+        <ActivityIndicator size="large" color="#08142E" />
       </View>
     );
   }
@@ -39,9 +39,7 @@ export default function EntrepreneurDashboard() {
         className="bg-surface-bright pt-14 pb-3 px-margin-mobile md:px-margin-desktop"
         style={{
           elevation: 4,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.04,
+          boxShadow: '0 4px 4px rgba(0,0,0,0.04)',
         }}
       >
         <View
@@ -183,9 +181,7 @@ export default function EntrepreneurDashboard() {
                     onPress={() => router.push("/(tabs)/ai-coach")}
                     className="bg-secondary-fixed py-4 rounded-xl flex-row items-center justify-center gap-2 active:scale-95"
                     style={{
-                      shadowColor: "rgba(88,251,218,0.3)",
-                      shadowOffset: { width: 0, height: 4 },
-                      shadowRadius: 12,
+                      boxShadow: '0 4px 12px rgba(88,251,218,0.3)',
                       elevation: 4,
                     }}
                   >
@@ -208,7 +204,7 @@ export default function EntrepreneurDashboard() {
 
             <BentoCard>
               <View className="flex-row items-center gap-2 mb-4">
-                <MaterialIcons name="verified-user" size={20} color="#D4AF37" />
+                <MaterialIcons name="verified-user" size={20} color="#08142E" />
                 <Text className="font-label-md text-primary">
                   Smart Savings
                 </Text>

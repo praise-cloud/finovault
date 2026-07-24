@@ -26,9 +26,9 @@ export class ErrorBoundary extends Component<PropsWithChildren> {
           </Text>
           <Pressable
             onPress={() => this.setState({ error: null })}
-            style={{ backgroundColor: '#0A1F5C', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12 }}
+            style={{ backgroundColor: '#08142E', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 9999 }}
           >
-            <Text style={{ color: '#fff', fontWeight: '600' }}>Try Again</Text>
+            <Text style={{ color: '#1A1A1A', fontWeight: '600' }}>Try Again</Text>
           </Pressable>
         </View>
       );

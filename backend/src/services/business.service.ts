@@ -1,5 +1,6 @@
 import { getSupabase } from '../config/supabase';
 import { createContextLogger } from '../utils/logger';
+import { aiClient } from '../lib/ai-client';
 
 const log = createContextLogger('BusinessService');
 
@@ -174,7 +175,12 @@ export async function deleteVendor(userId: string, vendorId: string) {
   }
 }
 
-export async function getAiAdvice(userId: string, question: string, _businessData?: Record<string, unknown>) {
+export async function getAiAdvice(
+  userId: string,
+  question: string,
+  _businessData?: Record<string, unknown>,
+  userToken?: string,
+) {
   const supabase = getSupabase();
 
   const [txRes, vendorRes] = await Promise.all([
@@ -191,6 +197,19 @@ export async function getAiAdvice(userId: string, question: string, _businessDat
     .reduce((s: number, t: any) => s + Number(t.amount), 0);
 
   const vendors = vendorRes.data || [];
+
+  if (userToken) {
+    try {
+      const aiResult = await aiClient.getBusinessAdvice(question, { revenue, expenses, vendor_count: vendors.length }, userToken, userId);
+      return {
+        question,
+        answer: aiResult.answer,
+        context: aiResult.metrics,
+      };
+    } catch (error: any) {
+      log.warn(`AI business service unavailable, falling back to local response: ${error.message}`);
+    }
+  }
 
   const q = question.toLowerCase();
   let answer: string;

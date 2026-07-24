@@ -5,12 +5,12 @@ import { createContextLogger } from '../../src/utils/logger';
 const log = createContextLogger('PatternLearningProcessor');
 
 export async function processPatternLearning(job: Job) {
-  const { userId } = job.data;
+  const { userId, userToken } = job.data;
 
   log.info(`Learning patterns for user ${userId}`);
 
   try {
-    await analyzeUserPatterns(userId);
+    await analyzeUserPatterns(userId, userToken);
     return { completed: true };
   } catch (error: any) {
     log.error(`Pattern learning failed for user ${userId}`, { error: error.message });

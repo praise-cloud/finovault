@@ -1,10 +1,12 @@
-import { Input, InputField } from '@gluestack-ui/themed';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { View, Text, Pressable, ScrollView, Alert, ActivityIndicator, useColorScheme } from 'react-native';
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useAuthStore } from '@/stores/auth-store';
 import { signInWithGoogle } from '@/lib/api/services/auth';
+import { TextInput } from '@/components/ui/text-input';
+import { VaultMonogram } from '@/components/vault-monogram';
+import { FlatCard } from '@/components/flat-card';
 
 export default function SignUp() {
   const [name, setName] = useState('');
@@ -12,8 +14,6 @@ export default function SignUp() {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [focusedField, setFocusedField] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const signUp = useAuthStore((s) => s.signUp);
@@ -50,217 +50,172 @@ export default function SignUp() {
     setIsSubmitting(true);
     const error = await signUp({ email, password, fullName: name, phone: phone || undefined });
     setIsSubmitting(false);
-    if (error) {
-      Alert.alert('Sign Up Failed', error);
-      return;
-    }
+    if (error) { Alert.alert('Sign Up Failed', error); return; }
     router.replace('/(tabs)');
   };
 
   const handleGoogleSignIn = async () => {
-    try {
-      await signInWithGoogle();
-    } catch {
-      Alert.alert('Error', 'Failed to sign in with Google');
-    }
+    try { await signInWithGoogle(); }
+    catch { Alert.alert('Error', 'Failed to sign in with Google'); }
   };
 
-  const getFocusBorder = (field: string) =>
-    focusedField === field ? 'border-[#D4AF37]' : errors[field] ? 'border-error' : 'border-outline-variant';
+  const bg = isDark ? '#08142E' : '#F7F9FC';
+  const textColor = isDark ? '#FFFFFF' : '#1A1A1A';
+  const mutedColor = isDark ? 'rgba(255,255,255,0.5)' : '#43474D';
 
   return (
-    <View className={`flex-1 flex-col md:flex-row ${isDark ? 'bg-[#0A1F5C]' : 'bg-background'}`}>
-      <View className="hidden md:flex md:w-1/2 bg-[#0A1F5C] relative overflow-hidden items-center justify-center px-margin-desktop">
-        <View className="relative z-10 max-w-lg">
-          <View className="mb-gutter">
-            <View className="self-start flex-row items-center px-sm py-xs bg-[#D4AF37]/10 border border-[#D4AF37]/20 rounded-full mb-base">
-              <MaterialIcons name="verified-user" size={18} color="#D4AF37" />
-              <Text className="font-label-md text-label-md text-[#D4AF37] ml-xs">Bank-Grade Security</Text>
-            </View>
+    <View className="flex-1" style={{ backgroundColor: bg }}>
+      <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 24 }}>
+        <Pressable
+          onPress={() => router.back()}
+          className="w-10 h-10 rounded-full items-center justify-center active:scale-90 mb-6"
+          style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' }}
+        >
+          <MaterialIcons name="arrow-back" size={22} color={isDark ? '#FFFFFF' : '#0A1F5C'} />
+        </Pressable>
+
+        <FlatCard className="p-8" style={{ maxWidth: 400, alignSelf: 'center', width: '100%' }}>
+          <View className="items-center mb-8">
+            <VaultMonogram size={56} />
+            <Text className="font-display-bold mt-4" style={{ color: isDark ? '#FFFFFF' : '#0A1F5C', fontSize: 34, lineHeight: 38 }}>
+              Create an account
+            </Text>
+            <Text className="font-body text-body-md mt-1" style={{ color: mutedColor }}>
+              Start your financial intelligence journey
+            </Text>
           </View>
-          <Text className="font-display-lg text-display-lg text-[#D4AF37] mb-sm">Welcome to Finovault AI</Text>
-          <Text className="font-body-lg text-body-lg text-white/70 leading-relaxed">
-            Predict. Protect. Empower. Your Adaptive Financial Intelligence. Join the next generation of digital asset management.
-          </Text>
-          <View className="mt-xl flex-row gap-gutter opacity-80">
-            <View className="flex-1 p-md bg-white/5 rounded-xl border border-white/10">
-              <Text className="font-headline-md text-headline-md text-[#D4AF37] mb-xs">99.9%</Text>
-              <Text className="font-caption text-caption text-white/50 uppercase tracking-wider">Uptime SLA</Text>
+
+          <TextInput
+            label="Full Name"
+            value={name}
+            onChangeText={setName}
+            placeholder="John Doe"
+            error={errors.name}
+          />
+
+          <TextInput
+            label="Email address"
+            value={email}
+            onChangeText={setEmail}
+            placeholder="name@example.com"
+            error={errors.email}
+            keyboardType="email-address"
+          />
+
+          <TextInput
+            label="Phone Number"
+            value={phone}
+            onChangeText={setPhone}
+            placeholder="+1 (555) 000-0000"
+            keyboardType="phone-pad"
+            rightLabel="Optional"
+          />
+
+          <TextInput
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            placeholder="••••••••"
+            error={errors.password}
+            secureTextEntry
+          />
+
+          <View className="mb-4">
+            <View className="flex-row gap-1 mb-1">
+              {[1, 2, 3, 4].map((i) => (
+                <View
+                  key={i}
+                  className="h-1 flex-1 rounded-full"
+                  style={{
+                    backgroundColor: i <= strength ? '#08142E' : isDark ? 'rgba(255,255,255,0.15)' : '#e0e3e6',
+                  }}
+                />
+              ))}
             </View>
-            <View className="flex-1 p-md bg-white/5 rounded-xl border border-white/10">
-              <Text className="font-headline-md text-headline-md text-[#D4AF37] mb-xs">AES-256</Text>
-              <Text className="font-caption text-caption text-white/50 uppercase tracking-wider">Encryption</Text>
-            </View>
+            <Text className="font-caption text-caption text-[#08142E]">{strengthLabel} password</Text>
           </View>
-        </View>
-        <View className="absolute -bottom-20 -right-20 w-96 h-96 bg-[#D4AF37] rounded-full opacity-10" />
-      </View>
 
-      <ScrollView className={`flex-1 w-full md:w-1/2 ${isDark ? 'bg-[#0A1F5C]' : 'bg-surface'}`}>
-        <View className="px-margin-mobile md:px-margin-desktop py-lg pb-[60px] items-center">
-          <View className="w-full max-w-md">
-            <View className="md:hidden mb-lg">
-              <View className="flex-row items-center gap-xs mb-sm">
-                <Text className="font-headline-lg-mobile text-headline-lg-mobile text-[#D4AF37] font-semibold">Finovault AI</Text>
-              </View>
-              <Text className={`font-headline-lg-mobile text-headline-lg-mobile ${isDark ? 'text-white' : 'text-on-background'} mb-xs`}>Create an account</Text>
-              <Text className={`font-body-md text-body-md ${isDark ? 'text-white/60' : 'text-on-surface-variant'}`}>Your adaptive financial intelligence journey starts here.</Text>
-            </View>
+          <TextInput
+            label="Confirm Password"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            placeholder="••••••••"
+            error={errors.confirmPassword}
+            secureTextEntry
+          />
 
-            <View className="hidden md:block mb-lg">
-              <Text className={`font-headline-lg text-headline-lg ${isDark ? 'text-white' : 'text-on-background'}`}>Sign up</Text>
-              <Text className={`font-body-md text-body-md ${isDark ? 'text-white/60' : 'text-on-surface-variant'}`}>Join the community of intelligent investors.</Text>
-            </View>
+          <Pressable
+            onPress={handleSubmit}
+            disabled={isSubmitting}
+            className="w-full py-3.5 items-center justify-center flex-row active:scale-[0.98] mt-2"
+            style={{
+              backgroundColor: isSubmitting ? '#1A1A1A' : 'rgba(8,20,46,0.08)',
+              borderRadius: 9999,
+              borderWidth: 1.5,
+              borderColor: '#08142E',
+            }}
+          >
+            {isSubmitting ? (
+              <ActivityIndicator size="small" color="#74777e" />
+            ) : (
+              <>
+                <Text className="font-body-semibold" style={{ fontSize: 16, color: '#08142E' }}>Create Free Account</Text>
+                <MaterialIcons name="arrow-forward" size={20} color="#08142E" style={{ marginLeft: 8 }} />
+              </>
+            )}
+          </Pressable>
 
-            <View className="mb-gutter">
-              <Text className={`font-label-md text-label-md ${isDark ? 'text-white/80' : 'text-on-surface'} mb-xs`}>Full Name</Text>
-              <Input variant="outline" size="md" className={`${isDark ? 'bg-[#1A1A1A] border-white/20' : 'bg-surface-container-lowest'} rounded-lg ${getFocusBorder('name')}`}>
-                <InputField
-                  placeholder="John Doe"
-                  value={name}
-                  onChangeText={setName}
-                  className={`text-body-md placeholder:text-outline/50 ${isDark ? 'text-white' : ''}`}
-                  onFocus={() => setFocusedField('name')}
-                  onBlur={() => setFocusedField(null)}
-                  placeholderTextColor={isDark ? '#ffffff50' : undefined}
-                />
-              </Input>
-              {errors.name && <Text className="text-error text-caption mt-xs">{errors.name}</Text>}
-            </View>
+          <View className="flex-row items-center my-6">
+            <View className="flex-1 h-px" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#e0e3e6' }} />
+            <Text className="font-caption text-caption mx-4" style={{ color: mutedColor }}>Or continue with</Text>
+            <View className="flex-1 h-px" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#e0e3e6' }} />
+          </View>
 
-            <View className="mb-gutter">
-              <Text className={`font-label-md text-label-md ${isDark ? 'text-white/80' : 'text-on-surface'} mb-xs`}>Email address</Text>
-              <Input variant="outline" size="md" className={`${isDark ? 'bg-[#1A1A1A] border-white/20' : 'bg-surface-container-lowest'} rounded-lg ${getFocusBorder('email')}`}>
-                <InputField
-                  placeholder="name@example.com"
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  className={`text-body-md placeholder:text-outline/50 ${isDark ? 'text-white' : ''}`}
-                  onFocus={() => setFocusedField('email')}
-                  onBlur={() => setFocusedField(null)}
-                  placeholderTextColor={isDark ? '#ffffff50' : undefined}
-                />
-              </Input>
-              {errors.email && <Text className="text-error text-caption mt-xs">{errors.email}</Text>}
-            </View>
-
-            <View className="mb-gutter">
-              <View className="flex-row justify-between items-center mb-xs">
-                <Text className={`font-label-md text-label-md ${isDark ? 'text-white/80' : 'text-on-surface'}`}>Phone Number</Text>
-                <Text className="font-caption text-caption text-outline">Optional</Text>
-              </View>
-              <Input variant="outline" size="md" className={`${isDark ? 'bg-[#1A1A1A] border-white/20' : 'bg-surface-container-lowest'} rounded-lg ${getFocusBorder('phone')}`}>
-                <InputField
-                  placeholder="+1 (555) 000-0000"
-                  value={phone}
-                  onChangeText={setPhone}
-                  keyboardType="phone-pad"
-                  className={`text-body-md placeholder:text-outline/50 ${isDark ? 'text-white' : ''}`}
-                  onFocus={() => setFocusedField('phone')}
-                  onBlur={() => setFocusedField(null)}
-                  placeholderTextColor={isDark ? '#ffffff50' : undefined}
-                />
-              </Input>
-            </View>
-
-            <View className="mb-gutter">
-              <Text className={`font-label-md text-label-md ${isDark ? 'text-white/80' : 'text-on-surface'} mb-xs`}>Password</Text>
-              <View className="relative">
-                <Input variant="outline" size="md" className={`${isDark ? 'bg-[#1A1A1A] border-white/20' : 'bg-surface-container-lowest'} rounded-lg ${getFocusBorder('password')}`}>
-                  <InputField
-                    placeholder="••••••••"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry={!showPassword}
-                    className={`text-body-md placeholder:text-outline/50 ${isDark ? 'text-white' : ''}`}
-                    onFocus={() => setFocusedField('password')}
-                    onBlur={() => setFocusedField(null)}
-                    placeholderTextColor={isDark ? '#ffffff50' : undefined}
-                  />
-                </Input>
-                <Pressable onPress={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 active:scale-95">
-                  <MaterialIcons name={showPassword ? 'visibility-off' : 'visibility'} size={20} color={isDark ? '#ffffff80' : '#74777e'} />
-                </Pressable>
-              </View>
-              {errors.password && <Text className="text-error text-caption mt-xs">{errors.password}</Text>}
-              <View className="mt-sm">
-                <View className="flex-row gap-xs">
-                  {[1, 2, 3, 4].map((i) => (
-                    <View key={i} className={`h-1 flex-1 rounded-full ${i <= strength ? 'bg-[#D4AF37]' : isDark ? 'bg-white/20' : 'bg-surface-container-highest'}`} />
-                  ))}
-                </View>
-                <Text className="font-caption text-caption text-[#D4AF37] mt-xs">{strengthLabel} password</Text>
-              </View>
-            </View>
-
-            <View className="mb-gutter">
-              <Text className={`font-label-md text-label-md ${isDark ? 'text-white/80' : 'text-on-surface'} mb-xs`}>Confirm Password</Text>
-              <Input variant="outline" size="md" className={`${isDark ? 'bg-[#1A1A1A] border-white/20' : 'bg-surface-container-lowest'} rounded-lg ${getFocusBorder('confirmPassword')}`}>
-                <InputField
-                  placeholder="••••••••"
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword}
-                  secureTextEntry
-                  className={`text-body-md placeholder:text-outline/50 ${isDark ? 'text-white' : ''}`}
-                  onFocus={() => setFocusedField('confirmPassword')}
-                  onBlur={() => setFocusedField(null)}
-                  placeholderTextColor={isDark ? '#ffffff50' : undefined}
-                />
-              </Input>
-              {errors.confirmPassword && <Text className="text-error text-caption mt-xs">{errors.confirmPassword}</Text>}
-            </View>
-
+          <View className="flex-row gap-3">
             <Pressable
-              onPress={handleSubmit}
-              disabled={isSubmitting}
-              className="w-full py-md rounded-lg bg-[#D4AF37] flex-row items-center justify-center gap-sm active:scale-[0.98]"
-              style={{ shadowColor: 'rgba(212,175,55,0.25)', shadowOffset: { width: 0, height: 4 }, shadowRadius: 14, elevation: 4 }}
+              onPress={handleGoogleSignIn}
+              className="flex-1 flex-row items-center justify-center gap-2 py-3.5 active:scale-95"
+              style={{
+                backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : '#EEF0F5',
+                borderRadius: 9999,
+              }}
             >
-              {isSubmitting ? (
-                <ActivityIndicator size="small" color="#1A1A1A" />
-              ) : (
-                <>
-                  <Text className="text-[#1A1A1A] font-label-md text-label-md">Create Free Account</Text>
-                  <MaterialIcons name="arrow-forward" size={20} color="#1A1A1A" />
-                </>
-              )}
+              <MaterialIcons name="g-mobiledata" size={20} color="#08142E" />
+              <Text className="font-body-medium" style={{ fontSize: 16, color: textColor }}>Google</Text>
             </Pressable>
+            <Pressable
+              className="flex-1 flex-row items-center justify-center gap-2 py-3.5 active:scale-95"
+              style={{
+                backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : '#EEF0F5',
+                borderRadius: 9999,
+              }}
+            >
+              <MaterialIcons name="apple" size={20} color="#08142E" />
+              <Text className="font-body-medium" style={{ fontSize: 16, color: textColor }}>Apple</Text>
+            </Pressable>
+          </View>
 
-            <View className="flex-row items-center my-xl">
-              <View className="flex-1 h-[1px] bg-outline-variant/30" />
-              <Text className="font-caption text-caption text-outline mx-md">Or continue with</Text>
-              <View className="flex-1 h-[1px] bg-outline-variant/30" />
-            </View>
+          <View className="mt-6 items-center">
+            <Text className="font-body text-body-md" style={{ color: mutedColor }}>
+              Already have an account?{' '}
+              <Text className="text-[#08142E] font-body-semibold" onPress={() => router.push('/login')}>Login</Text>
+            </Text>
+          </View>
 
-            <View className="flex-row gap-md">
-              <Pressable onPress={handleGoogleSignIn} className={`flex-1 flex-row items-center justify-center gap-sm px-md py-sm rounded-lg active:scale-95 ${isDark ? 'bg-white/10 border border-white/20' : 'bg-white border border-outline-variant'}`}>
-                <Ionicons name="logo-google" size={20} color={isDark ? '#D4AF37' : '#1A1A1A'} />
-                <Text className={`font-label-md text-label-md ${isDark ? 'text-white' : 'text-on-surface'}`}>Google</Text>
-              </Pressable>
-              <Pressable className={`flex-1 flex-row items-center justify-center gap-sm px-md py-sm rounded-lg active:scale-95 ${isDark ? 'bg-white/10 border border-white/20' : 'bg-white border border-outline-variant'}`}>
-                <Ionicons name="logo-apple" size={20} color={isDark ? '#D4AF37' : '#1A1A1A'} />
-                <Text className={`font-label-md text-label-md ${isDark ? 'text-white' : 'text-on-surface'}`}>Apple</Text>
-              </Pressable>
-            </View>
-
-            <View className="mt-xl items-center">
-              <Text className={`font-body-md text-body-md ${isDark ? 'text-white/60' : 'text-on-surface-variant'}`}>
-                Already have an account?{' '}
-                <Text className="text-[#D4AF37] font-semibold" onPress={() => router.push('/login')}>Login</Text>
+          <View className="mt-6 items-center">
+            <View className="flex-row items-center gap-2">
+              <MaterialIcons name="lock" size={14} color="#08142E" />
+              <Text className="font-caption" style={{ color: mutedColor }}>
+                Bank-grade encryption
+              </Text>
+              <View className="w-1 h-1 rounded-full" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.2)' : '#c4c6ce' }} />
+              <MaterialIcons name="verified" size={14} color="#08142E" />
+              <Text className="font-caption" style={{ color: mutedColor }}>
+                Your data is safe
               </Text>
             </View>
-
-            <View className="mt-xl items-center opacity-60">
-              <View className="flex-row items-center gap-xs">
-                <MaterialIcons name="lock" size={16} color={isDark ? '#ffffff80' : '#43474d'} />
-                <Text className={`font-caption text-caption ${isDark ? 'text-white/60' : 'text-on-surface-variant'}`}>Bank-grade encryption</Text>
-                <View className="w-1 h-1 rounded-full bg-outline/50" />
-                <Text className={`font-caption text-caption ${isDark ? 'text-white/60' : 'text-on-surface-variant'}`}>Your data is safe</Text>
-              </View>
-            </View>
           </View>
-        </View>
+        </FlatCard>
       </ScrollView>
     </View>
   );

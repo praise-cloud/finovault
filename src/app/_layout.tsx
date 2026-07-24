@@ -1,3 +1,6 @@
+import '@/global.css';
+import '@/lib/i18n/i18n';
+
 import { AnimatedSplashOverlay } from "@/components/animated-icon";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { ToastProvider } from "@/components/toast";
@@ -83,7 +86,7 @@ function RootContent() {
           backgroundColor: isDark ? "#0A1F5C" : "#F7F9FC",
         }}
       >
-        <ActivityIndicator size="small" color="#D4AF37" />
+        <ActivityIndicator size="small" color="#08142E" />
       </View>
     );
   }
@@ -107,7 +110,7 @@ function RootContent() {
         </Text>
         <Pressable
           onPress={() => setFatalError(null)}
-          style={{ backgroundColor: "#D4AF37", paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12 }}
+          style={{ backgroundColor: "#08142E", paddingHorizontal: 24, paddingVertical: 12, borderRadius: 9999 }}
         >
           <Text style={{ color: "#1A1A1A", fontWeight: "600" }}>Try Again</Text>
         </Pressable>
@@ -122,7 +125,6 @@ function RootContent() {
       <ToastProvider>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
-          <Stack.Screen name="getting-started" />
           <Stack.Screen name="preferences" />
           <Stack.Screen name="financial-interview" />
           <Stack.Screen name="financial-profile" />

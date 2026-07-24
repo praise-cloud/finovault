@@ -33,20 +33,20 @@ export default function BusinessAiAdvice() {
   if (loading) {
     return (
       <View className="flex-1 bg-surface-bright items-center justify-center">
-        <ActivityIndicator size="large" color="#D4AF37" />
+        <ActivityIndicator size="large" color="#08142E" />
       </View>
     );
   }
 
   return (
     <View className="flex-1 bg-surface-bright">
-      <View className="pt-14 pb-3 px-margin-mobile bg-surface-bright" style={{ elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04 }}>
+      <View className="pt-14 pb-3 px-margin-mobile bg-surface-bright" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
-          <Pressable onPress={() => router.back()} className="w-10 h-10 rounded-full bg-surface-container items-center justify-center active:scale-90">
+          <Pressable onPress={() => router.back()} className="w-10 h-10 rounded-full bg-[#EEF0F5] items-center justify-center active:scale-90">
             <MaterialIcons name="arrow-back" size={20} color="#181c1e" />
           </Pressable>
-          <Text className="font-headline-md text-headline-md text-primary font-bold">AI Advice</Text>
-          <Pressable onPress={onRefresh} className="w-10 h-10 rounded-full bg-surface-container items-center justify-center active:scale-90">
+          <Text className="font-body-bold text-[#1A1A1A] font-bold" style={{ fontSize: 20 }}>AI Advice</Text>
+          <Pressable onPress={onRefresh} className="w-10 h-10 rounded-full bg-[#EEF0F5] items-center justify-center active:scale-90">
             <MaterialIcons name="refresh" size={20} color="#181c1e" />
           </Pressable>
         </View>
@@ -55,38 +55,38 @@ export default function BusinessAiAdvice() {
       <ScrollView
         className="flex-1 px-margin-mobile"
         contentContainerStyle={{ paddingBottom: 120 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#D4AF37" />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#08142E" />}
       >
         <View className="mt-6 mb-8">
-          <Text className="font-headline-lg text-headline-lg text-primary mb-2">AI-Powered Insights</Text>
-          <Text className="font-body-md text-body-md text-on-surface-variant">Personalized recommendations based on your business data.</Text>
+          <Text className="font-body-bold text-[#1A1A1A] mb-2" style={{ fontSize: 28 }}>AI-Powered Insights</Text>
+          <Text className="text-[#6B6F76]" style={{ fontSize: 16 }}>Personalized recommendations based on your business data.</Text>
         </View>
 
         {advice?.summary && (
-          <View className="bg-surface-container-low rounded-2xl p-6 mb-6" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
+          <View className="bg-[#EEF0F5] rounded-2xl p-6 mb-6" style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.06)', elevation: 2 }}>
             <View className="flex-row items-center gap-3 mb-4">
               <View className="w-10 h-10 rounded-full bg-secondary-container items-center justify-center">
                 <MaterialIcons name="psychology" size={22} color="#1A1A1A" />
               </View>
-              <Text className="font-headline-md text-headline-md text-primary font-bold flex-1">Overview</Text>
+              <Text className="font-body-bold text-[#1A1A1A] font-bold flex-1" style={{ fontSize: 20 }}>Overview</Text>
             </View>
-            <Text className="font-body-md text-body-md text-on-surface leading-6">{advice.summary}</Text>
+            <Text className="font-body-md text-on-surface leading-6" style={{ fontSize: 16 }}>{advice.summary}</Text>
           </View>
         )}
 
         {advice?.recommendations?.length > 0 && (
           <View className="mb-6">
-            <Text className="font-headline-md text-headline-md text-primary font-bold mb-4">Recommendations</Text>
+            <Text className="font-body-bold text-[#1A1A1A] font-bold mb-4" style={{ fontSize: 20 }}>Recommendations</Text>
             <View className="gap-3">
               {advice.recommendations.map((rec: any, i: number) => (
-                <View key={i} className="bg-surface-container-low rounded-2xl p-5" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
+                <View key={i} className="bg-[#EEF0F5] rounded-2xl p-5" style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.06)', elevation: 2 }}>
                   <View className="flex-row items-start gap-3">
                     <View className="w-8 h-8 rounded-full bg-secondary-container items-center justify-center">
-                      <Text className="font-label-md text-label-md text-secondary font-bold">{i + 1}</Text>
+                      <Text className="font-body-semibold text-[#08142E] font-bold" style={{ fontSize: 14 }}>{i + 1}</Text>
                     </View>
                     <View className="flex-1">
-                      <Text className="font-label-md text-label-md text-primary font-bold mb-1">{rec.title}</Text>
-                      <Text className="font-body-md text-body-md text-on-surface-variant">{rec.description}</Text>
+                      <Text className="font-body-semibold text-[#1A1A1A] font-bold mb-1" style={{ fontSize: 14 }}>{rec.title}</Text>
+                      <Text className="text-[#6B6F76]" style={{ fontSize: 16 }}>{rec.description}</Text>
                     </View>
                   </View>
                 </View>
@@ -97,11 +97,11 @@ export default function BusinessAiAdvice() {
 
         {advice?.action_items?.length > 0 && (
           <View>
-            <Text className="font-headline-md text-headline-md text-primary font-bold mb-4">Action Items</Text>
+            <Text className="font-body-bold text-[#1A1A1A] font-bold mb-4" style={{ fontSize: 20 }}>Action Items</Text>
             {advice.action_items.map((item: string, i: number) => (
-              <View key={i} className="bg-surface-container-low rounded-2xl p-4 flex-row items-center gap-3 mb-3" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
-                <MaterialIcons name="check-circle-outline" size={22} color="#D4AF37" />
-                <Text className="font-body-md text-body-md text-on-surface flex-1">{item}</Text>
+              <View key={i} className="bg-[#EEF0F5] rounded-2xl p-4 flex-row items-center gap-3 mb-3" style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.06)', elevation: 2 }}>
+                <MaterialIcons name="check-circle-outline" size={22} color="#08142E" />
+                <Text className="font-body-md text-on-surface flex-1" style={{ fontSize: 16 }}>{item}</Text>
               </View>
             ))}
           </View>

@@ -64,7 +64,7 @@ export default function AiAnalysis() {
         const c = t.category || 'General';
         cats.set(c, (cats.get(c) || 0) + t.amount);
       });
-      const colors = ['#D4AF37', '#08142E', '#321ed2', '#ba1a1a', '#1A1A1A', '#43474d', '#150082', '#C8A030'];
+      const colors = ['#08142E', '#08142E', '#321ed2', '#ba1a1a', '#1A1A1A', '#43474d', '#150082', '#C8A030'];
       let i = 0;
       const breakdown = Array.from(cats.entries())
         .sort(([, a], [, b]) => b - a)
@@ -99,21 +99,21 @@ export default function AiAnalysis() {
 
   const getTypeStyle = (type: string) => {
     switch (type) {
-      case 'opportunity': return { icon: 'trending-up' as const, bg: 'bg-secondary-container', color: '#1A1A1A' };
-      case 'alert': return { icon: 'warning' as const, bg: 'bg-error-container', color: '#ba1a1a' };
-      default: return { icon: 'lightbulb' as const, bg: 'bg-primary-container', color: '#0A1F5C' };
+      case 'opportunity': return { icon: 'trending-up' as const, bg: 'bg-[#08142E]20', color: '#1A1A1A' };
+      case 'alert': return { icon: 'warning' as const, bg: 'bg-[#BA1A1A]20', color: '#ba1a1a' };
+      default: return { icon: 'lightbulb' as const, bg: 'bg-[#08142E]20', color: '#0A1F5C' };
     }
   };
 
   return (
     <View className="flex-1 bg-surface-bright">
-      <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, elevation: 4 }}>
+      <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
             <View className="w-9 h-9 rounded-xl bg-secondary items-center justify-center">
               <MaterialIcons name="auto-awesome" size={18} color="#fff" />
             </View>
-            <Text className="font-headline-md text-primary font-bold">AI Analysis</Text>
+            <Text className="font-body-bold text-primary font-bold">AI Analysis</Text>
           </View>
           <View className="flex-row items-center gap-3">
             <Pressable onPress={loadData} className="active:scale-90">
@@ -128,11 +128,11 @@ export default function AiAnalysis() {
       </View>
 
       <ScrollView ref={scrollRef} className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
-        <View className="bg-[#D4AF37] rounded-2xl p-5 mt-4 mb-4 relative overflow-hidden">
+        <View className="bg-[#0A1F5C] rounded-2xl p-5 mt-4 mb-4 relative overflow-hidden">
           <View className="absolute -top-8 -right-8 w-32 h-32 bg-white/5 rounded-full" />
           <View className="flex-row items-center gap-2 mb-2">
             <MaterialIcons name="auto-awesome" size={20} color="#fff" />
-            <Text className="text-white font-headline-md font-bold">AI Financial Coach</Text>
+            <Text className="text-white font-body-bold font-bold">AI Financial Coach</Text>
           </View>
           <Text className="text-white/80 text-body-md mb-4">Ask me anything about your finances — I'm here to help you make smarter decisions.</Text>
           <View className="flex-row gap-2">
@@ -144,18 +144,18 @@ export default function AiAnalysis() {
               onChangeText={setQuestion}
             />
             <Pressable onPress={handleAsk} disabled={isAsking} className="w-12 h-12 bg-white rounded-xl items-center justify-center active:scale-90">
-              {isAsking ? <ActivityIndicator size="small" color="#D4AF37" /> : <MaterialIcons name="send" size={20} color="#D4AF37" />}
+              {isAsking ? <ActivityIndicator size="small" color="#08142E" /> : <MaterialIcons name="send" size={20} color="#08142E" />}
             </Pressable>
           </View>
         </View>
 
         {chat.length > 1 && (
-          <View className="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl p-4 mb-4 max-h-48 overflow-hidden">
+          <View className="bg-white border border-outline-variant/20 rounded-2xl p-4 mb-4 max-h-48 overflow-hidden">
             <ScrollView className="max-h-40">
               {chat.slice(-6).map((msg, i) => (
                 <View key={i} className={`mb-2 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                  <View className={`max-w-[80%] rounded-2xl px-4 py-2.5 ${msg.role === 'user' ? 'bg-secondary rounded-br-sm' : 'bg-surface-container-high rounded-bl-sm'}`}>
-                    <Text className={msg.role === 'user' ? 'text-on-secondary' : 'text-on-surface'}>{msg.text}</Text>
+                    <View className={`max-w-[80%] rounded-2xl px-4 py-2.5 ${msg.role === 'user' ? 'bg-[#08142E] rounded-br-sm' : 'bg-[#E4E7EE] rounded-bl-sm'}`}>
+                    <Text className={msg.role === 'user' ? 'text-[#FFFFFF]' : 'text-on-surface'}>{msg.text}</Text>
                   </View>
                 </View>
               ))}
@@ -164,22 +164,22 @@ export default function AiAnalysis() {
         )}
 
         {isLoading ? (
-          <View className="items-center py-12"><ActivityIndicator size="large" color="#D4AF37" /></View>
+          <View className="items-center py-12"><ActivityIndicator size="large" color="#08142E" /></View>
         ) : (
           <>
             {patternSummary.length > 0 && (
-              <View className="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl p-4 mb-4">
+              <View className="bg-white border border-outline-variant/20 rounded-2xl p-4 mb-4">
                 <View className="flex-row items-center justify-between mb-3">
-                  <Text className="font-headline-md text-primary font-bold">Spending Patterns</Text>
-                  <Text className="text-caption text-on-surface-variant">${totalSpent.toLocaleString()} total</Text>
+                  <Text className="font-body-bold text-[#1A1A1A] font-bold">Spending Patterns</Text>
+                  <Text className="font-body text-[#6B6F76]">${totalSpent.toLocaleString()} total</Text>
                 </View>
                 {patternSummary.map((p, i) => (
                   <View key={i} className="mb-2">
                     <View className="flex-row justify-between items-center mb-1">
-                      <Text className="font-label-md text-primary">{p.label}</Text>
-                      <Text className="font-label-md text-on-surface-variant">${p.amount.toLocaleString()} ({p.pct}%)</Text>
+                      <Text className="font-body-semibold text-[#1A1A1A]">{p.label}</Text>
+                      <Text className="font-body-semibold text-[#6B6F76]">${p.amount.toLocaleString()} ({p.pct}%)</Text>
                     </View>
-                    <View className="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+                    <View className="w-full bg-[#EEF0F5] rounded-full h-2 overflow-hidden">
                       <View className="h-full rounded-full" style={{ width: `${p.pct}%`, backgroundColor: p.color }} />
                     </View>
                   </View>
@@ -188,8 +188,8 @@ export default function AiAnalysis() {
             )}
 
             <View className="flex-row items-center justify-between mb-3">
-              <Text className="font-headline-md text-primary font-bold">AI Insights</Text>
-              <Text className="text-caption text-on-surface-variant">{insights.length} updates</Text>
+              <Text className="font-body-bold text-[#1A1A1A] font-bold">AI Insights</Text>
+              <Text className="font-body text-[#6B6F76]">{insights.length} updates</Text>
             </View>
 
             <View className="space-y-3 mb-4">

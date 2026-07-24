@@ -23,7 +23,7 @@ export function useSheet() {
 }
 
 export default function TabsLayout() {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState('home');
   const [sheetContent, setSheetContent] = useState<SheetContent>(null);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const loadSummary = useDashboardStore((s) => s.loadSummary);
@@ -41,14 +41,17 @@ export default function TabsLayout() {
   const handleTabPress = (key: string) => {
     setActiveTab(key);
     switch (key) {
-      case 'dashboard':
+      case 'home':
         router.push('/(tabs)');
         break;
-      case 'protection':
-        router.push('/(tabs)/fraud-protection');
-        break;
-      case 'ai-analysis':
+      case 'insights':
         router.push('/(tabs)/ai-analysis');
+        break;
+      case 'vault':
+        router.push('/(tabs)/vault');
+        break;
+      case 'pay':
+        router.push('/(tabs)/pay');
         break;
       case 'profile':
         router.push('/(tabs)/profile');
@@ -61,6 +64,8 @@ export default function TabsLayout() {
       <View className={`flex-1 ${isDark ? 'bg-[#0A1F5C]' : 'bg-surface-bright'}`}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
+          <Stack.Screen name="vault" />
+          <Stack.Screen name="pay" />
           <Stack.Screen name="wealth-growth" />
           <Stack.Screen name="smart-savings" />
           <Stack.Screen name="savings-goals" />
@@ -96,7 +101,7 @@ export default function TabsLayout() {
               <Pressable className="flex-1 justify-end" onPress={() => {}}>
                 <Pressable
                   className={`${isDark ? 'bg-[#1A1A1A]' : 'bg-white'} rounded-t-3xl`}
-                  style={{ maxHeight: '80%', shadowColor: '#000', shadowOffset: { width: 0, height: -8 }, shadowOpacity: 0.1, shadowRadius: 24, elevation: 16 }}
+                  style={{ maxHeight: '80%', boxShadow: '0 -8px 24px rgba(0,0,0,0.1)', elevation: 16 }}
                   onPress={() => {}}
                 >
                   <View className="items-center pt-3 pb-1">

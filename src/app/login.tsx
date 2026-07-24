@@ -1,28 +1,22 @@
-import { Input, InputField } from '@gluestack-ui/themed';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { View, Text, Pressable, ScrollView, Alert, ActivityIndicator, useColorScheme } from 'react-native';
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useAuthStore } from '@/stores/auth-store';
 import { signInWithGoogle } from '@/lib/api/services/auth';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { mediumImpact, successNotification, errorNotification } from '@/hooks/use-haptics';
+import { TextInput } from '@/components/ui/text-input';
+import { VaultMonogram } from '@/components/vault-monogram';
+import { FlatCard } from '@/components/flat-card';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [focusedField, setFocusedField] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const signIn = useAuthStore((s) => s.signIn);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-
-  const buttonScale = useSharedValue(1);
-  const buttonAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: buttonScale.value }],
-  }));
 
   const validate = () => {
     const errs: Record<string, string> = {};
@@ -33,139 +27,130 @@ export default function Login() {
   };
 
   const handleLogin = async () => {
-    if (!validate()) {
-      errorNotification();
-      return;
-    }
+    if (!validate()) { errorNotification(); return; }
     mediumImpact();
     setIsSubmitting(true);
     const error = await signIn({ email, password });
     setIsSubmitting(false);
-    if (error) {
-      errorNotification();
-      Alert.alert('Login Failed', error);
-      return;
-    }
+    if (error) { errorNotification(); Alert.alert('Login Failed', error); return; }
     successNotification();
     router.replace('/(tabs)');
   };
 
   const handleGoogleSignIn = async () => {
-    try {
-      mediumImpact();
-      await signInWithGoogle();
-    } catch {
-      errorNotification();
-      Alert.alert('Error', 'Failed to sign in with Google');
-    }
+    try { mediumImpact(); await signInWithGoogle(); }
+    catch { errorNotification(); Alert.alert('Error', 'Failed to sign in with Google'); }
   };
 
-  const getFocusBorder = (field: string) =>
-    focusedField === field ? 'border-[#D4AF37]' : errors[field] ? 'border-error' : 'border-outline-variant';
+  const bg = isDark ? '#08142E' : '#F7F9FC';
+  const textColor = isDark ? '#FFFFFF' : '#1A1A1A';
+  const mutedColor = isDark ? 'rgba(255,255,255,0.5)' : '#43474D';
 
   return (
-    <View className={`flex-1 flex-col md:flex-row ${isDark ? 'bg-[#0A1F5C]' : 'bg-background'}`}>
-      <View className="hidden md:flex md:w-1/2 bg-[#0A1F5C] relative overflow-hidden items-center justify-center px-margin-desktop">
-        <View className="relative z-10 max-w-lg">
-          <Text className="font-display-lg text-display-lg text-[#D4AF37] mb-sm">Welcome Back</Text>
-          <Text className="font-body-lg text-body-lg text-white/70 leading-relaxed">Continue your adaptive financial intelligence journey.</Text>
-        </View>
-        <View className="absolute -bottom-20 -right-20 w-96 h-96 bg-[#D4AF37] rounded-full opacity-10" />
-      </View>
+    <View className="flex-1" style={{ backgroundColor: bg }}>
+      <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 24 }}>
+        <Pressable
+          onPress={() => router.back()}
+          className="w-10 h-10 rounded-full items-center justify-center active:scale-90 mb-6"
+          style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' }}
+        >
+          <MaterialIcons name="arrow-back" size={22} color={isDark ? '#FFFFFF' : '#0A1F5C'} />
+        </Pressable>
 
-      <ScrollView className={`flex-1 w-full md:w-1/2 ${isDark ? 'bg-[#0A1F5C]' : 'bg-surface'}`}>
-        <View className="px-margin-mobile md:px-margin-desktop py-lg pb-[60px] items-center">
-          <View className="w-full max-w-md">
-            <View className={`md:hidden mb-lg ${isDark ? '' : ''}`}>
-              <Text className="font-headline-lg-mobile text-headline-lg-mobile text-[#D4AF37] font-semibold">Finovault AI</Text>
-              <Text className={`font-headline-lg-mobile text-headline-lg-mobile ${isDark ? 'text-white' : 'text-on-background'} mb-xs`}>Welcome back</Text>
-            </View>
-            <View className="hidden md:block mb-lg">
-              <Text className={`font-headline-lg text-headline-lg ${isDark ? 'text-white' : 'text-on-background'}`}>Log in</Text>
-              <Text className="font-body-md text-body-md text-on-surface-variant">Welcome back to Finovault AI.</Text>
-            </View>
+        <FlatCard className="p-8" style={{ maxWidth: 400, alignSelf: 'center', width: '100%' }}>
+          <View className="items-center mb-8">
+            <VaultMonogram size={56} />
+            <Text className="font-display-bold mt-4" style={{ color: isDark ? '#FFFFFF' : '#0A1F5C', fontSize: 34, lineHeight: 38 }}>
+              Welcome back
+            </Text>
+            <Text className="font-body text-body-md mt-1" style={{ color: mutedColor }}>
+              Log in to your Finovault account
+            </Text>
+          </View>
 
-            <View className="mb-gutter">
-              <Text className={`font-label-md text-label-md ${isDark ? 'text-white/80' : 'text-on-surface'} mb-xs`}>Email address</Text>
-              <Input variant="outline" size="md" className={`${isDark ? 'bg-[#1A1A1A] border-white/20' : 'bg-surface-container-lowest'} rounded-lg ${getFocusBorder('email')}`}>
-                <InputField
-                  placeholder="name@example.com"
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  className={`text-body-md placeholder:text-outline/50 ${isDark ? 'text-white' : ''}`}
-                  onFocus={() => setFocusedField('email')}
-                  onBlur={() => setFocusedField(null)}
-                  placeholderTextColor={isDark ? '#ffffff50' : undefined}
-                />
-              </Input>
-              {errors.email && <Text className="text-error text-caption mt-xs">{errors.email}</Text>}
-            </View>
+          <TextInput
+            label="Email address"
+            value={email}
+            onChangeText={setEmail}
+            placeholder="name@example.com"
+            error={errors.email}
+            keyboardType="email-address"
+          />
 
-            <View className="mb-gutter">
-              <Text className={`font-label-md text-label-md ${isDark ? 'text-white/80' : 'text-on-surface'} mb-xs`}>Password</Text>
-              <View className="relative">
-                <Input variant="outline" size="md" className={`${isDark ? 'bg-[#1A1A1A] border-white/20' : 'bg-surface-container-lowest'} rounded-lg ${getFocusBorder('password')}`}>
-                  <InputField
-                    placeholder="••••••••"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry={!showPassword}
-                    className={`text-body-md placeholder:text-outline/50 ${isDark ? 'text-white' : ''}`}
-                    onFocus={() => setFocusedField('password')}
-                    onBlur={() => setFocusedField(null)}
-                    placeholderTextColor={isDark ? '#ffffff50' : undefined}
-                  />
-                </Input>
-                <Pressable onPress={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 active:scale-95">
-                  <MaterialIcons name={showPassword ? 'visibility-off' : 'visibility'} size={20} color={isDark ? '#ffffff80' : '#74777e'} />
-                </Pressable>
-              </View>
-              {errors.password && <Text className="text-error text-caption mt-xs">{errors.password}</Text>}
-            </View>
+          <TextInput
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            placeholder="••••••••"
+            error={errors.password}
+            secureTextEntry
+          />
 
-            <Pressable
-              onPressIn={() => { buttonScale.value = withSpring(0.96, { damping: 15 }); }}
-              onPressOut={() => { buttonScale.value = withSpring(1, { damping: 15 }); }}
-              onPress={handleLogin}
-              disabled={isSubmitting}
-            >
-              <Animated.View
-                style={[buttonAnimatedStyle, { shadowColor: 'rgba(212,175,55,0.25)', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 14, elevation: 4 }]}
-                className="w-full py-md rounded-lg bg-[#D4AF37] flex-row items-center justify-center gap-sm"
-              >
-                {isSubmitting ? (
-                  <ActivityIndicator size="small" color="#1A1A1A" />
-                ) : (
-                  <>
-                    <Text className="text-[#1A1A1A] font-label-md text-label-md">Log In</Text>
-                    <MaterialIcons name="arrow-forward" size={20} color="#1A1A1A" />
-                  </>
-                )}
-              </Animated.View>
-            </Pressable>
+          <Pressable
+            onPress={handleLogin}
+            disabled={isSubmitting}
+            className="w-full py-3.5 items-center justify-center flex-row active:scale-[0.98] mt-2"
+            style={{
+              backgroundColor: isSubmitting ? '#1A1A1A' : 'rgba(8,20,46,0.08)',
+              borderRadius: 9999,
+              borderWidth: 1.5,
+              borderColor: '#08142E',
+            }}
+          >
+            {isSubmitting ? (
+              <ActivityIndicator size="small" color="#74777e" />
+            ) : (
+              <>
+                <Text className="font-body-semibold" style={{ fontSize: 16, color: '#08142E' }}>Log In</Text>
+                <MaterialIcons name="arrow-forward" size={20} color="#08142E" style={{ marginLeft: 8 }} />
+              </>
+            )}
+          </Pressable>
 
-            <View className="flex-row items-center my-xl">
-              <View className="flex-1 h-[1px] bg-outline-variant/30" />
-              <Text className="font-caption text-caption text-outline mx-md">Or continue with</Text>
-              <View className="flex-1 h-[1px] bg-outline-variant/30" />
-            </View>
+          <View className="flex-row items-center my-6">
+            <View className="flex-1 h-px" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#e0e3e6' }} />
+            <Text className="font-caption text-caption mx-4" style={{ color: mutedColor }}>Or continue with</Text>
+            <View className="flex-1 h-px" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#e0e3e6' }} />
+          </View>
 
-            <View className="flex-row gap-md">
-              <Pressable onPress={handleGoogleSignIn} className={`flex-1 flex-row items-center justify-center gap-sm px-md py-sm rounded-lg active:scale-95 ${isDark ? 'bg-white/10 border border-white/20' : 'bg-white border border-outline-variant'}`}>
-                <Ionicons name="logo-google" size={20} color={isDark ? '#D4AF37' : '#1A1A1A'} />
-                <Text className={`font-label-md text-label-md ${isDark ? 'text-white' : 'text-on-surface'}`}>Google</Text>
-              </Pressable>
-            </View>
+          <Pressable
+            onPress={handleGoogleSignIn}
+            className="flex-row items-center justify-center gap-3 py-3.5 active:scale-95"
+            style={{
+              backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : '#EEF0F5',
+              borderRadius: 9999,
+            }}
+          >
+            <MaterialIcons name="g-mobiledata" size={20} color="#08142E" />
+            <Text className="font-body-medium" style={{ fontSize: 16, color: textColor }}>Google</Text>
+          </Pressable>
 
-            <View className="mt-xl items-center">
-              <Text className={`font-body-md text-body-md ${isDark ? 'text-white/60' : 'text-on-surface-variant'}`}>
-                Don't have an account?{' '}
-                <Text className="text-[#D4AF37] font-semibold" onPress={() => router.push('/signup')}>Sign Up</Text>
+          <Pressable className="flex-row items-center justify-center mt-6 gap-2">
+            <MaterialIcons name="fingerprint" size={20} color="#08142E" />
+            <Text className="font-body text-body-md text-[#08142E]">Use Face ID to log in faster</Text>
+          </Pressable>
+
+          <View className="mt-6 items-center">
+            <Text className="font-body text-body-md" style={{ color: mutedColor }}>
+              Don't have an account?{' '}
+              <Text className="text-[#08142E] font-body-semibold" onPress={() => router.push('/signup')}>Sign Up</Text>
+            </Text>
+          </View>
+
+          <View className="mt-6 items-center">
+            <View className="flex-row items-center gap-2">
+              <MaterialIcons name="lock" size={14} color="#08142E" />
+              <Text className="font-caption" style={{ color: mutedColor }}>
+                AES-256 encrypted
+              </Text>
+              <View className="w-1 h-1 rounded-full" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.2)' : '#c4c6ce' }} />
+              <MaterialIcons name="verified" size={14} color="#08142E" />
+              <Text className="font-caption" style={{ color: mutedColor }}>
+                Verified secure
               </Text>
             </View>
           </View>
-        </View>
+        </FlatCard>
       </ScrollView>
     </View>
   );

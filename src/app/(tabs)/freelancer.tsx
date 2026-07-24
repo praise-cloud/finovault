@@ -25,14 +25,14 @@ export default function FreelancerDashboard() {
   useEffect(() => { load(); }, [load]);
 
   if (!data) {
-    return <View className="flex-1 bg-surface-bright items-center justify-center"><ActivityIndicator size="large" color="#D4AF37" /></View>;
+    return <View className="flex-1 bg-surface-bright items-center justify-center"><ActivityIndicator size="large" color="#08142E" /></View>;
   }
 
   const d = data;
 
   return (
     <View className="flex-1 bg-surface-bright">
-      <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile md:px-margin-desktop" style={{ elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04 }}>
+      <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile md:px-margin-desktop" style={{ elevation: 4, boxShadow: '0 4px 4px rgba(0,0,0,0.04)' }}>
         <View className="flex-row items-center justify-between max-w-[1440px] mx-auto w-full">
           <View className="flex-row items-center gap-4">
             <Text className="font-headline-md text-headline-md text-primary font-bold">Finovault AI</Text>
@@ -45,7 +45,7 @@ export default function FreelancerDashboard() {
       </View>
 
       <View className="flex-1 flex-row max-w-[1440px] mx-auto w-full">
-        <View className="hidden md:flex w-80 bg-surface-container rounded-r-xl py-6" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.08, shadowRadius: 40, elevation: 8 }}>
+        <View className="hidden md:flex w-80 bg-surface-container rounded-r-xl py-6" style={{ boxShadow: '0 12px 40px rgba(0,0,0,0.08)', elevation: 8 }}>
           <View className="px-6 mb-8 flex-row items-center gap-3">
             <View className="w-10 h-10 rounded-full bg-surface-container-high items-center justify-center"><MaterialIcons name="person" size={22} color="#43474d" /></View>
             <View><Text className="font-label-md font-bold text-on-surface">{userName}</Text><Text className="text-[12px] text-on-surface-variant">Individual Pro Plan • Verified</Text></View>
@@ -76,7 +76,7 @@ export default function FreelancerDashboard() {
           </View>
 
           <View className="flex-row flex-wrap gap-gutter">
-            <View className="w-full md:flex-[2] md:min-w-0 min-w-[280px] p-md rounded-xl relative overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.8)', borderWidth: 1, borderColor: '#E6EBF1', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}>
+            <View className="w-full md:flex-[2] md:min-w-0 min-w-[280px] p-md rounded-xl relative overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.8)', borderWidth: 1, borderColor: '#E6EBF1', boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2 }}>
               <View className="absolute top-0 right-0 w-32 h-32 opacity-10 rounded-bl-full" style={{ backgroundColor: '#F4D35E' }} />
               <View>
                 <View className="flex-row justify-between items-start mb-4">
@@ -97,7 +97,7 @@ export default function FreelancerDashboard() {
               </View>
             </View>
 
-            <View className="w-full md:flex-1 md:min-w-0 min-w-[200px] p-md rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.8)', borderWidth: 1, borderColor: '#E6EBF1', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}>
+            <View className="w-full md:flex-1 md:min-w-0 min-w-[200px] p-md rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.8)', borderWidth: 1, borderColor: '#E6EBF1', boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2 }}>
               <View className="flex-row items-center gap-3 mb-6">
                 <View className="p-2 bg-primary-fixed rounded-lg"><MaterialIcons name="work" size={20} color="#0A1F5C" /></View>
                 <Text className="font-headline-md text-[18px] font-bold">Income Tracking</Text>
@@ -117,7 +117,7 @@ export default function FreelancerDashboard() {
               </Pressable>
             </View>
 
-            <View className="w-full md:flex-1 md:min-w-0 min-w-[200px] p-md rounded-xl bg-primary" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}>
+            <View className="w-full md:flex-1 md:min-w-0 min-w-[200px] p-md rounded-xl bg-primary" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2 }}>
               <View className="flex-row justify-between items-center mb-6">
                 <MaterialIcons name="receipt-long" size={24} color="#F4D35E" />
                 <View className="bg-secondary px-2 py-0.5 rounded"><Text className="text-[10px] text-on-secondary uppercase font-bold">{d.overdue_count} Overdue</Text></View>
@@ -135,10 +135,10 @@ export default function FreelancerDashboard() {
               </View>
             </View>
 
-            <View className="w-full md:flex-[3] md:min-w-0 min-w-[280px] rounded-xl overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.8)', borderWidth: 1, borderColor: '#E6EBF1', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}>
+            <View className="w-full md:flex-[3] md:min-w-0 min-w-[280px] rounded-xl overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.8)', borderWidth: 1, borderColor: '#E6EBF1', boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2 }}>
               <View className="p-md border-b border-outline-variant flex-row justify-between items-center">
                 <Text className="font-headline-md text-[20px] font-bold">Recent Projects & Status</Text>
-                <Pressable onPress={() => router.push('/(tabs)/transactions')} className="flex-row items-center gap-1"><Text className="text-secondary font-label-md">All Projects</Text><MaterialIcons name="arrow-forward" size={18} color="#D4AF37" /></Pressable>
+                <Pressable onPress={() => router.push('/(tabs)/transactions')} className="flex-row items-center gap-1"><Text className="text-secondary font-label-md">All Projects</Text><MaterialIcons name="arrow-forward" size={18} color="#08142E" /></Pressable>
               </View>
               <View className="overflow-x-auto">
                 <View className="flex-row bg-surface-container-low px-md py-3">
@@ -164,7 +164,7 @@ export default function FreelancerDashboard() {
               </View>
             </View>
 
-            <View className="w-full md:flex-1 md:min-w-0 min-w-[200px] p-md rounded-xl items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.8)', borderWidth: 1, borderColor: '#E6EBF1', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}>
+            <View className="w-full md:flex-1 md:min-w-0 min-w-[200px] p-md rounded-xl items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.8)', borderWidth: 1, borderColor: '#E6EBF1', boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2 }}>
               <Pressable onPress={() => router.push('/(tabs)/transactions')} className="items-center active:scale-95">
                 <View className="w-12 h-12 rounded-full bg-secondary-container items-center justify-center mb-3"><MaterialIcons name="add" size={24} color="#1A1A1A" /></View>
                 <Text className="font-label-md font-bold">New Invoice</Text>

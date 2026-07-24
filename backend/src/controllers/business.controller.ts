@@ -18,7 +18,9 @@ export async function listVendors(req: Request, res: Response): Promise<void> {
 }
 
 export async function getAiAdvice(req: Request, res: Response): Promise<void> {
-  const result = await businessService.getAiAdvice(req.user!.id, req.body.question, req.body.business_data);
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : undefined;
+  const result = await businessService.getAiAdvice(req.user!.id, req.body.question, req.body.business_data, token);
   sendSuccess(res, result);
 }
 

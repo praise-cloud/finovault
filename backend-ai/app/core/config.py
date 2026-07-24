@@ -5,6 +5,7 @@ load_dotenv()
 
 
 class Settings:
+    AI_SERVICE_KEY: str = os.getenv("AI_SERVICE_KEY", "")
     SUPABASE_URL: str = os.getenv("SUPABASE_URL", "")
     SUPABASE_SERVICE_KEY: str = os.getenv("SUPABASE_SERVICE_KEY", "")
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import i18n from '@/lib/i18n/i18n';
 
 const STORAGE_KEY = 'finovault_settings';
 
@@ -20,6 +21,7 @@ export const CURRENCIES: Currency[] = [
   { code: 'GHS', symbol: '₵', name: 'Ghanaian Cedi', rate: 12.3 },
   { code: 'XOF', symbol: 'CFA', name: 'CFA Franc', rate: 605 },
   { code: 'EGP', symbol: 'E£', name: 'Egyptian Pound', rate: 48 },
+  { code: 'MUR', symbol: '₨', name: 'Mauritian Rupee', rate: 46.5 },
   { code: 'MAD', symbol: 'DH', name: 'Moroccan Dirham', rate: 10.1 },
 ];
 
@@ -33,6 +35,7 @@ export const LOCATIONS = [
   { label: 'France', value: 'FR', currency: 'EUR', lang: 'fr' },
   { label: 'Germany', value: 'DE', currency: 'EUR', lang: 'de' },
   { label: 'Egypt', value: 'EG', currency: 'EGP', lang: 'ar' },
+  { label: 'Mauritius', value: 'MU', currency: 'MUR', lang: 'en' },
   { label: 'Morocco', value: 'MA', currency: 'MAD', lang: 'ar' },
 ];
 
@@ -79,6 +82,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
   setLanguage: (value) => {
     set({ language: value });
+    i18n.changeLanguage(value);
     get().saveSettings().catch(() => {});
   },
 
@@ -88,7 +92,9 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       if (stored) {
         const parsed = JSON.parse(stored);
         const currency = CURRENCIES.find((c) => c.code === parsed.currencyCode) || CURRENCIES[0];
-        set({ currency, location: parsed.location || 'US', language: parsed.language || 'en', loaded: true });
+        const lang = parsed.language || 'en';
+        i18n.changeLanguage(lang);
+        set({ currency, location: parsed.location || 'US', language: lang, loaded: true });
       } else {
         set({ loaded: true });
       }

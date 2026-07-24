@@ -8,7 +8,9 @@ export async function getInsights(req: Request, res: Response): Promise<void> {
 }
 
 export async function askCoach(req: Request, res: Response): Promise<void> {
-  const result = await aiService.askCoach(req.user!.id, req.body.question, req.body.context);
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : undefined;
+  const result = await aiService.askCoach(req.user!.id, req.body.question, req.body.context, token);
   sendSuccess(res, result);
 }
 

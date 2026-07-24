@@ -3,7 +3,9 @@ import { sendSuccess } from '../utils/helpers';
 import * as fraudService from '../services/fraud.service';
 
 export async function checkTransaction(req: Request, res: Response): Promise<void> {
-  const result = await fraudService.checkTransaction(req.user!.id, req.body);
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : undefined;
+  const result = await fraudService.checkTransaction(req.user!.id, req.body, token);
   sendSuccess(res, result);
 }
 

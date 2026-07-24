@@ -1,9 +1,10 @@
 import { getSupabase } from '../config/supabase';
 import { createContextLogger } from '../utils/logger';
+import { aiClient } from '../lib/ai-client';
 
 const log = createContextLogger('PatternRecognition');
 
-export async function analyzeUserPatterns(userId: string): Promise<void> {
+export async function analyzeUserPatterns(userId: string, userToken?: string): Promise<void> {
   const supabase = getSupabase();
 
   const { data: transactions, error } = await supabase
@@ -16,6 +17,31 @@ export async function analyzeUserPatterns(userId: string): Promise<void> {
   if (error || !transactions || transactions.length === 0) {
     log.warn('No transactions to analyze', { userId });
     return;
+  }
+
+  if (userToken) {
+    try {
+      const aiResult = await aiClient.analyzePatterns(false, userToken, userId);
+      if (aiResult.patterns_detected > 0) {
+        for (const pattern of aiResult.patterns) {
+          await supabase.from('behavior_patterns').upsert({
+            user_id: userId,
+            pattern_type: pattern.pattern_type || 'ai-detected',
+            pattern_name: pattern.pattern_name || `AI Pattern ${Date.now()}`,
+            description: pattern.description || '',
+            category: pattern.category || 'general',
+            frequency: pattern.frequency || 'monthly',
+            confidence_score: pattern.confidence_score || 50,
+            last_observed_at: new Date().toISOString(),
+            metadata: pattern.metadata || {},
+          }, { onConflict: 'user_id,pattern_type,pattern_name', ignoreDuplicates: false });
+        }
+        log.info(`AI pattern analysis complete for user ${userId}`, { patternsFound: aiResult.patterns_detected });
+        return;
+      }
+    } catch (error: any) {
+      log.warn(`AI pattern service unavailable, falling back to local analysis: ${error.message}`);
+    }
   }
 
   const dayOfWeekPatterns = detectDayOfWeekPatterns(transactions);

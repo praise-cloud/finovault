@@ -21,7 +21,7 @@ export function StatCard({ label, value, trend, className = '', index = 0 }: Pro
           <MaterialIcons
             name={trend.direction === 'up' ? 'trending-up' : 'trending-down'}
             size={14}
-            color={trend.positive !== false ? '#D4AF37' : '#ba1a1a'}
+            color={trend.positive !== false ? '#08142E' : '#ba1a1a'}
           />
           <Text className={`text-caption ${trend.positive !== false ? 'text-secondary' : 'text-error'}`}>
             {trend.text}

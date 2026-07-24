@@ -17,6 +17,7 @@ export const env = {
   SUPABASE_SERVICE_KEY: required('SUPABASE_SERVICE_KEY'),
   SUPABASE_JWT_SECRET: required('SUPABASE_JWT_SECRET'),
 
+  AI_SERVICE_KEY: process.env.AI_SERVICE_KEY || '',
   PYTHON_AI_URL: process.env.PYTHON_AI_URL || 'https://finovault-ai.onrender.com',
 
   REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',

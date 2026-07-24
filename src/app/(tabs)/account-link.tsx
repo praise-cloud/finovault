@@ -37,38 +37,38 @@ export default function AccountLink() {
   if (loading) {
     return (
       <View className="flex-1 bg-surface-bright items-center justify-center">
-        <ActivityIndicator size="large" color="#D4AF37" />
+        <ActivityIndicator size="large" color="#08142E" />
       </View>
     );
   }
 
   return (
     <View className="flex-1 bg-surface-bright">
-      <View className="pt-14 pb-3 px-margin-mobile bg-surface-bright" style={{ elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04 }}>
+      <View className="pt-14 pb-3 px-margin-mobile bg-surface-bright" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <Pressable onPress={() => router.back()} className="w-10 h-10 rounded-full bg-surface-container items-center justify-center active:scale-90">
             <MaterialIcons name="arrow-back" size={20} color="#181c1e" />
           </Pressable>
-          <Text className="font-headline-md text-headline-md text-primary font-bold">Link Account</Text>
+          <Text className="font-body-bold text-[#1A1A1A] font-bold" style={{ fontSize: 20 }}>Link Account</Text>
           <View className="w-10" />
         </View>
       </View>
 
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }}>
         <View className="mt-6 mb-8">
-          <Text className="font-headline-lg text-headline-lg text-primary mb-2">Connect Your Bank</Text>
-          <Text className="font-body-md text-body-md text-on-surface-variant">Securely link your bank account to enable round-ups and smart savings.</Text>
+          <Text className="font-body-bold text-[#1A1A1A] mb-2" style={{ fontSize: 28 }}>Connect Your Bank</Text>
+          <Text className="text-[#6B6F76]" style={{ fontSize: 16 }}>Securely link your bank account to enable round-ups and smart savings.</Text>
         </View>
 
         {linkedAccounts.length > 0 && (
           <View className="mb-8">
-            <Text className="font-label-md text-label-md text-primary font-bold mb-3">Already Linked</Text>
+            <Text className="font-body-semibold text-[#1A1A1A] font-bold mb-3" style={{ fontSize: 14 }}>Already Linked</Text>
             {linkedAccounts.map((acct: any, i: number) => (
-              <View key={i} className="bg-surface-container-low rounded-2xl p-4 flex-row items-center gap-3 mb-2" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
-                <MaterialIcons name="check-circle" size={20} color="#D4AF37" />
+              <View key={i} className="bg-[#EEF0F5] rounded-2xl p-4 flex-row items-center gap-3 mb-2" style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.06)', elevation: 2 }}>
+                <MaterialIcons name="check-circle" size={20} color="#08142E" />
                 <View className="flex-1">
-                  <Text className="font-label-md text-label-md text-primary font-bold">{acct.bank_name || acct.name || 'Linked Account'}</Text>
-                  <Text className="text-caption text-on-surface-variant">
+                  <Text className="font-body-semibold text-[#1A1A1A] font-bold" style={{ fontSize: 14 }}>{acct.bank_name || acct.name || 'Linked Account'}</Text>
+                  <Text className="font-body text-[#6B6F76]" style={{ fontSize: 12 }}>
                     {acct.mask ? `****${acct.mask}` : acct.type || 'Account'}
                   </Text>
                 </View>
@@ -77,35 +77,35 @@ export default function AccountLink() {
           </View>
         )}
 
-        <Text className="font-label-md text-label-md text-primary font-bold mb-4">Select Your Bank</Text>
+        <Text className="font-body-semibold text-[#1A1A1A] font-bold mb-4" style={{ fontSize: 14 }}>Select Your Bank</Text>
         <View className="gap-3 mb-8">
           {BANK_LIST.map((bank) => (
             <Pressable
               key={bank.id}
               onPress={() => setSelected(bank.id)}
-              className={`flex-row items-center gap-4 p-4 rounded-2xl border ${selected === bank.id ? 'bg-primary-container border-primary' : 'bg-surface-container-low border-transparent'}`}
-              style={{ elevation: selected === bank.id ? 0 : 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}
+              className={`flex-row items-center gap-4 p-4 rounded-2xl border ${selected === bank.id ? 'bg-[rgba(8,20,46,0.08)] border-[#08142E]' : 'bg-[#EEF0F5] border-transparent'}`}
+              style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.06)', elevation: selected === bank.id ? 0 : 2 }}
             >
-              <View className={`w-12 h-12 rounded-full items-center justify-center ${selected === bank.id ? 'bg-white/20' : 'bg-surface-container-high'}`}>
+              <View className={`w-12 h-12 rounded-full items-center justify-center ${selected === bank.id ? 'bg-white/20' : 'bg-[#E4E7EE]'}`}>
                 <MaterialIcons name={bank.icon as any} size={22} color={selected === bank.id ? '#ffffff' : '#43474d'} />
               </View>
-              <Text className={`font-label-md text-label-md font-bold flex-1 ${selected === bank.id ? 'text-white' : 'text-primary'}`}>{bank.name}</Text>
+              <Text className={`font-body-semibold font-bold flex-1 ${selected === bank.id ? 'text-white' : 'text-[#1A1A1A]'}`} style={{ fontSize: 14 }}>{bank.name}</Text>
               {selected === bank.id && <MaterialIcons name="check-circle" size={22} color="#ffffff" />}
             </Pressable>
           ))}
         </View>
 
         {selected && (
-          <View className="bg-surface-container-low rounded-2xl p-5 mb-6" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06 }}>
+          <View className="bg-[#EEF0F5] rounded-2xl p-5 mb-6" style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.06)', elevation: 2 }}>
             <View className="flex-row items-center gap-3 mb-4">
-              <MaterialIcons name="security" size={22} color="#D4AF37" />
-              <Text className="font-label-md text-label-md text-primary font-bold">Secure Connection</Text>
+              <MaterialIcons name="security" size={22} color="#08142E" />
+              <Text className="font-body-semibold text-[#1A1A1A] font-bold" style={{ fontSize: 14 }}>Secure Connection</Text>
             </View>
-            <Text className="font-body-md text-body-md text-on-surface-variant mb-4">
+            <Text className="text-[#6B6F76] mb-4" style={{ fontSize: 16 }}>
               Your credentials are encrypted. We use bank-grade security to protect your data.
             </Text>
-            <Pressable onPress={handleLink} disabled={linking} className="w-full py-4 rounded-xl bg-secondary items-center justify-center active:scale-[0.98]">
-              <Text className="font-label-md text-label-md text-white font-bold">{linking ? 'Linking...' : 'Link Account'}</Text>
+            <Pressable onPress={handleLink} disabled={linking} className="w-full py-4 rounded-full items-center justify-center active:scale-[0.98]" style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: '#08142E' }}>
+              <Text className="font-body-semibold text-[#08142E] font-bold" style={{ fontSize: 14 }}>{linking ? 'Linking...' : 'Link Account'}</Text>
             </Pressable>
           </View>
         )}

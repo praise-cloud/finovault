@@ -38,7 +38,7 @@ export function BentoCard({ children, className = '', onPress }: Props) {
       <Animated.View style={animatedStyle}>
         <View
           className={`bg-surface-container-lowest rounded-xl p-md border border-outline-variant/30 shadow-sm ${className}`}
-          style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}
+          style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2 }}
         >
           {children}
         </View>

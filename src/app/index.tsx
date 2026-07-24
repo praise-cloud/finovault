@@ -1,35 +1,34 @@
+import { useColorScheme } from 'react-native';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Dimensions, Pressable, Text, View } from 'react-native';
 import { useAuthStore } from '@/stores/auth-store';
 import Animated, {
-  Easing,
   runOnUI,
   useAnimatedStyle,
   useSharedValue,
-  withDelay,
-  withRepeat,
-  withSequence,
   withTiming,
+  Easing,
 } from 'react-native-reanimated';
 import { MaterialIcons } from '@expo/vector-icons';
+import { VaultMonogram } from '@/components/vault-monogram';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const SLIDES = [
   {
-    title: 'Smart Financial AI',
-    subtitle: 'Finovault uses advanced AI to analyze your finances, predict market trends, and optimize your wealth in real time.',
-    icon: 'auto-awesome' as const,
+    title: 'One vault for all your money',
+    subtitle: 'AI analyzes your finances, predicts trends, and optimizes your wealth in real time.',
+    icon: 'account-balance' as const,
   },
   {
-    title: 'Bank-Grade Protection',
-    subtitle: 'Enterprise-level fraud detection and AES-256 encryption keep your assets safe, monitored 24/7 by our neural network.',
+    title: 'Bank-grade protection, always',
+    subtitle: 'AES-256 encryption and neural fraud detection keep your assets safe 24/7.',
     icon: 'shield' as const,
   },
   {
-    title: 'Intelligent Growth',
-    subtitle: 'Personalized AI-driven suggestions, smart savings automation, and a complete view of your financial health in one place.',
+    title: 'Growth that adapts to you',
+    subtitle: 'Personal AI suggestions and smart savings automation for complete financial health.',
     icon: 'trending-up' as const,
   },
 ];
@@ -37,28 +36,15 @@ const SLIDES = [
 export default function WelcomeTour() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
   useEffect(() => {
-    if (isAuthenticated) {
-      router.replace('/(tabs)');
-    }
+    if (isAuthenticated) router.replace('/(tabs)');
   }, [isAuthenticated]);
 
   const currentIndexRef = useRef(0);
   const translateX = useSharedValue(0);
-  const floatY1 = useSharedValue(0);
-  const floatY2 = useSharedValue(0);
-  const floatY3 = useSharedValue(0);
-  const floatStyle1 = useAnimatedStyle(() => ({ transform: [{ translateY: floatY1.value }] }));
-  const floatStyle2 = useAnimatedStyle(() => ({ transform: [{ translateY: floatY2.value }] }));
-  const floatStyle3 = useAnimatedStyle(() => ({ transform: [{ translateY: floatY3.value }] }));
-  const floatStyles = [floatStyle1, floatStyle2, floatStyle3];
-
-  useEffect(() => {
-    [floatY1, floatY2, floatY3].forEach((y, i) => {
-      y.value = withDelay(i * 1000, withRepeat(withSequence(withTiming(-15, { duration: 3000, easing: Easing.inOut(Easing.sin) }), withTiming(0, { duration: 3000, easing: Easing.inOut(Easing.sin) })), -1, true));
-    });
-  }, [floatY1, floatY2, floatY3]);
 
   const goToSlide = useCallback((index: number) => {
     currentIndexRef.current = index;
@@ -69,73 +55,93 @@ export default function WelcomeTour() {
     setCurrentIndex(index);
   }, [translateX]);
 
-  useEffect(() => {
-    const id = setInterval(() => goToSlide((currentIndexRef.current + 1) % SLIDES.length), 5000);
-    return () => clearInterval(id);
-  }, [goToSlide]);
-
   const carouselStyle = useAnimatedStyle(() => ({ transform: [{ translateX: translateX.value }] }));
-
-  const handleSkip = () => {
-    router.replace('/getting-started');
-  };
+  const bg = isDark ? '#08142E' : '#F7F9FC';
+  const textColor = isDark ? '#FFFFFF' : '#1A1A1A';
+  const textMuted = isDark ? 'rgba(255,255,255,0.6)' : '#43474D';
 
   return (
-    <View className="flex-1 bg-[#0A1F5C]">
-      <View className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[#08142E]" />
-      <View className="absolute top-1/3 -left-20 w-56 h-56 rounded-full bg-[#08142E]" />
-      <View className="absolute bottom-40 -right-16 w-48 h-48 rounded-full bg-[#08142E]" />
+    <View className="flex-1" style={{ backgroundColor: bg }}>
+      {/* Thin progress bar at top */}
+      <View className="absolute top-0 left-0 right-0 z-10 h-0.5" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#E4E7EE' }}>
+        <Animated.View
+          style={{
+            width: `${((currentIndex + 1) / SLIDES.length) * 100}%`,
+            height: '100%',
+            backgroundColor: '#08142E',
+          }}
+        />
+      </View>
 
-      <Pressable onPress={handleSkip} className="absolute top-14 right-5 z-10 px-5 py-2 rounded-full border border-[#D4AF37]/30 active:scale-95">
-        <Text className="text-white font-label-md font-bold">Skip</Text>
+      <Pressable
+        onPress={() => router.replace('/login')}
+        className="absolute top-14 right-5 z-10 px-5 py-2 rounded-full active:scale-95"
+        style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)', borderWidth: 1, borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)' }}
+      >
+        <Text className="font-body-medium text-caption" style={{ color: textMuted }}>Skip</Text>
       </Pressable>
 
-      <View className="flex-1 justify-center">
-        <View className="items-center mt-16 mb-6">
-          <View className="w-20 h-20 rounded-2xl bg-[#D4AF37]/20 items-center justify-center mb-3" style={{ shadowColor: '#D4AF37', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.2, shadowRadius: 24, elevation: 8 }}>
-            <Text className="text-[#D4AF37] font-bold text-4xl">F</Text>
-          </View>
-          <Text className="font-headline-lg text-headline-lg text-white font-bold">Finovault AI</Text>
-        </View>
-
-        <View className="overflow-hidden" style={{ height: 360 }}>
-          <Animated.View className="flex-row" style={[{ width: SCREEN_WIDTH * SLIDES.length }, carouselStyle]}>
+      <View className="flex-1 justify-center px-10">
+        <View className="overflow-hidden" style={{ maxHeight: SCREEN_WIDTH * 0.45 }}>
+          <Animated.View className="flex-row" style={[{ width: SCREEN_WIDTH * SLIDES.length, height: SCREEN_WIDTH * 0.4 }, carouselStyle]}>
             {SLIDES.map((slide, index) => (
-              <View key={index} style={{ width: SCREEN_WIDTH }} className="items-center justify-center px-8 py-8">
-                <View className="items-center">
-                  <Animated.View style={[floatStyles[index], { marginBottom: 24 }]}>
-                    <View className="w-36 h-36 rounded-full bg-[#D4AF37]/10 items-center justify-center">
-                      <MaterialIcons name={slide.icon} size={56} color="#D4AF37" />
-                    </View>
-                  </Animated.View>
-                  <Text className="font-headline-md text-headline-md text-white font-bold mb-3 text-center">{slide.title}</Text>
-                  <Text className="font-body-md text-body-md text-white/80 text-center leading-relaxed">{slide.subtitle}</Text>
+              <View key={index} style={{ width: SCREEN_WIDTH }} className="items-center justify-center">
+                <View className="w-24 h-24 rounded-full items-center justify-center" style={{ backgroundColor: isDark ? 'rgba(8,20,46,0.15)' : 'rgba(8,20,46,0.08)' }}>
+                  <MaterialIcons name={slide.icon} size={36} color="#08142E" />
                 </View>
               </View>
             ))}
           </Animated.View>
         </View>
 
-        <View className="flex-row justify-center gap-2 mt-4 mb-8">
+        <View className="items-center px-4" style={{ marginTop: 40 }}>
+          <Text
+            className="font-display text-center"
+            style={{ fontSize: 34, lineHeight: 38, color: textColor }}
+          >
+            {SLIDES[currentIndex].title}
+          </Text>
+          <Text
+            className="font-body text-center mt-4"
+            style={{ fontSize: 16, lineHeight: 24, color: textMuted }}
+          >
+            {SLIDES[currentIndex].subtitle}
+          </Text>
+        </View>
+
+        {/* Slide indicator */}
+        <View className="flex-row justify-center items-center gap-1.5 mt-8">
           {SLIDES.map((_, index) => (
-            <Pressable key={index} onPress={() => goToSlide(index)}>
-              <View className={`rounded-full ${index === currentIndex ? 'w-6 bg-[#D4AF37]' : 'w-2 h-2 bg-white/30'}`} style={{ height: 8 }} />
+            <Pressable key={index} onPress={() => goToSlide(index)} className="px-1 py-2">
+              <View
+                style={{
+                  width: index === currentIndex ? 24 : 6,
+                  height: 6,
+                  borderRadius: 3,
+                  backgroundColor: index === currentIndex ? '#08142E' : isDark ? 'rgba(255,255,255,0.2)' : '#c4c6ce',
+                }}
+              />
             </Pressable>
           ))}
         </View>
+      </View>
 
-        <View className="px-8 max-w-sm mx-auto w-full">
-          <Pressable
-            onPress={() => {
-              router.replace('/getting-started');
-            }}
-            className="w-full py-4 rounded-xl bg-[#D4AF37] items-center justify-center flex-row active:scale-[0.98]"
-            style={{ shadowColor: '#D4AF37', shadowOffset: { width: 0, height: 4 }, shadowRadius: 14, elevation: 4 }}
-          >
-            <Text className="font-label-md text-label-md text-[#1A1A1A] mr-2 font-bold">Get Started</Text>
-            <MaterialIcons name="arrow-forward" size={20} color="#1A1A1A" />
-          </Pressable>
-        </View>
+      {/* Bottom CTAs */}
+      <View className="px-8 pb-12 gap-3">
+        <Pressable
+          onPress={() => router.replace('/login')}
+          className="w-full py-3.5 items-center justify-center active:scale-[0.98]"
+          style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderRadius: 9999, borderWidth: 1.5, borderColor: '#08142E' }}
+        >
+          <Text className="font-body-semibold" style={{ fontSize: 16, color: '#08142E' }}>Log in</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => router.replace('/signup')}
+          className="w-full py-3.5 items-center justify-center active:scale-[0.98]"
+          style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5', borderRadius: 9999 }}
+        >
+          <Text className="font-body-semibold" style={{ fontSize: 16, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Register</Text>
+        </Pressable>
       </View>
     </View>
   );

@@ -2,23 +2,35 @@ import { useEffect } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useDashboardStore } from '@/stores/dashboard-store';
-import { useSettingsStore, LOCATIONS } from '@/stores/settings-store';
+import { useSettingsStore } from '@/stores/settings-store';
+import { useAuthStore } from '@/stores/auth-store';
 import { router } from 'expo-router';
 import { NotificationIcon, NotificationModal } from '@/components/notification-modal';
 import { UserAvatar } from '@/components/user-avatar';
+import { VaultMonogram } from '@/components/vault-monogram';
+import { FlatCard } from '@/components/flat-card';
+import { ListRow } from '@/components/list-row';
 import { formatCurrency, convertAmount } from '@/lib/format-currency';
 import { useSheet } from './_layout';
 import { useNotificationStore } from '@/stores/notification-store';
+
+function getGreeting(name?: string) {
+  const hour = new Date().getHours();
+  const period = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
+  return { period, text: `Good ${period}${name ? `, ${name.split(' ')[0]}` : ''}` };
+}
 
 export default function IndividualDashboard() {
   const summary = useDashboardStore((s) => s.summary);
   const isLoading = useDashboardStore((s) => s.isLoading);
   const loadSummary = useDashboardStore((s) => s.loadSummary);
-  const { currency, location, loaded: settingsLoaded, loadSettings } = useSettingsStore();
+  const user = useAuthStore((s) => s.user);
+  const { currency, loaded: settingsLoaded, loadSettings } = useSettingsStore();
   const { showSheet } = useSheet();
   const { count: notifCount, open: openNotifications, visible: notifVisible, close: closeNotifications } = useNotificationStore();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+
   useEffect(() => {
     loadSummary();
     if (!settingsLoaded) loadSettings();
@@ -30,33 +42,39 @@ export default function IndividualDashboard() {
     net_worth_change_pct: 0,
     monthly_spending: 0,
     spending_limit: 0,
-    spending_trend: null,
-    next_best_move: null,
     recent_transactions: [],
-    asset_allocations: [],
   } as any;
 
   if (isLoading && !summary) {
     return (
-      <View className={`flex-1 ${isDark ? 'bg-[#0A1F5C]' : 'bg-surface-bright'} items-center justify-center`}>
-        <ActivityIndicator size="large" color="#D4AF37" />
+      <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#F7F9FC' }}>
+        <ActivityIndicator size="large" color="#08142E" />
       </View>
     );
   }
 
-  const locationName = LOCATIONS.find((l) => l.value === location)?.label || 'United States';
+  const userName = user?.user_metadata?.full_name?.split(' ')[0] || '';
+  const greeting = getGreeting(user?.user_metadata?.full_name);
 
   return (
-    <View className={`flex-1 ${isDark ? 'bg-[#0A1F5C]' : 'bg-surface-bright'}`}>
-      <View className={`${isDark ? 'bg-[#0A1F5C]' : 'bg-surface-bright'} pt-14 pb-3 px-margin-mobile`} style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 4 }}>
+    <View className="flex-1" style={{ backgroundColor: isDark ? '#08142E' : '#F7F9FC' }}>
+      <View className="px-margin-mobile pt-14 pb-3" style={{ backgroundColor: isDark ? '#08142E' : '#F7F9FC' }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
-            <View className="w-9 h-9 rounded-xl bg-primary items-center justify-center">
-              <Text className="text-on-primary font-bold text-sm">F</Text>
+            <VaultMonogram size={34} flat />
+            <View>
+              <Text className="font-body-semibold text-body-md" style={{ color: isDark ? '#FFFFFF' : '#1A1A1A' }}>
+                {greeting.text}
+              </Text>
             </View>
-            <Text className={`font-headline-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>Dashboard</Text>
           </View>
           <View className="flex-row items-center gap-3">
+            {false && (
+              <Pressable className="flex-row items-center gap-1.5 py-1.5 px-3 active:scale-95" style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: '#08142E', borderRadius: 9999 }}>
+                <Text className="font-body-semibold" style={{ fontSize: 12, color: '#08142E' }}>Earn MUR 100</Text>
+                <MaterialIcons name="chevron-right" size={14} color="#08142E" />
+              </Pressable>
+            )}
             <NotificationIcon onPress={openNotifications} count={notifCount} />
             <Pressable onPress={() => router.push('/(tabs)/profile')} className="active:scale-90">
               <UserAvatar size={36} />
@@ -66,135 +84,96 @@ export default function IndividualDashboard() {
       </View>
 
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
-        <View className={`bg-surface-container-low ${isDark ? 'bg-[#08142E]' : ''} rounded-xl px-4 py-2.5 mt-3 flex-row items-center justify-between`}>
-          <View className="flex-row items-center gap-2">
-            <MaterialIcons name="language" size={16} color="#D4AF37" />
-            <Text className={`text-sm ${isDark ? 'text-white/70' : 'text-on-surface-variant'}`}>{locationName}</Text>
-          </View>
-          <View className="flex-row items-center gap-1">
-            <MaterialIcons name="currency-exchange" size={14} color="#D4AF37" />
-            <Text className="text-sm text-secondary font-medium">1 USD = {currency.symbol}{currency.rate} {currency.code}</Text>
-          </View>
+        {/* Headline */}
+        <Text className="font-display-bold" style={{ fontSize: 22, color: isDark ? '#FFFFFF' : '#1A1A1A', marginTop: 8 }}>
+          {userName ? `Welcome to ${userName}` : 'Welcome'}
+        </Text>
+
+        {/* Action pill row */}
+        <View className="flex-row mt-4" style={{ gap: 10 }}>
+          <Pressable
+            onPress={() => router.push('/(tabs)/pay')}
+            className="flex-1 py-3 items-center active:scale-[0.98]"
+            style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: '#08142E', borderRadius: 9999 }}
+          >
+            <Text className="font-body-semibold" style={{ fontSize: 15, color: '#08142E' }}>Send</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => router.push('/(tabs)/pay')}
+            className="flex-1 py-3 items-center active:scale-[0.98]"
+            style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5', borderRadius: 9999 }}
+          >
+            <Text className="font-body-semibold" style={{ fontSize: 15, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Add money</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => router.push('/(tabs)/pay')}
+            className="flex-1 py-3 items-center active:scale-[0.98]"
+            style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5', borderRadius: 9999 }}
+          >
+            <Text className="font-body-semibold" style={{ fontSize: 15, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Request</Text>
+          </Pressable>
         </View>
 
-        <View className="flex-row flex-wrap mt-3" style={{ gap: 12 }}>
-          <View className="bg-primary-container rounded-2xl p-5 relative overflow-hidden" style={{ width: '48%' }}>
-            <View className="absolute -top-8 -right-8 w-24 h-24 bg-secondary/10 rounded-full" />
-            <Text className="text-on-primary-container font-caption uppercase tracking-wider mb-1">Net Worth</Text>
-            <Text className="font-headline-lg text-headline-lg text-on-primary font-bold">
-              {formatCurrency(convertAmount(data.total_net_worth, currency.rate), currency.code)}
-            </Text>
-            {data.net_worth_change > 0 && (
-              <View className="flex-row items-center mt-1">
-                <MaterialIcons name="arrow-upward" size={14} color="#F4D35E" />
-                <Text className="text-secondary-fixed font-label-md ml-1">+{data.net_worth_change_pct}%</Text>
+        {/* Balance card */}
+        <FlatCard className="p-5 mt-4">
+          <View className="flex-row items-center justify-between">
+            <View className="flex-row items-center gap-2">
+              <View className="w-6 h-6 rounded-full items-center justify-center" style={{ backgroundColor: '#08142E' }}>
+                <Text className="font-body-bold" style={{ fontSize: 10, color: '#08142E' }}>{currency.code.slice(0, 2)}</Text>
               </View>
-            )}
-          </View>
-          <View className={`bg-surface-container-lowest ${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'border-outline-variant/20'} rounded-2xl p-5`} style={{ width: '48%' }}>
-            <Text className={`font-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} uppercase tracking-wider mb-1`}>Spending</Text>
-            <Text className={`font-headline-lg text-headline-lg ${isDark ? 'text-white' : 'text-primary'} font-bold`}>
-              {formatCurrency(convertAmount(data.monthly_spending, currency.rate), currency.code)}
-            </Text>
-            {data.spending_trend === 'up' && (
-              <View className="flex-row items-center mt-1">
-                <MaterialIcons name="trending-up" size={14} color="#ba1a1a" />
-                <Text className="text-error font-label-md ml-1">{Math.round((data.monthly_spending / (data.spending_limit || 1)) * 100)}%</Text>
-              </View>
-            )}
-          </View>
-        </View>
-
-        {data.next_best_move && (
-          <View className="bg-secondary rounded-2xl p-5 mt-3 relative overflow-hidden">
-            <View className="absolute -top-8 -right-8 w-32 h-32 bg-white/5 rounded-full" />
-            <View className="flex-row items-center gap-2 mb-2">
-              <MaterialIcons name="auto-awesome" size={16} color="#fff" />
-              <Text className="text-secondary-fixed font-label-md font-bold">AI Recommendation</Text>
+              <Text className="font-body-semibold text-caption" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#6B6F76' }}>
+                {currency.code} • {currency.symbol}
+              </Text>
             </View>
-            <Text className="text-white font-headline-md font-bold mb-1">{data.next_best_move.title}</Text>
-            <Text className="text-white/80 text-body-md mb-4">{data.next_best_move.description}</Text>
-            <Pressable onPress={() => router.push('/(tabs)/transactions')} className="bg-white/20 backdrop-blur-md px-5 py-2.5 rounded-xl self-start active:scale-95 border border-white/20">
-              <Text className="text-white font-label-md font-bold">Execute Transfer</Text>
+          </View>
+          <Text className="font-body text-caption mt-3" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : '#6B6F76' }}>
+            {currency.code} {currency.symbol}0.00
+          </Text>
+          <Text className="font-display-bold" style={{ fontSize: 34, lineHeight: 38, color: '#08142E', marginTop: 4 }}>
+            {formatCurrency(convertAmount(data.total_net_worth, currency.rate), currency.code)}
+          </Text>
+          {data.net_worth_change > 0 && (
+            <View className="flex-row items-center mt-2">
+              <MaterialIcons name="arrow-upward" size={14} color="#2E7D5B" />
+              <Text className="font-body-medium" style={{ fontSize: 13, color: '#2E7D5B', marginLeft: 4 }}>
+                +{data.net_worth_change_pct}% this month
+              </Text>
+            </View>
+          )}
+        </FlatCard>
+
+        {/* Transactions section */}
+        <View className="mt-6">
+          <View className="flex-row items-center justify-between mb-1">
+            <Text className="font-body-bold" style={{ fontSize: 17, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>
+              Transactions
+            </Text>
+            <Pressable onPress={() => showSheet({ title: 'All Activity', children: activitySheetContent() })}>
+              <Text className="font-body-semibold" style={{ fontSize: 14, color: '#08142E' }}>See all</Text>
             </Pressable>
           </View>
-        )}
-
-        <View className="mt-3">
-          <View className="flex-row items-center justify-between mb-3">
-            <Text className={`font-headline-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>Asset Allocation</Text>
-            <Pressable onPress={() => showSheet({ title: 'Asset Allocation', children: assetSheetContent() })}><Text className="text-secondary font-label-md font-bold">View All</Text></Pressable>
-          </View>
-          <View className={`bg-surface-container-lowest ${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'border-outline-variant/20'} rounded-2xl p-4`}>
-            {data.asset_allocations.length > 0 ? (
-              data.asset_allocations.slice(0, 3).map((item: any) => (
-                <View key={item.id} className={`flex-row items-center gap-3 py-3 border-b ${isDark ? 'border-[#D4AF37]/20' : 'border-outline-variant/10'} last:border-b-0`}>
-                  <View className="w-9 h-9 rounded-full items-center justify-center" style={{ backgroundColor: item.color + '20' }}>
-                    <MaterialIcons name={item.icon as any} size={18} color={item.color} />
-                  </View>
-                  <View className="flex-1">
-                    <View className="flex-row justify-between items-center">
-                      <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>{item.category}</Text>
-                      <Text className={`font-label-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>{formatCurrency(convertAmount(item.value, currency.rate), currency.code)}</Text>
-                    </View>
-                    <View className={`w-full ${isDark ? 'bg-[#08142E]' : 'bg-surface-container'} rounded-full h-1.5 mt-1.5 overflow-hidden`}>
-                      <View className="h-full rounded-full" style={{ width: `${item.percentage}%`, backgroundColor: item.color }} />
-                    </View>
-                  </View>
-                </View>
-              ))
-            ) : (
-              <Text className={`${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-body-md text-center py-6`}>No assets allocated yet.</Text>
-            )}
-          </View>
-        </View>
-
-        <View className="mt-3">
-          <View className="flex-row items-center justify-between mb-3">
-            <Text className={`font-headline-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>Recent Activity</Text>
-            <Pressable onPress={() => showSheet({ title: 'All Activity', children: activitySheetContent() })}><Text className="text-secondary font-label-md font-bold">View All</Text></Pressable>
-          </View>
-          <View className={`bg-surface-container-lowest ${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'border-outline-variant/20'} rounded-2xl overflow-hidden`}>
+          <FlatCard className="px-4">
             {data.recent_transactions.length > 0 ? (
               data.recent_transactions.slice(0, 3).map((tx: any, i: number) => (
-                <View key={tx.id || i} className={`flex-row items-center gap-3 px-4 py-3.5 border-b ${isDark ? 'border-[#D4AF37]/20' : 'border-outline-variant/10'} last:border-b-0`}>
-                  <View className={`w-9 h-9 rounded-full items-center justify-center ${tx.type === 'income' ? 'bg-secondary-container' : 'bg-error-container'}`}>
-                    <MaterialIcons name={tx.type === 'income' ? 'arrow-downward' : 'arrow-upward'} size={18} color={tx.type === 'income' ? '#D4AF37' : '#ba1a1a'} />
-                  </View>
-                  <View className="flex-1">
-                    <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>{tx.description}</Text>
-                    <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'}`}>{tx.merchant || tx.category}</Text>
-                  </View>
-                  <Text className={`font-label-md font-bold ${tx.type === 'income' ? 'text-secondary' : (isDark ? 'text-white' : 'text-on-surface')}`}>
-                    {formatCurrency(convertAmount(tx.amount, currency.rate), currency.code)}
-                  </Text>
-                </View>
+                <ListRow
+                  key={tx.id || i}
+                  icon={tx.type === 'income' ? 'arrow-downward' : 'arrow-upward'}
+                  iconColor={tx.type === 'income' ? '#2E7D5B' : '#1A1A1A'}
+                  label={tx.description}
+                  secondary={tx.merchant || tx.category}
+                  amount={formatCurrency(convertAmount(tx.amount, currency.rate), currency.code)}
+                  amountColor={tx.type === 'income' ? '#2E7D5B' : (isDark ? '#FFFFFF' : '#1A1A1A')}
+                  showPlus={tx.type === 'income'}
+                />
               ))
             ) : (
-              <Text className={`${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-body-md text-center py-8`}>No recent activity.</Text>
+              <View className="py-8 items-center">
+                <Text className="font-body text-caption" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : '#6B6F76' }}>
+                  No recent activity
+                </Text>
+              </View>
             )}
-          </View>
-        </View>
-
-        <View className="flex-row flex-wrap mt-3" style={{ gap: 12 }}>
-          <Pressable onPress={() => router.push('/(tabs)/wealth-growth')} className={`bg-surface-container-lowest ${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'border-outline-variant/20'} rounded-2xl p-4 flex-row items-center gap-3 active:scale-[0.98]`} style={{ width: '48%' }}>
-            <View className="w-10 h-10 rounded-xl bg-secondary-container items-center justify-center">
-              <MaterialIcons name="trending-up" size={20} color="#1A1A1A" />
-            </View>
-            <View className="flex-1">
-              <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>Wealth</Text>
-              <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'}`}>Track growth</Text>
-            </View>
-          </Pressable>
-          <Pressable onPress={() => router.push('/(tabs)/savings-goals')} className={`bg-surface-container-lowest ${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'border-outline-variant/20'} rounded-2xl p-4 flex-row items-center gap-3 active:scale-[0.98]`} style={{ width: '48%' }}>
-            <View className="w-10 h-10 rounded-xl bg-primary-container items-center justify-center">
-              <MaterialIcons name="savings" size={20} color="#ffffff" />
-            </View>
-            <View className="flex-1">
-              <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>Savings</Text>
-              <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'}`}>Smart goals</Text>
-            </View>
-          </Pressable>
+          </FlatCard>
         </View>
       </ScrollView>
 
@@ -202,44 +181,24 @@ export default function IndividualDashboard() {
     </View>
   );
 
-  function assetSheetContent() {
-    return data.asset_allocations.length > 0 ? data.asset_allocations.map((item: any) => (
-      <View key={item.id} className={`flex-row items-center gap-3 py-3.5 border-b ${isDark ? 'border-[#D4AF37]/20' : 'border-outline-variant/10'} last:border-b-0`}>
-        <View className="w-10 h-10 rounded-full items-center justify-center" style={{ backgroundColor: item.color + '20' }}>
-          <MaterialIcons name={item.icon as any} size={20} color={item.color} />
-        </View>
-        <View className="flex-1">
-          <View className="flex-row justify-between items-center mb-1">
-            <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>{item.category}</Text>
-            <Text className={`font-label-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>{formatCurrency(convertAmount(item.value, currency.rate), currency.code)}</Text>
-          </View>
-          <View className={`w-full ${isDark ? 'bg-[#08142E]' : 'bg-surface-container'} rounded-full h-2 overflow-hidden`}>
-            <View className="h-full rounded-full" style={{ width: `${item.percentage}%`, backgroundColor: item.color }} />
-          </View>
-          <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} mt-0.5`}>{item.percentage}% of portfolio</Text>
-        </View>
-      </View>
-    )) : (
-      <Text className={`${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-body-md text-center py-8`}>No assets allocated yet.</Text>
-    );
-  }
-
   function activitySheetContent() {
     return data.recent_transactions.length > 0 ? data.recent_transactions.map((tx: any, i: number) => (
-      <View key={tx.id || i} className={`flex-row items-center gap-3 px-2 py-3.5 border-b ${isDark ? 'border-[#D4AF37]/20' : 'border-outline-variant/10'} last:border-b-0`}>
-        <View className={`w-10 h-10 rounded-full items-center justify-center ${tx.type === 'income' ? 'bg-secondary-container' : 'bg-error-container'}`}>
-          <MaterialIcons name={tx.type === 'income' ? 'arrow-downward' : 'arrow-upward'} size={20} color={tx.type === 'income' ? '#D4AF37' : '#ba1a1a'} />
-        </View>
-        <View className="flex-1">
-          <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>{tx.description}</Text>
-          <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'}`}>{tx.merchant || tx.category} • {new Date(tx.date).toLocaleDateString()}</Text>
-        </View>
-        <Text className={`font-label-md font-bold ${tx.type === 'income' ? 'text-secondary' : (isDark ? 'text-white' : 'text-on-surface')}`}>
-          {formatCurrency(convertAmount(tx.amount, currency.rate), currency.code)}
+      <ListRow
+        key={tx.id || i}
+        icon={tx.type === 'income' ? 'arrow-downward' : 'arrow-upward'}
+        iconColor={tx.type === 'income' ? '#2E7D5B' : '#1A1A1A'}
+        label={tx.description}
+        secondary={tx.merchant || tx.category}
+        amount={formatCurrency(convertAmount(tx.amount, currency.rate), currency.code)}
+        amountColor={tx.type === 'income' ? '#2E7D5B' : (isDark ? '#FFFFFF' : '#1A1A1A')}
+        showPlus={tx.type === 'income'}
+      />
+    )) : (
+      <View className="py-8 items-center">
+        <Text className="font-body text-caption" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : '#6B6F76' }}>
+          No recent activity
         </Text>
       </View>
-    )) : (
-      <Text className={`${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-body-md text-center py-8`}>No recent activity.</Text>
     );
   }
 }

@@ -1,5 +1,6 @@
 import { getSupabase } from '../config/supabase';
 import { createContextLogger } from '../utils/logger';
+import { aiClient } from '../lib/ai-client';
 
 const log = createContextLogger('AIService');
 
@@ -22,7 +23,12 @@ export async function getInsights(userId: string) {
   return data || [];
 }
 
-export async function askCoach(userId: string, question: string, context?: Record<string, unknown>) {
+export async function askCoach(
+  userId: string,
+  question: string,
+  context?: Record<string, unknown>,
+  userToken?: string,
+) {
   const supabase = getSupabase();
 
   const [profileRes, txRes, savingsRes] = await Promise.all([
@@ -35,13 +41,44 @@ export async function askCoach(userId: string, question: string, context?: Recor
   const transactions = txRes.data || [];
   const savingsGoals = savingsRes.data || [];
 
+  const coachContext = {
+    ...context,
+    profile,
+    transactions: transactions.slice(0, 10),
+    savings_goals: savingsGoals,
+    transaction_count: transactions.length,
+  };
+
   await supabase.from('ai_conversations').insert({
     user_id: userId,
     session_id: crypto.randomUUID ? crypto.randomUUID() : userId + Date.now().toString(),
     role: 'user',
     content: question,
-    context: { ...context, transaction_count: transactions.length },
+    context: coachContext,
   });
+
+  if (userToken) {
+    try {
+      const result = await aiClient.askCoach(question, coachContext, userToken, userId);
+      await supabase.from('ai_conversations').insert({
+        user_id: userId,
+        session_id: crypto.randomUUID ? crypto.randomUUID() : userId + Date.now().toString(),
+        role: 'assistant',
+        content: result.answer,
+        context: { suggestions: result.suggestions },
+      });
+      return {
+        answer: result.answer,
+        suggestions: result.suggestions,
+        context: {
+          recent_transactions: transactions.slice(0, 5),
+          total_savings_goals: savingsGoals.length,
+        },
+      };
+    } catch (error: any) {
+      log.warn(`AI coach service unavailable, falling back to local response: ${error.message}`);
+    }
+  }
 
   const response = generateCoachResponse(question, profile, transactions, savingsGoals);
 

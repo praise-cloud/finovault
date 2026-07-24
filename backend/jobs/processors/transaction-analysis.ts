@@ -5,7 +5,7 @@ import { createContextLogger } from '../../src/utils/logger';
 const log = createContextLogger('TransactionAnalysisProcessor');
 
 export async function processTransactionAnalysis(job: Job) {
-  const { userId, transactionId, amount, merchant, category } = job.data;
+  const { userId, transactionId, amount, merchant, category, userToken } = job.data;
 
   log.info(`Analyzing transaction ${transactionId} for user ${userId}`, { amount, merchant });
 

@@ -67,10 +67,10 @@ export default function Preferences() {
                   <Pressable
                     onPress={() => setRole(role.key)}
                     className={`items-center p-6 rounded-xl ${selected ? 'bg-[#f0fffb] border border-secondary' : 'bg-white border border-[#E6EBF1]'}`}
-                    style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2, transform: [{ scale: selected ? 0.98 : 1 }] }}
+                    style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2, transform: [{ scale: selected ? 0.98 : 1 }] }}
                   >
                     <View className={`w-12 h-12 rounded-full items-center justify-center mb-4 ${selected ? 'bg-secondary-container' : 'bg-surface-container'}`}>
-                      <MaterialIcons name={role.icon} size={24} color="#D4AF37" />
+                      <MaterialIcons name={role.icon} size={24} color="#08142E" />
                     </View>
                     <Text className="text-label-md text-on-surface text-center">{role.label}</Text>
                   </Pressable>
@@ -90,7 +90,7 @@ export default function Preferences() {
                   key={goal.key}
                   onPress={() => toggleGoal(goal.key)}
                   className={`p-8 rounded-xl ${selected ? 'bg-[#f0fffb] border border-secondary' : 'bg-white border border-[#E6EBF1]'}`}
-                  style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}
+                  style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2 }}
                 >
                   {goal.key === 'sme-analytics' ? (
                     <View className="flex-row items-center">
@@ -98,11 +98,11 @@ export default function Preferences() {
                         <Text className="text-headline-md text-primary mb-1">{goal.label}</Text>
                         <Text className="text-body-md text-on-surface-variant">{goal.desc}</Text>
                       </View>
-                      <MaterialIcons name={goal.icon} size={40} color="#D4AF37" />
+                      <MaterialIcons name={goal.icon} size={40} color="#08142E" />
                     </View>
                   ) : (
                     <>
-                      <MaterialIcons name={goal.icon} size={28} color="#D4AF37" style={{ marginBottom: 8 }} />
+                      <MaterialIcons name={goal.icon} size={28} color="#08142E" style={{ marginBottom: 8 }} />
                       <Text className="text-headline-md text-primary mb-1">{goal.label}</Text>
                       <Text className="text-body-md text-on-surface-variant">{goal.desc}</Text>
                     </>
@@ -114,7 +114,7 @@ export default function Preferences() {
         </View>
 
         <View className="mb-16">
-          <View className="bg-white rounded-2xl p-8 border border-[#E6EBF1]" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }}>
+          <View className="bg-white rounded-2xl p-8 border border-[#E6EBF1]" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2 }}>
             <Text className="text-headline-md text-primary mb-6">Notification Preferences</Text>
             <View className="flex-row items-center justify-between">
               <View className="flex-row gap-4 flex-1 items-start">
@@ -150,7 +150,7 @@ export default function Preferences() {
           onPress={handleContinue}
           disabled={isSaving}
           className="w-full py-4 rounded-xl items-center justify-center flex-row gap-2"
-          style={{ backgroundColor: '#D4AF37', shadowColor: 'rgba(212,175,55,0.2)', shadowOffset: { width: 0, height: 4 }, shadowRadius: 12, elevation: 4 }}
+          style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: '#08142E', boxShadow: '0 2px 8px rgba(8,20,46,0.1)', elevation: 4 }}
         >
           {isSaving ? (
             <ActivityIndicator size="small" color="#ffffff" />

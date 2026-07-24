@@ -79,7 +79,7 @@ export function NotificationModal({ visible, onClose }: { visible: boolean; onCl
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
       <Pressable className="flex-1 bg-black/40" onPress={onClose}>
-        <View className="mt-20 mx-4 bg-white rounded-3xl max-h-[70%] overflow-hidden" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 16 }}>
+        <View className="mt-20 mx-4 bg-white rounded-3xl max-h-[70%] overflow-hidden" style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.15)', elevation: 16 }}>
           <View className="flex-row items-center justify-between px-6 pt-6 pb-4 border-b border-outline-variant/30">
             <View className="flex-row items-center gap-3">
               <Text className="font-headline-md text-primary font-bold">Notifications</Text>

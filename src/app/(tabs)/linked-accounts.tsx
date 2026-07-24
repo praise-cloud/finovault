@@ -28,7 +28,7 @@ export default function LinkedAccounts() {
 
   return (
     <View className="flex-1 bg-surface-bright">
-      <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, elevation: 4 }}>
+      <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
             <Pressable onPress={() => router.back()} className="w-9 h-9 rounded-xl bg-surface-variant items-center justify-center active:scale-90">
@@ -86,7 +86,7 @@ export default function LinkedAccounts() {
 
             <View className="bg-white border border-outline-variant/20 rounded-2xl p-5 mt-4">
               <View className="flex-row items-center gap-2 mb-3">
-                <MaterialIcons name="info" size={16} color="#D4AF37" />
+                <MaterialIcons name="info" size={16} color="#08142E" />
                 <Text className="font-label-md font-bold text-primary">Link a New Bank</Text>
               </View>
               <Text className="text-body-md text-on-surface-variant text-sm mb-4">Connect your bank accounts to get a complete view of your finances. We use bank-grade encryption (AES-256) to protect your data.</Text>

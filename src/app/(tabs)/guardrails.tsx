@@ -46,12 +46,12 @@ export default function Guardrails() {
 
   return (
     <View className="flex-1 bg-surface-bright">
-      <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, elevation: 4 }}>
+      <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center gap-3">
-          <Pressable onPress={() => router.back()} className="w-9 h-9 rounded-xl bg-surface-variant items-center justify-center active:scale-90">
+          <Pressable onPress={() => router.back()} className="w-9 h-9 rounded-full bg-[#EEF0F5] items-center justify-center active:scale-90">
             <MaterialIcons name="arrow-back" size={20} color="#43474d" />
           </Pressable>
-          <Text className="font-headline-md text-primary font-bold">Configure Guardrails</Text>
+          <Text className="font-body-bold text-[#1A1A1A] font-bold" style={{ fontSize: 20 }}>Configure Guardrails</Text>
         </View>
       </View>
 
@@ -63,24 +63,24 @@ export default function Guardrails() {
         ) : (
           <>
             <View className="mt-4 mb-6">
-              <Text className="text-on-surface-variant text-body-md">Set automated safety rules for your financial transactions and account activity.</Text>
+              <Text className="text-[#6B6F76]" style={{ fontSize: 16 }}>Set automated safety rules for your financial transactions and account activity.</Text>
             </View>
 
             <View className="bg-white border border-outline-variant/20 rounded-2xl overflow-hidden">
               {guardrails.map((g, i) => (
                 <View key={g.key} className={`flex-row items-center gap-3 p-4 ${i < guardrails.length - 1 ? 'border-b border-outline-variant/10' : ''}`}>
-                  <View className={`w-10 h-10 rounded-xl items-center justify-center ${g.enabled ? 'bg-secondary-container' : 'bg-surface-variant'}`}>
+                  <View className={`w-10 h-10 rounded-xl items-center justify-center ${g.enabled ? 'bg-secondary-container' : 'bg-[#EEF0F5]'}`}>
                     <MaterialIcons name={g.icon} size={20} color={g.enabled ? '#1A1A1A' : '#9ea0a5'} />
                   </View>
                   <View className="flex-1">
-                    <Text className={`font-label-md font-bold ${g.enabled ? 'text-primary' : 'text-on-surface-variant'}`}>{g.label}</Text>
-                    <Text className="text-caption text-on-surface-variant text-xs">{g.description}</Text>
+                    <Text className={`font-body-semibold font-bold ${g.enabled ? 'text-[#1A1A1A]' : 'text-[#6B6F76]'}`} style={{ fontSize: 14 }}>{g.label}</Text>
+                    <Text className="text-caption text-[#6B6F76] text-xs">{g.description}</Text>
                   </View>
                   <Pressable
                     onPress={() => toggleGuardrail(g.key)}
-                    className={`w-12 h-7 rounded-full items-center justify-center ${g.enabled ? 'bg-secondary' : 'bg-surface-variant'}`}
+                    className={`w-12 h-7 rounded-full items-center justify-center ${g.enabled ? 'bg-[#08142E]' : 'bg-[#EEF0F5]'}`}
                   >
-                    <View className={`w-5 h-5 rounded-full bg-white ${g.enabled ? 'self-end mr-0.5' : 'self-start ml-0.5'}`} style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.2, shadowRadius: 2, elevation: 2 }} />
+                    <View className={`w-5 h-5 rounded-full bg-white ${g.enabled ? 'self-end mr-0.5' : 'self-start ml-0.5'}`} style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.2)', elevation: 2 }} />
                   </Pressable>
                 </View>
               ))}
@@ -89,12 +89,13 @@ export default function Guardrails() {
             <Pressable
               onPress={handleSave}
               disabled={saving}
-              className="mt-6 w-full bg-secondary py-3.5 rounded-xl items-center active:scale-[0.98]"
+              className="mt-6 w-full py-3.5 rounded-full items-center active:scale-[0.98]"
+              style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: '#08142E' }}
             >
               {saving ? (
-                <ActivityIndicator size="small" color="#ffffff" />
+                <ActivityIndicator size="small" color="#08142E" />
               ) : (
-                <Text className="text-on-secondary font-label-md font-bold">Save Guardrails</Text>
+                <Text className="text-[#08142E] font-body-semibold font-bold" style={{ fontSize: 14 }}>Save Guardrails</Text>
               )}
             </Pressable>
           </>

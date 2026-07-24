@@ -40,12 +40,12 @@ export default function LastLogin() {
 
   return (
     <View className="flex-1 bg-surface-bright">
-      <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, elevation: 4 }}>
+      <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center gap-3">
-          <Pressable onPress={() => router.back()} className="w-9 h-9 rounded-xl bg-surface-variant items-center justify-center active:scale-90">
+          <Pressable onPress={() => router.back()} className="w-9 h-9 rounded-full bg-[#EEF0F5] items-center justify-center active:scale-90">
             <MaterialIcons name="arrow-back" size={20} color="#43474d" />
           </Pressable>
-          <Text className="font-headline-md text-primary font-bold">Login Activity</Text>
+          <Text className="font-body-bold text-[#1A1A1A] font-bold" style={{ fontSize: 20 }}>Login Activity</Text>
         </View>
       </View>
 
@@ -58,27 +58,27 @@ export default function LastLogin() {
           <View className="mt-4 mb-6">
             <View className="flex-row flex-wrap mb-4" style={{ gap: 12 }}>
               <View className="bg-white border border-outline-variant/20 rounded-2xl p-4 flex-1 min-w-[100px]">
-                <Text className="text-caption text-on-surface-variant uppercase tracking-wider text-xs">Last Login</Text>
-                <Text className="font-label-md font-bold text-primary mt-1">{latest ? latest.time : 'N/A'}</Text>
+                <Text className="font-body text-[#6B6F76] uppercase tracking-wider" style={{ fontSize: 12 }}>Last Login</Text>
+                <Text className="font-body-semibold font-bold text-[#1A1A1A] mt-1" style={{ fontSize: 14 }}>{latest ? latest.time : 'N/A'}</Text>
               </View>
               <View className="bg-white border border-outline-variant/20 rounded-2xl p-4 flex-1 min-w-[100px]">
-                <Text className="text-caption text-on-surface-variant uppercase tracking-wider text-xs">Device</Text>
-                <Text className="font-label-md font-bold text-primary mt-1">{latest ? extractSummary(latest.device) : 'N/A'}</Text>
+                <Text className="font-body text-[#6B6F76] uppercase tracking-wider" style={{ fontSize: 12 }}>Device</Text>
+                <Text className="font-body-semibold font-bold text-[#1A1A1A] mt-1" style={{ fontSize: 14 }}>{latest ? extractSummary(latest.device) : 'N/A'}</Text>
               </View>
               <View className="bg-white border border-outline-variant/20 rounded-2xl p-4 flex-1 min-w-[100px]">
-                <Text className="text-caption text-on-surface-variant uppercase tracking-wider text-xs">Location</Text>
-                <Text className="font-label-md font-bold text-primary mt-1">{latest ? extractCity(latest.location) : 'N/A'}</Text>
+                <Text className="font-body text-[#6B6F76] uppercase tracking-wider" style={{ fontSize: 12 }}>Location</Text>
+                <Text className="font-body-semibold font-bold text-[#1A1A1A] mt-1" style={{ fontSize: 14 }}>{latest ? extractCity(latest.location) : 'N/A'}</Text>
               </View>
             </View>
 
             <View className="bg-white border border-outline-variant/20 rounded-2xl overflow-hidden">
               <View className="px-4 py-3.5 border-b border-outline-variant/10">
-                <Text className="font-label-md text-primary font-bold">Recent Login Attempts</Text>
+                <Text className="font-body-semibold text-[#1A1A1A] font-bold" style={{ fontSize: 14 }}>Recent Login Attempts</Text>
               </View>
               {logins.length === 0 ? (
                 <View className="p-8 items-center">
                   <MaterialIcons name="history" size={40} color="#c4c6ca" />
-                  <Text className="text-on-surface-variant text-sm mt-2">No login activity recorded</Text>
+                  <Text className="text-[#6B6F76] mt-2" style={{ fontSize: 14 }}>No login activity recorded</Text>
                 </View>
               ) : (
                 logins.map((entry, i) => (
@@ -88,11 +88,11 @@ export default function LastLogin() {
                     </View>
                     <View className="flex-1">
                       <View className="flex-row items-center gap-2">
-                        <Text className="font-label-md font-bold text-primary">{entry.device}</Text>
-                        {!entry.successful && <View className="bg-error px-1.5 py-0.5 rounded"><Text className="text-white text-[10px] font-bold">Failed</Text></View>}
+                        <Text className="font-body-semibold font-bold text-[#1A1A1A]" style={{ fontSize: 14 }}>{entry.device}</Text>
+                        {!entry.successful && <View className="bg-[#BA1A1A] px-1.5 py-0.5 rounded"><Text className="text-white text-[10px] font-bold">Failed</Text></View>}
                       </View>
-                      <Text className="text-caption text-on-surface-variant text-xs">{entry.location} • {entry.ip}</Text>
-                      <Text className="text-caption text-on-surface-variant text-xs mt-0.5">{entry.time}</Text>
+                      <Text className="font-body text-[#6B6F76]" style={{ fontSize: 12 }}>{entry.location} • {entry.ip}</Text>
+                      <Text className="font-body text-[#6B6F76] mt-0.5" style={{ fontSize: 12 }}>{entry.time}</Text>
                     </View>
                   </View>
                 ))
@@ -101,10 +101,10 @@ export default function LastLogin() {
 
             <View className="bg-white border border-outline-variant/20 rounded-2xl p-5 mt-4">
               <View className="flex-row items-center gap-2 mb-3">
-                <MaterialIcons name="info" size={16} color="#D4AF37" />
-                <Text className="font-label-md font-bold text-primary">Security Tip</Text>
+                <MaterialIcons name="info" size={16} color="#08142E" />
+                <Text className="font-body-semibold font-bold text-[#1A1A1A]" style={{ fontSize: 14 }}>Security Tip</Text>
               </View>
-              <Text className="text-body-md text-on-surface-variant text-sm">If you notice any unrecognized login attempts, change your password immediately and enable two-factor authentication.</Text>
+              <Text className="text-[#6B6F76]" style={{ fontSize: 14 }}>If you notice any unrecognized login attempts, change your password immediately and enable two-factor authentication.</Text>
             </View>
           </View>
         )}

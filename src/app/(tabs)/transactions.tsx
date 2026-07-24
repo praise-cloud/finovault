@@ -1,32 +1,54 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Alert, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import * as TransactionsService from '@/lib/api/services/transactions';
-import { formatCurrency } from '@/lib/format-currency';
-import { convertAmount } from '@/lib/format-currency';
+import { formatCurrency, convertAmount } from '@/lib/format-currency';
 import { useSettingsStore } from '@/stores/settings-store';
+import { FlatCard } from '@/components/flat-card';
+
+const FILTERS = ['All', 'Income', 'Expense', 'Transfer', 'Pending', 'Completed', 'Flagged'];
+
+function getFilterParam(label: string): { type: string; status: string } {
+  const lower = label.toLowerCase();
+  if (lower === 'all') return { type: '', status: '' };
+  if (lower === 'income') return { type: 'income', status: '' };
+  if (lower === 'expense') return { type: 'expense', status: '' };
+  if (lower === 'transfer') return { type: 'transfer', status: '' };
+  if (lower === 'pending') return { type: '', status: 'pending' };
+  if (lower === 'completed') return { type: '', status: 'completed' };
+  if (lower === 'flagged') return { type: '', status: 'flagged' };
+  return { type: '', status: '' };
+}
+
+function getIconForTx(tx: any): keyof typeof MaterialIcons.glyphMap {
+  if (tx.type === 'income') return 'arrow-downward';
+  if (tx.type === 'expense') return 'arrow-upward';
+  return 'swap-horiz';
+}
 
 export default function TransactionsScreen() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const [transactions, setTransactions] = useState<TransactionsService.Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [activeFilter, setActiveFilter] = useState('All');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showFilter, setShowFilter] = useState(false);
-  const [filterType, setFilterType] = useState<string>('');
-  const [filterStatus, setFilterStatus] = useState<string>('');
   const { currency } = useSettingsStore();
   const abortRef = useRef<AbortController | null>(null);
+
+  const filterParams = getFilterParam(activeFilter);
 
   const load = useCallback(async () => {
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
-
     setIsLoading(true);
     try {
       const params: any = {};
-      if (filterType) params.type = filterType;
-      if (filterStatus) params.status = filterStatus;
+      if (filterParams.type) params.type = filterParams.type;
+      if (filterParams.status) params.status = filterParams.status;
+      if (search.trim()) params.search = search.trim();
       const res = await TransactionsService.listTransactions(params, { signal: controller.signal });
       if (controller.signal.aborted) return;
       const items = Array.isArray(res) ? res : (res?.data ?? []);
@@ -36,7 +58,7 @@ export default function TransactionsScreen() {
       console.error('Failed to load transactions', e.message);
     }
     setIsLoading(false);
-  }, [filterType, filterStatus]);
+  }, [filterParams.type, filterParams.status, search]);
 
   useEffect(() => { load(); return () => abortRef.current?.abort(); }, [load]);
 
@@ -54,74 +76,143 @@ export default function TransactionsScreen() {
     ]);
   };
 
+  const bg = isDark ? '#08142E' : '#F7F9FC';
+  const textColor = isDark ? '#FFFFFF' : '#1A1A1A';
+  const mutedColor = isDark ? 'rgba(255,255,255,0.5)' : '#6B6F76';
+
   return (
-    <View className="flex-1 bg-surface-bright">
-      <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, elevation: 4 }}>
+    <View className="flex-1" style={{ backgroundColor: bg }}>
+      {/* Header */}
+      <View className="pt-14 pb-2 px-margin-mobile" style={{ backgroundColor: bg }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
-            <Pressable onPress={() => router.back()} className="active:scale-90">
-              <MaterialIcons name="arrow-back" size={24} color="#0A1F5C" />
+            <Pressable onPress={() => {}} className="active:scale-90">
+              <MaterialIcons name="arrow-back" size={24} color={isDark ? '#FFFFFF' : '#1A1A1A'} />
             </Pressable>
-            <Text className="font-headline-md text-primary font-bold">Transactions</Text>
+            <Text className="font-body-bold" style={{ fontSize: 22, color: textColor }}>Transactions</Text>
           </View>
-          <View className="flex-row items-center gap-3">
-            <Pressable onPress={() => setShowFilter(true)} className="active:scale-90">
-              <MaterialIcons name="filter-list" size={24} color="#43474d" />
-            </Pressable>
-            <Pressable onPress={() => setShowAddModal(true)} className="bg-primary px-4 py-2 rounded-xl active:scale-90">
-              <MaterialIcons name="add" size={20} color="#fff" />
-            </Pressable>
-          </View>
+          <Pressable onPress={() => setShowAddModal(true)} className="active:scale-90"
+            style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: '#08142E', borderRadius: 9999, paddingHorizontal: 16, paddingVertical: 8 }}
+          >
+            <View className="flex-row items-center gap-1">
+              <MaterialIcons name="add" size={18} color="#08142E" />
+              <Text className="font-body-semibold" style={{ fontSize: 13, color: '#08142E' }}>Add</Text>
+            </View>
+          </Pressable>
         </View>
+
+        {/* Search bar */}
+        <View
+          className="flex-row items-center px-4 mt-3"
+          style={{
+            backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5',
+            borderRadius: 14,
+            height: 42,
+          }}
+        >
+          <MaterialIcons name="search" size={18} color={isDark ? 'rgba(255,255,255,0.4)' : '#9ea0a5'} />
+          <TextInput
+            placeholder="Search transactions"
+            placeholderTextColor={isDark ? 'rgba(255,255,255,0.3)' : '#9ea0a5'}
+            value={search}
+            onChangeText={setSearch}
+            className="flex-1 ml-2"
+            style={{ fontSize: 15, fontFamily: 'Montserrat_400Regular', color: textColor }}
+          />
+          {search.length > 0 && (
+            <Pressable onPress={() => setSearch('')}>
+              <MaterialIcons name="close" size={18} color={mutedColor} />
+            </Pressable>
+          )}
+        </View>
+
+        {/* Filter chips */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mt-3 pb-1" contentContainerStyle={{ gap: 8 }}>
+          {FILTERS.map((f) => {
+            const isActive = activeFilter === f;
+            return (
+              <Pressable
+                key={f}
+                onPress={() => setActiveFilter(f)}
+                className="px-4 py-2 active:scale-[0.97]"
+                style={{
+                  borderRadius: 9999,
+                  backgroundColor: isActive ? 'rgba(8,20,46,0.08)' : isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5',
+                  borderWidth: isActive ? 0 : 1,
+                  borderColor: isActive ? '#08142E' : isDark ? 'rgba(255,255,255,0.1)' : '#E4E7EE',
+                }}
+              >
+                <Text
+                  className="font-body-medium"
+                  style={{
+                    fontSize: 13,
+                    color: isActive ? '#08142E' : mutedColor,
+                  }}
+                >
+                  {f}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
       </View>
 
-      <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }}>
+      {/* Transaction list */}
+      <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {isLoading ? (
-          <View className="flex-1 items-center justify-center py-20">
-            <ActivityIndicator size="large" color="#D4AF37" />
+          <View className="items-center justify-center py-20">
+            <ActivityIndicator size="large" color="#08142E" />
           </View>
         ) : transactions.length === 0 ? (
-          <View className="flex-1 items-center justify-center py-20">
-            <MaterialIcons name="receipt-long" size={64} color="#c4c7cb" />
-            <Text className="text-on-surface-variant text-body-md mt-4">No transactions yet.</Text>
-            <Pressable onPress={() => setShowAddModal(true)} className="bg-primary px-6 py-3 rounded-xl mt-4 active:scale-95">
-              <Text className="text-on-primary font-label-md">Add Transaction</Text>
+          <View className="items-center justify-center py-20">
+            <MaterialIcons name="receipt-long" size={56} color={isDark ? 'rgba(255,255,255,0.2)' : '#c4c7cb'} />
+            <Text className="font-body" style={{ fontSize: 15, color: mutedColor, marginTop: 12 }}>No transactions yet.</Text>
+            <Pressable
+              onPress={() => setShowAddModal(true)}
+              className="mt-5 py-3 px-6 active:scale-95"
+              style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: '#08142E', borderRadius: 9999 }}
+            >
+              <Text className="font-body-semibold" style={{ fontSize: 15, color: '#08142E' }}>Add Transaction</Text>
             </Pressable>
           </View>
         ) : (
-          <View className="mt-4 gap-3">
-            {transactions.map((tx) => (
-              <View key={tx.id} className="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl p-4 flex-row items-center gap-3">
-                <View className={`w-10 h-10 rounded-full items-center justify-center ${tx.type === 'income' ? 'bg-secondary-container' : tx.type === 'expense' ? 'bg-error-container' : 'bg-primary-container'}`}>
-                  <MaterialIcons
-                    name={tx.type === 'income' ? 'arrow-downward' : tx.type === 'expense' ? 'arrow-upward' : 'swap-horiz'}
-                    size={20}
-                    color={tx.type === 'income' ? '#D4AF37' : tx.type === 'expense' ? '#ba1a1a' : '#D4AF37'}
-                  />
-                </View>
-                <View className="flex-1">
-                  <View className="flex-row justify-between items-start">
+          <View className="mt-2">
+            {transactions.map((tx: any) => {
+              const icon = getIconForTx(tx);
+              const iconColor = tx.type === 'income' ? '#2E7D5B' : tx.type === 'expense' ? '#BA1A1A' : '#08142E';
+              const amountStr = `${tx.type === 'income' ? '+' : '-'}${formatCurrency(convertAmount(tx.amount, currency.rate), currency.code)}`;
+              const amountColor = tx.type === 'income' ? '#2E7D5B' : textColor;
+              const detail = [tx.merchant || tx.category || 'General', tx.status === 'flagged' ? '🚩 Flagged' : ''].filter(Boolean).join(' • ');
+              return (
+                <View key={tx.id}>
+                  <View
+                    className="flex-row items-center py-3.5"
+                    style={{
+                      borderBottomWidth: 1,
+                      borderBottomColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+                    }}
+                  >
+                    <View
+                      className="w-8 h-8 rounded-full items-center justify-center mr-3"
+                      style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5' }}
+                    >
+                      <MaterialIcons name={icon} size={16} color={iconColor} />
+                    </View>
                     <View className="flex-1">
-                      <Text className="font-label-md font-bold text-primary">{tx.description}</Text>
-                      <Text className="text-caption text-on-surface-variant">
-                        {tx.merchant || tx.category || 'General'} {tx.status === 'flagged' ? '• Flagged' : ''}
+                      <Text className="font-body-medium" style={{ fontSize: 15, color: textColor }}>
+                        {tx.description}
+                      </Text>
+                      <Text className="font-body" style={{ fontSize: 13, color: mutedColor, marginTop: 1 }}>
+                        {detail} • {new Date(tx.date).toLocaleDateString()}
                       </Text>
                     </View>
-                    <Text className={`font-label-md font-bold ${tx.type === 'income' ? 'text-secondary' : 'text-on-surface'}`}>
-                      {tx.type === 'income' ? '+' : '-'}{formatCurrency(convertAmount(tx.amount, currency.rate), currency.code)}
-                    </Text>
-                  </View>
-                  <View className="flex-row justify-between items-center mt-2">
-                    <Text className="text-caption text-on-surface-variant">{new Date(tx.date).toLocaleDateString()}</Text>
-                    <View className="flex-row gap-2">
-                      <Pressable onPress={() => handleDelete(tx.id)} className="active:scale-90">
-                        <MaterialIcons name="delete-outline" size={18} color="#ba1a1a" />
-                      </Pressable>
-                    </View>
+                    <Pressable onPress={() => handleDelete(tx.id)} className="pr-1 pl-3 active:scale-90">
+                      <MaterialIcons name="delete-outline" size={18} color={isDark ? 'rgba(255,255,255,0.3)' : '#BA1A1A'} />
+                    </Pressable>
                   </View>
                 </View>
-              </View>
-            ))}
+              );
+            })}
           </View>
         )}
       </ScrollView>
@@ -130,26 +221,28 @@ export default function TransactionsScreen() {
         visible={showAddModal}
         onClose={() => setShowAddModal(false)}
         onSaved={() => { setShowAddModal(false); load(); }}
-      />
-
-      <FilterModal
-        visible={showFilter}
-        onClose={() => setShowFilter(false)}
-        filterType={filterType}
-        filterStatus={filterStatus}
-        onApply={(t, s) => { setFilterType(t); setFilterStatus(s); setShowFilter(false); }}
+        isDark={isDark}
       />
     </View>
   );
 }
 
-function AddTransactionModal({ visible, onClose, onSaved }: { visible: boolean; onClose: () => void; onSaved: () => void }) {
+function AddTransactionModal({ visible, onClose, onSaved, isDark }: {
+  visible: boolean;
+  onClose: () => void;
+  onSaved: () => void;
+  isDark: boolean;
+}) {
   const [type, setType] = useState<'income' | 'expense' | 'transfer'>('expense');
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [merchant, setMerchant] = useState('');
   const [saving, setSaving] = useState(false);
+  const textColor = isDark ? '#FFFFFF' : '#1A1A1A';
+  const muted = isDark ? 'rgba(255,255,255,0.5)' : '#6B6F76';
+  const inputBg = isDark ? '#1A1A1A' : '#F7F9FC';
+  const inputBorder = isDark ? 'rgba(255,255,255,0.12)' : '#E4E7EE';
 
   const handleSave = async () => {
     if (!amount || !description) {
@@ -174,18 +267,28 @@ function AddTransactionModal({ visible, onClose, onSaved }: { visible: boolean; 
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable className="flex-1 bg-black/40" onPress={onClose}>
+      <Pressable className="flex-1" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }} onPress={onClose}>
         <Pressable className="flex-1 justify-end" onPress={() => {}}>
-          <Pressable className="bg-white rounded-t-3xl p-6" style={{ maxHeight: '80%' }} onPress={() => {}}>
-            <View className="items-center pt-3 pb-1">
-              <View className="w-10 h-1 rounded-full bg-outline/40" />
+          <View style={{ backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF', borderTopLeftRadius: 18, borderTopRightRadius: 18, padding: 24, maxHeight: '80%' }}>
+            <View className="items-center pb-3">
+              <View className="w-10 h-1 rounded-full" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.2)' : '#c4c6ce' }} />
             </View>
-            <Text className="font-headline-md text-primary font-bold mb-4">Add Transaction</Text>
+            <Text className="font-body-bold" style={{ fontSize: 20, color: textColor, marginBottom: 20 }}>Add Transaction</Text>
 
-            <View className="flex-row gap-2 mb-4">
+            {/* Type pills */}
+            <View className="flex-row gap-2 mb-5">
               {(['expense', 'income', 'transfer'] as const).map((t) => (
-                <Pressable key={t} onPress={() => setType(t)} className={`px-4 py-2 rounded-xl ${type === t ? 'bg-primary' : 'bg-surface-container'}`}>
-                  <Text className={`font-label-md ${type === t ? 'text-on-primary' : 'text-on-surface-variant'}`}>
+                <Pressable
+                  key={t}
+                  onPress={() => setType(t)}
+                  style={{
+                    paddingHorizontal: 16,
+                    paddingVertical: 8,
+                    borderRadius: 9999,
+                    backgroundColor: type === t ? 'rgba(8,20,46,0.08)' : isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5',
+                  }}
+                >
+                  <Text className="font-body-semibold" style={{ fontSize: 13, color: type === t ? '#08142E' : muted }}>
                     {t.charAt(0).toUpperCase() + t.slice(1)}
                   </Text>
                 </Pressable>
@@ -194,92 +297,89 @@ function AddTransactionModal({ visible, onClose, onSaved }: { visible: boolean; 
 
             <TextInput
               placeholder="Amount"
+              placeholderTextColor={muted}
               value={amount}
               onChangeText={setAmount}
               keyboardType="decimal-pad"
-              className="bg-surface-container rounded-xl px-4 py-3 mb-3 font-label-md"
+              style={{
+                backgroundColor: inputBg,
+                borderWidth: 1,
+                borderColor: inputBorder,
+                borderRadius: 14,
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+                fontSize: 15,
+                fontFamily: 'Montserrat_400Regular',
+                color: textColor,
+                marginBottom: 12,
+              }}
             />
             <TextInput
               placeholder="Description"
+              placeholderTextColor={muted}
               value={description}
               onChangeText={setDescription}
-              className="bg-surface-container rounded-xl px-4 py-3 mb-3 font-label-md"
+              style={{
+                backgroundColor: inputBg,
+                borderWidth: 1,
+                borderColor: inputBorder,
+                borderRadius: 14,
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+                fontSize: 15,
+                fontFamily: 'Montserrat_400Regular',
+                color: textColor,
+                marginBottom: 12,
+              }}
             />
             <TextInput
               placeholder="Category (optional)"
+              placeholderTextColor={muted}
               value={category}
               onChangeText={setCategory}
-              className="bg-surface-container rounded-xl px-4 py-3 mb-3 font-label-md"
+              style={{
+                backgroundColor: inputBg,
+                borderWidth: 1,
+                borderColor: inputBorder,
+                borderRadius: 14,
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+                fontSize: 15,
+                fontFamily: 'Montserrat_400Regular',
+                color: textColor,
+                marginBottom: 12,
+              }}
             />
             <TextInput
               placeholder="Merchant (optional)"
+              placeholderTextColor={muted}
               value={merchant}
               onChangeText={setMerchant}
-              className="bg-surface-container rounded-xl px-4 py-3 mb-3 font-label-md"
+              style={{
+                backgroundColor: inputBg,
+                borderWidth: 1,
+                borderColor: inputBorder,
+                borderRadius: 14,
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+                fontSize: 15,
+                fontFamily: 'Montserrat_400Regular',
+                color: textColor,
+                marginBottom: 12,
+              }}
             />
 
             <Pressable
               onPress={handleSave}
               disabled={saving}
-              className="bg-primary py-3 rounded-xl items-center mt-2 active:scale-95"
+              className="w-full py-3.5 items-center mt-2 active:scale-[0.98]"
+              style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: '#08142E', borderRadius: 9999 }}
             >
-              <Text className="text-on-primary font-label-md font-bold">
+              <Text className="font-body-semibold" style={{ fontSize: 15, color: '#08142E' }}>
                 {saving ? 'Saving...' : 'Save Transaction'}
               </Text>
             </Pressable>
-          </Pressable>
-        </Pressable>
-      </Pressable>
-    </Modal>
-  );
-}
-
-function FilterModal({ visible, onClose, filterType, filterStatus, onApply }: {
-  visible: boolean;
-  onClose: () => void;
-  filterType: string;
-  filterStatus: string;
-  onApply: (type: string, status: string) => void;
-}) {
-  const [localType, setLocalType] = useState(filterType);
-  const [localStatus, setLocalStatus] = useState(filterStatus);
-
-  return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable className="flex-1 bg-black/40" onPress={onClose}>
-        <Pressable className="flex-1 justify-end" onPress={() => {}}>
-          <Pressable className="bg-white rounded-t-3xl p-6" onPress={() => {}}>
-            <View className="items-center pt-3 pb-1">
-              <View className="w-10 h-1 rounded-full bg-outline/40" />
-            </View>
-            <Text className="font-headline-md text-primary font-bold mb-4">Filter Transactions</Text>
-
-            <Text className="font-label-md font-bold mb-2">Type</Text>
-            <View className="flex-row flex-wrap gap-2 mb-4">
-              {['', 'income', 'expense', 'transfer'].map((t) => (
-                <Pressable key={t} onPress={() => setLocalType(t)} className={`px-4 py-2 rounded-xl ${localType === t ? 'bg-primary' : 'bg-surface-container'}`}>
-                  <Text className={`font-label-md ${localType === t ? 'text-on-primary' : 'text-on-surface-variant'}`}>
-                    {t || 'All'}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-
-            <Text className="font-label-md font-bold mb-2">Status</Text>
-            <View className="flex-row flex-wrap gap-2 mb-6">
-              {['', 'pending', 'completed', 'flagged'].map((s) => (
-                <Pressable key={s} onPress={() => setLocalStatus(s)} className={`px-4 py-2 rounded-xl ${localStatus === s ? 'bg-primary' : 'bg-surface-container'}`}>
-                  <Text className={`font-label-md ${localStatus === s ? 'text-on-primary' : 'text-on-surface-variant'}`}>
-                    {s || 'All'}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-
-            <Pressable onPress={() => onApply(localType, localStatus)} className="bg-primary py-3 rounded-xl items-center active:scale-95">
-              <Text className="text-on-primary font-label-md font-bold">Apply Filters</Text>
-            </Pressable>
-          </Pressable>
+          </View>
         </Pressable>
       </Pressable>
     </Modal>

@@ -1,48 +1,60 @@
 import { getSupabase } from '../config/supabase';
 import { createContextLogger } from '../utils/logger';
-import { env } from '../config/env';
+import { aiClient } from '../lib/ai-client';
 
 const log = createContextLogger('FraudService');
 
-export async function checkTransaction(userId: string, input: {
-  amount: number; merchant?: string; category?: string;
-  location?: string; device_id?: string; receiver?: string;
-}) {
-  const result = {
-    risk_score: 0,
-    risk_level: 'low' as 'low' | 'medium' | 'high' | 'critical',
-    signals: [] as string[],
-    decision: 'allow' as 'allow' | 'freeze' | 'block',
-    message: 'Transaction looks normal.',
-  };
+export async function checkTransaction(
+  userId: string,
+  input: {
+    amount: number; merchant?: string; category?: string;
+    location?: string; device_id?: string; receiver?: string;
+  },
+  userToken?: string,
+) {
+  let risk_score = 0;
+  let risk_level: 'low' | 'medium' | 'high' | 'critical' = 'low';
+  let signals: string[] = [];
+  let decision: 'allow' | 'freeze' | 'block' = 'allow';
+  let message = 'Transaction looks normal.';
 
-  const signals: string[] = [];
-
-  if (input.amount > 10000) {
-    signals.push('High-value transaction');
-    result.risk_score += 25;
+  if (userToken) {
+    try {
+      const aiResult = await aiClient.checkFraud(input, userToken, userId);
+      risk_score = aiResult.risk_score;
+      risk_level = aiResult.risk_level as typeof risk_level;
+      signals = aiResult.signals;
+      decision = aiResult.decision as typeof decision;
+      message = aiResult.message;
+    } catch (error: any) {
+      log.warn(`AI fraud service unavailable, falling back to local rules: ${error.message}`);
+    }
   }
 
-  if (input.amount > 50000) {
-    signals.push('Very high-value transaction');
-    result.risk_score += 25;
+  if (!userToken || risk_score === 0) {
+    if (input.amount > 10000) {
+      signals.push('High-value transaction');
+      risk_score += 25;
+    }
+    if (input.amount > 50000) {
+      signals.push('Very high-value transaction');
+      risk_score += 25;
+    }
+    if (input.receiver) {
+      signals.push(`Transaction to: ${input.receiver}`);
+      risk_score += 5;
+    }
+    if (risk_score > 50) {
+      risk_level = 'high';
+      decision = 'freeze';
+      message = 'This transaction requires verification due to high risk factors.';
+    } else if (risk_score > 25) {
+      risk_level = 'medium';
+      message = 'We recommend verifying this transaction.';
+    }
   }
 
-  if (input.receiver) {
-    signals.push(`Transaction to: ${input.receiver}`);
-    result.risk_score += 5;
-  }
-
-  if (result.risk_score > 50) {
-    result.risk_level = 'high';
-    result.decision = 'freeze';
-    result.message = 'This transaction requires verification due to high risk factors.';
-  } else if (result.risk_score > 25) {
-    result.risk_level = 'medium';
-    result.message = 'We recommend verifying this transaction.';
-  }
-
-  result.signals = signals;
+  const result: { risk_score: number; risk_level: string; signals: string[]; decision: string; message: string } = { risk_score, risk_level, signals, decision, message };
 
   try {
     const supabase = getSupabase();

@@ -44,11 +44,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <View className="absolute top-14 left-4 right-4 z-[9999] gap-2" pointerEvents="box-none">
+      <View className="absolute top-14 left-4 right-4 z-[9999] gap-2" style={{ pointerEvents: 'box-none' }}>
         {toasts.map((toast) => {
           const c = CONFIG[toast.type];
           return (
-            <View key={toast.id} className={`flex-row items-center gap-3 px-4 py-3.5 rounded-xl ${c.bg}`} style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12, elevation: 8 }}>
+            <View key={toast.id} className={`flex-row items-center gap-3 px-4 py-3.5 rounded-xl ${c.bg}`} style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', elevation: 8 }}>
               <MaterialIcons name={c.icon} size={20} color={c.iconColor} />
               <View className="flex-1">
                 {toast.title && <Text className="font-label-md font-bold text-white">{toast.title}</Text>}

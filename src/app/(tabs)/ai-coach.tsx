@@ -3,6 +3,7 @@ import { View, Text, Pressable, TextInput, ScrollView, ActivityIndicator, Keyboa
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import * as AIService from '@/lib/api/services/ai';
+import { useToast } from '@/components/toast';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -16,6 +17,7 @@ export default function AICoachScreen() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     scrollRef.current?.scrollToEnd({ animated: true });
@@ -38,9 +40,13 @@ export default function AICoachScreen() {
     setIsLoading(false);
   };
 
+  const handleMicPress = () => {
+    showToast({ title: 'Voice Input', message: 'Voice input is coming soon!', type: 'info' });
+  };
+
   return (
-    <KeyboardAvoidingView className="flex-1 bg-surface-bright" behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, elevation: 4 }}>
+    <KeyboardAvoidingView className="flex-1 bg-[#FFFFFF]" behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <View className="bg-[#FFFFFF] pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center gap-3">
           <Pressable onPress={() => router.back()} className="active:scale-90">
             <MaterialIcons name="arrow-back" size={24} color="#0A1F5C" />
@@ -49,7 +55,7 @@ export default function AICoachScreen() {
             <Text className="font-headline-md text-primary font-bold">AI Coach</Text>
             <Text className="text-caption text-on-surface-variant">Your personal financial advisor</Text>
           </View>
-          <MaterialIcons name="auto-awesome" size={24} color="#D4AF37" />
+          <MaterialIcons name="auto-awesome" size={24} color="#08142E" />
         </View>
       </View>
 
@@ -76,8 +82,15 @@ export default function AICoachScreen() {
         )}
       </ScrollView>
 
-      <View className="px-margin-mobile pb-6 pt-2 bg-surface-bright border-t border-outline-variant/10">
+      <View className="px-margin-mobile pb-6 pt-2 bg-[#FFFFFF] border-t border-outline-variant/10">
         <View className="flex-row items-center gap-2 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl px-4 py-2">
+          <Pressable
+            onPress={handleMicPress}
+            className="active:scale-90"
+            hitSlop={8}
+          >
+            <MaterialIcons name="mic-off" size={24} color="#c4c7cb" />
+          </Pressable>
           <TextInput
             className="flex-1 font-body-md py-2"
             placeholder="Ask your financial coach..."

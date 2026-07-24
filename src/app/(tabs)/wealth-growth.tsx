@@ -13,14 +13,14 @@ export default function WealthGrowth() {
   useEffect(() => { load(); }, [load]);
 
   if (!data) {
-    return <View className="flex-1 bg-surface-bright items-center justify-center"><ActivityIndicator size="large" color="#D4AF37" /></View>;
+    return <View className="flex-1 bg-[#FFFFFF] items-center justify-center"><ActivityIndicator size="large" color="#08142E" /></View>;
   }
 
   const d = data;
 
   return (
-    <View className="flex-1 bg-surface-bright">
-      <View className="bg-surface-bright w-full" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, elevation: 4 }}>
+    <View className="flex-1 bg-[#FFFFFF]">
+      <View className="bg-[#FFFFFF] w-full" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between px-margin-mobile md:px-margin-desktop h-16 max-w-[1440px] mx-auto">
           <View className="flex-row items-center gap-4">
             <Text className="font-headline-md text-primary font-bold">Finovault AI</Text>
@@ -49,7 +49,7 @@ export default function WealthGrowth() {
               <Text className="font-body-md text-on-surface-variant max-w-2xl">Visualizing your path to financial freedom with real-time institutional-grade forecasts and automated risk mitigation.</Text>
             </View>
             <View className="flex-row gap-4">
-              <Pressable onPress={() => router.push('/(tabs)/ai-coach')} className="bg-primary px-6 py-3 rounded-xl flex-row items-center gap-2 active:scale-95" style={{ shadowColor: '#D4AF37', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8, elevation: 4 }}>
+              <Pressable onPress={() => router.push('/(tabs)/ai-coach')} className="bg-primary px-6 py-3 rounded-xl flex-row items-center gap-2 active:scale-95" style={{ boxShadow: '0 4px 8px rgba(8,20,46,0.15)', elevation: 4 }}>
                 <MaterialIcons name="add-circle" size={20} color="#ffffff" />
                 <Text className="text-on-primary font-label-md">Optimize Allocation</Text>
               </Pressable>
@@ -72,13 +72,13 @@ export default function WealthGrowth() {
                 </View>
               </View>
               <View className="h-80 w-full relative overflow-hidden rounded-lg bg-surface-bright flex items-end px-4 pb-8">
-                <View className="absolute inset-0 opacity-10 bg-surface-bright"><View className="h-full w-full" style={{ backgroundColor: '#D4AF37' }} /></View>
+                <View className="absolute inset-0 opacity-10 bg-surface-bright"><View className="h-full w-full" style={{ backgroundColor: '#08142E' }} /></View>
                 <View className="flex-row items-end justify-between w-full h-full gap-2 z-10">
                   {(d.performance_forecast || []).map((h, i) => (
-                    <View key={i} className="flex-1 rounded-t-sm" style={{ height: `${h}%`, backgroundColor: i > 5 ? '#D4AF37' : '#08142E', opacity: i > 5 ? 0.8 : 0.2 + (i * 0.1) }} />
+                    <View key={i} className="flex-1 rounded-t-sm" style={{ height: `${h}%`, backgroundColor: i > 5 ? '#08142E' : '#0A1F5C', opacity: i > 5 ? 0.8 : 0.2 + (i * 0.1) }} />
                   ))}
                 </View>
-                <View className="absolute right-0 top-0 h-full w-1/3 flex items-center justify-center" style={{ backgroundColor: 'rgba(212,175,55,0.03)' }}>
+                <View className="absolute right-0 top-0 h-full w-1/3 flex items-center justify-center" style={{ backgroundColor: 'rgba(8,20,46,0.03)' }}>
                   <Text className="text-[10px] font-bold tracking-widest text-secondary/40 uppercase" style={{ transform: [{ rotate: '90deg' }] }}>AI Projection</Text>
                 </View>
               </View>
@@ -91,7 +91,7 @@ export default function WealthGrowth() {
                   <Svg width={192} height={192} viewBox="0 0 192 192" style={{ transform: [{ rotate: '-90deg' }] }}>
                     <Circle cx={96} cy={96} r={80} fill="transparent" stroke="#ebeef1" strokeWidth={24} />
                     <Circle cx={96} cy={96} r={80} fill="transparent" stroke="#0A1F5C" strokeDasharray="502" strokeDashoffset="150" strokeWidth={24} />
-                    <Circle cx={96} cy={96} r={80} fill="transparent" stroke="#D4AF37" strokeDasharray="502" strokeDashoffset="400" strokeWidth={24} />
+                    <Circle cx={96} cy={96} r={80} fill="transparent" stroke="#08142E" strokeDasharray="502" strokeDashoffset="400" strokeWidth={24} />
                     <Circle cx={96} cy={96} r={80} fill="transparent" stroke="#321ed2" strokeDasharray="502" strokeDashoffset="450" strokeWidth={24} />
                   </Svg>
                   <View className="absolute items-center">
@@ -116,7 +116,7 @@ export default function WealthGrowth() {
             <View className="w-full md:w-[58.3333%] bg-surface-container-lowest rounded-xl p-md border border-outline-variant shadow-sm">
               <View className="flex-row items-center justify-between mb-md">
                 <Text className="font-headline-md text-primary">Market Intelligence</Text>
-                <MaterialIcons name="psychology" size={24} color="#D4AF37" />
+                <MaterialIcons name="psychology" size={24} color="#08142E" />
               </View>
               {(d.market_insights || []).map((item, i) => (
                 <View key={item.id || i} className="flex-row gap-md items-start p-sm rounded-lg">

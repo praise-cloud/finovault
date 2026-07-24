@@ -89,7 +89,7 @@ export default function Profile() {
   };
 
   if (!data) {
-    return <View className={`flex-1 ${isDark ? 'bg-[#0A1F5C]' : 'bg-surface-bright'} items-center justify-center`}><ActivityIndicator size="large" color="#D4AF37" /></View>;
+    return <View className={`flex-1 ${isDark ? 'bg-[#0A1F5C]' : 'bg-[#FFFFFF]'} items-center justify-center`}><ActivityIndicator size="large" color="#08142E" /></View>;
   }
 
   const d = {
@@ -101,8 +101,8 @@ export default function Profile() {
   };
 
   return (
-    <View className={`flex-1 ${isDark ? 'bg-[#0A1F5C]' : 'bg-surface-bright'}`}>
-      <View className={`${isDark ? 'bg-[#0A1F5C]' : 'bg-surface-bright'} pt-14 pb-3 px-margin-mobile md:px-margin-desktop`} style={{ elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04 }}>
+    <View className={`flex-1 ${isDark ? 'bg-[#0A1F5C]' : 'bg-[#FFFFFF]'}`}>
+      <View className={`${isDark ? 'bg-[#0A1F5C]' : 'bg-[#FFFFFF]'} pt-14 pb-3 px-margin-mobile md:px-margin-desktop`} style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
             <View className="w-9 h-9 rounded-xl bg-primary items-center justify-center">
@@ -146,7 +146,7 @@ export default function Profile() {
 
         <View className="flex-col md:flex-row gap-4">
           <View className="md:w-[30%]">
-            <View className={`${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'bg-white border-outline-variant/20'} rounded-2xl p-3`}>
+            <View className={`${isDark ? 'bg-[#08142E] border-white/12' : 'bg-white border-outline-variant/20'} rounded-2xl p-3`}>
               {SETTINGS.map((item) => {
                 const isActive = activeSection === item.label;
                 return (
@@ -174,7 +174,7 @@ export default function Profile() {
           </View>
 
           <View className="flex-1">
-            <View className={`${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'bg-white border-outline-variant/20'} rounded-2xl p-5 mb-4`}>
+            <View className={`${isDark ? 'bg-[#08142E] border-white/12' : 'bg-white border-outline-variant/20'} rounded-2xl p-5 mb-4`}>
               <View className="flex-row justify-between items-center mb-5">
                 <View className="flex-row items-center gap-2">
                   <View className="w-8 h-8 rounded-lg bg-primary-container items-center justify-center">
@@ -191,28 +191,28 @@ export default function Profile() {
                 <View className={`${isDark ? 'bg-[#08142E]' : 'bg-surface-container-low'} rounded-xl p-4 flex-1 min-w-[140px]`}>
                   <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} uppercase tracking-wider text-xs`}>Full Name</Text>
                   <View className="flex-row items-center gap-2 mt-1">
-                    <MaterialIcons name="badge" size={16} color="#D4AF37" />
+                    <MaterialIcons name="badge" size={16} color="#08142E" />
                     <Text className={`font-body-md font-medium ${isDark ? 'text-white' : 'text-primary'}`}>{d.profile.full_name}</Text>
                   </View>
                 </View>
                 <View className={`${isDark ? 'bg-[#08142E]' : 'bg-surface-container-low'} rounded-xl p-4 flex-1 min-w-[140px]`}>
                   <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} uppercase tracking-wider text-xs`}>Email</Text>
                   <View className="flex-row items-center gap-2 mt-1">
-                    <MaterialIcons name="email" size={16} color="#D4AF37" />
+                    <MaterialIcons name="email" size={16} color="#08142E" />
                     <Text className={`font-body-md font-medium ${isDark ? 'text-white' : 'text-primary'}`} numberOfLines={1}>{d.profile.email}</Text>
                   </View>
                 </View>
                 <View className={`${isDark ? 'bg-[#08142E]' : 'bg-surface-container-low'} rounded-xl p-4 flex-1 min-w-[140px]`}>
                   <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} uppercase tracking-wider text-xs`}>Phone</Text>
                   <View className="flex-row items-center gap-2 mt-1">
-                    <MaterialIcons name="phone" size={16} color="#D4AF37" />
+                    <MaterialIcons name="phone" size={16} color="#08142E" />
                     <Text className={`font-body-md font-medium ${isDark ? 'text-white' : 'text-primary'}`}>{d.profile.phone || 'Not set'}</Text>
                   </View>
                 </View>
               </View>
             </View>
 
-            <View className={`${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'bg-white border-outline-variant/20'} rounded-2xl p-5 mb-4`}>
+            <View className={`${isDark ? 'bg-[#08142E] border-white/12' : 'bg-white border-outline-variant/20'} rounded-2xl p-5 mb-4`}>
               <View className="flex-row items-center gap-2 mb-5">
                 <View className="w-8 h-8 rounded-lg bg-secondary-container items-center justify-center">
                   <MaterialIcons name="shield-moon" size={16} color="#1A1A1A" />
@@ -220,8 +220,8 @@ export default function Profile() {
                 <Text className={`font-headline-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>Security & Protection</Text>
               </View>
               <View className="flex-row flex-wrap" style={{ gap: 12 }}>
-                <Pressable onPress={() => router.push('/(tabs)/two-factor-auth' as any)} className={`flex-1 min-w-[140px] p-4 rounded-xl ${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'bg-surface-container-low border-outline-variant/20'} flex-row items-start gap-3 active:scale-[0.98]`}>
-                  <MaterialIcons name="lock-open" size={18} color="#D4AF37" />
+                <Pressable onPress={() => router.push('/(tabs)/two-factor-auth' as any)} className={`flex-1 min-w-[140px] p-4 rounded-xl ${isDark ? 'bg-[#08142E] border-white/12' : 'bg-surface-container-low border-outline-variant/20'} flex-row items-start gap-3 active:scale-[0.98]`}>
+                  <MaterialIcons name="lock-open" size={18} color="#08142E" />
                   <View className="flex-1">
                     <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>Two-Factor Auth</Text>
                     <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-xs`}>Enabled via App</Text>
@@ -231,15 +231,15 @@ export default function Profile() {
                     </View>
                   </View>
                 </Pressable>
-                <Pressable onPress={() => router.push('/(tabs)/last-login' as any)} className={`flex-1 min-w-[140px] p-4 rounded-xl ${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'bg-surface-container-low border-outline-variant/20'} flex-row items-start gap-3 active:scale-[0.98]`}>
-                  <MaterialIcons name="history" size={18} color="#D4AF37" />
+                <Pressable onPress={() => router.push('/(tabs)/last-login' as any)} className={`flex-1 min-w-[140px] p-4 rounded-xl ${isDark ? 'bg-[#08142E] border-white/12' : 'bg-surface-container-low border-outline-variant/20'} flex-row items-start gap-3 active:scale-[0.98]`}>
+                  <MaterialIcons name="history" size={18} color="#08142E" />
                   <View className="flex-1">
                     <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>Last Login</Text>
                     <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-xs`}>{new Date(d.security.last_login).toLocaleDateString()}</Text>
                   </View>
                 </Pressable>
-                <Pressable className={`flex-1 min-w-[140px] p-4 rounded-xl ${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'bg-surface-container-low border-outline-variant/20'} flex-row items-start gap-3 active:scale-[0.98]`}>
-                  <MaterialIcons name="devices" size={18} color="#D4AF37" />
+                <Pressable className={`flex-1 min-w-[140px] p-4 rounded-xl ${isDark ? 'bg-[#08142E] border-white/12' : 'bg-surface-container-low border-outline-variant/20'} flex-row items-start gap-3 active:scale-[0.98]`}>
+                  <MaterialIcons name="devices" size={18} color="#08142E" />
                   <View className="flex-1">
                     <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>Active Devices</Text>
                     <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-xs`}>{d.security.active_devices} connected</Text>
@@ -248,7 +248,7 @@ export default function Profile() {
               </View>
             </View>
 
-            <View className={`${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'bg-white border-outline-variant/20'} rounded-2xl p-5 mb-4`}>
+            <View className={`${isDark ? 'bg-[#08142E] border-white/12' : 'bg-white border-outline-variant/20'} rounded-2xl p-5 mb-4`}>
               <View className="flex-row justify-between items-center mb-5">
                 <View className="flex-row items-center gap-2">
                   <View className="w-8 h-8 rounded-lg bg-primary-container items-center justify-center">
@@ -263,7 +263,7 @@ export default function Profile() {
               </View>
               {(d.linked_accounts?.length ?? 0) > 0 ? (
                 (d.linked_accounts || []).map((account) => (
-                  <Pressable key={account.id} onPress={() => router.push('/(tabs)/linked-accounts' as any)} className={`flex-row items-center justify-between p-3.5 ${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'bg-surface-container-low border-outline-variant/10'} rounded-xl mb-2 active:scale-[0.98]`}>
+                  <Pressable key={account.id} onPress={() => router.push('/(tabs)/linked-accounts' as any)} className={`flex-row items-center justify-between p-3.5 ${isDark ? 'bg-[#08142E] border-white/12' : 'bg-surface-container-low border-outline-variant/10'} rounded-xl mb-2 active:scale-[0.98]`}>
                     <View className="flex-row items-center gap-3">
                       <View className={`w-10 h-10 ${isDark ? 'bg-[#08142E]' : 'bg-surface-container'} items-center justify-center rounded-xl`}>
                         <MaterialIcons name={account.account_type === 'Checking' ? 'account-balance' : 'savings'} size={20} color="#43474d" />
@@ -290,7 +290,7 @@ export default function Profile() {
               )}
             </View>
 
-            <View className={`${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'bg-white border-outline-variant/20'} rounded-2xl p-5 mb-4`}>
+            <View className={`${isDark ? 'bg-[#08142E] border-white/12' : 'bg-white border-outline-variant/20'} rounded-2xl p-5 mb-4`}>
               <View className="flex-row items-center gap-2 mb-5">
                 <View className="w-8 h-8 rounded-lg bg-secondary-container items-center justify-center">
                   <MaterialIcons name="auto-awesome" size={16} color="#1A1A1A" />
@@ -312,7 +312,7 @@ export default function Profile() {
               </Pressable>
             </View>
 
-            <View className={`${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'bg-white border-outline-variant/20'} rounded-2xl p-5`}>
+            <View className={`${isDark ? 'bg-[#08142E] border-white/12' : 'bg-white border-outline-variant/20'} rounded-2xl p-5`}>
               <View className="flex-row items-center gap-2 mb-5">
                 <View className="w-8 h-8 rounded-lg bg-primary-container items-center justify-center">
                   <MaterialIcons name="settings" size={16} color="#ffffff" />
@@ -322,7 +322,7 @@ export default function Profile() {
               <View className="space-y-12">
                 <Pressable onPress={() => setShowLocationPicker(true)} className={`flex-row items-center justify-between p-3.5 ${isDark ? 'bg-[#08142E]' : 'bg-surface-container-low'} rounded-xl active:scale-[0.98]`}>
                   <View className="flex-row items-center gap-3">
-                    <MaterialIcons name="language" size={18} color="#D4AF37" />
+                    <MaterialIcons name="language" size={18} color="#08142E" />
                     <View>
                       <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>Location</Text>
                       <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-xs`}>{LOCATIONS.find((l) => l.value === location)?.label}</Text>
@@ -332,7 +332,7 @@ export default function Profile() {
                 </Pressable>
                 <Pressable onPress={() => setShowCurrencyPicker(true)} className={`flex-row items-center justify-between p-3.5 ${isDark ? 'bg-[#08142E]' : 'bg-surface-container-low'} rounded-xl active:scale-[0.98]`}>
                   <View className="flex-row items-center gap-3">
-                    <MaterialIcons name="currency-exchange" size={18} color="#D4AF37" />
+                    <MaterialIcons name="currency-exchange" size={18} color="#08142E" />
                     <View>
                       <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>Currency</Text>
                       <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-xs`}>{currency.symbol} {currency.code} - {currency.name}</Text>
@@ -342,7 +342,7 @@ export default function Profile() {
                 </Pressable>
                 <Pressable onPress={() => setShowLanguagePicker(true)} className={`flex-row items-center justify-between p-3.5 ${isDark ? 'bg-[#08142E]' : 'bg-surface-container-low'} rounded-xl active:scale-[0.98]`}>
                   <View className="flex-row items-center gap-3">
-                    <MaterialIcons name="translate" size={18} color="#D4AF37" />
+                    <MaterialIcons name="translate" size={18} color="#08142E" />
                     <View>
                       <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>Language</Text>
                       <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-xs`}>{LANGUAGES.find((l) => l.value === language)?.label}</Text>
@@ -358,7 +358,7 @@ export default function Profile() {
 
       <Modal visible={editVisible} transparent animationType="slide" onRequestClose={() => setEditVisible(false)}>
         <View className="flex-1 bg-black/40 justify-center px-4">
-          <View className={`${isDark ? 'bg-[#1A1A1A]' : 'bg-white'} rounded-3xl p-6`} style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 16 }}>
+          <View className={`${isDark ? 'bg-[#1A1A1A]' : 'bg-white'} rounded-3xl p-6`} style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.15)', elevation: 16 }}>
             <View className="flex-row items-center justify-between mb-6">
               <View className="flex-row items-center gap-2">
                 <View className="w-8 h-8 rounded-lg bg-primary-container items-center justify-center">
@@ -373,7 +373,7 @@ export default function Profile() {
 
             <View className="mb-4">
               <Text className={`font-label-md ${isDark ? 'text-white' : 'text-on-surface'} mb-2`}>Full Name</Text>
-              <View className={`flex-row items-center ${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'bg-surface-container-low border-outline-variant/30'} rounded-xl px-4`}>
+              <View className={`flex-row items-center ${isDark ? 'bg-[#08142E] border-white/12' : 'bg-surface-container-low border-outline-variant/30'} rounded-xl px-4`}>
                 <MaterialIcons name="badge" size={18} color="#74777e" />
                 <TextInput className={`flex-1 py-3.5 ml-2 text-body-md ${isDark ? 'text-white' : 'text-primary'}`} value={editName} onChangeText={setEditName} placeholderTextColor="#9ea0a5" />
               </View>
@@ -381,7 +381,7 @@ export default function Profile() {
 
             <View className="mb-4">
               <Text className={`font-label-md ${isDark ? 'text-white' : 'text-on-surface'} mb-2`}>Email Address</Text>
-              <View className={`flex-row items-center ${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'bg-surface-container-low border-outline-variant/30'} rounded-xl px-4`}>
+              <View className={`flex-row items-center ${isDark ? 'bg-[#08142E] border-white/12' : 'bg-surface-container-low border-outline-variant/30'} rounded-xl px-4`}>
                 <MaterialIcons name="email" size={18} color="#74777e" />
                 <TextInput className={`flex-1 py-3.5 ml-2 text-body-md ${isDark ? 'text-white' : 'text-primary'}`} value={editEmail} onChangeText={setEditEmail} keyboardType="email-address" placeholderTextColor="#9ea0a5" />
               </View>
@@ -389,14 +389,14 @@ export default function Profile() {
 
             <View className="mb-6">
               <Text className={`font-label-md ${isDark ? 'text-white' : 'text-on-surface'} mb-2`}>Phone Number</Text>
-              <View className={`flex-row items-center ${isDark ? 'bg-[#08142E] border-[#D4AF37]/20' : 'bg-surface-container-low border-outline-variant/30'} rounded-xl px-4`}>
+              <View className={`flex-row items-center ${isDark ? 'bg-[#08142E] border-white/12' : 'bg-surface-container-low border-outline-variant/30'} rounded-xl px-4`}>
                 <MaterialIcons name="phone" size={18} color="#74777e" />
                 <TextInput className={`flex-1 py-3.5 ml-2 text-body-md ${isDark ? 'text-white' : 'text-primary'}`} value={editPhone} onChangeText={setEditPhone} keyboardType="phone-pad" placeholderTextColor="#9ea0a5" />
               </View>
             </View>
 
             <View className="flex-row gap-3">
-              <Pressable onPress={() => setEditVisible(false)} className={`flex-1 py-3.5 rounded-xl border ${isDark ? 'border-[#D4AF37]/20' : 'border-outline-variant'} items-center active:scale-[0.98]`}>
+              <Pressable onPress={() => setEditVisible(false)} className={`flex-1 py-3.5 rounded-xl border ${isDark ? 'border-white/12' : 'border-outline-variant'} items-center active:scale-[0.98]`}>
                 <Text className={`font-label-md ${isDark ? 'text-white' : 'text-on-surface'} font-bold`}>Cancel</Text>
               </Pressable>
               <Pressable onPress={handleSaveProfile} className="flex-1 py-3.5 rounded-xl bg-primary items-center active:scale-[0.98]">
@@ -411,9 +411,9 @@ export default function Profile() {
 
       <Modal visible={showLocationPicker} transparent animationType="slide" onRequestClose={() => setShowLocationPicker(false)}>
         <View className="flex-1 bg-black/40 justify-end">
-          <View className={`${isDark ? 'bg-[#1A1A1A]' : 'bg-white'} rounded-t-3xl max-h-[70%]`} style={{ shadowColor: '#000', shadowOffset: { width: 0, height: -8 }, shadowOpacity: 0.1, shadowRadius: 24, elevation: 16 }}>
+          <View className={`${isDark ? 'bg-[#1A1A1A]' : 'bg-white'} rounded-t-3xl max-h-[70%]`} style={{ boxShadow: '0 -8px 24px rgba(0,0,0,0.1)', elevation: 16 }}>
             <View className="items-center pt-3 pb-1"><View className="w-10 h-1 rounded-full bg-outline/40" /></View>
-            <View className={`flex-row items-center justify-between px-6 py-4 border-b ${isDark ? 'border-[#D4AF37]/20' : 'border-outline-variant/20'}`}>
+            <View className={`flex-row items-center justify-between px-6 py-4 border-b ${isDark ? 'border-white/12' : 'border-outline-variant/20'}`}>
               <Text className={`font-headline-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>Select Location</Text>
               <Pressable onPress={() => setShowLocationPicker(false)} className="w-8 h-8 rounded-full bg-surface-variant items-center justify-center"><MaterialIcons name="close" size={18} color="#43474d" /></Pressable>
             </View>
@@ -432,9 +432,9 @@ export default function Profile() {
 
       <Modal visible={showCurrencyPicker} transparent animationType="slide" onRequestClose={() => setShowCurrencyPicker(false)}>
         <View className="flex-1 bg-black/40 justify-end">
-          <View className={`${isDark ? 'bg-[#1A1A1A]' : 'bg-white'} rounded-t-3xl max-h-[70%]`} style={{ shadowColor: '#000', shadowOffset: { width: 0, height: -8 }, shadowOpacity: 0.1, shadowRadius: 24, elevation: 16 }}>
+          <View className={`${isDark ? 'bg-[#1A1A1A]' : 'bg-white'} rounded-t-3xl max-h-[70%]`} style={{ boxShadow: '0 -8px 24px rgba(0,0,0,0.1)', elevation: 16 }}>
             <View className="items-center pt-3 pb-1"><View className="w-10 h-1 rounded-full bg-outline/40" /></View>
-            <View className={`flex-row items-center justify-between px-6 py-4 border-b ${isDark ? 'border-[#D4AF37]/20' : 'border-outline-variant/20'}`}>
+            <View className={`flex-row items-center justify-between px-6 py-4 border-b ${isDark ? 'border-white/12' : 'border-outline-variant/20'}`}>
               <Text className={`font-headline-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>Select Currency</Text>
               <Pressable onPress={() => setShowCurrencyPicker(false)} className="w-8 h-8 rounded-full bg-surface-variant items-center justify-center"><MaterialIcons name="close" size={18} color="#43474d" /></Pressable>
             </View>
@@ -455,9 +455,9 @@ export default function Profile() {
 
       <Modal visible={showLanguagePicker} transparent animationType="slide" onRequestClose={() => setShowLanguagePicker(false)}>
         <View className="flex-1 bg-black/40 justify-end">
-          <View className={`${isDark ? 'bg-[#1A1A1A]' : 'bg-white'} rounded-t-3xl max-h-[70%]`} style={{ shadowColor: '#000', shadowOffset: { width: 0, height: -8 }, shadowOpacity: 0.1, shadowRadius: 24, elevation: 16 }}>
+          <View className={`${isDark ? 'bg-[#1A1A1A]' : 'bg-white'} rounded-t-3xl max-h-[70%]`} style={{ boxShadow: '0 -8px 24px rgba(0,0,0,0.1)', elevation: 16 }}>
             <View className="items-center pt-3 pb-1"><View className="w-10 h-1 rounded-full bg-outline/40" /></View>
-            <View className={`flex-row items-center justify-between px-6 py-4 border-b ${isDark ? 'border-[#D4AF37]/20' : 'border-outline-variant/20'}`}>
+            <View className={`flex-row items-center justify-between px-6 py-4 border-b ${isDark ? 'border-white/12' : 'border-outline-variant/20'}`}>
               <Text className={`font-headline-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>Select Language</Text>
               <Pressable onPress={() => setShowLanguagePicker(false)} className="w-8 h-8 rounded-full bg-surface-variant items-center justify-center"><MaterialIcons name="close" size={18} color="#43474d" /></Pressable>
             </View>
