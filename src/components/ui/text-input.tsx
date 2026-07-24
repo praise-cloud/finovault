@@ -62,7 +62,7 @@ export function TextInput({
     ? 'rgba(255,255,255,0.15)'
     : '#c4c6ce';
 
-  const bgColor = isDark ? '#1A1A1A' : '#F7F9FC';
+  const bgColor = isDark ? '#1A1A1A' : '#FFFFFF';
 
   return (
     <View className="mb-gutter">

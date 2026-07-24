@@ -56,8 +56,8 @@ export default function WelcomeTour() {
   }, [translateX]);
 
   const carouselStyle = useAnimatedStyle(() => ({ transform: [{ translateX: translateX.value }] }));
-  const bg = isDark ? '#08142E' : '#F7F9FC';
-  const textColor = isDark ? '#FFFFFF' : '#1A1A1A';
+  const bg = isDark ? '#08142E' : '#FFFFFF';
+  const textColor = isDark ? '#FFFFFF' : '#08142E';
   const textMuted = isDark ? 'rgba(255,255,255,0.6)' : '#43474D';
 
   return (
@@ -76,7 +76,7 @@ export default function WelcomeTour() {
       <Pressable
         onPress={() => router.replace('/login')}
         className="absolute top-14 right-5 z-10 px-5 py-2 rounded-full active:scale-95"
-        style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)', borderWidth: 1, borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)' }}
+        style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(8,20,46,0.04)', borderWidth: 1, borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(8,20,46,0.1)' }}
       >
         <Text className="font-body-medium text-caption" style={{ color: textMuted }}>Skip</Text>
       </Pressable>
@@ -138,9 +138,9 @@ export default function WelcomeTour() {
         <Pressable
           onPress={() => router.replace('/signup')}
           className="w-full py-3.5 items-center justify-center active:scale-[0.98]"
-          style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5', borderRadius: 9999 }}
+          style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(8,20,46,0.04)', borderRadius: 9999 }}
         >
-          <Text className="font-body-semibold" style={{ fontSize: 16, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Register</Text>
+          <Text className="font-body-semibold" style={{ fontSize: 16, color: isDark ? '#FFFFFF' : '#08142E' }}>Register</Text>
         </Pressable>
       </View>
     </View>

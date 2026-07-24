@@ -42,8 +42,8 @@ export default function Login() {
     catch { errorNotification(); Alert.alert('Error', 'Failed to sign in with Google'); }
   };
 
-  const bg = isDark ? '#08142E' : '#F7F9FC';
-  const textColor = isDark ? '#FFFFFF' : '#1A1A1A';
+  const bg = isDark ? '#08142E' : '#FFFFFF';
+  const textColor = isDark ? '#FFFFFF' : '#08142E';
   const mutedColor = isDark ? 'rgba(255,255,255,0.5)' : '#43474D';
 
   return (
