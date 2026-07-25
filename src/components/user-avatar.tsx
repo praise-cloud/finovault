@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { View, Text } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useAuthStore } from '@/stores/auth-store';
+import { useAuthStore } from '@/src/stores/auth-store';
 
 type Props = {
   size?: number;

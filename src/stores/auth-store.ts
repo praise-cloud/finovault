@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { setApiToken, loadStoredToken, getApiToken } from '@/lib/api/client';
-import * as AuthService from '@/lib/api/services/auth';
+import { setApiToken, loadStoredToken, getApiToken } from '@/src/lib/api/client';
+import * as AuthService from '@/src/lib/api/services/auth';
 
 interface AuthState {
   user: any | null;

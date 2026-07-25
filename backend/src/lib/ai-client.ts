@@ -89,7 +89,37 @@ async function request<T>(
   throw lastError || new Error(`AI service request to ${endpoint} failed after ${(retries ?? 1) + 1} attempts`);
 }
 
+type HealthResult = {
+  service: string;
+  status: string;
+  version: string;
+  db_connected?: boolean;
+};
+
+async function healthCheck(): Promise<HealthResult | null> {
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 5000);
+    const response = await fetch(`${BASE_URL}/health`, {
+      method: 'GET',
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (!response.ok) return null;
+    return (await response.json()) as HealthResult;
+  } catch {
+    return null;
+  }
+}
+
 export const aiClient = {
+  healthCheck,
+
+  isReachable: async (): Promise<boolean> => {
+    const result = await healthCheck();
+    return result !== null && result.status === 'running';
+  },
+
   askCoach: (question: string, context: Record<string, unknown>, userToken: string, userId: string) =>
     request<{ answer: string; suggestions: string[] }>(
       '/coach/ask',

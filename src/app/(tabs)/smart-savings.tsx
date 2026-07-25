@@ -1,7 +1,7 @@
 import { View, Text, Pressable, ScrollView, Animated, ActivityIndicator, useWindowDimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRef, useEffect, useState } from 'react';
-import { useDashboardStore } from '@/stores/dashboard-store';
+import { useDashboardStore } from '@/src/stores/dashboard-store';
 import { router } from 'expo-router';
 
 export default function SmartSavings() {

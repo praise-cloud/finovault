@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import * as DashboardService from '@/lib/api/services/dashboard';
+import * as DashboardService from '@/src/lib/api/services/dashboard';
 import type {
   DashboardSummary,
   WealthGrowthData,
@@ -10,7 +10,7 @@ import type {
   FreelancerData,
   EntrepreneurData,
   ProfileData,
-} from '@/lib/supabase-types';
+} from '@/src/lib/supabase-types';
 
 interface DashboardState {
   summary: DashboardSummary | null;

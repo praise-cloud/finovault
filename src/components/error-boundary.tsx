@@ -19,16 +19,16 @@ export class ErrorBoundary extends Component<PropsWithChildren> {
   render() {
     if (this.state.error) {
       return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f7fafd', padding: 24 }}>
-          <Text style={{ fontSize: 18, fontWeight: '700', color: '#1e293b', marginBottom: 8 }}>Something went wrong</Text>
-          <Text style={{ fontSize: 13, color: '#64748b', textAlign: 'center', marginBottom: 20, fontFamily: 'monospace' }}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F0F0F0', padding: 24 }}>
+          <Text style={{ fontSize: 18, fontWeight: '700', color: '#111111', marginBottom: 8 }}>Something went wrong</Text>
+          <Text style={{ fontSize: 13, color: '#5E6470', textAlign: 'center', marginBottom: 20, fontFamily: 'monospace' }}>
             {this.state.error.message}
           </Text>
           <Pressable
             onPress={() => this.setState({ error: null })}
-            style={{ backgroundColor: '#08142E', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 9999 }}
+            style={{ backgroundColor: '#0D358C', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12 }}
           >
-            <Text style={{ color: '#1A1A1A', fontWeight: '600' }}>Try Again</Text>
+            <Text style={{ color: '#FFFFFF', fontWeight: '600' }}>Try Again</Text>
           </Pressable>
         </View>
       );

@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useDashboardStore } from '@/stores/dashboard-store';
-import { useAuthStore } from '@/stores/auth-store';
+import { useDashboardStore } from '@/src/stores/dashboard-store';
+import { useAuthStore } from '@/src/stores/auth-store';
 import { router } from 'expo-router';
 
 type IconName = React.ComponentProps<typeof MaterialIcons>['name'];

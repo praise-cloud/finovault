@@ -26,12 +26,14 @@ export async function checkTransaction(
       signals = aiResult.signals;
       decision = aiResult.decision as typeof decision;
       message = aiResult.message;
+      log.info(`[AI] Fraud check from Python service for user ${userId}`, { risk_score, risk_level, decision });
     } catch (error: any) {
-      log.warn(`AI fraud service unavailable, falling back to local rules: ${error.message}`);
+      log.warn(`[AI] Fraud service unavailable, falling back to local rules: ${error.message}`);
     }
   }
 
   if (!userToken || risk_score === 0) {
+    log.info(`[FALLBACK] Fraud check used local rules for user ${userId}`);
     if (input.amount > 10000) {
       signals.push('High-value transaction');
       risk_score += 25;

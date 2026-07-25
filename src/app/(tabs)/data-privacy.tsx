@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { getDataPrivacy, updatePrivacyToggles } from '@/lib/api/services/settings';
+import { getDataPrivacy, updatePrivacyToggles } from '@/src/lib/api/services/settings';
 
 type PrivacyToggle = {
   key: string;

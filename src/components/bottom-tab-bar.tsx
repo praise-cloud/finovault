@@ -1,24 +1,50 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { View, Pressable, Text, useColorScheme } from 'react-native';
-import { VaultMonogram } from '@/components/vault-monogram';
+import { VaultMonogram } from '@/src/components/vault-monogram';
 
 type Tab = {
   key: string;
   label: string;
   icon: keyof typeof MaterialIcons.glyphMap;
+  route: string;
 };
 
-const TABS: Tab[] = [
-  { key: 'home', label: 'Home', icon: 'home' },
-  { key: 'insights', label: 'Insights', icon: 'auto-awesome' },
-  { key: 'vault', label: 'Vault', icon: 'lock' },
-  { key: 'pay', label: 'Pay', icon: 'swap-horiz' },
-  { key: 'profile', label: 'Profile', icon: 'person' },
+type Role = 'individual' | 'sme' | 'entrepreneur' | 'freelancer';
+
+const CORE_TABS: Tab[] = [
+  { key: 'vault', label: 'Vault', icon: 'lock', route: '/(tabs)/vault' },
+  { key: 'pay', label: 'Pay', icon: 'swap-horiz', route: '/(tabs)/pay' },
+  { key: 'profile', label: 'Profile', icon: 'person', route: '/(tabs)/profile' },
 ];
+
+const ROLE_TABS: Record<Role, Tab[]> = {
+  individual: [
+    { key: 'home', label: 'Home', icon: 'home', route: '/(tabs)' },
+    { key: 'insights', label: 'Insights', icon: 'auto-awesome', route: '/(tabs)/insight' },
+  ],
+  sme: [
+    { key: 'sme-dashboard', label: 'Dashboard', icon: 'business', route: '/(tabs)/sme-dashboard' },
+    { key: 'sme-analytics', label: 'Analytics', icon: 'analytics', route: '/(tabs)/sme-analytics' },
+  ],
+  entrepreneur: [
+    { key: 'entrepreneur', label: 'Growth', icon: 'trending-up', route: '/(tabs)/entrepreneur' },
+    { key: 'insights', label: 'Insights', icon: 'auto-awesome', route: '/(tabs)/insight' },
+  ],
+  freelancer: [
+    { key: 'freelancer', label: 'Work', icon: 'computer', route: '/(tabs)/freelancer' },
+    { key: 'insights', label: 'Insights', icon: 'auto-awesome', route: '/(tabs)/insight' },
+  ],
+};
+
+function getTabs(role: Role): Tab[] {
+  const roleTabs = ROLE_TABS[role] || ROLE_TABS.individual;
+  return [...roleTabs, ...CORE_TABS];
+}
 
 type Props = {
   activeTab: string;
   onTabPress: (key: string) => void;
+  role?: string;
 };
 
 function TabItem({ tab, isActive, onPress, isDark }: { tab: Tab; isActive: boolean; onPress: () => void; isDark: boolean }) {
@@ -58,9 +84,10 @@ function TabItem({ tab, isActive, onPress, isDark }: { tab: Tab; isActive: boole
   );
 }
 
-export function BottomTabBar({ activeTab, onTabPress }: Props) {
+export function BottomTabBar({ activeTab, onTabPress, role = 'individual' }: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const tabs = getTabs(role as Role);
 
   return (
     <View
@@ -73,7 +100,7 @@ export function BottomTabBar({ activeTab, onTabPress }: Props) {
         borderTopColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
       }}
     >
-      {TABS.map((tab) => (
+      {tabs.map((tab) => (
         <TabItem
           key={tab.key}
           tab={tab}

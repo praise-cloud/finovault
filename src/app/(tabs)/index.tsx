@@ -1,24 +1,73 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useDashboardStore } from '@/stores/dashboard-store';
-import { useSettingsStore } from '@/stores/settings-store';
-import { useAuthStore } from '@/stores/auth-store';
+import { useDashboardStore } from '@/src/stores/dashboard-store';
+import { useSettingsStore } from '@/src/stores/settings-store';
+import { useAuthStore } from '@/src/stores/auth-store';
 import { router } from 'expo-router';
-import { NotificationIcon, NotificationModal } from '@/components/notification-modal';
-import { UserAvatar } from '@/components/user-avatar';
-import { VaultMonogram } from '@/components/vault-monogram';
-import { FlatCard } from '@/components/flat-card';
-import { ListRow } from '@/components/list-row';
-import { formatCurrency, convertAmount } from '@/lib/format-currency';
+import { NotificationIcon, NotificationModal } from '@/src/components/notification-modal';
+import { UserAvatar } from '@/src/components/user-avatar';
+import { FlatCard } from '@/src/components/flat-card';
+import { ListRow } from '@/src/components/list-row';
+import { formatCurrency, convertAmount } from '@/src/lib/format-currency';
 import { useSheet } from './_layout';
-import { useNotificationStore } from '@/stores/notification-store';
+import { useNotificationStore } from '@/src/stores/notification-store';
 
-function getGreeting(name?: string) {
-  const hour = new Date().getHours();
-  const period = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
-  return { period, text: `Good ${period}${name ? `, ${name.split(' ')[0]}` : ''}` };
+const BLUE = '#123B91';
+
+function SegmentedControl({
+  options,
+  value,
+  onChange,
+}: {
+  options: string[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <View style={{ flexDirection: 'row', backgroundColor: '#EEF0F5', borderRadius: 9999, padding: 3 }}>
+      {options.map((opt) => {
+        const active = opt === value;
+        return (
+          <Pressable
+            key={opt}
+            onPress={() => onChange(opt)}
+            style={{
+              paddingHorizontal: 18,
+              paddingVertical: 8,
+              borderRadius: 9999,
+              backgroundColor: active ? BLUE : 'transparent',
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: 'Montserrat_600SemiBold',
+                fontSize: 13,
+                color: active ? '#FFFFFF' : '#4B5163',
+              }}
+            >
+              {opt}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
 }
+
+function ProgressBar({ progress, trackColor, fillColor }: { progress: number; trackColor: string; fillColor: string }) {
+  return (
+    <View style={{ height: 4, borderRadius: 2, backgroundColor: trackColor, overflow: 'hidden' }}>
+      <View style={{ height: '100%', width: `${Math.min(100, Math.max(0, progress))}%`, backgroundColor: fillColor, borderRadius: 2 }} />
+    </View>
+  );
+}
+
+const ASSET_ICONS: Record<string, keyof typeof MaterialIcons.glyphMap> = {
+  'real-estate': 'apartment',
+  'liquid-cash': 'account-balance',
+  default: 'account-balance-wallet',
+};
 
 export default function IndividualDashboard() {
   const summary = useDashboardStore((s) => s.summary);
@@ -30,6 +79,7 @@ export default function IndividualDashboard() {
   const { count: notifCount, open: openNotifications, visible: notifVisible, close: closeNotifications } = useNotificationStore();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const [view, setView] = useState<'Budgets' | 'Accounts'>('Budgets');
 
   useEffect(() => {
     loadSummary();
@@ -40,41 +90,37 @@ export default function IndividualDashboard() {
     total_net_worth: 0,
     net_worth_change: 0,
     net_worth_change_pct: 0,
-    monthly_spending: 0,
-    spending_limit: 0,
+    estimated_tax_liability: 0,
+    tax_period_label: '',
+    withheld_amount: 0,
+    goal_pct: 0,
     recent_transactions: [],
+    asset_allocation: [],
   } as any;
 
   if (isLoading && !summary) {
     return (
-      <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#F7F9FC' }}>
-        <ActivityIndicator size="large" color="#08142E" />
+      <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
+        <ActivityIndicator size="large" color={BLUE} />
       </View>
     );
   }
 
   const userName = user?.user_metadata?.full_name?.split(' ')[0] || '';
-  const greeting = getGreeting(user?.user_metadata?.full_name);
 
   return (
-    <View className="flex-1" style={{ backgroundColor: isDark ? '#08142E' : '#F7F9FC' }}>
-      <View className="px-margin-mobile pt-14 pb-3" style={{ backgroundColor: isDark ? '#08142E' : '#F7F9FC' }}>
+    <View className="flex-1" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
+      <View className="px-margin-mobile pt-14 pb-3" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
         <View className="flex-row items-center justify-between">
-          <View className="flex-row items-center gap-3">
-            <VaultMonogram size={34} flat />
-            <View>
-              <Text className="font-body-semibold text-body-md" style={{ color: isDark ? '#FFFFFF' : '#1A1A1A' }}>
-                {greeting.text}
-              </Text>
-            </View>
+          <View>
+            <Text className="font-body" style={{ fontSize: 13, color: isDark ? 'rgba(255,255,255,0.6)' : '#6B6F76' }}>
+              Welcome back
+            </Text>
+            <Text className="font-display-bold" style={{ fontSize: 22, color: isDark ? '#FFFFFF' : '#1A1A1A', marginTop: 2 }}>
+              {userName || 'there'}
+            </Text>
           </View>
           <View className="flex-row items-center gap-3">
-            {false && (
-              <Pressable className="flex-row items-center gap-1.5 py-1.5 px-3 active:scale-95" style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: '#08142E', borderRadius: 9999 }}>
-                <Text className="font-body-semibold" style={{ fontSize: 12, color: '#08142E' }}>Earn MUR 100</Text>
-                <MaterialIcons name="chevron-right" size={14} color="#08142E" />
-              </Pressable>
-            )}
             <NotificationIcon onPress={openNotifications} count={notifCount} />
             <Pressable onPress={() => router.push('/(tabs)/profile')} className="active:scale-90">
               <UserAvatar size={36} />
@@ -84,83 +130,72 @@ export default function IndividualDashboard() {
       </View>
 
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
-        {/* Headline */}
-        <Text className="font-display-bold" style={{ fontSize: 22, color: isDark ? '#FFFFFF' : '#1A1A1A', marginTop: 8 }}>
-          {userName ? `Welcome to ${userName}` : 'Welcome'}
-        </Text>
-
-        {/* Action pill row */}
-        <View className="flex-row mt-4" style={{ gap: 10 }}>
-          <Pressable
-            onPress={() => router.push('/(tabs)/pay')}
-            className="flex-1 py-3 items-center active:scale-[0.98]"
-            style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: '#08142E', borderRadius: 9999 }}
-          >
-            <Text className="font-body-semibold" style={{ fontSize: 15, color: '#08142E' }}>Send</Text>
-          </Pressable>
-          <Pressable
-            onPress={() => router.push('/(tabs)/pay')}
-            className="flex-1 py-3 items-center active:scale-[0.98]"
-            style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5', borderRadius: 9999 }}
-          >
-            <Text className="font-body-semibold" style={{ fontSize: 15, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Add money</Text>
-          </Pressable>
-          <Pressable
-            onPress={() => router.push('/(tabs)/pay')}
-            className="flex-1 py-3 items-center active:scale-[0.98]"
-            style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5', borderRadius: 9999 }}
-          >
-            <Text className="font-body-semibold" style={{ fontSize: 15, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Request</Text>
-          </Pressable>
+        {/* Segment control + net worth */}
+        <View className="flex-row items-center justify-between mt-2">
+          <SegmentedControl options={['Budgets', 'Accounts']} value={view} onChange={(v) => setView(v as any)} />
+          <View style={{ alignItems: 'flex-end' }}>
+            <Text className="font-body" style={{ fontSize: 11, color: isDark ? 'rgba(255,255,255,0.5)' : '#8A8E98' }}>
+              Net worth
+            </Text>
+            <Text className="font-body-semibold" style={{ fontSize: 13, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>
+              {formatCurrency(convertAmount(data.total_net_worth, currency.rate), currency.code)}
+            </Text>
+          </View>
         </View>
 
-        {/* Balance card */}
-        <FlatCard className="p-5 mt-4">
+        {/* Balance / tax liability card */}
+        <View style={{ backgroundColor: BLUE, borderRadius: 20, padding: 20, marginTop: 16 }}>
           <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center gap-2">
-              <View className="w-6 h-6 rounded-full items-center justify-center" style={{ backgroundColor: '#08142E' }}>
-                <Text className="font-body-bold" style={{ fontSize: 10, color: '#08142E' }}>{currency.code.slice(0, 2)}</Text>
-              </View>
-              <Text className="font-body-semibold text-caption" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#6B6F76' }}>
-                {currency.code} • {currency.symbol}
+            <View style={{ backgroundColor: 'rgba(46,125,91,0.9)', borderRadius: 9999, paddingHorizontal: 12, paddingVertical: 5 }}>
+              <Text className="font-body-semibold" style={{ fontSize: 11, color: '#FFFFFF' }}>
+                Estimated Tax Liability
               </Text>
             </View>
+            <Pressable hitSlop={10}>
+              <MaterialIcons name="more-horiz" size={20} color="rgba(255,255,255,0.7)" />
+            </Pressable>
           </View>
-          <Text className="font-body text-caption mt-3" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : '#6B6F76' }}>
-            {currency.code} {currency.symbol}0.00
-          </Text>
-          <Text className="font-display-bold" style={{ fontSize: 34, lineHeight: 38, color: '#08142E', marginTop: 4 }}>
-            {formatCurrency(convertAmount(data.total_net_worth, currency.rate), currency.code)}
-          </Text>
-          {data.net_worth_change > 0 && (
-            <View className="flex-row items-center mt-2">
-              <MaterialIcons name="arrow-upward" size={14} color="#2E7D5B" />
-              <Text className="font-body-medium" style={{ fontSize: 13, color: '#2E7D5B', marginLeft: 4 }}>
-                +{data.net_worth_change_pct}% this month
-              </Text>
-            </View>
-          )}
-        </FlatCard>
 
-        {/* Transactions section */}
+          <Text className="font-display-bold" style={{ fontSize: 34, lineHeight: 40, color: '#FFFFFF', marginTop: 14 }}>
+            {formatCurrency(convertAmount(data.estimated_tax_liability, currency.rate), currency.code)}
+          </Text>
+          <Text className="font-body" style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 2 }}>
+            {data.tax_period_label || 'Recommended for this quarter'}
+          </Text>
+
+          <View style={{ marginTop: 16 }}>
+            <ProgressBar progress={data.goal_pct} trackColor="rgba(255,255,255,0.2)" fillColor="#FFFFFF" />
+          </View>
+
+          <View className="flex-row items-center justify-between" style={{ marginTop: 10 }}>
+            <Text className="font-body" style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)' }}>
+              Withheld: {formatCurrency(convertAmount(data.withheld_amount, currency.rate), currency.code)}
+            </Text>
+            <Text className="font-body" style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)' }}>
+              Goal: {data.goal_pct}%
+            </Text>
+          </View>
+        </View>
+
+        {/* Transactions */}
         <View className="mt-6">
           <View className="flex-row items-center justify-between mb-1">
             <Text className="font-body-bold" style={{ fontSize: 17, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>
               Transactions
             </Text>
             <Pressable onPress={() => showSheet({ title: 'All Activity', children: activitySheetContent() })}>
-              <Text className="font-body-semibold" style={{ fontSize: 14, color: '#08142E' }}>See all</Text>
+              <Text className="font-body-semibold" style={{ fontSize: 14, color: BLUE }}>See all</Text>
             </Pressable>
           </View>
           <FlatCard className="px-4">
             {data.recent_transactions.length > 0 ? (
-              data.recent_transactions.slice(0, 3).map((tx: any, i: number) => (
+              data.recent_transactions.slice(0, 1).map((tx: any, i: number) => (
                 <ListRow
                   key={tx.id || i}
                   icon={tx.type === 'income' ? 'arrow-downward' : 'arrow-upward'}
                   iconColor={tx.type === 'income' ? '#2E7D5B' : '#1A1A1A'}
                   label={tx.description}
-                  secondary={tx.merchant || tx.category}
+                  secondary={`Added: ${tx.date_label || tx.merchant || tx.category}`}
                   amount={formatCurrency(convertAmount(tx.amount, currency.rate), currency.code)}
                   amountColor={tx.type === 'income' ? '#2E7D5B' : (isDark ? '#FFFFFF' : '#1A1A1A')}
                   showPlus={tx.type === 'income'}
@@ -170,6 +205,39 @@ export default function IndividualDashboard() {
               <View className="py-8 items-center">
                 <Text className="font-body text-caption" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : '#6B6F76' }}>
                   No recent activity
+                </Text>
+              </View>
+            )}
+          </FlatCard>
+        </View>
+
+        {/* Asset allocation */}
+        <View className="mt-6">
+          <View className="flex-row items-center justify-between mb-1">
+            <Text className="font-body-bold" style={{ fontSize: 17, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>
+              Asset Allocation
+            </Text>
+            <Pressable onPress={() => router.push('/(tabs)/vault')}>
+              <Text className="font-body-semibold" style={{ fontSize: 14, color: BLUE }}>See all</Text>
+            </Pressable>
+          </View>
+          <FlatCard className="px-4">
+            {data.asset_allocation.length > 0 ? (
+              data.asset_allocation.map((asset: any, i: number) => (
+                <ListRow
+                  key={asset.id || i}
+                  icon={ASSET_ICONS[asset.category_key] || ASSET_ICONS.default}
+                  iconColor={BLUE}
+                  label={asset.label}
+                  secondary={`${asset.portfolio_pct}% of portfolio`}
+                  amount={formatCurrency(convertAmount(asset.value, currency.rate), currency.code)}
+                  amountColor={isDark ? '#FFFFFF' : '#1A1A1A'}
+                />
+              ))
+            ) : (
+              <View className="py-8 items-center">
+                <Text className="font-body text-caption" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : '#6B6F76' }}>
+                  No assets linked yet
                 </Text>
               </View>
             )}
@@ -188,7 +256,7 @@ export default function IndividualDashboard() {
         icon={tx.type === 'income' ? 'arrow-downward' : 'arrow-upward'}
         iconColor={tx.type === 'income' ? '#2E7D5B' : '#1A1A1A'}
         label={tx.description}
-        secondary={tx.merchant || tx.category}
+        secondary={`Added: ${tx.date_label || tx.merchant || tx.category}`}
         amount={formatCurrency(convertAmount(tx.amount, currency.rate), currency.code)}
         amountColor={tx.type === 'income' ? '#2E7D5B' : (isDark ? '#FFFFFF' : '#1A1A1A')}
         showPlus={tx.type === 'income'}

@@ -1,80 +1,59 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { View, Text, Pressable, ScrollView, Alert, ActivityIndicator, useColorScheme } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, View, useWindowDimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useAuthStore } from '@/stores/auth-store';
-import { signInWithGoogle } from '@/lib/api/services/auth';
-import { mediumImpact, successNotification, errorNotification } from '@/hooks/use-haptics';
-import { TextInput } from '@/components/ui/text-input';
-import { VaultMonogram } from '@/components/vault-monogram';
-import { FlatCard } from '@/components/flat-card';
+import { useAuthStore } from '@/src/stores/auth-store';
+import { TextInput } from '@/src/components/ui/text-input';
+
+const BLUE = '#123B91';
+const PAPER = '#F2F2F2';
 
 export default function Login() {
+  const signIn = useAuthStore((state) => state.signIn);
+  const { width } = useWindowDimensions();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const signIn = useAuthStore((s) => s.signIn);
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const validate = () => {
-    const errs: Record<string, string> = {};
-    if (!email.trim()) errs.email = 'Email is required';
-    if (!password) errs.password = 'Password is required';
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
-  };
-
-  const handleLogin = async () => {
-    if (!validate()) { errorNotification(); return; }
-    mediumImpact();
-    setIsSubmitting(true);
-    const error = await signIn({ email, password });
-    setIsSubmitting(false);
-    if (error) { errorNotification(); Alert.alert('Login Failed', error); return; }
-    successNotification();
+  const submit = async () => {
+    if (!email.trim() || !password) {
+      setError('Enter your email and password.');
+      return;
+    }
+    setLoading(true);
+    const result = await signIn({ email: email.trim(), password });
+    setLoading(false);
+    if (result) {
+      setError(result);
+      return;
+    }
     router.replace('/(tabs)');
   };
 
-  const handleGoogleSignIn = async () => {
-    try { mediumImpact(); await signInWithGoogle(); }
-    catch { errorNotification(); Alert.alert('Error', 'Failed to sign in with Google'); }
-  };
-
-  const bg = isDark ? '#08142E' : '#FFFFFF';
-  const textColor = isDark ? '#FFFFFF' : '#08142E';
-  const mutedColor = isDark ? 'rgba(255,255,255,0.5)' : '#43474D';
-
   return (
-    <View className="flex-1" style={{ backgroundColor: bg }}>
-      <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 24 }}>
-        <Pressable
-          onPress={() => router.back()}
-          className="w-10 h-10 rounded-full items-center justify-center active:scale-90 mb-6"
-          style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' }}
-        >
-          <MaterialIcons name="arrow-back" size={22} color={isDark ? '#FFFFFF' : '#0A1F5C'} />
-        </Pressable>
+    <View style={{ flex: 1, backgroundColor: PAPER, alignItems: 'center' }}>
+      <View style={{ width: Math.min(width, 390), flex: 1, backgroundColor: PAPER, paddingHorizontal: 24, paddingTop: 60 }}>
+        <View style={styles.topbar}>
+          <Pressable onPress={() => router.back()} hitSlop={12}>
+            <MaterialIcons name="arrow-back" size={24} color={BLUE} />
+          </Pressable>
+          <Pressable onPress={() => router.push('/signup')} hitSlop={12}>
+            <Text style={styles.signUp}>Sign UP</Text>
+          </Pressable>
+        </View>
 
-        <FlatCard className="p-8" style={{ maxWidth: 400, alignSelf: 'center', width: '100%' }}>
-          <View className="items-center mb-8">
-            <VaultMonogram size={56} />
-            <Text className="font-display-bold mt-4" style={{ color: isDark ? '#FFFFFF' : '#0A1F5C', fontSize: 34, lineHeight: 38 }}>
-              Welcome back
-            </Text>
-            <Text className="font-body text-body-md mt-1" style={{ color: mutedColor }}>
-              Log in to your Finovault account
-            </Text>
-          </View>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30 }}>
+          <Text style={styles.title}>Welcome back!</Text>
+          <Text style={styles.subtitle}>Let's get you back into building wealth</Text>
 
           <TextInput
             label="Email address"
             value={email}
             onChangeText={setEmail}
             placeholder="name@example.com"
-            error={errors.email}
             keyboardType="email-address"
+            autoCapitalize="none"
           />
 
           <TextInput
@@ -82,76 +61,75 @@ export default function Login() {
             value={password}
             onChangeText={setPassword}
             placeholder="••••••••"
-            error={errors.password}
             secureTextEntry
           />
 
-          <Pressable
-            onPress={handleLogin}
-            disabled={isSubmitting}
-            className="w-full py-3.5 items-center justify-center flex-row active:scale-[0.98] mt-2"
-            style={{
-              backgroundColor: isSubmitting ? '#1A1A1A' : 'rgba(8,20,46,0.08)',
-              borderRadius: 9999,
-              borderWidth: 1.5,
-              borderColor: '#08142E',
-            }}
-          >
-            {isSubmitting ? (
-              <ActivityIndicator size="small" color="#74777e" />
-            ) : (
-              <>
-                <Text className="font-body-semibold" style={{ fontSize: 16, color: '#08142E' }}>Log In</Text>
-                <MaterialIcons name="arrow-forward" size={20} color="#08142E" style={{ marginLeft: 8 }} />
-              </>
-            )}
+          <Pressable style={{ alignSelf: 'flex-start', marginTop: 4, marginBottom: 24 }}>
+            <Text style={styles.link}>Forgot your password?</Text>
           </Pressable>
 
-          <View className="flex-row items-center my-6">
-            <View className="flex-1 h-px" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#e0e3e6' }} />
-            <Text className="font-caption text-caption mx-4" style={{ color: mutedColor }}>Or continue with</Text>
-            <View className="flex-1 h-px" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#e0e3e6' }} />
-          </View>
+          {!!error && <Text style={styles.error}>{error}</Text>}
 
           <Pressable
-            onPress={handleGoogleSignIn}
-            className="flex-row items-center justify-center gap-3 py-3.5 active:scale-95"
-            style={{
-              backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : '#EEF0F5',
-              borderRadius: 9999,
-            }}
+            onPress={submit}
+            disabled={loading}
+            style={({ pressed }) => [styles.cta, { opacity: pressed ? 0.85 : 1 }]}
           >
-            <MaterialIcons name="g-mobiledata" size={20} color="#08142E" />
-            <Text className="font-body-medium" style={{ fontSize: 16, color: textColor }}>Google</Text>
+            {loading ? <ActivityIndicator color="#FFFFFF" size="small" /> : <Text style={styles.ctaText}>Log in</Text>}
           </Pressable>
-
-          <Pressable className="flex-row items-center justify-center mt-6 gap-2">
-            <MaterialIcons name="fingerprint" size={20} color="#08142E" />
-            <Text className="font-body text-body-md text-[#08142E]">Use Face ID to log in faster</Text>
-          </Pressable>
-
-          <View className="mt-6 items-center">
-            <Text className="font-body text-body-md" style={{ color: mutedColor }}>
-              Don't have an account?{' '}
-              <Text className="text-[#08142E] font-body-semibold" onPress={() => router.push('/signup')}>Sign Up</Text>
-            </Text>
-          </View>
-
-          <View className="mt-6 items-center">
-            <View className="flex-row items-center gap-2">
-              <MaterialIcons name="lock" size={14} color="#08142E" />
-              <Text className="font-caption" style={{ color: mutedColor }}>
-                AES-256 encrypted
-              </Text>
-              <View className="w-1 h-1 rounded-full" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.2)' : '#c4c6ce' }} />
-              <MaterialIcons name="verified" size={14} color="#08142E" />
-              <Text className="font-caption" style={{ color: mutedColor }}>
-                Verified secure
-              </Text>
-            </View>
-          </View>
-        </FlatCard>
-      </ScrollView>
+        </ScrollView>
+      </View>
     </View>
   );
 }
+
+const styles = {
+  topbar: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    alignItems: 'center' as const,
+    marginBottom: 32,
+  },
+  signUp: {
+    color: BLUE,
+    fontFamily: 'Montserrat_600SemiBold',
+    fontSize: 14,
+  },
+  title: {
+    color: '#111111',
+    fontFamily: 'Montserrat_700Bold',
+    fontSize: 32,
+    marginBottom: 8,
+  },
+  subtitle: {
+    color: '#666B76',
+    fontFamily: 'Montserrat_400Regular',
+    fontSize: 15,
+    lineHeight: 20,
+    marginBottom: 28,
+  },
+  cta: {
+    height: 56,
+    borderRadius: 14,
+    backgroundColor: BLUE,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    marginTop: 4,
+  },
+  ctaText: {
+    color: '#FFFFFF',
+    fontFamily: 'Montserrat_600SemiBold',
+    fontSize: 16,
+  },
+  link: {
+    color: BLUE,
+    fontFamily: 'Montserrat_600SemiBold',
+    fontSize: 14,
+  },
+  error: {
+    color: '#8C3A3A',
+    fontFamily: 'Montserrat_400Regular',
+    fontSize: 13,
+    marginBottom: 12,
+  },
+};

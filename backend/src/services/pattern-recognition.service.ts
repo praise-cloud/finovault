@@ -36,14 +36,15 @@ export async function analyzeUserPatterns(userId: string, userToken?: string): P
             metadata: pattern.metadata || {},
           }, { onConflict: 'user_id,pattern_type,pattern_name', ignoreDuplicates: false });
         }
-        log.info(`AI pattern analysis complete for user ${userId}`, { patternsFound: aiResult.patterns_detected });
+        log.info(`[AI] Pattern analysis from Python service for user ${userId}`, { patternsFound: aiResult.patterns_detected });
         return;
       }
     } catch (error: any) {
-      log.warn(`AI pattern service unavailable, falling back to local analysis: ${error.message}`);
+      log.warn(`[AI] Pattern service unavailable, falling back to local analysis: ${error.message}`);
     }
   }
 
+  log.info(`[FALLBACK] Pattern analysis used local heuristics for user ${userId}`);
   const dayOfWeekPatterns = detectDayOfWeekPatterns(transactions);
   const merchantFrequency = detectMerchantFrequency(transactions);
   const categoryTrends = detectCategoryTrends(transactions);

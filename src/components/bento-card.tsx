@@ -6,7 +6,7 @@ import {
   withSpring,
 } from 'react-native-reanimated';
 import Animated from 'react-native-reanimated';
-import { lightImpact } from '@/hooks/use-haptics';
+import { lightImpact } from '@/src/hooks/use-haptics';
 
 type Props = PropsWithChildren<{
   className?: string;

@@ -1,6 +1,6 @@
-import { BentoCard } from "@/components/bento-card";
-import { useDashboardStore } from "@/stores/dashboard-store";
-import { useAuthStore } from "@/stores/auth-store";
+import { BentoCard } from "@/src/components/bento-card";
+import { useDashboardStore } from "@/src/stores/dashboard-store";
+import { useAuthStore } from "@/src/stores/auth-store";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import {

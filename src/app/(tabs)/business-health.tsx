@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { getBusinessHealth } from '@/lib/api/services/business';
+import { getBusinessHealth } from '@/src/lib/api/services/business';
 
 export default function BusinessHealth() {
   const [loading, setLoading] = useState(true);

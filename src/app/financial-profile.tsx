@@ -1,20 +1,32 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Pressable, TextInput, ActivityIndicator, useColorScheme } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { getFinancialProfile, updateFinancialProfile } from '@/lib/api/services/onboarding';
+import { getFinancialProfile, updateFinancialProfile } from '@/src/lib/api/services/onboarding';
+import { Logo } from '@/src/components/logo';
+
+const BLUE = '#123B91';
+const PAPER = '#F2F2F2';
+
+const EMPLOYMENT_OPTIONS = ['Employed', 'Self-Employed', 'Business Owner', 'Student', 'Retired'];
+
+// Note: the reference mockup shows "Conservation" / "Moderation" — these read as typos
+// for the standard financial-risk terms. Using the correct terms here; swap the `label`
+// strings below if you specifically want the mockup's wording instead.
+const RISK_OPTIONS = [
+  { value: 'conservative', label: 'Conservative' },
+  { value: 'moderate', label: 'Moderate' },
+  { value: 'aggressive', label: 'Aggressive' },
+];
 
 export default function FinancialProfile() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const { width } = useWindowDimensions();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [profile, setProfile] = useState<Record<string, any>>({
     employment_status: '',
     annual_income: '',
     monthly_expenses: '',
-    savings_goal: '',
-    investment_horizon: '',
     risk_level: '',
   });
 
@@ -35,7 +47,7 @@ export default function FinancialProfile() {
     setSaving(true);
     try {
       await updateFinancialProfile(profile);
-      router.back();
+      router.push('/account-created');
     } catch {
     } finally {
       setSaving(false);
@@ -44,135 +56,190 @@ export default function FinancialProfile() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#F7F9FC' }}>
-        <ActivityIndicator size="large" color="#08142E" />
+      <View style={{ flex: 1, backgroundColor: PAPER, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color={BLUE} />
       </View>
     );
   }
 
-  const bg = isDark ? '#08142E' : '#F7F9FC';
-  const textColor = isDark ? '#FFFFFF' : '#1A1A1A';
-  const muted = isDark ? 'rgba(255,255,255,0.6)' : '#6B6F76';
-  const inputBg = isDark ? '#1A1A1A' : '#F7F9FC';
-  const inputBorder = isDark ? 'rgba(255,255,255,0.12)' : '#E4E7EE';
-  const chipBg = isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5';
-
   return (
-    <View className="flex-1" style={{ backgroundColor: bg }}>
-      <View className="pt-14 pb-3 px-margin-mobile" style={{ backgroundColor: bg }}>
-        <View className="flex-row items-center justify-between">
-          <Pressable onPress={() => router.back()} className="w-10 h-10 items-center justify-center active:scale-90"
-            style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5', borderRadius: 9999 }}>
-            <MaterialIcons name="arrow-back" size={20} color={textColor} />
-          </Pressable>
-          <Text className="font-body-bold" style={{ fontSize: 20, color: textColor }}>Financial Profile</Text>
-          <View className="w-10" />
-        </View>
-      </View>
-
-      <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }}>
-        <View className="mt-6 mb-8">
-          <Text className="font-body-bold" style={{ fontSize: 28, color: textColor, marginBottom: 8 }}>Your Financial Profile</Text>
-          <Text className="font-body" style={{ fontSize: 15, color: muted }}>Review and update your financial information.</Text>
+    <View style={{ flex: 1, backgroundColor: PAPER, alignItems: 'center' }}>
+      <View style={{ width: Math.min(width, 390), flex: 1, backgroundColor: PAPER }}>
+        <View style={{ paddingHorizontal: 24, paddingTop: 60 }}>
+          <View style={styles.topbar}>
+            <Pressable onPress={() => router.back()} hitSlop={12}>
+              <MaterialIcons name="arrow-back" size={24} color={BLUE} />
+            </Pressable>
+            <Logo width={26} height={23.5} color={BLUE} />
+          </View>
         </View>
 
-        <View className="gap-6">
-          <View>
-            <Text className="font-body-semibold" style={{ fontSize: 14, color: textColor, marginBottom: 12 }}>Employment Status</Text>
-            <View className="flex-row flex-wrap gap-3">
-              {['Employed', 'Self-Employed', 'Business Owner', 'Student', 'Retired'].map((opt) => {
-                const isActive = profile.employment_status === opt;
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}
+        >
+          <Text style={styles.title}>Your financial profile</Text>
+          <Text style={styles.subtitle}>Review and update your financial information.</Text>
+
+          <View style={{ marginTop: 28 }}>
+            <Text style={styles.label}>Employment Status</Text>
+            <View style={styles.chipRow}>
+              {EMPLOYMENT_OPTIONS.map((opt) => {
+                const active = profile.employment_status === opt;
                 return (
                   <Pressable
                     key={opt}
                     onPress={() => updateField('employment_status', opt)}
-                    style={{ borderRadius: 9999, paddingHorizontal: 20, paddingVertical: 12, backgroundColor: isActive ? 'rgba(8,20,46,0.08)' : chipBg, borderWidth: 1.5, borderColor: isActive ? '#08142E' : inputBorder }}
+                    style={[styles.chip, active && styles.chipActive]}
                   >
-                    <Text className="font-body-semibold" style={{ fontSize: 14, color: isActive ? '#08142E' : textColor }}>{opt}</Text>
+                    <Text style={[styles.chipText, active && styles.chipTextActive]}>{opt}</Text>
                   </Pressable>
                 );
               })}
             </View>
           </View>
 
-          <View>
-            <Text className="font-body-semibold" style={{ fontSize: 14, color: textColor, marginBottom: 8 }}>Annual Income (USD)</Text>
+          <View style={{ marginTop: 24 }}>
+            <Text style={styles.label}>Annual Income (MUR)</Text>
             <TextInput
-              style={{ backgroundColor: inputBg, borderWidth: 1, borderColor: inputBorder, borderRadius: 14, paddingHorizontal: 16, paddingVertical: 12, fontSize: 15, fontFamily: 'Montserrat_400Regular', color: textColor }}
-              placeholder="e.g. 75000"
-              placeholderTextColor={muted}
+              style={styles.input}
+              placeholder="e.g. 750,000"
+              placeholderTextColor="#9AA0AC"
               keyboardType="numeric"
               value={profile.annual_income}
               onChangeText={(v) => updateField('annual_income', v)}
             />
           </View>
 
-          <View>
-            <Text className="font-body-semibold" style={{ fontSize: 14, color: textColor, marginBottom: 8 }}>Monthly Expenses (USD)</Text>
+          <View style={{ marginTop: 24 }}>
+            <Text style={styles.label}>Monthly Expenses (MUR)</Text>
             <TextInput
-              style={{ backgroundColor: inputBg, borderWidth: 1, borderColor: inputBorder, borderRadius: 14, paddingHorizontal: 16, paddingVertical: 12, fontSize: 15, fontFamily: 'Montserrat_400Regular', color: textColor }}
-              placeholder="e.g. 3000"
-              placeholderTextColor={muted}
+              style={styles.input}
+              placeholder="e.g. 30,000"
+              placeholderTextColor="#9AA0AC"
               keyboardType="numeric"
               value={profile.monthly_expenses}
               onChangeText={(v) => updateField('monthly_expenses', v)}
             />
           </View>
 
-          <View>
-            <Text className="font-body-semibold" style={{ fontSize: 14, color: textColor, marginBottom: 12 }}>Primary Savings Goal</Text>
-            <View className="flex-row flex-wrap gap-3">
-              {['Emergency Fund', 'Home Purchase', 'Retirement', 'Education', 'Travel', 'Business Growth'].map((opt) => {
-                const isActive = profile.savings_goal === opt;
-                return (
-                  <Pressable
-                    key={opt}
-                    onPress={() => updateField('savings_goal', opt)}
-                    style={{ borderRadius: 9999, paddingHorizontal: 20, paddingVertical: 12, backgroundColor: isActive ? 'rgba(8,20,46,0.08)' : chipBg, borderWidth: 1.5, borderColor: isActive ? '#08142E' : inputBorder }}
-                  >
-                    <Text className="font-body-semibold" style={{ fontSize: 14, color: isActive ? '#08142E' : textColor }}>{opt}</Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-          </View>
-
-          <View>
-            <Text className="font-body-semibold" style={{ fontSize: 14, color: textColor, marginBottom: 12 }}>Risk Tolerance</Text>
-            <View className="gap-3">
-              {[
-                { value: 'conservative', label: 'Conservative' },
-                { value: 'moderate', label: 'Moderate' },
-                { value: 'aggressive', label: 'Aggressive' },
-              ].map((opt) => {
-                const isActive = profile.risk_level === opt.value;
+          <View style={{ marginTop: 24 }}>
+            <Text style={styles.label}>Risk Tolerance</Text>
+            <View style={styles.chipRow}>
+              {RISK_OPTIONS.map((opt) => {
+                const active = profile.risk_level === opt.value;
                 return (
                   <Pressable
                     key={opt.value}
                     onPress={() => updateField('risk_level', opt.value)}
-                    style={{ borderRadius: 18, padding: 16, backgroundColor: isActive ? 'rgba(8,20,46,0.08)' : 'transparent', borderWidth: 1.5, borderColor: isActive ? '#08142E' : inputBorder }}
+                    style={[styles.chip, active && styles.chipActive]}
                   >
-                    <Text className="font-body-semibold" style={{ fontSize: 15, color: isActive ? '#08142E' : textColor }}>{opt.label}</Text>
+                    <Text style={[styles.chipText, active && styles.chipTextActive]}>{opt.label}</Text>
                   </Pressable>
                 );
               })}
             </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
 
-      <View className="px-margin-mobile pb-8 pt-2" style={{ backgroundColor: bg, borderTopWidth: 1, borderTopColor: isDark ? 'rgba(255,255,255,0.08)' : '#E4E7EE' }}>
-        <Pressable
-          onPress={handleSave}
-          disabled={saving}
-          className="w-full py-4 items-center justify-center active:scale-[0.98]"
-          style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderRadius: 9999, borderWidth: 1.5, borderColor: '#08142E' }}
-        >
-          <Text className="font-body-semibold" style={{ fontSize: 16, color: '#08142E' }}>
-            {saving ? 'Saving...' : 'Save Changes'}
-          </Text>
-        </Pressable>
+        <View style={{ paddingHorizontal: 24, paddingBottom: 32, paddingTop: 8 }}>
+          <Pressable onPress={handleSave} disabled={saving} style={styles.cta}>
+            {saving ? (
+              <ActivityIndicator color="#FFFFFF" size="small" />
+            ) : (
+              <>
+                <Text style={styles.ctaText}>Continue</Text>
+                <MaterialIcons name="arrow-forward" size={18} color="#FFFFFF" />
+              </>
+            )}
+          </Pressable>
+          <Text style={styles.helper}>Step 3 of 4 • Preferences</Text>
+        </View>
       </View>
     </View>
   );
 }
+
+const styles = {
+  topbar: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    alignItems: 'center' as const,
+    marginBottom: 32,
+  },
+  title: {
+    color: '#111111',
+    fontFamily: 'Montserrat_700Bold',
+    fontSize: 24,
+    textAlign: 'center' as const,
+    marginBottom: 8,
+  },
+  subtitle: {
+    color: '#666B76',
+    fontFamily: 'Montserrat_400Regular',
+    fontSize: 14,
+    textAlign: 'center' as const,
+  },
+  label: {
+    color: '#111111',
+    fontFamily: 'Montserrat_700Bold',
+    fontSize: 14,
+    marginBottom: 12,
+  },
+  chipRow: {
+    flexDirection: 'row' as const,
+    flexWrap: 'wrap' as const,
+    gap: 10,
+  },
+  chip: {
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: BLUE,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  chipActive: {
+    backgroundColor: BLUE,
+  },
+  chipText: {
+    color: BLUE,
+    fontFamily: 'Montserrat_500Medium',
+    fontSize: 14,
+  },
+  chipTextActive: {
+    color: '#FFFFFF',
+  },
+  input: {
+    height: 52,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: '#C9CEDD',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    fontSize: 15,
+    fontFamily: 'Montserrat_400Regular',
+    color: '#111111',
+  },
+  cta: {
+    height: 56,
+    borderRadius: 14,
+    backgroundColor: BLUE,
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    gap: 8,
+  },
+  ctaText: {
+    color: '#FFFFFF',
+    fontFamily: 'Montserrat_600SemiBold',
+    fontSize: 16,
+  },
+  helper: {
+    textAlign: 'center' as const,
+    color: '#969AA3',
+    fontFamily: 'Montserrat_400Regular',
+    fontSize: 13,
+    marginTop: 12,
+  },
+};

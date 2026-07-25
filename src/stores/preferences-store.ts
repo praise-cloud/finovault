@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import * as ProfileService from '@/lib/api/services/profile';
+import * as ProfileService from '@/src/lib/api/services/profile';
 import { useAuthStore } from './auth-store';
 
 interface PreferencesState {

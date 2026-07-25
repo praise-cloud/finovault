@@ -3,7 +3,7 @@ import { View, Text, Pressable, Modal, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import Animated from 'react-native-reanimated';
-import { lightImpact, successNotification } from '@/hooks/use-haptics';
+import { lightImpact, successNotification } from '@/src/hooks/use-haptics';
 
 export type NotificationType = 'alert' | 'insight' | 'transaction' | 'security';
 

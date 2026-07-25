@@ -1,14 +1,14 @@
-import '@/global.css';
-import '@/lib/i18n/i18n';
+import '@/src/global.css';
+import '@/src/lib/i18n/i18n';
 
-import { AnimatedSplashOverlay } from "@/components/animated-icon";
-import { ErrorBoundary } from "@/components/error-boundary";
-import { ToastProvider } from "@/components/toast";
-import { useFinovaultFonts } from "@/hooks/use-fonts";
-import { FinovaultProvider } from "@/lib/gluestack-provider";
-import "@/lib/nativewind-interop";
-import { useAuthStore } from "@/stores/auth-store";
-import { usePreferencesStore } from "@/stores/preferences-store";
+import { AnimatedSplashOverlay } from "@/src/components/animated-icon";
+import { ErrorBoundary } from "@/src/components/error-boundary";
+import { ToastProvider } from "@/src/components/toast";
+import { useFinovaultFonts } from "@/src/hooks/use-fonts";
+import { FinovaultProvider } from "@/src/lib/gluestack-provider";
+import "@/src/lib/nativewind-interop";
+import { useAuthStore } from "@/src/stores/auth-store";
+import { usePreferencesStore } from "@/src/stores/preferences-store";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -83,7 +83,7 @@ function RootContent() {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: isDark ? "#0A1F5C" : "#F7F9FC",
+          backgroundColor: isDark ? "#0A1F5C" : "#FFFFFF",
         }}
       >
         <ActivityIndicator size="small" color="#08142E" />
@@ -98,7 +98,7 @@ function RootContent() {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: isDark ? "#0A1F5C" : "#F7F9FC",
+          backgroundColor: isDark ? "#0A1F5C" : "#FFFFFF",
           padding: 24,
         }}
       >
@@ -128,6 +128,7 @@ function RootContent() {
           <Stack.Screen name="preferences" />
           <Stack.Screen name="financial-interview" />
           <Stack.Screen name="financial-profile" />
+         <Stack.Screen name="account-created" />
           <Stack.Screen name="login" />
           <Stack.Screen name="signup" />
           <Stack.Screen name="(tabs)" />

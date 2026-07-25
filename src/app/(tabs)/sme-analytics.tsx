@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { BentoCard } from '@/components/bento-card';
-import { useDashboardStore } from '@/stores/dashboard-store';
+import { BentoCard } from '@/src/components/bento-card';
+import { useDashboardStore } from '@/src/stores/dashboard-store';
 import { router } from 'expo-router';
 
 export default function SmeAnalytics() {

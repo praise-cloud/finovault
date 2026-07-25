@@ -60,6 +60,7 @@ export async function askCoach(
   if (userToken) {
     try {
       const result = await aiClient.askCoach(question, coachContext, userToken, userId);
+      log.info(`[AI] Coach response from Python service for user ${userId}`);
       await supabase.from('ai_conversations').insert({
         user_id: userId,
         session_id: crypto.randomUUID ? crypto.randomUUID() : userId + Date.now().toString(),
@@ -76,10 +77,11 @@ export async function askCoach(
         },
       };
     } catch (error: any) {
-      log.warn(`AI coach service unavailable, falling back to local response: ${error.message}`);
+      log.warn(`[AI] Coach service unavailable, falling back to local response: ${error.message}`);
     }
   }
 
+  log.info(`[FALLBACK] Coach used rule-based response for user ${userId}`);
   const response = generateCoachResponse(question, profile, transactions, savingsGoals);
 
   return {

@@ -1,7 +1,7 @@
-import json
 from app.models.schemas import CoachRequest, CoachResponse
 from app.core.supabase import get_supabase
 from app.core.logger import setup_logger
+from app.agents.llm_agent import ask as llm_ask
 
 logger = setup_logger("financial_coach")
 
@@ -41,66 +41,84 @@ class FinancialCoach:
             float(g["current_amount"]) for g in goals_data
         )
 
-        q = request.question.lower()
-        suggestions = []
+        context = {
+            "user_name": user_name,
+            "transactions": tx_data[:10],
+            "savings_goals": goals_data,
+            "profile": profile.data[0] if profile.data else None,
+        }
 
-        if "save" in q or "saving" in q:
-            answer = (
-                f"Great question, {user_name}! Based on your activity, "
-                f"you've saved ${total_saved:,.2f} so far. "
-                f"I recommend setting aside 20% of your income each month. "
-                f"Would you like me to suggest a personalized savings plan?"
-            )
-            suggestions.append("Set up automatic savings transfer")
-            suggestions.append("Review subscription services")
+        llm_result = await llm_ask(
+            question=request.question,
+            context=context,
+            role="coach",
+        )
 
-        elif "spend" in q or "spending" in q:
-            pct = (total_spent / total_income * 100) if total_income > 0 else 0
-            answer = (
-                f"Your recent spending totals ${total_spent:,.2f}, "
-                f"which is {pct:.0f}% of your income. "
-                f"Would you like a detailed breakdown by category?"
-            )
-            suggestions.append("Get category breakdown")
-            suggestions.append("Set spending limits")
-
-        elif "invest" in q:
-            answer = (
-                f"Investing is powerful for building wealth, {user_name}. "
-                f"A diversified portfolio with equities (60%), fixed income (25%), "
-                f"and alternatives (15%) could work well for you. "
-                f"Would you like help setting up an investment plan?"
-            )
-            suggestions.append("Learn about index funds")
-            suggestions.append("Calculate risk tolerance")
-
-        elif "budget" in q:
-            answer = (
-                f"Budgeting is key to financial health! Try the 50/30/20 rule: "
-                f"50% needs, 30% wants, 20% savings. "
-                f"Would you like me to create a custom budget?"
-            )
-            suggestions.append("Create a custom budget")
-            suggestions.append("Track expenses automatically")
-
-        elif "debt" in q or "loan" in q:
-            answer = (
-                f"Managing debt wisely is important. Consider the avalanche method "
-                f"(highest interest first) or snowball method (smallest first). "
-                f"Would you like a debt repayment strategy?"
-            )
-            suggestions.append("Calculate debt payoff timeline")
-            suggestions.append("Explore consolidation options")
-
+        if llm_result["used_llm"]:
+            logger.info(f"[LLM] Coach answered via OpenRouter for user {user_id}")
+            answer = llm_result["answer"]
+            suggestions = llm_result["suggestions"]
         else:
-            answer = (
-                f"That's a thoughtful question, {user_name}! "
-                f"Based on your profile, I'd recommend tracking expenses regularly "
-                f"and setting clear financial goals. "
-                f"What specific area would you like to focus on?"
-            )
+            logger.info(f"[FALLBACK] Coach used keyword rules for user {user_id}")
+            q = request.question.lower()
+            suggestions = []
 
-        # Insert placeholder before returning, so a DB failure doesn't lose the response
+            if "save" in q or "saving" in q:
+                answer = (
+                    f"Great question, {user_name}! Based on your activity, "
+                    f"you've saved ${total_saved:,.2f} so far. "
+                    f"I recommend setting aside 20% of your income each month. "
+                    f"Would you like me to suggest a personalized savings plan?"
+                )
+                suggestions.append("Set up automatic savings transfer")
+                suggestions.append("Review subscription services")
+
+            elif "spend" in q or "spending" in q:
+                pct = (total_spent / total_income * 100) if total_income > 0 else 0
+                answer = (
+                    f"Your recent spending totals ${total_spent:,.2f}, "
+                    f"which is {pct:.0f}% of your income. "
+                    f"Would you like a detailed breakdown by category?"
+                )
+                suggestions.append("Get category breakdown")
+                suggestions.append("Set spending limits")
+
+            elif "invest" in q:
+                answer = (
+                    f"Investing is powerful for building wealth, {user_name}. "
+                    f"A diversified portfolio with equities (60%), fixed income (25%), "
+                    f"and alternatives (15%) could work well for you. "
+                    f"Would you like help setting up an investment plan?"
+                )
+                suggestions.append("Learn about index funds")
+                suggestions.append("Calculate risk tolerance")
+
+            elif "budget" in q:
+                answer = (
+                    f"Budgeting is key to financial health! Try the 50/30/20 rule: "
+                    f"50% needs, 30% wants, 20% savings. "
+                    f"Would you like me to create a custom budget?"
+                )
+                suggestions.append("Create a custom budget")
+                suggestions.append("Track expenses automatically")
+
+            elif "debt" in q or "loan" in q:
+                answer = (
+                    f"Managing debt wisely is important. Consider the avalanche method "
+                    f"(highest interest first) or snowball method (smallest first). "
+                    f"Would you like a debt repayment strategy?"
+                )
+                suggestions.append("Calculate debt payoff timeline")
+                suggestions.append("Explore consolidation options")
+
+            else:
+                answer = (
+                    f"That's a thoughtful question, {user_name}! "
+                    f"Based on your profile, I'd recommend tracking expenses regularly "
+                    f"and setting clear financial goals. "
+                    f"What specific area would you like to focus on?"
+                )
+
         try:
             supabase.table("ai_conversations").insert({
                 "user_id": user_id,
@@ -113,6 +131,7 @@ class FinancialCoach:
                     "total_income": total_income,
                     "total_saved": total_saved,
                     "question_asked": request.question,
+                    "llm_used": llm_result["used_llm"],
                 },
             }).execute()
         except Exception as db_err:

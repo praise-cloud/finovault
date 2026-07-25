@@ -2,16 +2,16 @@ import { useState, useEffect } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator, TextInput, Modal, Alert, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { useDashboardStore } from '@/stores/dashboard-store';
-import { useAuthStore } from '@/stores/auth-store';
+import { useDashboardStore } from '@/src/stores/dashboard-store';
+import { useAuthStore } from '@/src/stores/auth-store';
 import { router } from 'expo-router';
-import { NotificationIcon, NotificationModal } from '@/components/notification-modal';
-import { UserAvatar } from '@/components/user-avatar';
-import { useSettingsStore, CURRENCIES, LOCATIONS, LANGUAGES } from '@/stores/settings-store';
-import { useNotificationStore } from '@/stores/notification-store';
+import { NotificationIcon, NotificationModal } from '@/src/components/notification-modal';
+import { UserAvatar } from '@/src/components/user-avatar';
+import { useSettingsStore, CURRENCIES, LOCATIONS, LANGUAGES } from '@/src/stores/settings-store';
+import { useNotificationStore } from '@/src/stores/notification-store';
 const colorScheme = useColorScheme();
 const isDark = colorScheme === 'dark';
-import * as ProfileService from '@/lib/api/services/profile';
+import * as ProfileService from '@/src/lib/api/services/profile';
 
 const SETTINGS = [
   { icon: 'person' as const, label: 'Personal Info', route: null, active: true },

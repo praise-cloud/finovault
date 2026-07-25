@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useDashboardStore } from '@/stores/dashboard-store';
-import { useSettingsStore } from '@/stores/settings-store';
+import { useDashboardStore } from '@/src/stores/dashboard-store';
+import { useSettingsStore } from '@/src/stores/settings-store';
 import { router } from 'expo-router';
-import { VaultMonogram } from '@/components/vault-monogram';
-import { FlatCard } from '@/components/flat-card';
-import { formatCurrency, convertAmount } from '@/lib/format-currency';
+import { VaultMonogram } from '@/src/components/vault-monogram';
+import { FlatCard } from '@/src/components/flat-card';
+import { formatCurrency, convertAmount } from '@/src/lib/format-currency';
 
 const HOLDING_COLORS = ['#08142E', '#0A1F5C', '#2E7D5B', '#8C3A3A', '#C99A2E'];
 
@@ -30,15 +30,15 @@ export default function VaultScreen() {
 
   if (isLoading && !summary) {
     return (
-      <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#F7F9FC' }}>
+      <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
         <ActivityIndicator size="large" color="#08142E" />
       </View>
     );
   }
 
   return (
-    <View className="flex-1" style={{ backgroundColor: isDark ? '#08142E' : '#F7F9FC' }}>
-      <View className="px-margin-mobile pt-14 pb-3" style={{ backgroundColor: isDark ? '#08142E' : '#F7F9FC' }}>
+    <View className="flex-1" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
+      <View className="px-margin-mobile pt-14 pb-3" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
         <View className="flex-row items-center gap-3">
           <VaultMonogram size={36} />
           <Text className={`font-body-semibold text-headline-md ${isDark ? 'text-white' : 'text-primary'}`}>Vault</Text>

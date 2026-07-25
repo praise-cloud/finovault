@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { View, Text, Pressable, TextInput, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import * as AIService from '@/lib/api/services/ai';
-import { useToast } from '@/components/toast';
+import * as AIService from '@/src/lib/api/services/ai';
+import { useToast } from '@/src/components/toast';
 
 interface Message {
   role: 'user' | 'assistant';

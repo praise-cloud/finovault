@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator, RefreshControl } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { getBusinessAiAdvice } from '@/lib/api/services/business';
+import { getBusinessAiAdvice } from '@/src/lib/api/services/business';
 
 export default function BusinessAiAdvice() {
   const [loading, setLoading] = useState(true);

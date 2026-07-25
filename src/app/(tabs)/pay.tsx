@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { ScrollView, View, Text, Pressable, TextInput as RNTextInput, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { VaultMonogram } from '@/components/vault-monogram';
-import { FlatCard } from '@/components/flat-card';
+import { VaultMonogram } from '@/src/components/vault-monogram';
+import { FlatCard } from '@/src/components/flat-card';
 
 export default function PayScreen() {
   const [activeTab, setActiveTab] = useState<'send' | 'request'>('send');
@@ -10,8 +10,8 @@ export default function PayScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <View className="flex-1" style={{ backgroundColor: isDark ? '#08142E' : '#F7F9FC' }}>
-      <View className="px-margin-mobile pt-14 pb-3" style={{ backgroundColor: isDark ? '#08142E' : '#F7F9FC' }}>
+    <View className="flex-1" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
+      <View className="px-margin-mobile pt-14 pb-3" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
         <View className="flex-row items-center gap-3">
           <VaultMonogram size={34} flat />
           <Text className="font-body-semibold" style={{ fontSize: 22, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Pay</Text>
@@ -46,7 +46,7 @@ export default function PayScreen() {
           <View
             className="flex-row items-center px-4 py-3"
             style={{
-              backgroundColor: isDark ? '#1A1A1A' : '#F7F9FC',
+              backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
               borderWidth: 1,
               borderColor: isDark ? 'rgba(255,255,255,0.12)' : '#E4E7EE',
               borderRadius: 14,
@@ -70,7 +70,7 @@ export default function PayScreen() {
           <View
             className="flex-row items-center px-4 py-3"
             style={{
-              backgroundColor: isDark ? '#1A1A1A' : '#F7F9FC',
+              backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
               borderWidth: 1,
               borderColor: isDark ? 'rgba(255,255,255,0.12)' : '#E4E7EE',
               borderRadius: 14,

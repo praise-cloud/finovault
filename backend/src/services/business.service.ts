@@ -201,16 +201,18 @@ export async function getAiAdvice(
   if (userToken) {
     try {
       const aiResult = await aiClient.getBusinessAdvice(question, { revenue, expenses, vendor_count: vendors.length }, userToken, userId);
+      log.info(`[AI] Business advice from Python service for user ${userId}`);
       return {
         question,
         answer: aiResult.answer,
         context: aiResult.metrics,
       };
     } catch (error: any) {
-      log.warn(`AI business service unavailable, falling back to local response: ${error.message}`);
+      log.warn(`[AI] Business service unavailable, falling back to local response: ${error.message}`);
     }
   }
 
+  log.info(`[FALLBACK] Business advice used local rules for user ${userId}`);
   const q = question.toLowerCase();
   let answer: string;
 

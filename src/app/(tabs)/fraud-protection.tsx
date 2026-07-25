@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
-import { useDashboardStore } from '@/stores/dashboard-store';
+import { useDashboardStore } from '@/src/stores/dashboard-store';
 import { router } from 'expo-router';
-import { NotificationIcon, NotificationModal } from '@/components/notification-modal';
-import { UserAvatar } from '@/components/user-avatar';
-import { useNotificationStore } from '@/stores/notification-store';
+import { NotificationIcon, NotificationModal } from '@/src/components/notification-modal';
+import { UserAvatar } from '@/src/components/user-avatar';
+import { useNotificationStore } from '@/src/stores/notification-store';
 
 export default function FraudProtection() {
   const data = useDashboardStore((s) => s.fraudProtection);

@@ -2,12 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator, TextInput } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { NotificationIcon, NotificationModal } from '@/components/notification-modal';
-import { UserAvatar } from '@/components/user-avatar';
-import { useNotificationStore } from '@/stores/notification-store';
-import { AlertCard } from '@/components/alert-card';
-import * as AIService from '@/lib/api/services/ai';
-import * as TransactionsService from '@/lib/api/services/transactions';
+import { NotificationIcon, NotificationModal } from '@/src/components/notification-modal';
+import { UserAvatar } from '@/src/components/user-avatar';
+import { useNotificationStore } from '@/src/stores/notification-store';
+import { AlertCard } from '@/src/components/alert-card';
+import * as AIService from '@/src/lib/api/services/ai';
+import * as TransactionsService from '@/src/lib/api/services/transactions';
 
 type Insight = {
   id: string;

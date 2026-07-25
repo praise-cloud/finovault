@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { getProfileLinkedAccounts } from '@/lib/api/services/profile';
+import { getProfileLinkedAccounts } from '@/src/lib/api/services/profile';
 
 const BANK_LIST = [
   { id: 'chase', name: 'Chase', icon: 'account-balance' },

@@ -1,29 +1,18 @@
 const { getDefaultConfig } = require('expo/metro-config');
 const { withNativeWind } = require('nativewind/metro');
-const path = require('path');
 
 const config = getDefaultConfig(__dirname);
 
-config.resolver.blockList = [
-  /design_ui\/.*/,
-  /stitch_finovault_ai_onboarding_flow\/.*/,
-];
+const { transformer, resolver } = config;
 
-const srcDir = path.join(__dirname, 'src');
-const assetsDir = path.join(__dirname, 'assets');
-
-config.watchFolders = [srcDir, assetsDir];
-
-config.resolver.resolveRequest = (context, moduleName, platform) => {
-  if (moduleName.startsWith('@/assets/')) {
-    const assetPath = moduleName.replace('@/assets/', '');
-    return context.resolveRequest(context, path.join(assetsDir, assetPath), platform);
-  }
-  if (moduleName.startsWith('@/')) {
-    const srcPath = moduleName.replace('@/', '');
-    return context.resolveRequest(context, path.join(srcDir, srcPath), platform);
-  }
-  return context.resolveRequest(context, moduleName, platform);
+config.transformer = {
+  ...transformer,
+  babelTransformerPath: require.resolve('react-native-svg-transformer'),
+};
+config.resolver = {
+  ...resolver,
+  assetExts: resolver.assetExts.filter((ext) => ext !== 'svg'),
+  sourceExts: [...resolver.sourceExts, 'svg'],
 };
 
-module.exports = withNativeWind(config, { input: './src/global.css' });
+module.exports = withNativeWind(config, { input: './src/global.css' }); // adjust input path to your actual CSS entry

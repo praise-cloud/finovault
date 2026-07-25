@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import i18n from '@/lib/i18n/i18n';
+import i18n from '@/src/lib/i18n/i18n';
 
 const STORAGE_KEY = 'finovault_settings';
 

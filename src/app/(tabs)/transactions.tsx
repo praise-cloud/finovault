@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Alert, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import * as TransactionsService from '@/lib/api/services/transactions';
-import { formatCurrency, convertAmount } from '@/lib/format-currency';
-import { useSettingsStore } from '@/stores/settings-store';
-import { FlatCard } from '@/components/flat-card';
+import * as TransactionsService from '@/src/lib/api/services/transactions';
+import { formatCurrency, convertAmount } from '@/src/lib/format-currency';
+import { useSettingsStore } from '@/src/stores/settings-store';
+import { FlatCard } from '@/src/components/flat-card';
 
 const FILTERS = ['All', 'Income', 'Expense', 'Transfer', 'Pending', 'Completed', 'Flagged'];
 
@@ -76,7 +76,7 @@ export default function TransactionsScreen() {
     ]);
   };
 
-  const bg = isDark ? '#08142E' : '#F7F9FC';
+  const bg = isDark ? '#08142E' : '#FFFFFF';
   const textColor = isDark ? '#FFFFFF' : '#1A1A1A';
   const mutedColor = isDark ? 'rgba(255,255,255,0.5)' : '#6B6F76';
 
@@ -241,7 +241,7 @@ function AddTransactionModal({ visible, onClose, onSaved, isDark }: {
   const [saving, setSaving] = useState(false);
   const textColor = isDark ? '#FFFFFF' : '#1A1A1A';
   const muted = isDark ? 'rgba(255,255,255,0.5)' : '#6B6F76';
-  const inputBg = isDark ? '#1A1A1A' : '#F7F9FC';
+  const inputBg = isDark ? '#1A1A1A' : '#FFFFFF';
   const inputBorder = isDark ? 'rgba(255,255,255,0.12)' : '#E4E7EE';
 
   const handleSave = async () => {

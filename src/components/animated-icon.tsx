@@ -1,19 +1,13 @@
 import { useEffect, useRef } from 'react';
-import { Animated, View, Text, StyleSheet, useColorScheme } from 'react-native';
-import { VaultMonogram } from './vault-monogram';
+import { Animated, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 
 const DURATION = 600;
 
 export function AnimatedSplashOverlay() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const visible = useRef(new Animated.Value(1)).current;
-
-  const scaleAnim = fadeAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.92, 1],
-  });
+  const scaleAnim = fadeAnim.interpolate({ inputRange: [0, 1], outputRange: [0.94, 1] });
 
   useEffect(() => {
     Animated.sequence([
@@ -33,10 +27,16 @@ export function AnimatedSplashOverlay() {
 
   return (
     <Animated.View
-      style={[styles.overlay, { opacity: visible, backgroundColor: isDark ? '#08142E' : '#F7F9FC', pointerEvents: 'none' }]}
+      style={[styles.overlay, { opacity: visible, pointerEvents: 'none' }]}
     >
       <Animated.View style={{ opacity: fadeAnim, transform: [{ scale: scaleAnim }], alignItems: 'center' }}>
-        <VaultMonogram size={72} flat />
+        <View style={styles.logoHolder}>
+          <Image
+            source={require('@/assets/images/logo-image.png')}
+            style={styles.logo}
+            contentFit="contain"
+          />
+        </View>
         <Text style={styles.wordmark}>FINOVAULT</Text>
       </Animated.View>
     </Animated.View>
@@ -53,12 +53,23 @@ const styles = StyleSheet.create({
     zIndex: 1000,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#0D358C',
+  },
+  logoHolder: {
+    width: 104,
+    height: 104,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logo: {
+    width: 78,
+    height: 78,
   },
   wordmark: {
-    fontFamily: 'Cinzel_700Bold',
-    fontSize: 28,
-    color: '#08142E',
-    letterSpacing: 4,
-    marginTop: 16,
+    fontFamily: 'Montserrat_600SemiBold',
+    fontSize: 12,
+    color: '#FFFFFF',
+    letterSpacing: 4.5,
+    marginTop: 10,
   },
 });

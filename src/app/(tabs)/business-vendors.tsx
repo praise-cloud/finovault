@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator, TextInput } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { getBusinessVendors, addVendor, deleteVendor } from '@/lib/api/services/business';
+import { getBusinessVendors, addVendor, deleteVendor } from '@/src/lib/api/services/business';
 
 export default function BusinessVendors() {
   const [loading, setLoading] = useState(true);

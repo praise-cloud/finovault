@@ -50,3 +50,5 @@ example
 *.docx
 stitch_finovault_ai_onboarding_flow
 design_ui
+*.apk
+nul

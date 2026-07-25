@@ -2,10 +2,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { View, Text, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import * as SavingsService from '@/lib/api/services/savings';
-import { formatCurrency } from '@/lib/format-currency';
-import { convertAmount } from '@/lib/format-currency';
-import { useSettingsStore } from '@/stores/settings-store';
+import * as SavingsService from '@/src/lib/api/services/savings';
+import { formatCurrency } from '@/src/lib/format-currency';
+import { convertAmount } from '@/src/lib/format-currency';
+import { useSettingsStore } from '@/src/stores/settings-store';
 
 export default function SavingsGoalsScreen() {
   const [goals, setGoals] = useState<SavingsService.SavingsGoal[]>([]);
