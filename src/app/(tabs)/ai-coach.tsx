@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { View, Text, Pressable, TextInput, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, Pressable, TextInput, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import * as AIService from '@/src/lib/api/services/ai';
@@ -11,6 +11,8 @@ interface Message {
 }
 
 export default function AICoachScreen() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', content: 'Hi! I\'m your financial AI coach. Ask me anything about your finances, savings, investments, or budgeting.' },
   ]);
@@ -45,7 +47,7 @@ export default function AICoachScreen() {
   };
 
   return (
-    <KeyboardAvoidingView className="flex-1 bg-[#FFFFFF]" behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView className="flex-1 bg-[#FFFFFF]" style={{ backgroundColor: isDark ? '#0D1117' : '#F2F2F2' }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View className="bg-[#FFFFFF] pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center gap-3">
           <Pressable onPress={() => router.back()} className="active:scale-90">

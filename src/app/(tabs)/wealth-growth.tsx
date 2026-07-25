@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
-import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
+import { ScrollView, View, Text, Pressable, ActivityIndicator, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import { useDashboardStore } from '@/src/stores/dashboard-store';
 import { router } from 'expo-router';
 
 export default function WealthGrowth() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const data = useDashboardStore((s) => s.wealthGrowth);
   const isLoading = useDashboardStore((s) => s.isLoading);
   const load = useDashboardStore((s) => s.loadWealthGrowth);
@@ -13,13 +15,13 @@ export default function WealthGrowth() {
   useEffect(() => { load(); }, [load]);
 
   if (!data) {
-    return <View className="flex-1 bg-[#FFFFFF] items-center justify-center"><ActivityIndicator size="large" color="#08142E" /></View>;
+    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}><ActivityIndicator size="large" color="#08142E" /></View>;
   }
 
   const d = data;
 
   return (
-    <View className="flex-1 bg-[#FFFFFF]">
+    <View className="flex-1" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
       <View className="bg-[#FFFFFF] w-full" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between px-margin-mobile md:px-margin-desktop h-16 max-w-[1440px] mx-auto">
           <View className="flex-row items-center gap-4">

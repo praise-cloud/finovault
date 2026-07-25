@@ -16,7 +16,7 @@ export function BottomSheet({ visible, onClose, title, children }: Props) {
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <Pressable className="flex-1 bg-black/40 justify-end" onPress={onClose}>
         <Pressable
-          className={`${isDark ? 'bg-[#1A1A1A]' : 'bg-white'} rounded-t-3xl max-h-[80%]`}
+          className={`${isDark ? 'bg-[#242424]' : 'bg-white'} rounded-t-3xl max-h-[80%]`}
           onPress={() => {}}
           style={{ boxShadow: '0 -8px 24px rgba(0,0,0,0.1)', elevation: 16 }}
         >

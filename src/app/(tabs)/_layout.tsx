@@ -1,4 +1,5 @@
 import { BottomTabBar } from "@/src/components/bottom-tab-bar";
+import { FloatingAIButton } from "@/src/components/floatingAiButton";
 import { useAuthStore } from "@/src/stores/auth-store";
 import { useDashboardStore } from "@/src/stores/dashboard-store";
 import { usePreferencesStore } from "@/src/stores/preferences-store";
@@ -114,7 +115,7 @@ export default function TabsLayout() {
       }}
     >
       <View
-        className={`flex-1 ${isDark ? "bg-[#0A1F5C]" : "bg-surface-bright"}`}
+        style={{ flex: 1, backgroundColor: isDark ? '#0D1117' : '#F2F2F2' }}
       >
         {!prefsLoaded ? (
           <View className="flex-1 items-center justify-center">
@@ -154,6 +155,10 @@ export default function TabsLayout() {
         </Stack>
 
         <BottomTabBar activeTab={activeTab} onTabPress={handleTabPress} role={role} />
+
+        {activeTab !== "vault" && !sheetContent && (
+          <FloatingAIButton bottom={96} />
+        )}
         </>)}
 
         {sheetContent && (
@@ -169,7 +174,7 @@ export default function TabsLayout() {
             >
               <Pressable className="flex-1 justify-end" onPress={() => {}}>
                 <Pressable
-                  className={`${isDark ? "bg-[#1A1A1A]" : "bg-white"} rounded-t-3xl`}
+                  className={`${isDark ? "bg-[#242424]" : "bg-white"} rounded-t-3xl`}
                   style={{
                     maxHeight: "80%",
                     boxShadow: "0 -8px 24px rgba(0,0,0,0.1)",

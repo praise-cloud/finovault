@@ -15,8 +15,8 @@ export function ListRow({ icon, iconColor, label, secondary, amount, amountColor
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
-  const resolvedIconColor = iconColor || (isDark ? '#FFFFFF' : '#08142E');
-  const resolvedAmountColor = amountColor || (isDark ? '#FFFFFF' : '#1A1A1A');
+  const resolvedIconColor = iconColor || (isDark ? '#60A5FA' : '#123B91');
+  const resolvedAmountColor = amountColor || (isDark ? '#F0F0F0' : '#1A1A1A');
 
   return (
     <View
@@ -28,21 +28,21 @@ export function ListRow({ icon, iconColor, label, secondary, amount, amountColor
     >
       <View
         className="w-8 h-8 rounded-full items-center justify-center mr-3"
-        style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5' }}
+        style={{ backgroundColor: isDark ? '#2A2A2A' : '#EEF0F5' }}
       >
         <MaterialIcons name={icon} size={16} color={resolvedIconColor} />
       </View>
       <View className="flex-1">
         <Text
           className="font-body-medium"
-          style={{ fontSize: 15, color: isDark ? '#FFFFFF' : '#1A1A1A' }}
+          style={{ fontSize: 15, color: isDark ? '#F0F0F0' : '#1A1A1A' }}
         >
           {label}
         </Text>
         {secondary && (
           <Text
             className="font-body"
-            style={{ fontSize: 13, color: isDark ? 'rgba(255,255,255,0.5)' : '#6B6F76', marginTop: 1 }}
+            style={{ fontSize: 13, color: isDark ? '#9CA3B0' : '#6B6F76', marginTop: 1 }}
           >
             {secondary}
           </Text>

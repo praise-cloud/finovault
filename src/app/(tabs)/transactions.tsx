@@ -76,7 +76,7 @@ export default function TransactionsScreen() {
     ]);
   };
 
-  const bg = isDark ? '#08142E' : '#FFFFFF';
+  const bg = isDark ? '#0D1117' : '#FFFFFF';
   const textColor = isDark ? '#FFFFFF' : '#1A1A1A';
   const mutedColor = isDark ? 'rgba(255,255,255,0.5)' : '#6B6F76';
 

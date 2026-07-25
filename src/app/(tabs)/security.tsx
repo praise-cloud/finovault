@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
+import { ScrollView, View, Text, Pressable, ActivityIndicator, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { getSecuritySettings } from '@/src/lib/api/services/settings';
 
 export default function Security() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [activeDevices, setActiveDevices] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -29,7 +31,7 @@ export default function Security() {
   ];
 
   return (
-    <View className="flex-1 bg-surface-bright">
+    <View className="flex-1 bg-surface-bright" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
       <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center gap-3">
           <Pressable onPress={() => router.back()} className="w-9 h-9 rounded-xl bg-surface-variant items-center justify-center active:scale-90">

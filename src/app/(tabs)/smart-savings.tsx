@@ -1,10 +1,12 @@
-import { View, Text, Pressable, ScrollView, Animated, ActivityIndicator, useWindowDimensions } from 'react-native';
+import { View, Text, Pressable, ScrollView, Animated, ActivityIndicator, useWindowDimensions, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRef, useEffect, useState } from 'react';
 import { useDashboardStore } from '@/src/stores/dashboard-store';
 import { router } from 'expo-router';
 
 export default function SmartSavings() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const { width } = useWindowDimensions();
   const isMd = width >= 768;
   const [progressAnim] = useState(() => new Animated.Value(0));
@@ -27,7 +29,7 @@ export default function SmartSavings() {
   }, [data]);
 
   if (!data) {
-    return <View className="flex-1 bg-[#FFFFFF] items-center justify-center"><ActivityIndicator size="large" color="#08142E" /></View>;
+    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}><ActivityIndicator size="large" color="#08142E" /></View>;
   }
 
   const d = data;
@@ -40,7 +42,7 @@ export default function SmartSavings() {
   const goalPct = (d.rainy_day_fund.current_amount / d.rainy_day_fund.target_amount) * 100;
 
   return (
-    <View className="flex-1 bg-[#FFFFFF]">
+    <View className="flex-1" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
       <View className="bg-[#FFFFFF] pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-4">

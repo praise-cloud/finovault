@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ScrollView, View, Text, Pressable, ActivityIndicator, TextInput } from 'react-native';
+import { ScrollView, View, Text, Pressable, ActivityIndicator, TextInput, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { NotificationIcon, NotificationModal } from '@/src/components/notification-modal';
@@ -18,6 +18,8 @@ type Insight = {
 };
 
 export default function AiAnalysis() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const [question, setQuestion] = useState('');
   const [chat, setChat] = useState<{ role: 'user' | 'ai'; text: string }[]>([
     { role: 'ai', text: 'Hello! I\'m your AI financial coach. Ask me anything about your finances, investments, or savings strategies.' },
@@ -106,7 +108,7 @@ export default function AiAnalysis() {
   };
 
   return (
-    <View className="flex-1 bg-surface-bright">
+    <View className="flex-1 bg-surface-bright" style={{ backgroundColor: isDark ? '#0D1117' : '#F2F2F2' }}>
       <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">

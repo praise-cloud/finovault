@@ -8,6 +8,7 @@ import {
   TextInput,
   View,
   useWindowDimensions,
+  useColorScheme,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -30,6 +31,8 @@ const SUGGESTIONS = [
 ];
 
 export default function VaultAssistant() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const { width } = useWindowDimensions();
   const user = useAuthStore((s) => s.user);
   const { count: notifCount, open: openNotifications, visible: notifVisible, close: closeNotifications } = useNotificationStore();
@@ -68,7 +71,7 @@ export default function VaultAssistant() {
   const hasConversation = messages.length > 1;
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: PAPER }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: isDark ? '#0D1117' : PAPER }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={{ flex: 1, alignItems: 'center' }}>
         <View style={{ width: Math.min(width, 390), flex: 1 }}>
           <View style={{ paddingHorizontal: 20, paddingTop: 60, paddingBottom: 12 }}>

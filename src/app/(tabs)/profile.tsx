@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Pressable, ActivityIndicator, TextInput, Modal, Alert, useWindowDimensions } from 'react-native';
+import { ScrollView, View, Text, Pressable, ActivityIndicator, TextInput, Modal, Alert, useWindowDimensions, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useDashboardStore } from '@/src/stores/dashboard-store';
@@ -26,6 +26,8 @@ const SETTINGS_ITEMS = [
 ];
 
 export default function Settings() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const { width } = useWindowDimensions();
   const data = useDashboardStore((s) => s.profileData);
   const summary = useDashboardStore((s) => s.summary);
@@ -91,7 +93,7 @@ export default function Settings() {
   const connectedAppsCount = (data as any)?.connected_apps_count ?? 5;
 
   return (
-    <View style={{ flex: 1, backgroundColor: PAPER, alignItems: 'center' }}>
+    <View style={{ flex: 1, backgroundColor: isDark ? '#0D1117' : PAPER, alignItems: 'center' }}>
       <View style={{ width: Math.min(width, 390), flex: 1 }}>
         <View style={{ paddingHorizontal: 20, paddingTop: 60, paddingBottom: 12 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>

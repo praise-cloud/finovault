@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Pressable, ActivityIndicator, Alert } from 'react-native';
+import { ScrollView, View, Text, Pressable, ActivityIndicator, Alert, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { getSecuritySettings, updateGuardrails } from '@/src/lib/api/services/settings';
@@ -13,6 +13,8 @@ type Guardrail = {
 };
 
 export default function Guardrails() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const [guardrails, setGuardrails] = useState<Guardrail[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -45,7 +47,7 @@ export default function Guardrails() {
   };
 
   return (
-    <View className="flex-1 bg-surface-bright">
+    <View className="flex-1 bg-surface-bright" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
       <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center gap-3">
           <Pressable onPress={() => router.back()} className="w-9 h-9 rounded-full bg-[#EEF0F5] items-center justify-center active:scale-90">

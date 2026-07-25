@@ -10,8 +10,8 @@ export default function PayScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <View className="flex-1" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
-      <View className="px-margin-mobile pt-14 pb-3" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
+    <View className="flex-1" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
+      <View className="px-margin-mobile pt-14 pb-3" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
         <View className="flex-row items-center gap-3">
           <VaultMonogram size={34} flat />
           <Text className="font-body-semibold" style={{ fontSize: 22, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Pay</Text>

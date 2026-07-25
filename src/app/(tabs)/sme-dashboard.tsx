@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
+import { ScrollView, View, Text, Pressable, ActivityIndicator, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import { useDashboardStore } from '@/src/stores/dashboard-store';
@@ -7,6 +7,8 @@ import { useAuthStore } from '@/src/stores/auth-store';
 import { router } from 'expo-router';
 
 export default function SmeDashboard() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const data = useDashboardStore((s) => s.smeDashboard);
   const isLoading = useDashboardStore((s) => s.isLoading);
   const load = useDashboardStore((s) => s.loadSmeDashboard);
@@ -22,7 +24,7 @@ export default function SmeDashboard() {
   const d = data;
 
   return (
-    <View className="flex-1 bg-[#FFFFFF]">
+    <View className="flex-1 bg-[#FFFFFF]" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
       <View className="bg-[#FFFFFF] pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-4">

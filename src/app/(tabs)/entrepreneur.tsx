@@ -9,10 +9,13 @@ import {
     ScrollView,
     Text,
     View,
+    useColorScheme,
 } from "react-native";
 import { router } from "expo-router";
 
 export default function EntrepreneurDashboard() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const data = useDashboardStore((s) => s.entrepreneur);
   const isLoading = useDashboardStore((s) => s.isLoading);
   const load = useDashboardStore((s) => s.loadEntrepreneur);
@@ -34,7 +37,7 @@ export default function EntrepreneurDashboard() {
   const d = data;
 
   return (
-    <View className="flex-1 bg-surface-bright">
+    <View className="flex-1 bg-surface-bright" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
       <View
         className="bg-surface-bright pt-14 pb-3 px-margin-mobile md:px-margin-desktop"
         style={{

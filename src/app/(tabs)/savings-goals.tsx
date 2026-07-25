@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { View, Text, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Alert, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import * as SavingsService from '@/src/lib/api/services/savings';
@@ -8,6 +8,8 @@ import { convertAmount } from '@/src/lib/format-currency';
 import { useSettingsStore } from '@/src/stores/settings-store';
 
 export default function SavingsGoalsScreen() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const [goals, setGoals] = useState<SavingsService.SavingsGoal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -39,7 +41,7 @@ export default function SavingsGoalsScreen() {
   };
 
   return (
-    <View className="flex-1 bg-surface-bright">
+    <View className="flex-1 bg-surface-bright" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
       <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">

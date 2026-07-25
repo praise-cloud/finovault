@@ -87,5 +87,26 @@ export const Shadow = {
   },
 } as const;
 
+export const Dark = {
+  bg: '#0D1117',
+  card: '#1A1A1A',
+  elevated: '#242424',
+  text: '#F0F0F0',
+  textSoft: '#FFFFFF',
+  muted: '#9CA3B0',
+  mutedLight: '#6B7280',
+  border: '#2A2A2A',
+  chipBg: '#2A2A2A',
+  inputBorder: '#333333',
+  blueAccent: '#60A5FA',
+  blueFill: '#1E3A5F',
+  green: '#34D399',
+  greenFill: '#1A3A2A',
+  gold: '#FBBF24',
+  goldFill: '#3A2A1A',
+  red: '#F87171',
+  redFill: '#3A1A1A',
+} as const;
+
 export const BottomTabInset = 0;
 export const MaxContentWidth = 800;

@@ -58,7 +58,7 @@ function TabItem({ tab, isActive, onPress, isDark }: { tab: Tab; isActive: boole
         {tab.key === 'vault' ? (
           <VaultMonogram
             size={22}
-            color={isActive ? '#08142E' : isDark ? '#FFFFFF80' : '#43474d'}
+            color={isActive ? '#60A5FA' : isDark ? '#FFFFFF80' : '#43474d'}
             bgColor="transparent"
             flat
           />
@@ -66,14 +66,14 @@ function TabItem({ tab, isActive, onPress, isDark }: { tab: Tab; isActive: boole
           <MaterialIcons
             name={tab.icon}
             size={22}
-            color={isActive ? '#08142E' : isDark ? '#FFFFFF80' : '#43474d'}
+            color={isActive ? '#60A5FA' : isDark ? '#FFFFFF80' : '#43474d'}
           />
         )}
         <Text
           className={isActive ? 'font-body-semibold' : 'font-body'}
           style={{
             fontSize: 11,
-            color: isActive ? '#08142E' : isDark ? 'rgba(255,255,255,0.5)' : '#43474d',
+            color: isActive ? '#60A5FA' : isDark ? 'rgba(255,255,255,0.5)' : '#43474d',
             marginTop: 3,
           }}
         >
@@ -95,7 +95,7 @@ export function BottomTabBar({ activeTab, onTabPress, role = 'individual' }: Pro
       style={{
         height: 60,
         paddingBottom: 4,
-        backgroundColor: isDark ? '#0A1F5C' : '#FFFFFF',
+        backgroundColor: isDark ? '#0D1117' : '#FFFFFF',
         borderTopWidth: 1,
         borderTopColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
       }}

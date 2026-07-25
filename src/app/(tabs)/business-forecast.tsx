@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
+import { ScrollView, View, Text, Pressable, ActivityIndicator, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { getBusinessForecast } from '@/src/lib/api/services/business';
 
 export default function BusinessForecast() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const [loading, setLoading] = useState(true);
   const [forecast, setForecast] = useState<any>(null);
 
@@ -17,14 +19,14 @@ export default function BusinessForecast() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-surface-bright items-center justify-center">
+    <View className="flex-1 bg-surface-bright items-center justify-center" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
         <ActivityIndicator size="large" color="#08142E" />
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-surface-bright">
+    <View className="flex-1 bg-surface-bright" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
       <View className="pt-14 pb-3 px-margin-mobile bg-surface-bright" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <Pressable onPress={() => router.back()} className="w-10 h-10 rounded-full bg-surface-container items-center justify-center active:scale-90">

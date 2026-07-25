@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Pressable, ActivityIndicator } from 'react-native';
+import { ScrollView, View, Text, Pressable, ActivityIndicator, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import { useDashboardStore } from '@/src/stores/dashboard-store';
@@ -9,6 +9,8 @@ import { UserAvatar } from '@/src/components/user-avatar';
 import { useNotificationStore } from '@/src/stores/notification-store';
 
 export default function FraudProtection() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const data = useDashboardStore((s) => s.fraudProtection);
   const isLoading = useDashboardStore((s) => s.isLoading);
   const load = useDashboardStore((s) => s.loadFraudProtection);
@@ -17,7 +19,7 @@ export default function FraudProtection() {
   const { count: notifCount, open: openNotifications, visible: notifVisible, close: closeNotifications } = useNotificationStore();
 
   if (!data) {
-    return <View className="flex-1 bg-background items-center justify-center"><ActivityIndicator size="large" color="#08142E" /></View>;
+    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}><ActivityIndicator size="large" color="#08142E" /></View>;
   }
 
   const d = data;
@@ -29,7 +31,7 @@ export default function FraudProtection() {
   ];
 
   return (
-    <View className="flex-1 bg-background">
+    <View className="flex-1" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
       <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
