@@ -19,9 +19,11 @@ export default function FinancialInterview() {
   const { width } = useWindowDimensions();
   const goals = usePreferencesStore((state) => state.goals);
   const toggleGoal = usePreferencesStore((state) => state.toggleGoal);
+  const savePreferences = usePreferencesStore((state) => state.savePreferences);
 
   const complete = async () => {
     try {
+      await savePreferences();
       await submitFinancialInterview({ goals });
     } catch {}
     router.push('/account-created');
@@ -64,7 +66,7 @@ export default function FinancialInterview() {
           <MaterialIcons name="arrow-forward" size={18} color="#FFFFFF" />
         </Pressable>
 
-        <Text style={styles.helper}>Step 3 of 4 • Preferences</Text>
+        <Text style={styles.helper}>Step 4 of 4 • Goals</Text>
       </View>
     </View>
   );

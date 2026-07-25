@@ -47,7 +47,7 @@ export default function FinancialProfile() {
     setSaving(true);
     try {
       await updateFinancialProfile(profile);
-      router.push('/account-created');
+      router.push('/financial-interview');
     } catch {
     } finally {
       setSaving(false);
@@ -153,7 +153,7 @@ export default function FinancialProfile() {
               </>
             )}
           </Pressable>
-          <Text style={styles.helper}>Step 3 of 4 • Preferences</Text>
+          <Text style={styles.helper}>Step 3 of 4 • Financial Profile</Text>
         </View>
       </View>
     </View>

@@ -1,45 +1,57 @@
-import { useState, useEffect } from 'react';
-import { ScrollView, View, Text, Pressable, ActivityIndicator, TextInput, Modal, Alert, useColorScheme } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ScrollView, View, Text, Pressable, ActivityIndicator, TextInput, Modal, Alert, useWindowDimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
+import { router } from 'expo-router';
 import { useDashboardStore } from '@/src/stores/dashboard-store';
 import { useAuthStore } from '@/src/stores/auth-store';
-import { router } from 'expo-router';
 import { NotificationIcon, NotificationModal } from '@/src/components/notification-modal';
 import { UserAvatar } from '@/src/components/user-avatar';
-import { useSettingsStore, CURRENCIES, LOCATIONS, LANGUAGES } from '@/src/stores/settings-store';
+import { Logo } from '@/src/components/logo';
+import { formatCurrency, convertAmount } from '@/src/lib/format-currency';
+import { useSettingsStore } from '@/src/stores/settings-store';
 import { useNotificationStore } from '@/src/stores/notification-store';
-const colorScheme = useColorScheme();
-const isDark = colorScheme === 'dark';
 import * as ProfileService from '@/src/lib/api/services/profile';
 
-const SETTINGS = [
-  { icon: 'person' as const, label: 'Personal Info', route: null, active: true },
-  { icon: 'security' as const, label: 'Security', route: '/(tabs)/security' as const, active: false },
-  { icon: 'account-balance' as const, label: 'Linked Accounts', route: '/(tabs)/linked-accounts' as const, active: false },
-  { icon: 'privacy-tip' as const, label: 'Data Privacy', route: '/(tabs)/data-privacy' as const, active: false },
-  { icon: 'notifications' as const, label: 'Notifications', route: null, active: false },
+const BLUE = '#123B91';
+const PAPER = '#F2F2F2';
+const GREEN = '#2E7D5B';
+const GOLD = '#C99A2E';
+
+const SETTINGS_ITEMS = [
+  { icon: 'person' as const, label: 'Personal Info', action: 'edit' as const },
+  { icon: 'security' as const, label: 'Security', route: '/(tabs)/security' as const },
+  { icon: 'account-balance' as const, label: 'Linked Accounts', route: '/(tabs)/linked-accounts' as const },
+  { icon: 'privacy-tip' as const, label: 'Data Privacy', route: '/(tabs)/data-privacy' as const },
+  { icon: 'notifications' as const, label: 'Notifications', action: 'notifications' as const },
 ];
 
-export default function Profile() {
+export default function Settings() {
+  const { width } = useWindowDimensions();
   const data = useDashboardStore((s) => s.profileData);
+  const summary = useDashboardStore((s) => s.summary);
   const isLoading = useDashboardStore((s) => s.isLoading);
   const load = useDashboardStore((s) => s.loadProfileData);
+  const user = useAuthStore((s) => s.user);
   const signOut = useAuthStore((s) => s.signOut);
-  const { currency, location, language, setCurrency, setLocation, setLanguage } = useSettingsStore();
+  const { currency } = useSettingsStore();
   const { count: notifCount, open: openNotifications, visible: notifVisible, close: closeNotifications } = useNotificationStore();
+
   const [editVisible, setEditVisible] = useState(false);
   const [editName, setEditName] = useState('');
   const [editEmail, setEditEmail] = useState('');
   const [editPhone, setEditPhone] = useState('');
-  const [activeSection, setActiveSection] = useState('Personal Info');
-  const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
-  const [showLocationPicker, setShowLocationPicker] = useState(false);
-  const [showLanguagePicker, setShowLanguagePicker] = useState(false);
 
-  const user = useAuthStore((s) => s.user);
+  useEffect(() => {
+    load();
+  }, [load]);
 
-  useEffect(() => { load(); }, [load]);
+  const openEdit = () => {
+    if (!data) return;
+    setEditName(data.profile.full_name);
+    setEditEmail(data.profile.email);
+    setEditPhone(data.profile.phone || '');
+    setEditVisible(true);
+  };
 
   const handleSaveProfile = async () => {
     try {
@@ -61,346 +73,210 @@ export default function Profile() {
     router.replace('/');
   };
 
-  const setAvatarUri = useAuthStore((s) => s.setAvatarUri);
-
-  const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission Required', 'Camera roll permission is needed to change your avatar.');
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    });
-    if (!result.canceled && result.assets[0]) {
-      setAvatarUri(result.assets[0].uri);
-    }
-  };
-
-  const openEdit = () => {
-    if (!data) return;
-    setEditName(data.profile.full_name);
-    setEditEmail(data.profile.email);
-    setEditPhone(data.profile.phone || '');
-    setEditVisible(true);
-  };
-
   if (!data) {
-    return <View className={`flex-1 ${isDark ? 'bg-[#0A1F5C]' : 'bg-[#FFFFFF]'} items-center justify-center`}><ActivityIndicator size="large" color="#08142E" /></View>;
+    return (
+      <View style={{ flex: 1, backgroundColor: PAPER, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color={BLUE} />
+      </View>
+    );
   }
 
-  const d = {
-    ...data,
-    plan: data.plan || { name: 'Free Plan', price: 0, billing: 'month' },
-    security: data.security || { identity_verified: false, encryption_level: 'AES-128', last_login: new Date().toISOString(), active_devices: 0, score: 0 },
-    profile: data.profile || { full_name: 'User', email: '', phone: null, account_id: 'N/A' },
-    linked_accounts: data.linked_accounts || [],
-  };
+  const firstName = data.profile.full_name?.split(' ')[0] || 'there';
+  // TODO: source these from the real dashboard summary once the backend fields exist —
+  // falling back to `total_net_worth` / a placeholder budget so the screen renders meaningfully.
+  const walletBalance = summary?.total_net_worth ?? 0;
+  const monthlyBudget = (summary as any)?.budget_this_month ?? 40000;
+  const savingsAmount = (summary as any)?.savings_balance ?? 45000;
+  const linkedAccountsCount = data.linked_accounts?.length ?? 0;
+  const connectedAppsCount = (data as any)?.connected_apps_count ?? 5;
 
   return (
-    <View className={`flex-1 ${isDark ? 'bg-[#0A1F5C]' : 'bg-[#FFFFFF]'}`}>
-      <View className={`${isDark ? 'bg-[#0A1F5C]' : 'bg-[#FFFFFF]'} pt-14 pb-3 px-margin-mobile md:px-margin-desktop`} style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
-        <View className="flex-row items-center justify-between">
-          <View className="flex-row items-center gap-3">
-            <View className="w-9 h-9 rounded-xl bg-primary items-center justify-center">
-              <Text className="text-on-primary font-bold text-sm">P</Text>
+    <View style={{ flex: 1, backgroundColor: PAPER, alignItems: 'center' }}>
+      <View style={{ width: Math.min(width, 390), flex: 1 }}>
+        <View style={{ paddingHorizontal: 20, paddingTop: 60, paddingBottom: 12 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Logo width={20} height={18} color={BLUE} />
+              <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 18, color: '#1A1A1A' }}>Settings</Text>
             </View>
-            <Text className={`font-headline-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>Profile</Text>
-          </View>
-          <View className="flex-row items-center gap-3">
-            <NotificationIcon onPress={openNotifications} count={notifCount} />
-            <UserAvatar size={36} showBorder />
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <NotificationIcon onPress={openNotifications} count={notifCount} />
+              <UserAvatar size={32} />
+            </View>
           </View>
         </View>
+
+        <ScrollView style={{ flex: 1, paddingHorizontal: 20 }} contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
+          {/* Greeting row */}
+          <Pressable onPress={openEdit} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, marginBottom: 20 }}>
+            <UserAvatar size={56} name={data.profile.full_name} />
+            <View style={{ marginLeft: 14, flex: 1 }}>
+              <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 18, color: '#1A1A1A' }}>Hey, {firstName}</Text>
+              <Text style={{ fontFamily: 'Montserrat_400Regular', fontSize: 13, color: '#6B6F76', marginTop: 2 }}>
+                {data.profile.email}
+              </Text>
+            </View>
+            <MaterialIcons name="chevron-right" size={20} color="#C4C6CE" />
+          </Pressable>
+
+          {/* Wallet balance / budget card */}
+          <View style={{ backgroundColor: BLUE, borderRadius: 18, padding: 18, flexDirection: 'row' }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontFamily: 'Montserrat_500Medium', fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>
+                Total Wallet Balance
+              </Text>
+              <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 20, color: '#FFFFFF', marginTop: 4 }}>
+                {formatCurrency(convertAmount(walletBalance, currency.rate), currency.code)}
+              </Text>
+            </View>
+            <View style={{ width: 1, backgroundColor: 'rgba(255,255,255,0.15)', marginHorizontal: 16 }} />
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontFamily: 'Montserrat_500Medium', fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>
+                Budget For the Month
+              </Text>
+              <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 20, color: '#FFFFFF', marginTop: 4 }}>
+                {formatCurrency(convertAmount(monthlyBudget, currency.rate), currency.code)}
+              </Text>
+            </View>
+          </View>
+
+          {/* Others */}
+          <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 16, color: '#1A1A1A', marginTop: 24, marginBottom: 12 }}>
+            Others
+          </Text>
+          <View style={{ flexDirection: 'row', gap: 10 }}>
+            <Pressable
+              onPress={() => router.push('/(tabs)/linked-accounts')}
+              style={{ flex: 1, backgroundColor: BLUE, borderRadius: 14, padding: 14, minHeight: 76, justifyContent: 'space-between' }}
+            >
+              <MaterialIcons name="apps" size={18} color="#FFFFFF" />
+              <View>
+                <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 13, color: '#FFFFFF' }}>Apps Connected</Text>
+                <Text style={{ fontFamily: 'Montserrat_400Regular', fontSize: 11, color: 'rgba(255,255,255,0.75)', marginTop: 2 }}>
+                  {connectedAppsCount} apps connected
+                </Text>
+              </View>
+            </Pressable>
+
+            <Pressable
+              onPress={() => router.push('/(tabs)/vault')}
+              style={{ flex: 1, backgroundColor: GREEN, borderRadius: 14, padding: 14, minHeight: 76, justifyContent: 'space-between' }}
+            >
+              <MaterialIcons name="savings" size={18} color="#FFFFFF" />
+              <View>
+                <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 13, color: '#FFFFFF' }}>Your Savings</Text>
+                <Text style={{ fontFamily: 'Montserrat_400Regular', fontSize: 11, color: 'rgba(255,255,255,0.75)', marginTop: 2 }}>
+                  {formatCurrency(convertAmount(savingsAmount, currency.rate), currency.code)}
+                </Text>
+              </View>
+            </Pressable>
+
+            <Pressable
+              onPress={() => router.push('/(tabs)/linked-accounts')}
+              style={{ flex: 1, backgroundColor: GOLD, borderRadius: 14, padding: 14, minHeight: 76, justifyContent: 'space-between' }}
+            >
+              <MaterialIcons name="link" size={18} color="#FFFFFF" />
+              <View>
+                <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 13, color: '#FFFFFF' }}>Account Linked</Text>
+                <Text style={{ fontFamily: 'Montserrat_400Regular', fontSize: 11, color: 'rgba(255,255,255,0.75)', marginTop: 2 }}>
+                  {linkedAccountsCount} accounts linked
+                </Text>
+              </View>
+            </Pressable>
+          </View>
+
+          {/* Settings list */}
+          <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 16, color: '#1A1A1A', marginTop: 24, marginBottom: 12 }}>
+            Settings
+          </Text>
+          <View style={{ backgroundColor: '#FFFFFF', borderRadius: 16, borderWidth: 1, borderColor: '#E4E7EE' }}>
+            {SETTINGS_ITEMS.map((item, i) => (
+              <Pressable
+                key={item.label}
+                onPress={() => {
+                  if (item.action === 'edit') openEdit();
+                  else if (item.action === 'notifications') openNotifications();
+                  else if ('route' in item && item.route) router.push(item.route as any);
+                }}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingHorizontal: 16,
+                  paddingVertical: 14,
+                  borderBottomWidth: i < SETTINGS_ITEMS.length - 1 ? 1 : 0,
+                  borderBottomColor: '#EEF0F5',
+                }}
+              >
+                <MaterialIcons name={item.icon} size={20} color="#43474D" />
+                <Text style={{ flex: 1, marginLeft: 14, fontFamily: 'Montserrat_500Medium', fontSize: 15, color: '#1A1A1A' }}>
+                  {item.label}
+                </Text>
+                <MaterialIcons name="chevron-right" size={18} color="#C4C6CE" />
+              </Pressable>
+            ))}
+
+            <Pressable
+              onPress={handleSignOut}
+              style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, borderTopWidth: 1, borderTopColor: '#EEF0F5' }}
+            >
+              <MaterialIcons name="logout" size={20} color="#C0392B" />
+              <Text style={{ marginLeft: 14, fontFamily: 'Montserrat_500Medium', fontSize: 15, color: '#C0392B' }}>Sign Out</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
       </View>
 
-      <ScrollView className="flex-1 px-margin-mobile md:px-margin-desktop" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
-        <View className="bg-[#001f1a] rounded-2xl overflow-hidden p-6 mt-4 mb-4 relative">
-          <View className="absolute -top-16 -right-16 w-40 h-40 bg-secondary/10 rounded-full" />
-          <View className="flex-row items-center gap-4">
-            <Pressable onPress={pickImage} className="w-20 h-20 rounded-full border-4 border-white/20 overflow-hidden">
-              <UserAvatar size={80} name={d.profile.full_name} />
-            </Pressable>
-            <View className="flex-1">
-              <View className="flex-row items-center gap-2">
-                <Text className="font-headline-md text-white font-bold">{d.profile.full_name}</Text>
-                <MaterialIcons name="verified" size={16} color="#F4D35E" />
-              </View>
-              <View className="flex-row items-center gap-1 mt-0.5">
-                <MaterialIcons name="workspace-premium" size={12} color="#768dad" />
-                <Text className="text-on-primary-container text-sm">{d.plan.name}</Text>
-              </View>
-              <View className="flex-row flex-wrap gap-2 mt-3">
-                <View className="bg-white/10 px-3 py-0.5 rounded-full"><Text className="text-white/80 text-xs">ID: {d.profile.account_id}</Text></View>
-                <View className="bg-secondary-container px-3 py-0.5 rounded-full"><Text className="text-on-secondary-container text-xs font-bold">PRO MEMBER</Text></View>
-              </View>
-            </View>
-            <Pressable onPress={openEdit} className="bg-secondary-fixed w-10 h-10 rounded-xl items-center justify-center active:scale-90">
-              <MaterialIcons name="edit" size={20} color="#00201a" />
-            </Pressable>
-          </View>
-        </View>
-
-        <View className="flex-col md:flex-row gap-4">
-          <View className="md:w-[30%]">
-            <View className={`${isDark ? 'bg-[#08142E] border-white/12' : 'bg-white border-outline-variant/20'} rounded-2xl p-3`}>
-              {SETTINGS.map((item) => {
-                const isActive = activeSection === item.label;
-                return (
-                  <Pressable
-                    key={item.label}
-                    onPress={() => {
-                      setActiveSection(item.label);
-                      if (item.label === 'Notifications') openNotifications();
-                      else if (item.route) router.push(item.route as any);
-                    }}
-                    className={`flex-row items-center gap-3 px-4 py-3.5 rounded-xl mb-1 ${isActive ? 'bg-secondary-container' : ''} active:scale-[0.98]`}
-                  >
-                    <MaterialIcons name={item.icon} size={20} color={isActive ? '#1A1A1A' : '#43474d'} />
-                    <Text className={`font-label-md flex-1 ${isActive ? 'text-on-secondary-container font-bold' : (isDark ? 'text-white/70' : 'text-on-surface-variant')}`}>{item.label}</Text>
-                    <MaterialIcons name="chevron-right" size={16} color="#c4c6ca" />
-                  </Pressable>
-                );
-              })}
-              <View className="h-[1px] bg-outline-variant/30 my-2 mx-2" />
-              <Pressable onPress={handleSignOut} className="flex-row items-center gap-3 px-4 py-3.5 rounded-xl active:scale-[0.98]">
-                <MaterialIcons name="logout" size={20} color="#ba1a1a" />
-                <Text className="font-label-md text-error">Sign Out</Text>
-              </Pressable>
-            </View>
-          </View>
-
-          <View className="flex-1">
-            <View className={`${isDark ? 'bg-[#08142E] border-white/12' : 'bg-white border-outline-variant/20'} rounded-2xl p-5 mb-4`}>
-              <View className="flex-row justify-between items-center mb-5">
-                <View className="flex-row items-center gap-2">
-                  <View className="w-8 h-8 rounded-lg bg-primary-container items-center justify-center">
-                    <MaterialIcons name="person" size={16} color="#ffffff" />
-                  </View>
-                  <Text className={`font-headline-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>Personal Info</Text>
-                </View>
-                <Pressable onPress={openEdit} className="flex-row items-center gap-1 bg-secondary-container px-4 py-2 rounded-xl active:scale-95">
-                  <MaterialIcons name="edit" size={14} color="#1A1A1A" />
-                  <Text className="text-on-secondary-container font-label-md font-bold text-sm">Change</Text>
-                </Pressable>
-              </View>
-              <View className="flex-row flex-wrap" style={{ gap: 16 }}>
-                <View className={`${isDark ? 'bg-[#08142E]' : 'bg-surface-container-low'} rounded-xl p-4 flex-1 min-w-[140px]`}>
-                  <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} uppercase tracking-wider text-xs`}>Full Name</Text>
-                  <View className="flex-row items-center gap-2 mt-1">
-                    <MaterialIcons name="badge" size={16} color="#08142E" />
-                    <Text className={`font-body-md font-medium ${isDark ? 'text-white' : 'text-primary'}`}>{d.profile.full_name}</Text>
-                  </View>
-                </View>
-                <View className={`${isDark ? 'bg-[#08142E]' : 'bg-surface-container-low'} rounded-xl p-4 flex-1 min-w-[140px]`}>
-                  <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} uppercase tracking-wider text-xs`}>Email</Text>
-                  <View className="flex-row items-center gap-2 mt-1">
-                    <MaterialIcons name="email" size={16} color="#08142E" />
-                    <Text className={`font-body-md font-medium ${isDark ? 'text-white' : 'text-primary'}`} numberOfLines={1}>{d.profile.email}</Text>
-                  </View>
-                </View>
-                <View className={`${isDark ? 'bg-[#08142E]' : 'bg-surface-container-low'} rounded-xl p-4 flex-1 min-w-[140px]`}>
-                  <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} uppercase tracking-wider text-xs`}>Phone</Text>
-                  <View className="flex-row items-center gap-2 mt-1">
-                    <MaterialIcons name="phone" size={16} color="#08142E" />
-                    <Text className={`font-body-md font-medium ${isDark ? 'text-white' : 'text-primary'}`}>{d.profile.phone || 'Not set'}</Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-
-            <View className={`${isDark ? 'bg-[#08142E] border-white/12' : 'bg-white border-outline-variant/20'} rounded-2xl p-5 mb-4`}>
-              <View className="flex-row items-center gap-2 mb-5">
-                <View className="w-8 h-8 rounded-lg bg-secondary-container items-center justify-center">
-                  <MaterialIcons name="shield-moon" size={16} color="#1A1A1A" />
-                </View>
-                <Text className={`font-headline-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>Security & Protection</Text>
-              </View>
-              <View className="flex-row flex-wrap" style={{ gap: 12 }}>
-                <Pressable onPress={() => router.push('/(tabs)/two-factor-auth' as any)} className={`flex-1 min-w-[140px] p-4 rounded-xl ${isDark ? 'bg-[#08142E] border-white/12' : 'bg-surface-container-low border-outline-variant/20'} flex-row items-start gap-3 active:scale-[0.98]`}>
-                  <MaterialIcons name="lock-open" size={18} color="#08142E" />
-                  <View className="flex-1">
-                    <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>Two-Factor Auth</Text>
-                    <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-xs`}>Enabled via App</Text>
-                    <View className="flex-row items-center gap-1 mt-1.5">
-                      <View className="w-1.5 h-1.5 rounded-full bg-secondary" />
-                      <Text className="text-xs text-secondary font-medium">Active</Text>
-                    </View>
-                  </View>
-                </Pressable>
-                <Pressable onPress={() => router.push('/(tabs)/last-login' as any)} className={`flex-1 min-w-[140px] p-4 rounded-xl ${isDark ? 'bg-[#08142E] border-white/12' : 'bg-surface-container-low border-outline-variant/20'} flex-row items-start gap-3 active:scale-[0.98]`}>
-                  <MaterialIcons name="history" size={18} color="#08142E" />
-                  <View className="flex-1">
-                    <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>Last Login</Text>
-                    <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-xs`}>{new Date(d.security.last_login).toLocaleDateString()}</Text>
-                  </View>
-                </Pressable>
-                <Pressable className={`flex-1 min-w-[140px] p-4 rounded-xl ${isDark ? 'bg-[#08142E] border-white/12' : 'bg-surface-container-low border-outline-variant/20'} flex-row items-start gap-3 active:scale-[0.98]`}>
-                  <MaterialIcons name="devices" size={18} color="#08142E" />
-                  <View className="flex-1">
-                    <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>Active Devices</Text>
-                    <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-xs`}>{d.security.active_devices} connected</Text>
-                  </View>
-                </Pressable>
-              </View>
-            </View>
-
-            <View className={`${isDark ? 'bg-[#08142E] border-white/12' : 'bg-white border-outline-variant/20'} rounded-2xl p-5 mb-4`}>
-              <View className="flex-row justify-between items-center mb-5">
-                <View className="flex-row items-center gap-2">
-                  <View className="w-8 h-8 rounded-lg bg-primary-container items-center justify-center">
-                    <MaterialIcons name="account-balance" size={16} color="#ffffff" />
-                  </View>
-                  <Text className={`font-headline-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>Linked Accounts</Text>
-                </View>
-                <Pressable onPress={() => router.push('/(tabs)/linked-accounts' as any)} className="flex-row items-center gap-1 bg-surface-container-high px-4 py-2 rounded-xl active:scale-95">
-                  <MaterialIcons name="add" size={14} color="#0A1F5C" />
-                  <Text className="font-label-md font-bold text-sm">Link Bank</Text>
-                </Pressable>
-              </View>
-              {(d.linked_accounts?.length ?? 0) > 0 ? (
-                (d.linked_accounts || []).map((account) => (
-                  <Pressable key={account.id} onPress={() => router.push('/(tabs)/linked-accounts' as any)} className={`flex-row items-center justify-between p-3.5 ${isDark ? 'bg-[#08142E] border-white/12' : 'bg-surface-container-low border-outline-variant/10'} rounded-xl mb-2 active:scale-[0.98]`}>
-                    <View className="flex-row items-center gap-3">
-                      <View className={`w-10 h-10 ${isDark ? 'bg-[#08142E]' : 'bg-surface-container'} items-center justify-center rounded-xl`}>
-                        <MaterialIcons name={account.account_type === 'Checking' ? 'account-balance' : 'savings'} size={20} color="#43474d" />
-                      </View>
-                      <View>
-                        <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>{account.bank_name}</Text>
-                        <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'}`}>{account.account_type} ••••{account.account_number.slice(-4)}</Text>
-                      </View>
-                    </View>
-                    <View className="flex-row items-center gap-2">
-                      <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>${account.balance.toLocaleString()}</Text>
-                      <MaterialIcons name="chevron-right" size={18} color="#c4c6ca" />
-                    </View>
-                  </Pressable>
-                ))
-              ) : (
-                <View className="items-center py-6">
-                  <MaterialIcons name="account-balance" size={40} color="#c4c6ca" />
-                  <Text className={`${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-body-md mt-3`}>No linked accounts yet</Text>
-                  <Pressable onPress={() => router.push('/(tabs)/linked-accounts' as any)} className="mt-3 bg-primary px-5 py-2.5 rounded-xl active:scale-95">
-                    <Text className="text-on-primary font-label-md font-bold">Link Your First Bank</Text>
-                  </Pressable>
-                </View>
-              )}
-            </View>
-
-            <View className={`${isDark ? 'bg-[#08142E] border-white/12' : 'bg-white border-outline-variant/20'} rounded-2xl p-5 mb-4`}>
-              <View className="flex-row items-center gap-2 mb-5">
-                <View className="w-8 h-8 rounded-lg bg-secondary-container items-center justify-center">
-                  <MaterialIcons name="auto-awesome" size={16} color="#1A1A1A" />
-                </View>
-                <Text className={`font-headline-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>Plan Details</Text>
-              </View>
-              <View className="flex-row items-center gap-4 p-4 bg-[#001f1a] rounded-xl">
-                <View className="w-14 h-14 bg-white/10 rounded-full items-center justify-center">
-                  <MaterialIcons name="auto-awesome" size={28} color="#F4D35E" />
-                </View>
-                <View className="flex-1">
-                  <Text className="font-headline-md text-white font-bold">{d.plan.name}</Text>
-                  <Text className="text-white/80 text-body-md">${d.plan.price} / {d.plan.billing}</Text>
-                </View>
-                <View className="bg-secondary-container/30 px-3 py-1 rounded-full"><Text className="text-secondary-fixed text-xs font-bold">ACTIVE</Text></View>
-              </View>
-              <Pressable className="w-full bg-primary py-3 rounded-xl items-center mt-4 active:scale-[0.98]">
-                <Text className="text-on-primary font-label-md font-bold">Manage Subscription</Text>
-              </Pressable>
-            </View>
-
-            <View className={`${isDark ? 'bg-[#08142E] border-white/12' : 'bg-white border-outline-variant/20'} rounded-2xl p-5`}>
-              <View className="flex-row items-center gap-2 mb-5">
-                <View className="w-8 h-8 rounded-lg bg-primary-container items-center justify-center">
-                  <MaterialIcons name="settings" size={16} color="#ffffff" />
-                </View>
-                <Text className={`font-headline-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>App Preferences</Text>
-              </View>
-              <View className="space-y-12">
-                <Pressable onPress={() => setShowLocationPicker(true)} className={`flex-row items-center justify-between p-3.5 ${isDark ? 'bg-[#08142E]' : 'bg-surface-container-low'} rounded-xl active:scale-[0.98]`}>
-                  <View className="flex-row items-center gap-3">
-                    <MaterialIcons name="language" size={18} color="#08142E" />
-                    <View>
-                      <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>Location</Text>
-                      <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-xs`}>{LOCATIONS.find((l) => l.value === location)?.label}</Text>
-                    </View>
-                  </View>
-                  <MaterialIcons name="chevron-right" size={18} color="#c4c6ca" />
-                </Pressable>
-                <Pressable onPress={() => setShowCurrencyPicker(true)} className={`flex-row items-center justify-between p-3.5 ${isDark ? 'bg-[#08142E]' : 'bg-surface-container-low'} rounded-xl active:scale-[0.98]`}>
-                  <View className="flex-row items-center gap-3">
-                    <MaterialIcons name="currency-exchange" size={18} color="#08142E" />
-                    <View>
-                      <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>Currency</Text>
-                      <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-xs`}>{currency.symbol} {currency.code} - {currency.name}</Text>
-                    </View>
-                  </View>
-                  <MaterialIcons name="chevron-right" size={18} color="#c4c6ca" />
-                </Pressable>
-                <Pressable onPress={() => setShowLanguagePicker(true)} className={`flex-row items-center justify-between p-3.5 ${isDark ? 'bg-[#08142E]' : 'bg-surface-container-low'} rounded-xl active:scale-[0.98]`}>
-                  <View className="flex-row items-center gap-3">
-                    <MaterialIcons name="translate" size={18} color="#08142E" />
-                    <View>
-                      <Text className={`font-label-md font-bold ${isDark ? 'text-white' : 'text-primary'}`}>Language</Text>
-                      <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'} text-xs`}>{LANGUAGES.find((l) => l.value === language)?.label}</Text>
-                    </View>
-                  </View>
-                  <MaterialIcons name="chevron-right" size={18} color="#c4c6ca" />
-                </Pressable>
-              </View>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
-
+      {/* Edit personal info */}
       <Modal visible={editVisible} transparent animationType="slide" onRequestClose={() => setEditVisible(false)}>
-        <View className="flex-1 bg-black/40 justify-center px-4">
-          <View className={`${isDark ? 'bg-[#1A1A1A]' : 'bg-white'} rounded-3xl p-6`} style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.15)', elevation: 16 }}>
-            <View className="flex-row items-center justify-between mb-6">
-              <View className="flex-row items-center gap-2">
-                <View className="w-8 h-8 rounded-lg bg-primary-container items-center justify-center">
-                  <MaterialIcons name="edit" size={16} color="#0A1F5C" />
-                </View>
-                <Text className={`font-headline-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>Edit Personal Info</Text>
-              </View>
-              <Pressable onPress={() => setEditVisible(false)} className="w-8 h-8 rounded-full bg-surface-variant items-center justify-center active:scale-90">
-                <MaterialIcons name="close" size={18} color="#43474d" />
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', paddingHorizontal: 20 }}>
+          <View style={{ backgroundColor: '#FFFFFF', borderRadius: 20, padding: 22 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+              <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 17, color: '#1A1A1A' }}>Edit Personal Info</Text>
+              <Pressable onPress={() => setEditVisible(false)} hitSlop={8}>
+                <MaterialIcons name="close" size={20} color="#6B6F76" />
               </Pressable>
             </View>
 
-            <View className="mb-4">
-              <Text className={`font-label-md ${isDark ? 'text-white' : 'text-on-surface'} mb-2`}>Full Name</Text>
-              <View className={`flex-row items-center ${isDark ? 'bg-[#08142E] border-white/12' : 'bg-surface-container-low border-outline-variant/30'} rounded-xl px-4`}>
-                <MaterialIcons name="badge" size={18} color="#74777e" />
-                <TextInput className={`flex-1 py-3.5 ml-2 text-body-md ${isDark ? 'text-white' : 'text-primary'}`} value={editName} onChangeText={setEditName} placeholderTextColor="#9ea0a5" />
+            {[
+              { label: 'Full Name', value: editName, setter: setEditName, keyboardType: 'default' as const },
+              { label: 'Email Address', value: editEmail, setter: setEditEmail, keyboardType: 'email-address' as const },
+              { label: 'Phone Number', value: editPhone, setter: setEditPhone, keyboardType: 'phone-pad' as const },
+            ].map((field) => (
+              <View key={field.label} style={{ marginBottom: 16 }}>
+                <Text style={{ fontFamily: 'Montserrat_500Medium', fontSize: 13, color: '#1A1A1A', marginBottom: 6 }}>
+                  {field.label}
+                </Text>
+                <TextInput
+                  value={field.value}
+                  onChangeText={field.setter}
+                  keyboardType={field.keyboardType}
+                  style={{
+                    height: 50,
+                    borderRadius: 10,
+                    borderWidth: 1,
+                    borderColor: '#E1E4EC',
+                    paddingHorizontal: 14,
+                    fontFamily: 'Montserrat_400Regular',
+                    fontSize: 14,
+                    color: '#1A1A1A',
+                  }}
+                  placeholderTextColor="#9AA0AC"
+                />
               </View>
-            </View>
+            ))}
 
-            <View className="mb-4">
-              <Text className={`font-label-md ${isDark ? 'text-white' : 'text-on-surface'} mb-2`}>Email Address</Text>
-              <View className={`flex-row items-center ${isDark ? 'bg-[#08142E] border-white/12' : 'bg-surface-container-low border-outline-variant/30'} rounded-xl px-4`}>
-                <MaterialIcons name="email" size={18} color="#74777e" />
-                <TextInput className={`flex-1 py-3.5 ml-2 text-body-md ${isDark ? 'text-white' : 'text-primary'}`} value={editEmail} onChangeText={setEditEmail} keyboardType="email-address" placeholderTextColor="#9ea0a5" />
-              </View>
-            </View>
-
-            <View className="mb-6">
-              <Text className={`font-label-md ${isDark ? 'text-white' : 'text-on-surface'} mb-2`}>Phone Number</Text>
-              <View className={`flex-row items-center ${isDark ? 'bg-[#08142E] border-white/12' : 'bg-surface-container-low border-outline-variant/30'} rounded-xl px-4`}>
-                <MaterialIcons name="phone" size={18} color="#74777e" />
-                <TextInput className={`flex-1 py-3.5 ml-2 text-body-md ${isDark ? 'text-white' : 'text-primary'}`} value={editPhone} onChangeText={setEditPhone} keyboardType="phone-pad" placeholderTextColor="#9ea0a5" />
-              </View>
-            </View>
-
-            <View className="flex-row gap-3">
-              <Pressable onPress={() => setEditVisible(false)} className={`flex-1 py-3.5 rounded-xl border ${isDark ? 'border-white/12' : 'border-outline-variant'} items-center active:scale-[0.98]`}>
-                <Text className={`font-label-md ${isDark ? 'text-white' : 'text-on-surface'} font-bold`}>Cancel</Text>
+            <View style={{ flexDirection: 'row', gap: 10, marginTop: 6 }}>
+              <Pressable
+                onPress={() => setEditVisible(false)}
+                style={{ flex: 1, height: 50, borderRadius: 12, borderWidth: 1.5, borderColor: '#E1E4EC', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <Text style={{ fontFamily: 'Montserrat_600SemiBold', fontSize: 15, color: '#1A1A1A' }}>Cancel</Text>
               </Pressable>
-              <Pressable onPress={handleSaveProfile} className="flex-1 py-3.5 rounded-xl bg-primary items-center active:scale-[0.98]">
-                <Text className="font-label-md text-on-primary font-bold">Save Changes</Text>
+              <Pressable
+                onPress={handleSaveProfile}
+                style={{ flex: 1, height: 50, borderRadius: 12, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center' }}
+              >
+                <Text style={{ fontFamily: 'Montserrat_600SemiBold', fontSize: 15, color: '#FFFFFF' }}>Save Changes</Text>
               </Pressable>
             </View>
           </View>
@@ -408,71 +284,6 @@ export default function Profile() {
       </Modal>
 
       <NotificationModal visible={notifVisible} onClose={closeNotifications} />
-
-      <Modal visible={showLocationPicker} transparent animationType="slide" onRequestClose={() => setShowLocationPicker(false)}>
-        <View className="flex-1 bg-black/40 justify-end">
-          <View className={`${isDark ? 'bg-[#1A1A1A]' : 'bg-white'} rounded-t-3xl max-h-[70%]`} style={{ boxShadow: '0 -8px 24px rgba(0,0,0,0.1)', elevation: 16 }}>
-            <View className="items-center pt-3 pb-1"><View className="w-10 h-1 rounded-full bg-outline/40" /></View>
-            <View className={`flex-row items-center justify-between px-6 py-4 border-b ${isDark ? 'border-white/12' : 'border-outline-variant/20'}`}>
-              <Text className={`font-headline-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>Select Location</Text>
-              <Pressable onPress={() => setShowLocationPicker(false)} className="w-8 h-8 rounded-full bg-surface-variant items-center justify-center"><MaterialIcons name="close" size={18} color="#43474d" /></Pressable>
-            </View>
-            <ScrollView className="px-6 py-4">
-              {LOCATIONS.map((loc) => (
-                <Pressable key={loc.value} onPress={() => { setLocation(loc.value); setShowLocationPicker(false); }} className={`flex-row items-center gap-3 p-4 rounded-xl mb-1 ${location === loc.value ? 'bg-secondary-container' : ''} active:scale-[0.98]`}>
-                  <MaterialIcons name="language" size={20} color={location === loc.value ? '#1A1A1A' : '#43474d'} />
-                  <Text className={`font-label-md flex-1 ${location === loc.value ? 'text-on-secondary-container font-bold' : (isDark ? 'text-white' : 'text-on-surface')}`}>{loc.label}</Text>
-                  <Text className={`text-caption ${isDark ? 'text-white/70' : 'text-on-surface-variant'}`}>{loc.currency}</Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
-
-      <Modal visible={showCurrencyPicker} transparent animationType="slide" onRequestClose={() => setShowCurrencyPicker(false)}>
-        <View className="flex-1 bg-black/40 justify-end">
-          <View className={`${isDark ? 'bg-[#1A1A1A]' : 'bg-white'} rounded-t-3xl max-h-[70%]`} style={{ boxShadow: '0 -8px 24px rgba(0,0,0,0.1)', elevation: 16 }}>
-            <View className="items-center pt-3 pb-1"><View className="w-10 h-1 rounded-full bg-outline/40" /></View>
-            <View className={`flex-row items-center justify-between px-6 py-4 border-b ${isDark ? 'border-white/12' : 'border-outline-variant/20'}`}>
-              <Text className={`font-headline-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>Select Currency</Text>
-              <Pressable onPress={() => setShowCurrencyPicker(false)} className="w-8 h-8 rounded-full bg-surface-variant items-center justify-center"><MaterialIcons name="close" size={18} color="#43474d" /></Pressable>
-            </View>
-            <ScrollView className="px-6 py-4">
-              {CURRENCIES.map((c) => (
-                <Pressable key={c.code} onPress={() => { setCurrency(c.code); setShowCurrencyPicker(false); }} className={`flex-row items-center gap-3 p-4 rounded-xl mb-1 ${currency.code === c.code ? 'bg-secondary-container' : ''} active:scale-[0.98]`}>
-                  <View className="w-10 h-10 rounded-full bg-primary-container items-center justify-center"><Text className={`font-bold ${isDark ? 'text-white' : 'text-primary'}`}>{c.symbol}</Text></View>
-                  <View className="flex-1">
-                    <Text className={`font-label-md ${currency.code === c.code ? 'text-on-secondary-container font-bold' : (isDark ? 'text-white' : 'text-on-surface')}`}>{c.code} - {c.name}</Text>
-                  </View>
-                  {currency.code === c.code && <MaterialIcons name="check-circle" size={20} color="#1A1A1A" />}
-                </Pressable>
-              ))}
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
-
-      <Modal visible={showLanguagePicker} transparent animationType="slide" onRequestClose={() => setShowLanguagePicker(false)}>
-        <View className="flex-1 bg-black/40 justify-end">
-          <View className={`${isDark ? 'bg-[#1A1A1A]' : 'bg-white'} rounded-t-3xl max-h-[70%]`} style={{ boxShadow: '0 -8px 24px rgba(0,0,0,0.1)', elevation: 16 }}>
-            <View className="items-center pt-3 pb-1"><View className="w-10 h-1 rounded-full bg-outline/40" /></View>
-            <View className={`flex-row items-center justify-between px-6 py-4 border-b ${isDark ? 'border-white/12' : 'border-outline-variant/20'}`}>
-              <Text className={`font-headline-md ${isDark ? 'text-white' : 'text-primary'} font-bold`}>Select Language</Text>
-              <Pressable onPress={() => setShowLanguagePicker(false)} className="w-8 h-8 rounded-full bg-surface-variant items-center justify-center"><MaterialIcons name="close" size={18} color="#43474d" /></Pressable>
-            </View>
-            <ScrollView className="px-6 py-4">
-              {LANGUAGES.map((lang) => (
-                <Pressable key={lang.value} onPress={() => { setLanguage(lang.value); setShowLanguagePicker(false); }} className={`flex-row items-center gap-3 p-4 rounded-xl mb-1 ${language === lang.value ? 'bg-secondary-container' : ''} active:scale-[0.98]`}>
-                  <MaterialIcons name="translate" size={20} color={language === lang.value ? '#1A1A1A' : '#43474d'} />
-                  <Text className={`font-label-md flex-1 ${language === lang.value ? 'text-on-secondary-container font-bold' : (isDark ? 'text-white' : 'text-on-surface')}`}>{lang.label}</Text>
-                  {language === lang.value && <MaterialIcons name="check-circle" size={20} color="#1A1A1A" />}
-                </Pressable>
-              ))}
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
-}
+}        

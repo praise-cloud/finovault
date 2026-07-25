@@ -54,7 +54,7 @@ export default function Preferences() {
           })}
         </View>
 
-        <Pressable onPress={() => router.push('/financial-interview')} style={[styles.cta, { marginTop: 24 }]}>
+        <Pressable onPress={() => router.push('/financial-profile')} style={[styles.cta, { marginTop: 24 }]}>
           <Text style={styles.ctaText}>Continue</Text>
           <MaterialIcons name="arrow-forward" size={18} color="#FFFFFF" />
         </Pressable>
