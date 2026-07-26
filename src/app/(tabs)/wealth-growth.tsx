@@ -15,13 +15,13 @@ export default function WealthGrowth() {
   useEffect(() => { load(); }, [load]);
 
   if (!data) {
-    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}><ActivityIndicator size="large" color="#08142E" /></View>;
+    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}><ActivityIndicator size="large" color="#08142E" /></View>;
   }
 
   const d = data;
 
   return (
-    <View className="flex-1" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
+    <View className="flex-1" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
       <View className="bg-[#FFFFFF] w-full" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between px-margin-mobile md:px-margin-desktop h-16 max-w-[1440px] mx-auto">
           <View className="flex-row items-center gap-4">

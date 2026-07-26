@@ -24,7 +24,7 @@ export default function SmeDashboard() {
   const d = data;
 
   return (
-    <View className="flex-1 bg-[#FFFFFF]" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
+    <View className="flex-1 bg-[#FFFFFF]" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
       <View className="bg-[#FFFFFF] pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-4">
@@ -183,15 +183,15 @@ export default function SmeDashboard() {
             <View className="mt-auto gap-4">
               <View className="flex-row justify-between items-center border-b border-white/10 pb-2">
                 <Text className="text-caption text-white/70">Market Share Growth</Text>
-                <Text className="font-bold text-secondary-fixed">+{d.growth_pulse.market_share_growth}%</Text>
+                    <Text className="font-bold text-secondary-fixed">+{d.growth_pulse?.market_share_growth ?? 0}%</Text>
               </View>
               <View className="flex-row justify-between items-center border-b border-white/10 pb-2">
                 <Text className="text-caption text-white/70">Customer Lifetime Value</Text>
-                <Text className="font-bold text-white">${d.growth_pulse.customer_lifetime_value.toLocaleString()}</Text>
+                    <Text className="font-bold text-white">${(d.growth_pulse?.customer_lifetime_value ?? 0).toLocaleString()}</Text>
               </View>
               <View className="flex-row justify-between items-center">
                 <Text className="text-caption text-white/70">Burn Rate Efficiency</Text>
-                <Text className="font-bold text-secondary-fixed">{d.growth_pulse.burn_rate_efficiency}</Text>
+                    <Text className="font-bold text-secondary-fixed">{d.growth_pulse?.burn_rate_efficiency ?? 'N/A'}</Text>
               </View>
             </View>
           </View>
@@ -205,7 +205,7 @@ export default function SmeDashboard() {
               <View className="bg-surface-variant px-3 py-1 rounded-full"><Text className="text-on-surface-variant text-caption font-bold">24/7 MONITORING ACTIVE</Text></View>
             </View>
             <View className="gap-4">
-              {d.fraud_events.length > 0 ? d.fraud_events.map((event) => (
+              {(d.fraud_events ?? []).length > 0 ? d.fraud_events.map((event) => (
                 <View key={event.id} className="flex-row items-center justify-between p-4 bg-surface-bright rounded-xl border border-outline-variant">
                   <View className="flex-row items-center gap-4 flex-1">
                     <View className={`w-2 h-2 rounded-full ${event.severity === 'critical' ? 'bg-error' : 'bg-secondary'}`} />

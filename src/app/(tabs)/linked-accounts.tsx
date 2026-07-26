@@ -29,7 +29,7 @@ export default function LinkedAccounts() {
   const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
 
   return (
-    <View className="flex-1 bg-surface-bright" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
+    <View className="flex-1 bg-surface-bright" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
       <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">

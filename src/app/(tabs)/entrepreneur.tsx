@@ -37,7 +37,7 @@ export default function EntrepreneurDashboard() {
   const d = data;
 
   return (
-    <View className="flex-1 bg-surface-bright" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
+    <View className="flex-1 bg-surface-bright" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
       <View
         className="bg-surface-bright pt-14 pb-3 px-margin-mobile md:px-margin-desktop"
         style={{
@@ -86,7 +86,7 @@ export default function EntrepreneurDashboard() {
             style={{ maxWidth: 576 }}
           >
             Your business expanded by{" "}
-            <Text className="text-secondary font-bold">{d.mrr_growth}%</Text>{" "}
+            <Text className="text-secondary font-bold">{d.mrr_growth ?? 0}%</Text>{" "}
             this month. Explore new funding opportunities matched to your growth
             stage.
           </Text>
@@ -111,7 +111,7 @@ export default function EntrepreneurDashboard() {
                       </Text>
                       <View className="flex-row items-baseline gap-1">
                         <Text className="font-display-lg text-display-lg text-primary">
-                          ${d.mrr.toLocaleString()}
+                          ${(d.mrr ?? 0).toLocaleString()}
                         </Text>
                         <Text
                           className="text-body-md text-on-surface-variant"
@@ -128,7 +128,7 @@ export default function EntrepreneurDashboard() {
                         color="#1A1A1A"
                       />
                       <Text className="text-on-secondary-container font-label-md">
-                        {d.mrr_growth}% vs LY
+                        {d.mrr_growth ?? 0}% vs LY
                       </Text>
                     </View>
                   </View>
@@ -174,11 +174,11 @@ export default function EntrepreneurDashboard() {
                       Grant Insight
                     </Text>
                   </View>
-                  <Text className="font-headline-md text-white mb-4 leading-tight">
-                    {d.grant.title}
+                    <Text className="font-headline-md text-white mb-4 leading-tight">
+                    {d.grant?.title ?? 'No grant available'}
                   </Text>
                   <Text className="font-body-md text-body-md text-primary-fixed-dim mb-6 opacity-90">
-                    {d.grant.description}
+                    {d.grant?.description ?? 'No grant information available.'}
                   </Text>
                   <Pressable
                     onPress={() => router.push("/(tabs)/ai-coach")}
@@ -214,15 +214,15 @@ export default function EntrepreneurDashboard() {
               </View>
               <View className="flex-row justify-between items-center p-3 bg-surface-container-low rounded-lg">
                 <View>
-                  <Text className="font-label-md text-primary">
-                    {d.smart_savings.label}
+                    <Text className="font-label-md text-primary">
+                    {d.smart_savings?.label ?? 'Savings'}
                   </Text>
                   <Text className="text-caption text-on-surface-variant">
-                    {d.smart_savings.apy}
+                    {d.smart_savings?.apy ?? 'N/A'}
                   </Text>
                 </View>
                 <Text className="font-label-md font-bold">
-                  ${d.smart_savings.amount.toLocaleString()}
+                  ${(d.smart_savings?.amount ?? 0).toLocaleString()}
                 </Text>
               </View>
             </BentoCard>
@@ -262,11 +262,11 @@ export default function EntrepreneurDashboard() {
                   Upcoming Roundtable
                 </Text>
                 <View className="bg-surface-container-low rounded-xl p-4">
-                  <Text className="font-label-md text-primary mb-1">
-                    {d.upcoming_roundtable.title}
+                    <Text className="font-label-md text-primary mb-1">
+                    {d.upcoming_roundtable?.title ?? 'No roundtable scheduled'}
                   </Text>
                   <Text className="text-caption text-on-surface-variant">
-                    {d.upcoming_roundtable.time}
+                    {d.upcoming_roundtable?.time ?? ''}
                   </Text>
                 </View>
               </View>
@@ -316,7 +316,7 @@ export default function EntrepreneurDashboard() {
                     </View>
                     <View className="items-center">
                       <Text className="font-display-lg text-[32px] text-primary">
-                        {d.portfolio.saas_focus_pct}%
+                        {d.portfolio?.saas_focus_pct ?? 0}%
                       </Text>
                       <Text className="text-caption text-on-surface-variant uppercase">
                         SaaS Focus
@@ -333,7 +333,7 @@ export default function EntrepreneurDashboard() {
                       </Text>
                     </View>
                     <Text className="font-label-md font-bold">
-                      ${d.portfolio.saas_value.toLocaleString()}
+                      ${(d.portfolio?.saas_value ?? 0).toLocaleString()}
                     </Text>
                   </View>
                   <View className="flex-row items-center justify-between">
@@ -344,7 +344,7 @@ export default function EntrepreneurDashboard() {
                       </Text>
                     </View>
                     <Text className="font-label-md font-bold">
-                      ${d.portfolio.marketing_value.toLocaleString()}
+                      ${(d.portfolio?.marketing_value ?? 0).toLocaleString()}
                     </Text>
                   </View>
                   <View className="flex-row items-center justify-between">
@@ -355,7 +355,7 @@ export default function EntrepreneurDashboard() {
                       </Text>
                     </View>
                     <Text className="font-label-md font-bold">
-                      ${d.portfolio.human_capital_value.toLocaleString()}
+                      ${(d.portfolio?.human_capital_value ?? 0).toLocaleString()}
                     </Text>
                   </View>
                   <View className="p-4 rounded-xl bg-secondary-container/10 border border-secondary/20">

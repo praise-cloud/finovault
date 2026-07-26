@@ -92,7 +92,7 @@ export default function InsightScreen() {
 
   if (isLoading && !summary) {
     return (
-      <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
+      <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
         <ActivityIndicator size="large" color={BLUE} />
       </View>
     );
@@ -105,8 +105,8 @@ export default function InsightScreen() {
   const transactions = isIncome ? data.income_transactions : data.outcome_transactions;
 
   return (
-    <View className="flex-1" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
-      <View className="px-margin-mobile pt-14 pb-3" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
+    <View className="flex-1" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
+      <View className="px-margin-mobile pt-14 pb-3" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-2">
             <Logo width={20} height={18} color={isDark ? '#FFFFFF' : BLUE} />

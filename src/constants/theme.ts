@@ -88,7 +88,7 @@ export const Shadow = {
 } as const;
 
 export const Dark = {
-  bg: '#0D1117',
+  bg: '#08142E',
   card: '#1A1A1A',
   elevated: '#242424',
   text: '#F0F0F0',

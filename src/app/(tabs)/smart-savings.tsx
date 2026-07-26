@@ -29,7 +29,7 @@ export default function SmartSavings() {
   }, [data]);
 
   if (!data) {
-    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}><ActivityIndicator size="large" color="#08142E" /></View>;
+    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}><ActivityIndicator size="large" color="#08142E" /></View>;
   }
 
   const d = data;
@@ -39,10 +39,10 @@ export default function SmartSavings() {
     outputRange: ['0%', '100%'],
   });
 
-  const goalPct = (d.rainy_day_fund.current_amount / d.rainy_day_fund.target_amount) * 100;
+  const goalPct = d.rainy_day_fund ? (d.rainy_day_fund.current_amount / d.rainy_day_fund.target_amount) * 100 : 0;
 
   return (
-    <View className="flex-1" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
+    <View className="flex-1" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
       <View className="bg-[#FFFFFF] pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-4">
@@ -87,8 +87,8 @@ export default function SmartSavings() {
                 </View>
                 <View className="mb-lg">
                   <View className="flex-row justify-between items-end mb-2">
-                    <Text className="font-display-lg text-display-lg text-primary">${d?.rainy_day_fund.current_amount.toLocaleString('en-US', { minimumFractionDigits: 2 }) || '$8,420.50'}</Text>
-                    <Text className="font-label-md text-label-md text-on-surface-variant mb-2">Goal: ${d?.rainy_day_fund.target_amount.toLocaleString() || '$12,000'}</Text>
+                    <Text className="font-display-lg text-display-lg text-primary">${(d.rainy_day_fund?.current_amount ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</Text>
+                    <Text className="font-label-md text-label-md text-on-surface-variant mb-2">Goal: ${(d.rainy_day_fund?.target_amount ?? 0).toLocaleString()}</Text>
                   </View>
                   <View className="w-full bg-surface-container-high h-4 rounded-full overflow-hidden">
                     <Animated.View className="h-full rounded-full" style={{ width: progressWidth, backgroundColor: '#F4D35E' }} />

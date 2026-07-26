@@ -16,13 +16,13 @@ export default function SmeAnalytics() {
   useEffect(() => { load(); }, [load]);
 
   if (!data) {
-    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}><ActivityIndicator size="large" color="#08142E" /></View>;
+    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}><ActivityIndicator size="large" color="#08142E" /></View>;
   }
 
   const d = data;
 
   return (
-    <View className="flex-1" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
+    <View className="flex-1" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
       <View className="bg-[#FFFFFF] pt-14 pb-3 px-margin-mobile md:px-margin-desktop" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between max-w-[1440px] mx-auto w-full">
           <View className="flex-row items-center gap-4">
@@ -82,17 +82,17 @@ export default function SmeAnalytics() {
             <View className="flex-row gap-4 border-t border-surface-variant pt-6">
               <View className="flex-1">
                 <Text className="text-caption text-on-surface-variant uppercase tracking-tighter">Net Inflow</Text>
-                <Text className="font-headline-md text-headline-md text-primary">${d.cashflow_forensics.net_inflow.toLocaleString()}</Text>
-                <View className="flex-row items-center gap-1"><MaterialIcons name="trending-up" size={14} color="#2E7D5B" /><Text className="text-caption text-secondary">+{d.cashflow_forensics.inflow_change}%</Text></View>
+                    <Text className="font-headline-md text-headline-md text-primary">${(d.cashflow_forensics?.net_inflow ?? 0).toLocaleString()}</Text>
+                <View className="flex-row items-center gap-1"><MaterialIcons name="trending-up" size={14} color="#2E7D5B" /><Text className="text-caption text-secondary">+{d.cashflow_forensics?.inflow_change ?? 0}%</Text></View>
               </View>
               <View className="flex-1">
                 <Text className="text-caption text-on-surface-variant uppercase tracking-tighter">Burn Rate</Text>
-                <Text className="font-headline-md text-headline-md text-primary">${d.cashflow_forensics.burn_rate.toLocaleString()}</Text>
+                    <Text className="font-headline-md text-headline-md text-primary">${(d.cashflow_forensics?.burn_rate ?? 0).toLocaleString()}</Text>
                 <Text className="text-caption text-on-surface-variant">Stabilized</Text>
               </View>
               <View className="flex-1">
                 <Text className="text-caption text-on-surface-variant uppercase tracking-tighter">Runway</Text>
-                <Text className="font-headline-md text-headline-md text-primary">{d.cashflow_forensics.runway_months} Mo</Text>
+                    <Text className="font-headline-md text-headline-md text-primary">{d.cashflow_forensics?.runway_months ?? 0} Mo</Text>
                 <View className="flex-row items-center gap-1"><MaterialIcons name="verified" size={14} color="#08142E" /><Text className="text-caption text-secondary">High Security</Text></View>
               </View>
             </View>
@@ -104,16 +104,16 @@ export default function SmeAnalytics() {
               <Text className="font-headline-md text-headline-md text-white mb-6">Top 5% Performance</Text>
               <View className="gap-4">
                 <View>
-                  <View className="flex-row justify-between mb-1"><Text className="text-caption text-white/70">Efficiency Ratio</Text><Text className="text-caption text-white/70">{d.benchmarks.efficiency_ratio}/100</Text></View>
-                  <View className="h-1.5 w-full bg-white/20 rounded-full overflow-hidden"><View className="h-full bg-secondary-fixed rounded-full" style={{ width: `${d.benchmarks.efficiency_ratio}%` }} /></View>
+                  <View className="flex-row justify-between mb-1"><Text className="text-caption text-white/70">Efficiency Ratio</Text>                    <Text className="text-caption text-white/70">{d.benchmarks?.efficiency_ratio ?? 0}/100</Text></View>
+                  <View className="h-1.5 w-full bg-white/20 rounded-full overflow-hidden">                    <View className="h-full bg-secondary-fixed rounded-full" style={{ width: `${d.benchmarks?.efficiency_ratio ?? 0}%` }} /></View>
                 </View>
                 <View>
-                  <View className="flex-row justify-between mb-1"><Text className="text-caption text-white/70">Customer Retention</Text><Text className="text-caption text-white/70">{d.benchmarks.customer_retention}/100</Text></View>
-                  <View className="h-1.5 w-full bg-white/20 rounded-full overflow-hidden"><View className="h-full bg-secondary-fixed rounded-full" style={{ width: `${d.benchmarks.customer_retention}%`, opacity: 0.8 }} /></View>
+                  <View className="flex-row justify-between mb-1"><Text className="text-caption text-white/70">Customer Retention</Text>                    <Text className="text-caption text-white/70">{d.benchmarks?.customer_retention ?? 0}/100</Text></View>
+                  <View className="h-1.5 w-full bg-white/20 rounded-full overflow-hidden">                    <View className="h-full bg-secondary-fixed rounded-full" style={{ width: `${d.benchmarks?.customer_retention ?? 0}%`, opacity: 0.8 }} /></View>
                 </View>
                 <View>
-                  <View className="flex-row justify-between mb-1"><Text className="text-caption text-white/70">Digital Adoption</Text><Text className="text-caption text-white/70">{d.benchmarks.digital_adoption}/100</Text></View>
-                  <View className="h-1.5 w-full bg-white/20 rounded-full overflow-hidden"><View className="h-full bg-secondary-fixed rounded-full" style={{ width: `${d.benchmarks.digital_adoption}%` }} /></View>
+                  <View className="flex-row justify-between mb-1"><Text className="text-caption text-white/70">Digital Adoption</Text>                    <Text className="text-caption text-white/70">{d.benchmarks?.digital_adoption ?? 0}/100</Text></View>
+                  <View className="h-1.5 w-full bg-white/20 rounded-full overflow-hidden">                    <View className="h-full bg-secondary-fixed rounded-full" style={{ width: `${d.benchmarks?.digital_adoption ?? 0}%` }} /></View>
                 </View>
               </View>
               <View className="mt-8 pt-6 border-t border-white/10">
@@ -181,7 +181,7 @@ export default function SmeAnalytics() {
             </View>
             <View className="flex-grow text-center md:text-left">
               <Text className="font-headline-md text-headline-md text-primary mb-1">AI Smart Recommendation</Text>
-              <Text className="text-body-md text-on-surface-variant">&ldquo;{d.ai_recommendation}&rdquo;</Text>
+              <Text className="text-body-md text-on-surface-variant">&ldquo;{d.ai_recommendation ?? 'No recommendations available.'}&rdquo;</Text>
             </View>
             <Pressable onPress={() => router.push('/(tabs)/ai-coach')} className="px-8 py-3 bg-secondary rounded-xl active:scale-95" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
               <Text className="font-label-md text-label-md text-on-secondary">Execute Audit</Text>

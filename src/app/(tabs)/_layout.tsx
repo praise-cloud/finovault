@@ -115,7 +115,8 @@ export default function TabsLayout() {
       }}
     >
       <View
-        style={{ flex: 1, backgroundColor: isDark ? '#0D1117' : '#F2F2F2' }}
+        className="flex-1"
+        style={{ backgroundColor: isDark ? '#08142E' : '#F2F2F2' }}
       >
         {!prefsLoaded ? (
           <View className="flex-1 items-center justify-center">

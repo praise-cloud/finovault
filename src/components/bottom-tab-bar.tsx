@@ -95,7 +95,7 @@ export function BottomTabBar({ activeTab, onTabPress, role = 'individual' }: Pro
       style={{
         height: 60,
         paddingBottom: 4,
-        backgroundColor: isDark ? '#0D1117' : '#FFFFFF',
+        backgroundColor: isDark ? '#08142E' : '#FFFFFF',
         borderTopWidth: 1,
         borderTopColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
       }}

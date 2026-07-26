@@ -39,7 +39,7 @@ export default function SignUp() {
           <Pressable onPress={() => router.back()}>
             <MaterialIcons name="arrow-back" size={24} color={BLUE} />
           </Pressable>
-          <Logo width={25} height={25} />
+          <Logo width={40} height={40} />
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30, paddingTop: 20 }}>

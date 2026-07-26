@@ -100,7 +100,7 @@ export default function IndividualDashboard() {
 
   if (isLoading && !summary) {
     return (
-      <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
+      <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
         <ActivityIndicator size="large" color={BLUE} />
       </View>
     );
@@ -109,8 +109,8 @@ export default function IndividualDashboard() {
   const userName = user?.user_metadata?.full_name?.split(' ')[0] || '';
 
   return (
-    <View className="flex-1" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
-      <View className="px-margin-mobile pt-14 pb-3" style={{ backgroundColor: isDark ? '#0D1117' : '#FFFFFF' }}>
+    <View className="flex-1" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
+      <View className="px-margin-mobile pt-14 pb-3" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
         <View className="flex-row items-center justify-between">
           <View>
             <Text className="font-body" style={{ fontSize: 13, color: isDark ? 'rgba(255,255,255,0.6)' : '#6B6F76' }}>

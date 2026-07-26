@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Image, Pressable, Text, View, useWindowDimensions } from 'react-native';
+import { Pressable, Text, View, useWindowDimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuthStore } from '@/src/stores/auth-store';
 
@@ -23,10 +23,7 @@ export default function WelcomeTour() {
 
   if (showSplash) {
     return (
-      <View style={{ flex: 1, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center' }}>
-        <Image source={require('@/assets/images/logo-image.png')} style={{width:200, height:120}}  />
-
-      </View>
+      <View style={{ flex: 1, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center' }} />
     );
   }
 
@@ -51,10 +48,7 @@ export default function WelcomeTour() {
             <Text style={styles.buttonText}>Register</Text>
           </Pressable>
         </View>
-          <Pressable onPress={() => router.push('/signup')} style={({ pressed }) => [styles.googleButton, { opacity: pressed ? 0.78 : 1 }]}>
-            <MaterialIcons name="g-mobiledata" size={24} color="#FFFFFF" />
-            <Text style={styles.buttonText}>Sign in with Google</Text>
-          </Pressable>
+
       </View>
     </View>
   );
@@ -62,6 +56,5 @@ export default function WelcomeTour() {
 
 const styles = {
   button: { height: 52, borderRadius: 12, backgroundColor: BLUE, alignItems: 'center' as const, justifyContent: 'center' as const },
-  googleButton: { height: 52, borderRadius: 12, backgroundColor: BLUE, alignItems: 'center' as const, justifyContent: 'center' as const, flexDirection: 'row' as const, gap: 5 },
   buttonText: { color: '#FFFFFF', fontFamily: 'Montserrat_600SemiBold', fontSize: 16 },
 };

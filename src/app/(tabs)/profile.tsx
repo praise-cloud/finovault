@@ -93,7 +93,7 @@ export default function Settings() {
   const connectedAppsCount = (data as any)?.connected_apps_count ?? 5;
 
   return (
-    <View style={{ flex: 1, backgroundColor: isDark ? '#0D1117' : PAPER, alignItems: 'center' }}>
+    <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
       <View style={{ width: Math.min(width, 390), flex: 1 }}>
         <View style={{ paddingHorizontal: 20, paddingTop: 60, paddingBottom: 12 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
