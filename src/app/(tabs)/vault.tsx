@@ -78,7 +78,7 @@ export default function VaultAssistant() {
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <Logo width={20} height={18} color={BLUE} />
-                <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 18, color: '#1A1A1A' }}>Vault</Text>
+                <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 18, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Vault</Text>
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 <NotificationIcon onPress={openNotifications} count={notifCount} />
@@ -122,14 +122,14 @@ export default function VaultAssistant() {
                 <View
                   style={{
                     maxWidth: '75%',
-                    backgroundColor: m.role === 'user' ? BLUE : '#FFFFFF',
+                    backgroundColor: m.role === 'user' ? BLUE : (isDark ? '#1A1A1A' : '#FFFFFF'),
                     borderRadius: 16,
                     borderTopLeftRadius: m.role === 'assistant' ? 4 : 16,
                     borderTopRightRadius: m.role === 'user' ? 4 : 16,
                     paddingHorizontal: 14,
                     paddingVertical: 10,
                     borderWidth: m.role === 'assistant' ? 1 : 0,
-                    borderColor: '#E1E4EC',
+                    borderColor: isDark ? '#2A2A2A' : '#E1E4EC',
                   }}
                 >
                   <Text
@@ -137,7 +137,7 @@ export default function VaultAssistant() {
                       fontFamily: 'Montserrat_400Regular',
                       fontSize: 14,
                       lineHeight: 19,
-                      color: m.role === 'user' ? '#FFFFFF' : '#1A1A1A',
+                      color: m.role === 'user' ? '#FFFFFF' : (isDark ? '#F0F0F0' : '#1A1A1A'),
                     }}
                   >
                     {m.text}
@@ -161,7 +161,7 @@ export default function VaultAssistant() {
                 >
                   <Logo width={11} height={10} color="#FFFFFF" />
                 </View>
-                <Text style={{ fontFamily: 'Montserrat_400Regular', fontSize: 13, color: '#8A8E98' }}>Typing…</Text>
+                <Text style={{ fontFamily: 'Montserrat_400Regular', fontSize: 13, color: isDark ? '#9CA3B0' : '#8A8E98' }}>Typing…</Text>
               </View>
             )}
 
@@ -173,9 +173,9 @@ export default function VaultAssistant() {
                     onPress={() => send(s)}
                     style={{
                       alignSelf: 'flex-start',
-                      backgroundColor: '#FFFFFF',
+                      backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
                       borderWidth: 1,
-                      borderColor: '#E1E4EC',
+                      borderColor: isDark ? '#2A2A2A' : '#E1E4EC',
                       borderRadius: 14,
                       paddingHorizontal: 14,
                       paddingVertical: 10,
@@ -194,10 +194,10 @@ export default function VaultAssistant() {
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                backgroundColor: '#FFFFFF',
+                backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
                 borderRadius: 9999,
                 borderWidth: 1,
-                borderColor: '#E1E4EC',
+                borderColor: isDark ? '#2A2A2A' : '#E1E4EC',
                 paddingLeft: 18,
                 paddingRight: 6,
                 height: 52,
@@ -208,7 +208,7 @@ export default function VaultAssistant() {
                 onChangeText={setInput}
                 placeholder="Ask Vault anything…"
                 placeholderTextColor="#9AA0AC"
-                style={{ flex: 1, fontFamily: 'Montserrat_400Regular', fontSize: 14, color: '#1A1A1A' }}
+                style={{ flex: 1, fontFamily: 'Montserrat_400Regular', fontSize: 14, color: isDark ? '#FFFFFF' : '#1A1A1A' }}
                 onSubmitEditing={() => send()}
                 returnKeyType="send"
               />

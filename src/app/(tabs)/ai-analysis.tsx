@@ -1,13 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { ScrollView, View, Text, Pressable, ActivityIndicator, TextInput, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import * as AIService from '@/src/lib/api/services/ai';
+import * as TransactionsService from '@/src/lib/api/services/transactions';
+import { AlertCard } from '@/src/components/alert-card';
 import { NotificationIcon, NotificationModal } from '@/src/components/notification-modal';
 import { UserAvatar } from '@/src/components/user-avatar';
 import { useNotificationStore } from '@/src/stores/notification-store';
-import { AlertCard } from '@/src/components/alert-card';
-import * as AIService from '@/src/lib/api/services/ai';
-import * as TransactionsService from '@/src/lib/api/services/transactions';
 
 type Insight = {
   id: string;
@@ -32,11 +32,7 @@ export default function AiAnalysis() {
   const [totalSpent, setTotalSpent] = useState(0);
   const scrollRef = useRef<ScrollView>(null);
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setIsLoading(true);
     try {
       const [suggestions, txRes] = await Promise.all([
@@ -79,10 +75,13 @@ export default function AiAnalysis() {
         }));
       setPatternSummary(breakdown);
     } catch (e) {
-      console.error('Failed to load AI analysis data', e);
     }
     setIsLoading(false);
-  };
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleAsk = async () => {
     if (!question.trim() || isAsking) return;

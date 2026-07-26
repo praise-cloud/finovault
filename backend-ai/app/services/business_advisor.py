@@ -1,5 +1,5 @@
 from app.models.schemas import BusinessAdviceRequest, BusinessAdviceResponse
-from app.core.supabase import get_supabase
+from app.core.supabase import async_execute, get_supabase
 from app.core.logger import setup_logger
 from app.agents.llm_agent import ask as llm_ask
 
@@ -10,16 +10,18 @@ class BusinessAdvisor:
     async def advise(self, request: BusinessAdviceRequest, user_id: str) -> BusinessAdviceResponse:
         supabase = get_supabase()
 
-        tx_result = supabase.table("transactions") \
-            .select("type, amount") \
-            .eq("user_id", user_id) \
-            .limit(100) \
-            .execute()
+        tx_result = await async_execute(
+            supabase.table("transactions")
+            .select("type, amount")
+            .eq("user_id", user_id)
+            .limit(100)
+        )
 
-        vendor_result = supabase.table("vendors") \
-            .select("*") \
-            .eq("user_id", user_id) \
-            .execute()
+        vendor_result = await async_execute(
+            supabase.table("vendors")
+            .select("*")
+            .eq("user_id", user_id)
+        )
 
         transactions = tx_result.data or []
         vendors = vendor_result.data or []

@@ -77,7 +77,7 @@ export default function Settings() {
 
   if (!data) {
     return (
-      <View style={{ flex: 1, backgroundColor: PAPER, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" color={BLUE} />
       </View>
     );
@@ -99,7 +99,7 @@ export default function Settings() {
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <Logo width={20} height={18} color={BLUE} />
-              <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 18, color: '#1A1A1A' }}>Settings</Text>
+              <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 18, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Settings</Text>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               <NotificationIcon onPress={openNotifications} count={notifCount} />
@@ -113,8 +113,8 @@ export default function Settings() {
           <Pressable onPress={openEdit} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, marginBottom: 20 }}>
             <UserAvatar size={56} name={data.profile.full_name} />
             <View style={{ marginLeft: 14, flex: 1 }}>
-              <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 18, color: '#1A1A1A' }}>Hey, {firstName}</Text>
-              <Text style={{ fontFamily: 'Montserrat_400Regular', fontSize: 13, color: '#6B6F76', marginTop: 2 }}>
+              <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 18, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Hey, {firstName}</Text>
+              <Text style={{ fontFamily: 'Montserrat_400Regular', fontSize: 13, color: isDark ? '#9CA3B0' : '#6B6F76', marginTop: 2 }}>
                 {data.profile.email}
               </Text>
             </View>
@@ -143,7 +143,7 @@ export default function Settings() {
           </View>
 
           {/* Others */}
-          <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 16, color: '#1A1A1A', marginTop: 24, marginBottom: 12 }}>
+          <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 16, color: isDark ? '#FFFFFF' : '#1A1A1A', marginTop: 24, marginBottom: 12 }}>
             Others
           </Text>
           <View style={{ flexDirection: 'row', gap: 10 }}>
@@ -188,10 +188,10 @@ export default function Settings() {
           </View>
 
           {/* Settings list */}
-          <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 16, color: '#1A1A1A', marginTop: 24, marginBottom: 12 }}>
+          <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 16, color: isDark ? '#FFFFFF' : '#1A1A1A', marginTop: 24, marginBottom: 12 }}>
             Settings
           </Text>
-          <View style={{ backgroundColor: '#FFFFFF', borderRadius: 16, borderWidth: 1, borderColor: '#E4E7EE' }}>
+          <View style={{ backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF', borderRadius: 16, borderWidth: 1, borderColor: isDark ? '#2A2A2A' : '#E4E7EE' }}>
             {SETTINGS_ITEMS.map((item, i) => (
               <Pressable
                 key={item.label}
@@ -206,11 +206,11 @@ export default function Settings() {
                   paddingHorizontal: 16,
                   paddingVertical: 14,
                   borderBottomWidth: i < SETTINGS_ITEMS.length - 1 ? 1 : 0,
-                  borderBottomColor: '#EEF0F5',
+                  borderBottomColor: isDark ? '#2A2A2A' : '#EEF0F5',
                 }}
               >
-                <MaterialIcons name={item.icon} size={20} color="#43474D" />
-                <Text style={{ flex: 1, marginLeft: 14, fontFamily: 'Montserrat_500Medium', fontSize: 15, color: '#1A1A1A' }}>
+                <MaterialIcons name={item.icon} size={20} color={isDark ? '#9CA3B0' : '#43474D'} />
+                <Text style={{ flex: 1, marginLeft: 14, fontFamily: 'Montserrat_500Medium', fontSize: 15, color: isDark ? '#F0F0F0' : '#1A1A1A' }}>
                   {item.label}
                 </Text>
                 <MaterialIcons name="chevron-right" size={18} color="#C4C6CE" />
@@ -219,7 +219,7 @@ export default function Settings() {
 
             <Pressable
               onPress={handleSignOut}
-              style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, borderTopWidth: 1, borderTopColor: '#EEF0F5' }}
+              style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, borderTopWidth: 1, borderTopColor: isDark ? '#2A2A2A' : '#EEF0F5' }}
             >
               <MaterialIcons name="logout" size={20} color="#C0392B" />
               <Text style={{ marginLeft: 14, fontFamily: 'Montserrat_500Medium', fontSize: 15, color: '#C0392B' }}>Sign Out</Text>
@@ -231,11 +231,11 @@ export default function Settings() {
       {/* Edit personal info */}
       <Modal visible={editVisible} transparent animationType="slide" onRequestClose={() => setEditVisible(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', paddingHorizontal: 20 }}>
-          <View style={{ backgroundColor: '#FFFFFF', borderRadius: 20, padding: 22 }}>
+          <View style={{ backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF', borderRadius: 20, padding: 22 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-              <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 17, color: '#1A1A1A' }}>Edit Personal Info</Text>
+              <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 17, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Edit Personal Info</Text>
               <Pressable onPress={() => setEditVisible(false)} hitSlop={8}>
-                <MaterialIcons name="close" size={20} color="#6B6F76" />
+                <MaterialIcons name="close" size={20} color={isDark ? '#9CA3B0' : '#6B6F76'} />
               </Pressable>
             </View>
 
@@ -245,7 +245,7 @@ export default function Settings() {
               { label: 'Phone Number', value: editPhone, setter: setEditPhone, keyboardType: 'phone-pad' as const },
             ].map((field) => (
               <View key={field.label} style={{ marginBottom: 16 }}>
-                <Text style={{ fontFamily: 'Montserrat_500Medium', fontSize: 13, color: '#1A1A1A', marginBottom: 6 }}>
+                <Text style={{ fontFamily: 'Montserrat_500Medium', fontSize: 13, color: isDark ? '#FFFFFF' : '#1A1A1A', marginBottom: 6 }}>
                   {field.label}
                 </Text>
                 <TextInput
@@ -256,11 +256,11 @@ export default function Settings() {
                     height: 50,
                     borderRadius: 10,
                     borderWidth: 1,
-                    borderColor: '#E1E4EC',
+                    borderColor: isDark ? '#2A2A2A' : '#E1E4EC',
                     paddingHorizontal: 14,
                     fontFamily: 'Montserrat_400Regular',
                     fontSize: 14,
-                    color: '#1A1A1A',
+                    color: isDark ? '#FFFFFF' : '#1A1A1A',
                   }}
                   placeholderTextColor="#9AA0AC"
                 />
@@ -270,9 +270,9 @@ export default function Settings() {
             <View style={{ flexDirection: 'row', gap: 10, marginTop: 6 }}>
               <Pressable
                 onPress={() => setEditVisible(false)}
-                style={{ flex: 1, height: 50, borderRadius: 12, borderWidth: 1.5, borderColor: '#E1E4EC', alignItems: 'center', justifyContent: 'center' }}
+                style={{ flex: 1, height: 50, borderRadius: 12, borderWidth: 1.5, borderColor: isDark ? '#2A2A2A' : '#E1E4EC', alignItems: 'center', justifyContent: 'center' }}
               >
-                <Text style={{ fontFamily: 'Montserrat_600SemiBold', fontSize: 15, color: '#1A1A1A' }}>Cancel</Text>
+                <Text style={{ fontFamily: 'Montserrat_600SemiBold', fontSize: 15, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Cancel</Text>
               </Pressable>
               <Pressable
                 onPress={handleSaveProfile}

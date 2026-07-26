@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { View, Text, Pressable, TextInput as RNTextInput, StyleProp, ViewStyle } from 'react-native';
+import { View, Text, Pressable, TextInput as RNTextInput, StyleProp, ViewStyle, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 type Props = {
@@ -29,7 +29,8 @@ export function TextInput({
 }: Props) {
   const [focused, setFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const isDark = false;
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const inputRef = useRef<RNTextInput>(null);
 
   const isPassword = secureTextEntry !== undefined;

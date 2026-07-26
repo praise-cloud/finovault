@@ -10,7 +10,7 @@ import type {
   FreelancerData,
   EntrepreneurData,
   ProfileData,
-} from '@/lib/supabase-types';
+} from '@/src/lib/supabase-types';
 
 export async function getDashboardSummary(): Promise<DashboardSummary> {
   return apiClient.get<DashboardSummary>(ENDPOINTS.dashboard.summary);

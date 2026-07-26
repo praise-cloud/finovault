@@ -13,19 +13,19 @@ export async function getProfile(_userId?: string): Promise<ProfileResponse> {
 }
 
 export async function updateProfile(_userId: string, updates: Record<string, any>) {
-  return apiClient.put(ENDPOINTS.profile.update, updates);
+  return await apiClient.put(ENDPOINTS.profile.update, updates);
 }
 
 export async function savePreferences(_userId: string, prefs: Record<string, any>) {
-  return apiClient.put(ENDPOINTS.profile.preferences, prefs);
+  return await apiClient.put(ENDPOINTS.profile.preferences, prefs);
 }
 
 export async function getPreferences(_userId?: string): Promise<Record<string, any>> {
-  return apiClient.get(ENDPOINTS.profile.preferences);
+  return await apiClient.get(ENDPOINTS.profile.preferences);
 }
 
 export async function getProfileLinkedAccounts(_userId?: string) {
-  return apiClient.get(ENDPOINTS.profile.linkedAccounts);
+  return await apiClient.get(ENDPOINTS.profile.linkedAccounts);
 }
 
 export async function getSecurityMetrics(_userId: string) {

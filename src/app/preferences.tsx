@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Pressable, Text, View, useWindowDimensions } from 'react-native';
+import { Pressable, Text, View, useWindowDimensions, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { usePreferencesStore } from '@/src/stores/preferences-store';
 import { Logo } from '@/src/components/logo';
@@ -15,26 +15,28 @@ const ROLES = [
 ];
 
 export default function Preferences() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const { width } = useWindowDimensions();
   const selectedRole = usePreferencesStore((state) => state.role);
   const setRole = usePreferencesStore((state) => state.setRole);
 
   return (
-    <View style={{ flex: 1, backgroundColor: PAPER, alignItems: 'center' }}>
-      <View style={{ width: Math.min(width, 390), flex: 1, backgroundColor: PAPER, paddingHorizontal: 24, paddingTop: 60 }}>
+    <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
+      <View style={{ width: Math.min(width, 390), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 24, paddingTop: 60 }}>
         <View style={styles.topbar}>
           <Pressable onPress={() => router.back()} hitSlop={12}>
-            <MaterialIcons name="arrow-back" size={24} color={BLUE} />
+            <MaterialIcons name="arrow-back" size={24} color={isDark ? '#D4AF37' : BLUE} />
           </Pressable>
-          <Logo width={26} height={23.5} color={BLUE} />
+          <Logo width={26} height={23.5} color={isDark ? '#D4AF37' : BLUE} />
         </View>
 
-        <Text style={styles.title}>Let's personalize your{'\n'}experience</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#111111' }]}>Let's personalize your{'\n'}experience</Text>
+        <Text style={[styles.subtitle, { color: isDark ? '#B0B0B0' : '#666B76' }]}>
           Help us tailor our AI insights to your specific professional needs and financial landscape.
         </Text>
 
-        <Text style={styles.label}>WHO ARE YOU?</Text>
+        <Text style={[styles.label, { color: isDark ? '#8C8F9E' : '#8A8E98' }]}>WHO ARE YOU?</Text>
 
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
           {ROLES.map((role) => {
@@ -43,12 +45,20 @@ export default function Preferences() {
               <Pressable
                 key={role.key}
                 onPress={() => setRole(role.key)}
-                style={[styles.role, selected && styles.selected]}
+                style={[
+                  styles.role,
+                  { backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF', borderColor: isDark ? '#2A2A2A' : '#E1E4EC' },
+                  selected && { borderColor: BLUE, backgroundColor: isDark ? '#0F2040' : '#EEF1FB' },
+                ]}
               >
-                <View style={[styles.iconCircle, selected && styles.iconCircleSelected]}>
+                <View style={[
+                  styles.iconCircle,
+                  { backgroundColor: isDark ? '#2A2A2A' : '#EEF0F5' },
+                  selected && { backgroundColor: isDark ? '#1A2A5C' : '#DCE3F7' },
+                ]}>
                   <MaterialIcons name={role.icon} size={22} color={BLUE} />
                 </View>
-                <Text style={styles.roleText}>{role.label}</Text>
+                <Text style={[styles.roleText, { color: isDark ? '#FFFFFF' : '#20232A' }]}>{role.label}</Text>
               </Pressable>
             );
           })}
@@ -59,7 +69,7 @@ export default function Preferences() {
           <MaterialIcons name="arrow-forward" size={18} color="#FFFFFF" />
         </Pressable>
 
-        <Text style={styles.helper}>Step 2 of 4 • Preferences</Text>
+        <Text style={[styles.helper, { color: isDark ? '#8C8F9E' : '#969AA3' }]}>Step 2 of 4 • Preferences</Text>
       </View>
     </View>
   );

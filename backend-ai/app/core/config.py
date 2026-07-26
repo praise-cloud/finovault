@@ -14,7 +14,7 @@ class Settings:
 
     @property
     def cors_origins(self) -> list[str]:
-        return os.getenv("CORS_ORIGINS", "http://localhost:4000,http://localhost:8081,http://localhost:8082").split(",")
+        return os.getenv("CORS_ORIGINS", "http://localhost:4000,http://localhost:8081,http://localhost:8082,https://finovault.ai").split(",")
 
 
 settings = Settings()

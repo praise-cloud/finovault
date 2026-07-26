@@ -3,21 +3,25 @@ import { ENDPOINTS } from '../endpoints';
 import type { Vendor } from '@/src/lib/supabase-types';
 
 export interface BusinessHealth {
-  overall_score: number;
+  overall_health_score: number;
   revenue: number;
   expenses: number;
+  profit: number;
   profit_margin: number;
-  cash_reserves: number;
-  month_over_month: number;
-  alerts: string[];
+  revenue_trend: number;
+  expense_trend: number;
+  vendor_count: number;
+  vendor_health_average: number;
 }
 
 export interface BusinessForecast {
-  projected_revenue: number[];
-  projected_expenses: number[];
-  confidence: number;
-  growth_rate: number;
-  risk_factors: string[];
+  monthly_avg_revenue: number;
+  monthly_avg_expenses: number;
+  net_monthly: number;
+  cash_reserves: number;
+  runway_months: number;
+  forecast: number[];
+  recommendation: string;
 }
 
 export interface BusinessAiAdvice {

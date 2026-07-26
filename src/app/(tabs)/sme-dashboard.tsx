@@ -18,7 +18,7 @@ export default function SmeDashboard() {
   useEffect(() => { load(); }, [load]);
 
   if (!data) {
-    return <View className="flex-1 bg-[#FFFFFF] items-center justify-center"><ActivityIndicator size="large" color="#08142E" /></View>;
+    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}><ActivityIndicator size="large" color={isDark ? '#D4AF37' : '#08142E'} /></View>;
   }
 
   const d = data;

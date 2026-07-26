@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.ensemble import IsolationForest
 from app.models.schemas import FraudCheckRequest, FraudCheckResponse
-from app.core.supabase import get_supabase
+from app.core.supabase import async_execute, get_supabase
 from app.core.logger import setup_logger
 
 logger = setup_logger("fraud_detector")
@@ -21,12 +21,13 @@ class FraudDetector:
 
         supabase = get_supabase()
 
-        result = supabase.table("transactions") \
-            .select("amount") \
-            .eq("user_id", user_id) \
-            .order("date", desc=True) \
-            .limit(100) \
-            .execute()
+        result = await async_execute(
+            supabase.table("transactions")
+            .select("amount")
+            .eq("user_id", user_id)
+            .order("date", desc=True)
+            .limit(100)
+        )
 
         amounts = [float(t["amount"]) for t in result.data] if result.data else []
 
@@ -52,10 +53,11 @@ class FraudDetector:
             signals.append(f"Transaction to new receiver: {request.receiver}")
 
         if request.device_id:
-            metrics = supabase.table("security_metrics") \
-                .select("active_devices") \
-                .eq("user_id", user_id) \
-                .execute()
+            metrics = await async_execute(
+                supabase.table("security_metrics")
+                .select("active_devices")
+                .eq("user_id", user_id)
+            )
 
             if metrics.data:
                 pass

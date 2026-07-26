@@ -24,14 +24,14 @@ export const Colors = {
   },
   dark: {
     text: '#FFFFFF',
-    background: '#0A1A4D',
-    backgroundElement: '#122A72',
-    backgroundSelected: '#2B46B1',
-    textSecondary: '#D1D6E2',
-    surface: 'rgba(255,255,255,0.08)',
-    border: 'rgba(255,255,255,0.15)',
-    surfaceBorder: 'rgba(255,255,255,0.12)',
-    chipBg: 'rgba(255,255,255,0.08)',
+    background: '#08142E',
+    backgroundElement: '#1A1A1A',
+    backgroundSelected: '#242424',
+    textSecondary: '#9CA3B0',
+    surface: '#1A1A1A',
+    border: '#2A2A2A',
+    surfaceBorder: '#2A2A2A',
+    chipBg: '#2A2A2A',
     errorBg: 'rgba(140,58,58,0.18)',
   },
 } as const;
@@ -108,5 +108,5 @@ export const Dark = {
   redFill: '#3A1A1A',
 } as const;
 
-export const BottomTabInset = 0;
+export const BottomTabInset = 34;
 export const MaxContentWidth = 800;

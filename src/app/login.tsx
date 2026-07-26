@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, View, useWindowDimensions, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuthStore } from '@/src/stores/auth-store';
 import { TextInput } from '@/src/components/ui/text-input';
@@ -9,6 +9,8 @@ const BLUE = '#123B91';
 const PAPER = '#F2F2F2';
 
 export default function Login() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const signIn = useAuthStore((state) => state.signIn);
   const { width } = useWindowDimensions();
   const [email, setEmail] = useState('');
@@ -32,11 +34,11 @@ export default function Login() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: PAPER, alignItems: 'center' }}>
-      <View style={{ width: Math.min(width, 390), flex: 1, backgroundColor: PAPER, paddingHorizontal: 24, paddingTop: 60 }}>
+    <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
+      <View style={{ width: Math.min(width, 390), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 24, paddingTop: 60 }}>
         <View style={styles.topbar}>
           <Pressable onPress={() => router.back()} hitSlop={12}>
-            <MaterialIcons name="arrow-back" size={24} color={BLUE} />
+            <MaterialIcons name="arrow-back" size={24} color={isDark ? '#D4AF37' : BLUE} />
           </Pressable>
           <Pressable onPress={() => router.push('/signup')} hitSlop={12}>
             <Text style={styles.signUp}>Sign UP</Text>
@@ -44,8 +46,8 @@ export default function Login() {
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30 }}>
-          <Text style={styles.title}>Welcome back!</Text>
-          <Text style={styles.subtitle}>Let's get you back into building wealth</Text>
+          <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#111111' }]}>Welcome back!</Text>
+          <Text style={[styles.subtitle, { color: isDark ? '#B0B0B0' : '#666B76' }]}>Let's get you back into building wealth</Text>
 
           <TextInput
             label="Email address"

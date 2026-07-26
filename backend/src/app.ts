@@ -26,6 +26,10 @@ app.use(standardRateLimit);
 
 app.use(API_PREFIX, routes);
 
+app.use((_req, res) => {
+  res.status(404).json({ error: { status: 404, message: 'Not Found', path: _req.originalUrl } });
+});
+
 app.use(errorHandler);
 
 process.on('unhandledRejection', (reason: Error) => {

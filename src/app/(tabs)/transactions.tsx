@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Alert, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import * as TransactionsService from '@/src/lib/api/services/transactions';
+import type { Transaction } from '@/src/lib/supabase-types';
 import { formatCurrency, convertAmount } from '@/src/lib/format-currency';
 import { useSettingsStore } from '@/src/stores/settings-store';
 import { FlatCard } from '@/src/components/flat-card';
@@ -29,7 +31,7 @@ function getIconForTx(tx: any): keyof typeof MaterialIcons.glyphMap {
 export default function TransactionsScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const [transactions, setTransactions] = useState<TransactionsService.Transaction[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
@@ -55,7 +57,7 @@ export default function TransactionsScreen() {
       setTransactions(items);
     } catch (e: any) {
       if (e?.name === 'AbortError') return;
-      console.error('Failed to load transactions', e.message);
+      // silently fail
     }
     setIsLoading(false);
   }, [filterParams.type, filterParams.status, search]);
@@ -86,7 +88,7 @@ export default function TransactionsScreen() {
       <View className="pt-14 pb-2 px-margin-mobile" style={{ backgroundColor: bg }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
-            <Pressable onPress={() => {}} className="active:scale-90">
+            <Pressable onPress={() => router.back()} className="active:scale-90">
               <MaterialIcons name="arrow-back" size={24} color={isDark ? '#FFFFFF' : '#1A1A1A'} />
             </Pressable>
             <Text className="font-body-bold" style={{ fontSize: 22, color: textColor }}>Transactions</Text>

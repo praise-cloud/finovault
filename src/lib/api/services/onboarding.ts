@@ -13,7 +13,7 @@ export interface FinancialProfile {
 }
 
 export async function submitFinancialInterview(data: Record<string, unknown>): Promise<{ message: string }> {
-  return apiClient.post<{ message: string }>(ENDPOINTS.onboarding.financialInterview, data);
+  return await apiClient.post<{ message: string }>(ENDPOINTS.onboarding.financialInterview, data);
 }
 
 export async function getFinancialProfile(): Promise<FinancialProfile | null> {

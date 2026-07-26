@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Pressable, Text, View, useWindowDimensions } from 'react-native';
+import { Pressable, Text, View, useWindowDimensions, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { usePreferencesStore } from '@/src/stores/preferences-store';
 import { submitFinancialInterview } from '@/src/lib/api/services/onboarding';
@@ -16,6 +16,8 @@ const GOALS = [
 ];
 
 export default function FinancialInterview() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const { width } = useWindowDimensions();
   const goals = usePreferencesStore((state) => state.goals);
   const toggleGoal = usePreferencesStore((state) => state.toggleGoal);
@@ -30,17 +32,17 @@ export default function FinancialInterview() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: PAPER, alignItems: 'center' }}>
-      <View style={{ width: Math.min(width, 390), flex: 1, backgroundColor: PAPER, paddingHorizontal: 24, paddingTop: 60 }}>
+    <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
+      <View style={{ width: Math.min(width, 390), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 24, paddingTop: 60 }}>
         <View style={styles.topbar}>
           <Pressable onPress={() => router.back()} hitSlop={12}>
-            <MaterialIcons name="arrow-back" size={24} color={BLUE} />
+            <MaterialIcons name="arrow-back" size={24} color={isDark ? '#D4AF37' : BLUE} />
           </Pressable>
-          <Logo width={26} height={23.5} color={BLUE} />
+          <Logo width={26} height={23.5} color={isDark ? '#D4AF37' : BLUE} />
         </View>
 
-        <Text style={styles.title}>What are your financial goals?</Text>
-        <Text style={styles.subtitle}>Help us tailor our system to your specific financial needs.</Text>
+        <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#111111' }]}>What are your financial goals?</Text>
+        <Text style={[styles.subtitle, { color: isDark ? '#B0B0B0' : '#666B76' }]}>Help us tailor our system to your specific financial needs.</Text>
 
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 24 }}>
           {GOALS.map((goal) => {
@@ -49,13 +51,21 @@ export default function FinancialInterview() {
               <Pressable
                 key={goal.key}
                 onPress={() => toggleGoal(goal.key)}
-                style={[styles.goal, selected && styles.selected]}
+                style={[
+                  styles.goal,
+                  { backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF', borderColor: isDark ? '#2A2A2A' : '#E1E4EC' },
+                  selected && { borderColor: BLUE, backgroundColor: isDark ? '#0F2040' : '#EEF1FB' },
+                ]}
               >
-                <View style={[styles.iconBox, selected && styles.iconBoxSelected]}>
+                <View style={[
+                  styles.iconBox,
+                  { backgroundColor: isDark ? '#2A2A2A' : '#EEF0F5' },
+                  selected && { backgroundColor: isDark ? '#1A2A5C' : '#DCE3F7' },
+                ]}>
                   <MaterialIcons name={goal.icon} size={18} color={BLUE} />
                 </View>
-                <Text style={styles.goalTitle}>{goal.label}</Text>
-                <Text style={styles.goalDesc}>{goal.desc}</Text>
+                <Text style={[styles.goalTitle, { color: isDark ? '#FFFFFF' : '#20232A' }]}>{goal.label}</Text>
+                <Text style={[styles.goalDesc, { color: isDark ? '#B0B0B0' : '#666B76' }]}>{goal.desc}</Text>
               </Pressable>
             );
           })}
@@ -66,7 +76,7 @@ export default function FinancialInterview() {
           <MaterialIcons name="arrow-forward" size={18} color="#FFFFFF" />
         </Pressable>
 
-        <Text style={styles.helper}>Step 4 of 4 • Goals</Text>
+        <Text style={[styles.helper, { color: isDark ? '#8C8F9E' : '#969AA3' }]}>Step 4 of 4 • Goals</Text>
       </View>
     </View>
   );

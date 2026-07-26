@@ -1,6 +1,7 @@
 import app from './app';
 import { env } from './config/env';
 import { logger } from './utils/logger';
+import '../jobs/queue';
 
 const server = app.listen(env.PORT, () => {
   logger.info(`Finovault API server running`, {

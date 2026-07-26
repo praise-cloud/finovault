@@ -3,14 +3,14 @@ import { View, Text, Pressable, ScrollView, TextInput, Modal, ActivityIndicator,
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import * as SavingsService from '@/src/lib/api/services/savings';
-import { formatCurrency } from '@/src/lib/format-currency';
-import { convertAmount } from '@/src/lib/format-currency';
+import type { SavingsGoal } from '@/src/lib/supabase-types';
+import { formatCurrency, convertAmount } from '@/src/lib/format-currency';
 import { useSettingsStore } from '@/src/stores/settings-store';
 
 export default function SavingsGoalsScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const [goals, setGoals] = useState<SavingsService.SavingsGoal[]>([]);
+  const [goals, setGoals] = useState<SavingsGoal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const { currency } = useSettingsStore();
@@ -21,7 +21,7 @@ export default function SavingsGoalsScreen() {
       const data = await SavingsService.listGoals();
       setGoals(data || []);
     } catch (e: any) {
-      console.error('Failed to load goals', e.message);
+      // silently fail
     }
     setIsLoading(false);
   }, []);

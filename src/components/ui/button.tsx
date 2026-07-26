@@ -27,27 +27,27 @@ export function Button({
 
   const isDisabled = disabled || loading;
 
-  const borderColor = variant === 'primary' && !isDisabled ? '#08142E' : 'transparent';
+  const borderColor = variant === 'primary' && !isDisabled ? (isDark ? '#FFFFFF' : '#08142E') : 'transparent';
 
   const bgColor = isDisabled
-    ? '#1A1A1A'
+    ? (isDark ? '#333333' : '#1A1A1A')
     : variant === 'primary'
-    ? 'rgba(8,20,46,0.08)'
+    ? (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(8,20,46,0.08)')
     : variant === 'secondary'
-    ? '#F0F2F5'
+    ? (isDark ? '#2A2A2A' : '#F0F2F5')
     : variant === 'destructive'
-    ? '#F6E7E7'
+    ? (isDark ? '#3D1A1A' : '#F6E7E7')
     : 'transparent';
 
   const textColor = isDisabled
-    ? '#74777e'
+    ? (isDark ? '#666666' : '#74777e')
     : variant === 'primary'
-    ? '#08142E'
+    ? (isDark ? '#FFFFFF' : '#08142E')
     : variant === 'destructive'
     ? '#8C3A3A'
     : variant === 'tertiary'
-    ? '#08142E'
-    : '#1A1A1A';
+    ? (isDark ? '#FFFFFF' : '#08142E')
+    : (isDark ? '#F0F0F0' : '#1A1A1A');
 
   return (
     <Pressable

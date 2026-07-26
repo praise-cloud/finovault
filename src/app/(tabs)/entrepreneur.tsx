@@ -28,8 +28,8 @@ export default function EntrepreneurDashboard() {
 
   if (!data) {
     return (
-      <View className="flex-1 bg-surface-bright items-center justify-center">
-        <ActivityIndicator size="large" color="#08142E" />
+      <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
+        <ActivityIndicator size="large" color={isDark ? '#D4AF37' : '#08142E'} />
       </View>
     );
   }

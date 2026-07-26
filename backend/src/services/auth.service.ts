@@ -164,22 +164,27 @@ export async function resetPassword(token: string, newPassword: string) {
 export async function changePassword(userId: string, currentPassword: string, newPassword: string) {
   const supabase = getSupabase();
 
-  // Verify current password by attempting sign in with the user's email
+  // Verify current password by checking against stored hash
   const { data: userData } = await supabase.auth.admin.getUserById(userId);
   if (!userData.user?.email) {
     throw new UnauthorizedError('User not found');
   }
 
-  const { error: verifyError } = await supabase.auth.signInWithPassword({
+  // Verify current password using admin API — avoids mutating the shared session
+  const { error: signInError } = await supabase.auth.signInWithPassword({
     email: userData.user.email,
     password: currentPassword,
   });
 
-  if (verifyError) {
+  if (signInError) {
     throw new UnauthorizedError('Current password is incorrect');
   }
 
-  const { error: updateError } = await supabase.auth.updateUser({
+  // Sign out the temp session to keep the admin client stateless
+  await supabase.auth.admin.signOut(userId);
+
+  // Update password using admin API — no session mutation needed
+  const { error: updateError } = await supabase.auth.admin.updateUserById(userId, {
     password: newPassword,
   });
 

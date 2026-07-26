@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, View, useWindowDimensions, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuthStore } from '@/src/stores/auth-store';
 import { TextInput } from '@/src/components/ui/text-input';
@@ -10,6 +10,8 @@ const BLUE = '#123B91';
 const PAPER = '#F2F2F2';
 
 export default function SignUp() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const signUp = useAuthStore((state) => state.signUp);
   const { width } = useWindowDimensions();
   const [name, setName] = useState('');
@@ -33,18 +35,18 @@ export default function SignUp() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: PAPER, alignItems: 'center' }}>
-      <View style={{ width: Math.min(width, 390), flex: 1, backgroundColor: PAPER, paddingHorizontal: 20, paddingTop: 54 }}>
+    <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
+      <View style={{ width: Math.min(width, 390), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 20, paddingTop: 54 }}>
         <View style={styles.topbar}>
           <Pressable onPress={() => router.back()}>
-            <MaterialIcons name="arrow-back" size={24} color={BLUE} />
+            <MaterialIcons name="arrow-back" size={24} color={isDark ? '#D4AF37' : BLUE} />
           </Pressable>
           <Logo width={40} height={40} />
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30, paddingTop: 20 }}>
-          <Text style={styles.title}>Personal details</Text>
-          <Text style={styles.subtitle}>Tell us a little about yourself to get started.</Text>
+          <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#111111' }]}>Personal details</Text>
+          <Text style={[styles.subtitle, { color: isDark ? '#B0B0B0' : '#666B76' }]}>Tell us a little about yourself to get started.</Text>
 
           <TextInput label="Full Name" value={name} onChangeText={setName} placeholder="John Doe" />
           <TextInput label="Email Address" value={email} onChangeText={setEmail} placeholder="name@example.com" keyboardType="email-address" autoCapitalize="none" />
@@ -58,7 +60,7 @@ export default function SignUp() {
                 style={{
                   height: 2,
                   flex: 1,
-                  backgroundColor: item < Math.min(4, Math.floor(password.length / 3)) ? BLUE : '#C8CEDA',
+                  backgroundColor: item < Math.min(4, Math.floor(password.length / 3)) ? BLUE : (isDark ? '#2A2A2A' : '#C8CEDA'),
                 }}
               />
             ))}
@@ -79,7 +81,7 @@ export default function SignUp() {
             )}
           </Pressable>
 
-          <Text style={styles.helper}>Step 1 of 3</Text>
+          <Text style={[styles.helper, { color: isDark ? '#8C8F9E' : '#969AA3' }]}>Step 1 of 3</Text>
         </ScrollView>
       </View>
     </View>

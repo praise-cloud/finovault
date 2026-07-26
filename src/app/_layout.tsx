@@ -83,10 +83,10 @@ function RootContent() {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: isDark ? "#0A1F5C" : "#FFFFFF",
+          backgroundColor: isDark ? "#08142E" : "#FFFFFF",
         }}
       >
-        <ActivityIndicator size="small" color="#08142E" />
+        <ActivityIndicator size="small" color={isDark ? "#D4AF37" : "#08142E"} />
       </View>
     );
   }
@@ -98,7 +98,7 @@ function RootContent() {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: isDark ? "#0A1F5C" : "#FFFFFF",
+          backgroundColor: isDark ? "#08142E" : "#FFFFFF",
           padding: 24,
         }}
       >
@@ -112,7 +112,7 @@ function RootContent() {
           onPress={() => setFatalError(null)}
           style={{ backgroundColor: "#08142E", paddingHorizontal: 24, paddingVertical: 12, borderRadius: 9999 }}
         >
-          <Text style={{ color: "#1A1A1A", fontWeight: "600" }}>Try Again</Text>
+          <Text style={{ color: "#FFFFFF", fontWeight: "600" }}>Try Again</Text>
         </Pressable>
       </View>
     );

@@ -1,6 +1,6 @@
 from collections import defaultdict
 from app.models.schemas import PatternAnalysisRequest, PatternAnalysisResponse
-from app.core.supabase import get_supabase
+from app.core.supabase import async_execute, get_supabase
 from app.core.logger import setup_logger
 
 logger = setup_logger("pattern_recognizer")
@@ -10,12 +10,13 @@ class PatternRecognizer:
     async def analyze(self, request: PatternAnalysisRequest, user_id: str) -> PatternAnalysisResponse:
         supabase = get_supabase()
 
-        result = supabase.table("transactions") \
-            .select("*") \
-            .eq("user_id", user_id) \
-            .order("date", desc=True) \
-            .limit(500) \
-            .execute()
+        result = await async_execute(
+            supabase.table("transactions")
+            .select("*")
+            .eq("user_id", user_id)
+            .order("date", desc=True)
+            .limit(500)
+        )
 
         transactions = result.data or []
         patterns = []
@@ -35,17 +36,19 @@ class PatternRecognizer:
         patterns.extend(category_patterns)
 
         for p in patterns:
-            supabase.table("behavior_patterns").upsert({
-                "user_id": user_id,
-                "pattern_type": p["type"],
-                "pattern_name": p["name"],
-                "description": p["description"],
-                "category": p.get("category", "general"),
-                "frequency": p.get("frequency", "monthly"),
-                "confidence_score": p.get("confidence", 50),
-                "last_observed_at": p.get("last_observed", ""),
-                "metadata": p.get("metadata", {}),
-            }, on_conflict="user_id,pattern_type,pattern_name").execute()
+            await async_execute(
+                supabase.table("behavior_patterns").upsert({
+                    "user_id": user_id,
+                    "pattern_type": p["type"],
+                    "pattern_name": p["name"],
+                    "description": p["description"],
+                    "category": p.get("category", "general"),
+                    "frequency": p.get("frequency", "monthly"),
+                    "confidence_score": p.get("confidence", 50),
+                    "last_observed_at": p.get("last_observed", ""),
+                    "metadata": p.get("metadata", {}),
+                }, on_conflict="user_id,pattern_type,pattern_name")
+            )
 
         return PatternAnalysisResponse(
             patterns_detected=len(patterns),

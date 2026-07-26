@@ -33,9 +33,12 @@ export async function signUpWithEmail(params: SignUpParams): Promise<AuthResult>
   }
 }
 
-export async function updateUserPassword(password: string): Promise<string | null> {
+export async function updateUserPassword(currentPassword: string, newPassword: string): Promise<string | null> {
   try {
-    const result = await apiClient.put<{ message: string }>(ENDPOINTS.auth.changePassword, { password });
+    const result = await apiClient.put<{ message: string }>(ENDPOINTS.auth.changePassword, {
+      current_password: currentPassword,
+      password: newPassword,
+    });
     return result.message || 'Password updated';
   } catch (e: any) {
     return e.message || 'Failed to update password';
@@ -64,7 +67,6 @@ export async function signInWithGoogle(): Promise<{ url?: string } | null> {
     const result = await apiClient.post<{ url?: string }>(ENDPOINTS.auth.google, {});
     return result;
   } catch (err) {
-    console.error('Google auth failed', err);
     return null;
   }
 }

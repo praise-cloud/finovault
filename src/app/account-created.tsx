@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 import { router } from 'expo-router';
-import { Text, View } from 'react-native';
+import { Text, View, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const BLUE = '#123B91';
 const PAPER = '#F2F2F2';
 
 export default function AccountCreated() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   useEffect(() => {
     const timer = setTimeout(() => {
       router.replace('/(tabs)');
@@ -15,11 +17,11 @@ export default function AccountCreated() {
   }, []);
 
   return (
-    <View style={{ flex: 1, backgroundColor: PAPER, alignItems: 'center', justifyContent: 'center' }}>
+    <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center', justifyContent: 'center' }}>
       <View style={styles.checkCircle}>
         <MaterialIcons name="check" size={44} color="#FFFFFF" />
       </View>
-      <Text style={styles.text}>Account successfully Created!</Text>
+      <Text style={[styles.text, { color: isDark ? '#FFFFFF' : '#111111' }]}>Account successfully Created!</Text>
     </View>
   );
 }

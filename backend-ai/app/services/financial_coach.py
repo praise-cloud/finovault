@@ -1,5 +1,5 @@
 from app.models.schemas import CoachRequest, CoachResponse
-from app.core.supabase import get_supabase
+from app.core.supabase import async_execute, get_supabase
 from app.core.logger import setup_logger
 from app.agents.llm_agent import ask as llm_ask
 
@@ -10,22 +10,25 @@ class FinancialCoach:
     async def answer(self, request: CoachRequest, user_id: str) -> CoachResponse:
         supabase = get_supabase()
 
-        profile = supabase.table("profiles") \
-            .select("*") \
-            .eq("id", user_id) \
-            .execute()
+        profile = await async_execute(
+            supabase.table("profiles")
+            .select("*")
+            .eq("id", user_id)
+        )
 
-        transactions = supabase.table("transactions") \
-            .select("type, amount, category, merchant, date") \
-            .eq("user_id", user_id) \
-            .order("date", desc=True) \
-            .limit(30) \
-            .execute()
+        transactions = await async_execute(
+            supabase.table("transactions")
+            .select("type, amount, category, merchant, date")
+            .eq("user_id", user_id)
+            .order("date", desc=True)
+            .limit(30)
+        )
 
-        goals = supabase.table("savings_goals") \
-            .select("*") \
-            .eq("user_id", user_id) \
-            .execute()
+        goals = await async_execute(
+            supabase.table("savings_goals")
+            .select("*")
+            .eq("user_id", user_id)
+        )
 
         user_name = profile.data[0]["full_name"] if profile.data else "User"
         tx_data = transactions.data or []
@@ -120,20 +123,22 @@ class FinancialCoach:
                 )
 
         try:
-            supabase.table("ai_conversations").insert({
-                "user_id": user_id,
-                "session_id": user_id,
-                "role": "assistant",
-                "content": answer,
-                "context": {
-                    "user_name": user_name,
-                    "total_spent": total_spent,
-                    "total_income": total_income,
-                    "total_saved": total_saved,
-                    "question_asked": request.question,
-                    "llm_used": llm_result["used_llm"],
-                },
-            }).execute()
+            await async_execute(
+                supabase.table("ai_conversations").insert({
+                    "user_id": user_id,
+                    "session_id": user_id,
+                    "role": "assistant",
+                    "content": answer,
+                    "context": {
+                        "user_name": user_name,
+                        "total_spent": total_spent,
+                        "total_income": total_income,
+                        "total_saved": total_saved,
+                        "question_asked": request.question,
+                        "llm_used": llm_result["used_llm"],
+                    },
+                })
+            )
         except Exception as db_err:
             logger.warning(f"Failed to persist conversation for user {user_id}: {db_err}")
 

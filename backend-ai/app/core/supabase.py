@@ -1,9 +1,6 @@
+import asyncio
+from typing import Any
 from supabase import create_client, Client
-
-# Note: The supabase-py library primarily uses sync clients.
-# For async operations, we use the sync client. The blocking calls
-# can be run in executor threads if needed.
-# Future migration: use gotrue-py async when available.
 
 from app.core.config import settings
 
@@ -15,3 +12,8 @@ def get_supabase() -> Client:
     if _client is None:
         _client = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_KEY)
     return _client
+
+
+async def async_execute(query_builder: Any) -> Any:
+    """Run a sync supabase query in a thread pool to avoid blocking the event loop."""
+    return await asyncio.to_thread(query_builder.execute)
