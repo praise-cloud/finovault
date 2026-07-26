@@ -33,12 +33,21 @@ export async function signUpWithEmail(params: SignUpParams): Promise<AuthResult>
   }
 }
 
-export async function updateUserPassword(_password: string): Promise<string | null> {
-  return null;
+export async function updateUserPassword(password: string): Promise<string | null> {
+  try {
+    const result = await apiClient.put<{ message: string }>(ENDPOINTS.auth.changePassword, { password });
+    return result.message || 'Password updated';
+  } catch (e: any) {
+    return e.message || 'Failed to update password';
+  }
 }
 
-export async function updateUserMetadata(_data: Record<string, any>): Promise<string | null> {
-  return null;
+export async function updateUserMetadata(data: Record<string, any>): Promise<any> {
+  try {
+    return await apiClient.put<any>(ENDPOINTS.profile.update, data);
+  } catch (e: any) {
+    return null;
+  }
 }
 
 export async function signInWithEmail(params: SignInParams): Promise<AuthResult> {
@@ -50,14 +59,13 @@ export async function signInWithEmail(params: SignInParams): Promise<AuthResult>
   }
 }
 
-export async function signInWithGoogle(): Promise<void> {
+export async function signInWithGoogle(): Promise<{ url?: string } | null> {
   try {
     const result = await apiClient.post<{ url?: string }>(ENDPOINTS.auth.google, {});
-    if (result.url) {
-      window.location.href = result.url;
-    }
+    return result;
   } catch (err) {
     console.error('Google auth failed', err);
+    return null;
   }
 }
 

@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { getSupabase } from '../config/supabase';
 import { createContextLogger } from '../utils/logger';
 import { aiClient } from '../lib/ai-client';

@@ -43,3 +43,22 @@ export async function logout(req: Request, res: Response): Promise<void> {
 
   sendSuccess(res, { message: 'Logged out successfully' });
 }
+
+export async function forgotPassword(req: Request, res: Response): Promise<void> {
+  const { email } = req.body;
+  const result = await authService.forgotPassword(email);
+  sendSuccess(res, result);
+}
+
+export async function resetPassword(req: Request, res: Response): Promise<void> {
+  const { token, password } = req.body;
+  const result = await authService.resetPassword(token, password);
+  sendSuccess(res, result);
+}
+
+export async function changePassword(req: Request, res: Response): Promise<void> {
+  const userId = req.user!.id;
+  const { current_password, password } = req.body;
+  const result = await authService.changePassword(userId, current_password, password);
+  sendSuccess(res, result);
+}

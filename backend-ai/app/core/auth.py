@@ -1,3 +1,4 @@
+import secrets
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.core.config import settings
@@ -12,7 +13,7 @@ async def get_current_user(
 ) -> str:
     # Check for inter-service auth (X-Api-Key + X-User-Id)
     api_key = request.headers.get("X-Api-Key")
-    if api_key and settings.AI_SERVICE_KEY and api_key == settings.AI_SERVICE_KEY:
+    if api_key and settings.AI_SERVICE_KEY and secrets.compare_digest(api_key, settings.AI_SERVICE_KEY):
         user_id = request.headers.get("X-User-Id")
         if user_id:
             return user_id

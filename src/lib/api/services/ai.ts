@@ -1,17 +1,10 @@
 import { apiClient } from '../client';
 import { ENDPOINTS } from '../endpoints';
-
-export interface AISuggestion {
-  id: string;
-  title?: string;
-  description?: string;
-  category?: string;
-  status: string;
-  created_at: string;
-}
+import type { AISuggestion } from '@/src/lib/supabase-types';
 
 interface CoachResponse {
   answer: string;
+  suggestions?: string[];
   context: {
     recent_transactions: any[];
     total_savings_goals: number;
@@ -21,7 +14,7 @@ interface CoachResponse {
 interface MorningBriefing {
   id: string;
   user_id: string;
-  date: string;
+  briefing_date: string;
   content: any;
   created_at: string;
 }

@@ -90,12 +90,12 @@ export default function IndividualDashboard() {
     total_net_worth: 0,
     net_worth_change: 0,
     net_worth_change_pct: 0,
-    estimated_tax_liability: 0,
-    tax_period_label: '',
-    withheld_amount: 0,
-    goal_pct: 0,
+    monthly_spending: 0,
+    spending_limit: 0,
+    spending_trend: null,
+    next_best_move: null,
     recent_transactions: [],
-    asset_allocation: [],
+    asset_allocations: [],
   } as any;
 
   if (isLoading && !summary) {
@@ -222,8 +222,8 @@ export default function IndividualDashboard() {
             </Pressable>
           </View>
           <FlatCard className="px-4">
-            {data.asset_allocation.length > 0 ? (
-              data.asset_allocation.map((asset: any, i: number) => (
+            {(data.asset_allocations || data.asset_allocation || []).length > 0 ? (
+              (data.asset_allocations || data.asset_allocation || []).map((asset: any, i: number) => (
                 <ListRow
                   key={asset.id || i}
                   icon={ASSET_ICONS[asset.category_key] || ASSET_ICONS.default}

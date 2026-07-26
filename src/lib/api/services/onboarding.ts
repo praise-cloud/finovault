@@ -1,14 +1,25 @@
 import { apiClient } from '../client';
 import { ENDPOINTS } from '../endpoints';
 
-export async function submitFinancialInterview(data: Record<string, any>) {
-  return apiClient.post(ENDPOINTS.onboarding.financialInterview, data);
+export interface FinancialProfile {
+  id: string;
+  user_id: string;
+  role: string;
+  goals: string[];
+  monthly_income: number;
+  monthly_expenses: number;
+  risk_tolerance: string;
+  completed: boolean;
 }
 
-export async function getFinancialProfile() {
-  return apiClient.get(ENDPOINTS.onboarding.financialProfile);
+export async function submitFinancialInterview(data: Record<string, unknown>): Promise<{ message: string }> {
+  return apiClient.post<{ message: string }>(ENDPOINTS.onboarding.financialInterview, data);
 }
 
-export async function updateFinancialProfile(data: Record<string, any>) {
-  return apiClient.put(ENDPOINTS.onboarding.financialProfile, data);
+export async function getFinancialProfile(): Promise<FinancialProfile | null> {
+  return apiClient.get<FinancialProfile | null>(ENDPOINTS.onboarding.financialProfile);
+}
+
+export async function updateFinancialProfile(data: Partial<FinancialProfile>): Promise<FinancialProfile> {
+  return apiClient.put<FinancialProfile>(ENDPOINTS.onboarding.financialProfile, data);
 }

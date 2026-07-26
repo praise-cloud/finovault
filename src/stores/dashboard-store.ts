@@ -63,48 +63,84 @@ export const useDashboardStore = create<DashboardState>((set) => ({
   error: null,
 
   loadSummary: async () => withLoading(set, async () => {
-    const data = await DashboardService.getDashboardSummary();
-    set({ summary: data });
+    try {
+      const data = await DashboardService.getDashboardSummary();
+      set({ summary: data });
+    } catch (e: any) {
+      set({ error: e.message || 'Failed to load summary' });
+    }
   }),
 
   loadWealthGrowth: async () => withLoading(set, async () => {
-    const data = await DashboardService.getWealthGrowthData();
-    set({ wealthGrowth: data });
+    try {
+      const data = await DashboardService.getWealthGrowthData();
+      set({ wealthGrowth: data });
+    } catch (e: any) {
+      set({ error: e.message || 'Failed to load wealth growth' });
+    }
   }),
 
   loadSmartSavings: async () => withLoading(set, async () => {
-    const data = await DashboardService.getSmartSavingsData();
-    set({ smartSavings: data });
+    try {
+      const data = await DashboardService.getSmartSavingsData();
+      set({ smartSavings: data });
+    } catch (e: any) {
+      set({ error: e.message || 'Failed to load smart savings' });
+    }
   }),
 
   loadFraudProtection: async () => withLoading(set, async () => {
-    const data = await DashboardService.getFraudProtectionData();
-    set({ fraudProtection: data });
+    try {
+      const data = await DashboardService.getFraudProtectionData();
+      set({ fraudProtection: data });
+    } catch (e: any) {
+      set({ error: e.message || 'Failed to load fraud protection' });
+    }
   }),
 
   loadSmeDashboard: async () => withLoading(set, async () => {
-    const data = await DashboardService.getSmeDashboardData();
-    set({ smeDashboard: data });
+    try {
+      const data = await DashboardService.getSmeDashboardData();
+      set({ smeDashboard: data });
+    } catch (e: any) {
+      set({ error: e.message || 'Failed to load SME dashboard' });
+    }
   }),
 
   loadSmeAnalytics: async () => withLoading(set, async () => {
-    const data = await DashboardService.getSmeAnalyticsData();
-    set({ smeAnalytics: data });
+    try {
+      const data = await DashboardService.getSmeAnalyticsData();
+      set({ smeAnalytics: data });
+    } catch (e: any) {
+      set({ error: e.message || 'Failed to load SME analytics' });
+    }
   }),
 
   loadFreelancer: async () => withLoading(set, async () => {
-    const data = await DashboardService.getFreelancerData();
-    set({ freelancer: data });
+    try {
+      const data = await DashboardService.getFreelancerData();
+      set({ freelancer: data });
+    } catch (e: any) {
+      set({ error: e.message || 'Failed to load freelancer data' });
+    }
   }),
 
   loadEntrepreneur: async () => withLoading(set, async () => {
-    const data = await DashboardService.getEntrepreneurData();
-    set({ entrepreneur: data });
+    try {
+      const data = await DashboardService.getEntrepreneurData();
+      set({ entrepreneur: data });
+    } catch (e: any) {
+      set({ error: e.message || 'Failed to load entrepreneur data' });
+    }
   }),
 
   loadProfileData: async () => withLoading(set, async () => {
-    const data = await DashboardService.getProfileData();
-    set({ profileData: data });
+    try {
+      const data = await DashboardService.getProfileData();
+      set({ profileData: data });
+    } catch (e: any) {
+      set({ error: e.message || 'Failed to load profile data' });
+    }
   }),
 
   loadAll: async () => withLoading(set, async () => {

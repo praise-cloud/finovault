@@ -1,26 +1,6 @@
 import { apiClient } from '../client';
 import { ENDPOINTS } from '../endpoints';
-
-export interface SavingsGoal {
-  id: string;
-  user_id: string;
-  name: string;
-  target_amount: number;
-  current_amount: number;
-  goal_type: string;
-  status: 'active' | 'completed' | 'paused';
-  created_at: string;
-  updated_at: string;
-}
-
-export interface RoundUpSaving {
-  id: string;
-  user_id: string;
-  amount: number;
-  date: string;
-  transaction_id?: string;
-  created_at: string;
-}
+import type { SavingsGoal, RoundUpSavings } from '@/src/lib/supabase-types';
 
 interface CreateGoalInput {
   name: string;
@@ -52,6 +32,6 @@ export async function deleteGoal(id: string): Promise<void> {
   return apiClient.delete(ENDPOINTS.savings.goalDetail(id));
 }
 
-export async function listRoundUps(): Promise<RoundUpSaving[]> {
-  return apiClient.get<RoundUpSaving[]>(ENDPOINTS.savings.roundUps);
+export async function listRoundUps(): Promise<RoundUpSavings[]> {
+  return apiClient.get<RoundUpSavings[]>(ENDPOINTS.savings.roundUps);
 }

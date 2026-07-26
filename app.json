@@ -7,9 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "finovault",
     "userInterfaceStyle": "automatic",
-    "ios": {
-      "icon": "./assets/expo.icon"
-    },
     "android": {
       "package": "com.finovault.app",
       "adaptiveIcon": {
@@ -31,7 +28,7 @@
         {
           "backgroundColor": "#0D358C",
           "android": {
-            "image": "./assets/images/splash-icon.png",
+            "image": "./assets/images/logo-image.png",
             "imageWidth": 128
           }
         }
@@ -48,7 +45,8 @@
           }
         }
       ],
-      "expo-image"
+      "expo-image",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
@@ -56,9 +54,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "753daffd-df2d-448e-8535-dfa6ebd8d2d3"
+        "projectId": "1bddfe82-be0a-4011-a1b4-f954ea9d9a54"
       }
     },
-    "owner": "praise.stealth"
+    "owner": "praiseg"
   }
 }

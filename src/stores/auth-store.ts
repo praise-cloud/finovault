@@ -71,12 +71,18 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   signInWithGoogle: async () => {
     try {
-      await AuthService.signInWithGoogle();
+      const result = await AuthService.signInWithGoogle();
+      if (result?.url) {
+        const { Linking } = require('react-native');
+        await Linking.openURL(result.url);
+      }
     } catch {}
   },
 
   signOut: async () => {
-    await AuthService.signOut();
+    try {
+      await AuthService.signOut();
+    } catch {}
     setApiToken(null);
     set({ user: null, session: null, isAuthenticated: false });
   },

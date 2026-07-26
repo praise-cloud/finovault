@@ -1,9 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ENDPOINTS } from './endpoints';
 
 const TOKEN_KEY = 'finovault_auth_token';
+const DEFAULT_TIMEOUT = 15000;
+const MAX_RETRIES = 2;
 
 let _token: string | null = null;
+let _refreshToken: string | null = null;
 let _baseUrl: string = process.env.EXPO_PUBLIC_API_URL || 'https://finovault.onrender.com/api/v1';
+let _refreshPromise: Promise<boolean> | null = null;
 
 export async function setApiToken(token: string | null) {
   _token = token;
@@ -18,6 +23,10 @@ export function getApiToken(): string | null {
   return _token;
 }
 
+export async function setRefreshToken(token: string | null) {
+  _refreshToken = token;
+}
+
 export async function loadStoredToken(): Promise<string | null> {
   try {
     const stored = await AsyncStorage.getItem(TOKEN_KEY);
@@ -29,8 +38,45 @@ export async function loadStoredToken(): Promise<string | null> {
   return null;
 }
 
+function isTokenExpired(errorBody: any): boolean {
+  const msg = errorBody?.error?.message?.toLowerCase() || '';
+  return msg.includes('token') && (msg.includes('expired') || msg.includes('invalid'));
+}
+
+async function refreshAccessToken(): Promise<boolean> {
+  if (!_refreshToken) return false;
+  try {
+    const response = await fetch(`${_baseUrl}${ENDPOINTS.auth.refresh}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: _refreshToken }),
+    });
+    if (!response.ok) return false;
+    const json = await response.json();
+    const session = json.session || json.data?.session;
+    if (session?.access_token) {
+      _token = session.access_token;
+      _refreshToken = session.refresh_token || _refreshToken;
+      await AsyncStorage.setItem(TOKEN_KEY, _token).catch(() => {});
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+async function refreshTokenIfNeeded(): Promise<boolean> {
+  if (_refreshPromise) return _refreshPromise;
+  _refreshPromise = refreshAccessToken().finally(() => {
+    _refreshPromise = null;
+  });
+  return _refreshPromise;
+}
+
 interface FetchOptions extends RequestInit {
   params?: Record<string, string>;
+  timeout?: number;
 }
 
 class ApiClient {
@@ -40,8 +86,8 @@ class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  private async request<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
-    const { params, ...fetchOptions } = options;
+  private async request<T>(endpoint: string, options: FetchOptions = {}, retryCount = 0): Promise<T> {
+    const { params, timeout = DEFAULT_TIMEOUT, ...fetchOptions } = options;
 
     let url = `${this.baseUrl}${endpoint}`;
 
@@ -60,28 +106,61 @@ class ApiClient {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(url, {
-      ...fetchOptions,
-      headers,
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-    if (!response.ok) {
-      let message = `API Error ${response.status}`;
-      try {
-        const errorBody = await response.json();
-        message = errorBody?.error?.message || message;
-      } catch {}
-      throw new Error(message);
+    try {
+      const response = await fetch(url, {
+        ...fetchOptions,
+        headers,
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        let message = `API Error ${response.status}`;
+        let errorBody: any = null;
+        try {
+          errorBody = await response.json();
+          message = errorBody?.error?.message || message;
+        } catch {}
+
+        // Try to refresh token on 401 if token is expired
+        if (response.status === 401 && isTokenExpired(errorBody) && retryCount === 0) {
+          const refreshed = await refreshTokenIfNeeded();
+          if (refreshed) {
+            return this.request<T>(endpoint, options, retryCount + 1);
+          }
+        }
+
+        throw new Error(message);
+      }
+
+      const text = await response.text();
+      if (!text) return undefined as T;
+
+      const json = JSON.parse(text);
+      const paginationKeys = ['total', 'page', 'limit', 'has_more', 'next_cursor', 'previous_cursor'];
+      const hasPagination = paginationKeys.some((key) => key in json);
+      if (json.data !== undefined && !hasPagination) {
+        return json.data;
+      }
+      return json;
+    } catch (err: any) {
+      clearTimeout(timeoutId);
+
+      if (err.name === 'AbortError') {
+        throw new Error(`Request timeout after ${timeout}ms: ${endpoint}`);
+      }
+
+      // Retry on network error (not API errors with status)
+      if (retryCount < MAX_RETRIES && err.message?.startsWith('API Error') === false) {
+        return this.request<T>(endpoint, options, retryCount + 1);
+      }
+
+      throw err;
     }
-
-    const json = await response.json();
-
-    const paginationKeys = ['total', 'page', 'limit', 'has_more', 'next_cursor', 'previous_cursor'];
-    const hasPagination = paginationKeys.some((key) => key in json);
-    if (json.data !== undefined && !hasPagination) {
-      return json.data;
-    }
-    return json;
   }
 
   get<T>(endpoint: string, options?: FetchOptions) {

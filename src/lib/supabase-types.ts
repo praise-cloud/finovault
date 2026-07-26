@@ -27,10 +27,12 @@ export interface Transaction {
   type: 'income' | 'expense' | 'transfer';
   amount: number;
   description: string;
-  category: string;
+  category: string | null;
   date: string;
   status: 'pending' | 'completed' | 'flagged';
   merchant: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface AssetAllocation {
@@ -81,14 +83,14 @@ export interface Vendor {
   id: string;
   user_id: string;
   name: string;
-  description: string;
-  icon: string;
   health_score: number;
-  status: string;
   monthly_spend: number;
-  badge: string;
-  badge_bg: string;
-  badge_text: string;
+  description?: string;
+  icon?: string;
+  status?: string;
+  badge?: string;
+  badge_bg?: string;
+  badge_text?: string;
 }
 
 export interface PayrollTask {
@@ -142,7 +144,7 @@ export interface AISuggestion {
   description: string;
   type: string;
   potential_savings: number | null;
-  status: 'active' | 'dismissed' | 'executed';
+  status: string;
   created_at: string;
 }
 
@@ -167,7 +169,7 @@ export interface DashboardSummary {
   net_worth_change_pct: number;
   monthly_spending: number;
   spending_limit: number;
-  spending_trend: 'up' | 'down' | 'flat';
+  spending_trend: 'up' | 'down' | 'flat' | null;
   next_best_move: AISuggestion | null;
   recent_transactions: Transaction[];
   asset_allocations: AssetAllocation[];
@@ -184,12 +186,12 @@ export interface WealthGrowthData {
 }
 
 export interface SmartSavingsData {
-  rainy_day_fund: SavingsGoal;
-  ai_suggestion: AISuggestion;
+  rainy_day_fund: SavingsGoal | null;
+  ai_suggestion: AISuggestion | null;
   round_ups: RoundUpSavings[];
   total_savings_impact: number;
-  savings_trend: number;
-  micro_budget_suggestion: string;
+  savings_trend: number | null;
+  micro_budget_suggestion: string | null;
 }
 
 export interface FraudProtectionData {
@@ -214,7 +216,7 @@ export interface SmeDashboardData {
     market_share_growth: number;
     customer_lifetime_value: number;
     burn_rate_efficiency: string;
-  };
+  } | null;
   fraud_events: FraudEvent[];
 }
 
@@ -257,23 +259,23 @@ export interface EntrepreneurData {
     title: string;
     description: string;
     max_funding: string;
-  };
+  } | null;
   smart_savings: {
     label: string;
     apy: string;
     amount: number;
-  };
+  } | null;
   network: NetworkContact[];
   upcoming_roundtable: {
     title: string;
     time: string;
-  };
+  } | null;
   portfolio: {
     saas_focus_pct: number;
     saas_value: number;
     marketing_value: number;
     human_capital_value: number;
-  };
+  } | null;
 }
 
 export interface ProfileData {

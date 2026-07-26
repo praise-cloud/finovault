@@ -1,9 +1,22 @@
 import { apiClient } from '../client';
 import { ENDPOINTS } from '../endpoints';
 
-export async function getSecuritySettings(): Promise<any> {
-  const result = await apiClient.get<any>(ENDPOINTS.settings.security);
-  return result;
+export interface SecuritySettings {
+  two_factor_enabled: boolean;
+  two_factor_method: string;
+  guardrails: any[];
+  privacy_toggles: any[];
+  recovery_codes: string[];
+  recent_events: any[];
+}
+
+export interface DataPrivacy {
+  privacy_toggles: { key: string; label: string; enabled: boolean }[];
+  last_updated: string;
+}
+
+export async function getSecuritySettings(): Promise<SecuritySettings> {
+  return apiClient.get<SecuritySettings>(ENDPOINTS.settings.security);
 }
 
 export async function updateTwoFactor(enabled: boolean, method?: string): Promise<void> {
@@ -14,26 +27,22 @@ export async function updateGuardrails(guardrails: any[]): Promise<void> {
   await apiClient.put(ENDPOINTS.settings.securityGuardrails, { guardrails });
 }
 
-export async function getDataPrivacy(): Promise<any> {
-  const result = await apiClient.get<any>(ENDPOINTS.settings.dataPrivacy);
-  return result;
+export async function getDataPrivacy(): Promise<DataPrivacy> {
+  return apiClient.get<DataPrivacy>(ENDPOINTS.settings.dataPrivacy);
 }
 
-export async function updatePrivacyToggles(privacy_toggles: any[]): Promise<void> {
+export async function updatePrivacyToggles(privacy_toggles: { key: string; label: string; enabled: boolean }[]): Promise<void> {
   await apiClient.put(ENDPOINTS.settings.dataPrivacy, { privacy_toggles });
 }
 
 export async function getLinkedAccounts(): Promise<any[]> {
-  const result = await apiClient.get<any[]>(ENDPOINTS.settings.linkedAccounts);
-  return result;
+  return apiClient.get<any[]>(ENDPOINTS.settings.linkedAccounts);
 }
 
 export async function getLoginActivity(): Promise<any[]> {
-  const result = await apiClient.get<any[]>(ENDPOINTS.settings.loginActivity);
-  return result;
+  return apiClient.get<any[]>(ENDPOINTS.settings.loginActivity);
 }
 
 export async function getAuditLog(): Promise<any[]> {
-  const result = await apiClient.get<any[]>(ENDPOINTS.settings.auditLog);
-  return result;
+  return apiClient.get<any[]>(ENDPOINTS.settings.auditLog);
 }

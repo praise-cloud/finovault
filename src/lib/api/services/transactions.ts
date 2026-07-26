@@ -1,19 +1,6 @@
 import { apiClient } from '../client';
 import { ENDPOINTS } from '../endpoints';
-
-export interface Transaction {
-  id: string;
-  user_id: string;
-  type: 'income' | 'expense' | 'transfer';
-  amount: number;
-  description: string;
-  category: string | null;
-  merchant: string | null;
-  date: string;
-  status: 'pending' | 'completed' | 'flagged';
-  created_at: string;
-  updated_at: string;
-}
+import type { Transaction } from '@/src/lib/supabase-types';
 
 interface TransactionListResponse {
   data: Transaction[];

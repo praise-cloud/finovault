@@ -1,5 +1,5 @@
 import json
-from openai import OpenAI
+from openai import AsyncOpenAI
 from app.core.config import settings
 from app.core.logger import setup_logger
 
@@ -9,17 +9,17 @@ OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 DEFAULT_MODEL = "openai/gpt-4o-mini"
 BUSINESS_MODEL = "anthropic/claude-3.5-sonnet"
 
-_client: OpenAI | None = None
+_client: AsyncOpenAI | None = None
 
 
-def get_client() -> OpenAI | None:
+def get_client() -> AsyncOpenAI | None:
     global _client
     if _client is not None:
         return _client
     if not settings.OPENROUTER_API_KEY:
         logger.warning("OPENROUTER_API_KEY not configured — LLM disabled")
         return None
-    _client = OpenAI(
+    _client = AsyncOpenAI(
         base_url=OPENROUTER_BASE_URL,
         api_key=settings.OPENROUTER_API_KEY,
         default_headers={
@@ -90,7 +90,7 @@ async def ask(
     selected_model = model or (BUSINESS_MODEL if role == "business" else DEFAULT_MODEL)
 
     try:
-        response = client.chat.completions.create(
+        response = await client.chat.completions.create(
             model=selected_model,
             messages=[
                 {"role": "system", "content": system},
