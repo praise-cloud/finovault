@@ -46,6 +46,7 @@ export const Fonts = {
   bodyMedium: 'Montserrat_500Medium' as const,
   bodySemiBold: 'Montserrat_600SemiBold' as const,
   bodyBold: 'Montserrat_700Bold' as const,
+  mono: 'monospace' as const,
 };
 
 export const FontSize = {
@@ -85,27 +86,6 @@ export const Shadow = {
     boxShadow: '0 4px 20px rgba(13,53,140,0.18)',
     elevation: 6,
   },
-} as const;
-
-export const Dark = {
-  bg: '#08142E',
-  card: '#1A1A1A',
-  elevated: '#242424',
-  text: '#F0F0F0',
-  textSoft: '#FFFFFF',
-  muted: '#9CA3B0',
-  mutedLight: '#6B7280',
-  border: '#2A2A2A',
-  chipBg: '#2A2A2A',
-  inputBorder: '#333333',
-  blueAccent: '#60A5FA',
-  blueFill: '#1E3A5F',
-  green: '#34D399',
-  greenFill: '#1A3A2A',
-  gold: '#FBBF24',
-  goldFill: '#3A2A1A',
-  red: '#F87171',
-  redFill: '#3A1A1A',
 } as const;
 
 export const BottomTabInset = 34;

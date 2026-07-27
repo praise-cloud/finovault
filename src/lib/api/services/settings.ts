@@ -35,14 +35,39 @@ export async function updatePrivacyToggles(privacy_toggles: { key: string; label
   await apiClient.put(ENDPOINTS.settings.dataPrivacy, { privacy_toggles });
 }
 
-export async function getLinkedAccounts(): Promise<any[]> {
-  return apiClient.get<any[]>(ENDPOINTS.settings.linkedAccounts);
+export interface LinkedAccount {
+  id: string;
+  institution: string;
+  account_type: string;
+  last_synced: string;
+  status: string;
 }
 
-export async function getLoginActivity(): Promise<any[]> {
-  return apiClient.get<any[]>(ENDPOINTS.settings.loginActivity);
+export interface LoginEvent {
+  id: string;
+  timestamp: string;
+  ip_address: string;
+  device: string;
+  location: string;
+  success: boolean;
 }
 
-export async function getAuditLog(): Promise<any[]> {
-  return apiClient.get<any[]>(ENDPOINTS.settings.auditLog);
+export interface AuditEntry {
+  id: string;
+  action: string;
+  category: string;
+  timestamp: string;
+  details: string;
+}
+
+export async function getLinkedAccounts(): Promise<LinkedAccount[]> {
+  return apiClient.get<LinkedAccount[]>(ENDPOINTS.settings.linkedAccounts);
+}
+
+export async function getLoginActivity(): Promise<LoginEvent[]> {
+  return apiClient.get<LoginEvent[]>(ENDPOINTS.settings.loginActivity);
+}
+
+export async function getAuditLog(): Promise<AuditEntry[]> {
+  return apiClient.get<AuditEntry[]>(ENDPOINTS.settings.auditLog);
 }

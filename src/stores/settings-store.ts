@@ -107,6 +107,8 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     const { currency, location, language } = get();
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ currencyCode: currency.code, location, language }));
-    } catch {}
+    } catch (e) {
+      console.error('Failed to save settings', e);
+    }
   },
 }));

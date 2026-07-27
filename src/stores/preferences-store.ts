@@ -49,7 +49,9 @@ export const usePreferencesStore = create<PreferencesState>((set, get) => ({
           securityAlerts: prefs.security_alerts_enabled,
         });
       }
-    } catch {}
+    } catch (e) {
+      console.error('Failed to load preferences', e);
+    }
     set({ isLoading: false });
   },
 
@@ -57,14 +59,18 @@ export const usePreferencesStore = create<PreferencesState>((set, get) => ({
     const user = useAuthStore.getState().user;
     if (!user) return;
 
+    set({ isLoading: true });
     try {
       const { role, goals, aiInsights, securityAlerts } = get();
       await ProfileService.savePreferences(user.id, {
-        role: role as any,
+        role,
         goals,
         ai_insights_enabled: aiInsights,
         security_alerts_enabled: securityAlerts,
       });
-    } catch {}
+    } catch (e) {
+      console.error('Failed to save preferences', e);
+    }
+    set({ isLoading: false });
   },
 }));

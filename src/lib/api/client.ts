@@ -5,9 +5,16 @@ const TOKEN_KEY = 'finovault_auth_token';
 const DEFAULT_TIMEOUT = 15000;
 const MAX_RETRIES = 2;
 
+const ENDPOINT_TIMEOUTS: Record<string, number> = {
+  '/ai/coach': 20000,
+  '/ai/business-advice': 20000,
+  '/ai/patterns/analyze': 15000,
+  '/ai/fraud/check': 5000,
+};
+
 let _token: string | null = null;
 let _refreshToken: string | null = null;
-let _baseUrl: string = process.env.EXPO_PUBLIC_API_URL || 'https://finovault.onrender.com/api/v1';
+let _baseUrl: string = process.env.EXPO_PUBLIC_API_URL || (process.env.NODE_ENV === 'development' ? 'http://localhost:4000/api/v1' : 'https://finovault.onrender.com/api/v1');
 let _refreshPromise: Promise<boolean> | null = null;
 
 export async function setApiToken(token: string | null) {
@@ -87,7 +94,8 @@ class ApiClient {
   }
 
   private async request<T>(endpoint: string, options: FetchOptions = {}, retryCount = 0): Promise<T> {
-    const { params, timeout = DEFAULT_TIMEOUT, ...fetchOptions } = options;
+    const endpointTimeout = Object.entries(ENDPOINT_TIMEOUTS).find(([key]) => endpoint.includes(key))?.[1];
+    const { params, timeout = endpointTimeout ?? DEFAULT_TIMEOUT, ...fetchOptions } = options;
 
     let url = `${this.baseUrl}${endpoint}`;
 
