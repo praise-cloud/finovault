@@ -160,7 +160,7 @@ export default function InsightScreen() {
             <Text className="font-body-bold" style={{ fontSize: 17, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>
               Transactions
             </Text>
-            <Pressable>
+            <Pressable accessibilityRole="button">
               <Text className="font-body-semibold" style={{ fontSize: 14, color: cardColor }}>See all</Text>
             </Pressable>
           </View>

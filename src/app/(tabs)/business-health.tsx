@@ -36,7 +36,7 @@ export default function BusinessHealth() {
     <View className="flex-1 bg-surface-bright" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
       <View className="pt-14 pb-3 px-margin-mobile bg-surface-bright" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
-          <Pressable onPress={() => router.back()} className="w-10 h-10 rounded-full bg-surface-container items-center justify-center active:scale-90">
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" onPress={() => router.back()} className="w-10 h-10 rounded-full bg-surface-container items-center justify-center active:scale-90">
             <MaterialIcons name="arrow-back" size={20} color="#181c1e" />
           </Pressable>
           <Text className="font-body-bold text-[#1A1A1A] font-bold" style={{ fontSize: 20 }}>Business Health</Text>

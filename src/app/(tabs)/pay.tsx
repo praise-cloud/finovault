@@ -25,6 +25,7 @@ export default function PayScreen() {
             <Pressable
               key={tab}
               onPress={() => setActiveTab(tab)}
+              accessibilityRole="button"
               className="flex-1 py-2.5 items-center active:scale-[0.98]"
               style={{ backgroundColor: activeTab === tab ? 'rgba(8,20,46,0.08)' : 'transparent', borderRadius: 9999 }}
             >
@@ -56,6 +57,7 @@ export default function PayScreen() {
             <RNTextInput
               placeholder="Name, email, or phone"
               placeholderTextColor={isDark ? 'rgba(255,255,255,0.3)' : '#9ea0a5'}
+              accessibilityLabel="Recipient name, email, or phone"
               className="flex-1 ml-2"
               style={{ fontSize: 16, fontFamily: 'Montserrat_400Regular', color: isDark ? '#FFFFFF' : '#1A1A1A' }}
             />
@@ -81,6 +83,7 @@ export default function PayScreen() {
               placeholder="0.00"
               placeholderTextColor={isDark ? 'rgba(255,255,255,0.3)' : '#9ea0a5'}
               keyboardType="decimal-pad"
+              accessibilityLabel="Amount"
               className="flex-1 ml-2"
               style={{ fontSize: 22, fontFamily: 'Montserrat_700Bold', color: isDark ? '#FFFFFF' : '#1A1A1A' }}
             />
@@ -89,6 +92,7 @@ export default function PayScreen() {
 
         {/* CTA button */}
         <Pressable
+          accessibilityRole="button"
           className="w-full py-3.5 items-center justify-center flex-row active:scale-[0.98] mt-5"
           style={{
             backgroundColor: isDark ? 'rgba(212,175,55,0.15)' : 'rgba(8,20,46,0.08)',

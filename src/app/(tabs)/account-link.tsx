@@ -48,7 +48,7 @@ export default function AccountLink() {
     <View className="flex-1 bg-surface-bright" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
       <View className="pt-14 pb-3 px-margin-mobile bg-surface-bright" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
-          <Pressable onPress={() => router.back()} className="w-10 h-10 rounded-full bg-surface-container items-center justify-center active:scale-90">
+          <Pressable onPress={() => router.back()} className="w-10 h-10 rounded-full bg-surface-container items-center justify-center active:scale-90" accessibilityLabel="Go back" accessibilityRole="button">
             <MaterialIcons name="arrow-back" size={20} color={isDark ? '#FFFFFF' : '#181c1e'} />
           </Pressable>
           <Text className={`font-body-bold font-bold ${isDark ? 'text-white' : 'text-[#1A1A1A]'}`} style={{ fontSize: 20 }}>Link Account</Text>
@@ -87,6 +87,7 @@ export default function AccountLink() {
               onPress={() => setSelected(bank.id)}
               className={`flex-row items-center gap-4 p-4 rounded-2xl border ${selected === bank.id ? (isDark ? 'bg-[rgba(212,175,55,0.15)] border-[#D4AF37]' : 'bg-[rgba(8,20,46,0.08)] border-[#08142E]') : (isDark ? 'bg-[#0D1B3E] border-transparent' : 'bg-[#EEF0F5] border-transparent')}`}
               style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.06)', elevation: selected === bank.id ? 0 : 2 }}
+              accessibilityRole="button"
             >
               <View className={`w-12 h-12 rounded-full items-center justify-center ${selected === bank.id ? 'bg-white/20' : (isDark ? 'bg-[#0D1B3E]' : 'bg-[#E4E7EE]')}`}>
                 <MaterialIcons name={bank.icon as any} size={22} color={selected === bank.id ? '#ffffff' : (isDark ? '#9CA3B0' : '#43474d')} />
@@ -106,7 +107,7 @@ export default function AccountLink() {
             <Text className={`mb-4 ${isDark ? 'text-gray-400' : 'text-[#6B6F76]'}`} style={{ fontSize: 16 }}>
               Your credentials are encrypted. We use bank-grade security to protect your data.
             </Text>
-            <Pressable onPress={handleLink} disabled={linking} className="w-full py-4 rounded-full items-center justify-center active:scale-[0.98]" style={{ backgroundColor: isDark ? 'rgba(212,175,55,0.15)' : 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: isDark ? '#D4AF37' : '#08142E' }}>
+            <Pressable onPress={handleLink} disabled={linking} className="w-full py-4 rounded-full items-center justify-center active:scale-[0.98]" style={{ backgroundColor: isDark ? 'rgba(212,175,55,0.15)' : 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: isDark ? '#D4AF37' : '#08142E' }} accessibilityRole="button" accessibilityLabel="Link account">
               <Text className={`font-body-semibold font-bold ${isDark ? 'text-[#D4AF37]' : 'text-[#08142E]'}`} style={{ fontSize: 14 }}>{linking ? 'Linking...' : 'Link Account'}</Text>
             </Pressable>
           </View>

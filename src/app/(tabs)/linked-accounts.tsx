@@ -33,12 +33,12 @@ export default function LinkedAccounts() {
       <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
-            <Pressable onPress={() => router.back()} className="w-9 h-9 rounded-xl bg-surface-variant items-center justify-center active:scale-90">
+            <Pressable onPress={() => router.back()} className="w-9 h-9 rounded-xl bg-surface-variant items-center justify-center active:scale-90" accessibilityLabel="Go back" accessibilityRole="button">
               <MaterialIcons name="arrow-back" size={20} color={isDark ? '#9CA3B0' : '#43474d'} />
             </Pressable>
             <Text className="font-headline-md text-primary font-bold">Linked Accounts</Text>
           </View>
-          <Pressable onPress={() => router.push('/(tabs)/account-link')} className="bg-primary px-4 py-2 rounded-xl active:scale-95">
+          <Pressable onPress={() => router.push('/(tabs)/account-link')} className="bg-primary px-4 py-2 rounded-xl active:scale-95" accessibilityRole="button" accessibilityLabel="Link new account">
             <Text className="text-on-primary font-label-md font-bold">+ Link New</Text>
           </Pressable>
         </View>
@@ -69,7 +69,7 @@ export default function LinkedAccounts() {
                 </View>
               ) : (
                 accounts.map((account, i) => (
-                  <Pressable key={account.id} className={`flex-row items-center gap-3 p-4 ${i < accounts.length - 1 ? 'border-b border-outline-variant/10' : ''} active:scale-[0.98]`}>
+                  <Pressable key={account.id} className={`flex-row items-center gap-3 p-4 ${i < accounts.length - 1 ? 'border-b border-outline-variant/10' : ''} active:scale-[0.98]`} accessibilityRole="button">
                     <View className="w-12 h-12 rounded-xl bg-surface-container items-center justify-center">
                       <MaterialIcons name={(account.logo || 'account-balance') as any} size={24} color={isDark ? '#9CA3B0' : '#43474d'} />
                     </View>
@@ -93,15 +93,15 @@ export default function LinkedAccounts() {
               </View>
               <Text className="text-body-md text-on-surface-variant text-sm mb-4">Connect your bank accounts to get a complete view of your finances. We use bank-grade encryption (AES-256) to protect your data.</Text>
               <View className="flex-row flex-wrap" style={{ gap: 12 }}>
-                <Pressable className="flex-1 min-w-[120px] flex-row items-center gap-2 p-3.5 bg-surface-container-low rounded-xl border border-outline-variant/20 active:scale-[0.98]">
+<Pressable className="flex-1 min-w-[120px] flex-row items-center gap-2 p-3.5 bg-surface-container-low rounded-xl border border-outline-variant/20 active:scale-[0.98]" accessibilityRole="button" accessibilityLabel="Link with Plaid">
 <MaterialIcons name="account-balance" size={20} color={isDark ? '#9CA3B0' : '#43474d'} />
                     <Text className="font-label-md font-bold text-primary">Plaid</Text>
                 </Pressable>
-                <Pressable className="flex-1 min-w-[120px] flex-row items-center gap-2 p-3.5 bg-surface-container-low rounded-xl border border-outline-variant/20 active:scale-[0.98]">
+                <Pressable className="flex-1 min-w-[120px] flex-row items-center gap-2 p-3.5 bg-surface-container-low rounded-xl border border-outline-variant/20 active:scale-[0.98]" accessibilityRole="button" accessibilityLabel="Link with MX">
 <MaterialIcons name="account-balance" size={20} color={isDark ? '#9CA3B0' : '#43474d'} />
                     <Text className="font-label-md font-bold text-primary">MX</Text>
                 </Pressable>
-                <Pressable className="flex-1 min-w-[120px] flex-row items-center gap-2 p-3.5 bg-surface-container-low rounded-xl border border-outline-variant/20 active:scale-[0.98]">
+                <Pressable className="flex-1 min-w-[120px] flex-row items-center gap-2 p-3.5 bg-surface-container-low rounded-xl border border-outline-variant/20 active:scale-[0.98]" accessibilityRole="button" accessibilityLabel="Link with Manual Entry">
 <MaterialIcons name="sync" size={20} color={isDark ? '#9CA3B0' : '#43474d'} />
                     <Text className="font-label-md font-bold text-primary">Manual Entry</Text>
                 </Pressable>

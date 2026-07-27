@@ -55,11 +55,11 @@ export default function BusinessVendors() {
     <View className="flex-1 bg-surface-bright" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
       <View className="pt-14 pb-3 px-margin-mobile bg-surface-bright" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
-          <Pressable onPress={() => router.back()} className="w-10 h-10 rounded-full bg-surface-container items-center justify-center active:scale-90">
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" onPress={() => router.back()} className="w-10 h-10 rounded-full bg-surface-container items-center justify-center active:scale-90">
             <MaterialIcons name="arrow-back" size={20} color="#181c1e" />
           </Pressable>
           <Text className="font-body-bold text-[#1A1A1A] font-bold" style={{ fontSize: 20 }}>Vendors</Text>
-          <Pressable onPress={() => setShowAdd(true)} className="w-10 h-10 rounded-full items-center justify-center active:scale-90" style={{ borderWidth: 1.5, borderColor: '#08142E', backgroundColor: 'transparent' }}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Add vendor" onPress={() => setShowAdd(true)} className="w-10 h-10 rounded-full items-center justify-center active:scale-90" style={{ borderWidth: 1.5, borderColor: '#08142E', backgroundColor: 'transparent' }}>
             <MaterialIcons name="add" size={20} color="#08142E" />
           </Pressable>
         </View>
@@ -75,6 +75,7 @@ export default function BusinessVendors() {
           <View className="bg-surface-container-low rounded-2xl p-5 mb-6" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.08)', elevation: 4 }}>
             <Text className="font-body-semibold text-[#1A1A1A] font-bold mb-4" style={{ fontSize: 14 }}>Add Vendor</Text>
             <TextInput
+              accessibilityLabel="Vendor name"
               className="bg-surface-bright border border-[#E4E7EE] rounded-[14px] px-4 py-3 font-body-md text-[#1A1A1A] mb-3"
               placeholder="Vendor name"
               placeholderTextColor="#74777e"
@@ -82,6 +83,7 @@ export default function BusinessVendors() {
               onChangeText={setNewVendorName}
             />
             <TextInput
+              accessibilityLabel="Category"
               className="bg-surface-bright border border-[#E4E7EE] rounded-[14px] px-4 py-3 font-body-md text-[#1A1A1A] mb-4"
               placeholder="Category (optional)"
               placeholderTextColor="#74777e"
@@ -89,10 +91,10 @@ export default function BusinessVendors() {
               onChangeText={setNewVendorCategory}
             />
             <View className="flex-row gap-3">
-              <Pressable onPress={() => { setShowAdd(false); setNewVendorName(''); setNewVendorCategory(''); }} className="flex-1 py-3 rounded-full border border-[#E4E7EE] items-center">
+              <Pressable accessibilityRole="button" onPress={() => { setShowAdd(false); setNewVendorName(''); setNewVendorCategory(''); }} className="flex-1 py-3 rounded-full border border-[#E4E7EE] items-center">
                 <Text className="font-body-semibold text-on-surface" style={{ fontSize: 14 }}>Cancel</Text>
               </Pressable>
-              <Pressable onPress={handleAdd} className="flex-1 py-3 rounded-full items-center" style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: '#08142E' }}>
+              <Pressable accessibilityRole="button" onPress={handleAdd} className="flex-1 py-3 rounded-full items-center" style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: '#08142E' }}>
                 <Text className="font-body-semibold text-[#08142E] font-bold" style={{ fontSize: 14 }}>Save</Text>
               </Pressable>
             </View>
@@ -116,7 +118,7 @@ export default function BusinessVendors() {
                 <Text className="font-body-semibold text-[#1A1A1A] font-bold" style={{ fontSize: 14 }}>{vendor.name}</Text>
                 {vendor.category && <Text className="font-body text-[#6B6F76]" style={{ fontSize: 12 }}>{vendor.category}</Text>}
               </View>
-              <Pressable onPress={() => handleDelete(vendor.id)} className="w-8 h-8 rounded-full bg-error-container items-center justify-center" style={{ backgroundColor: '#9f4e3c20' }}>
+              <Pressable accessibilityRole="button" accessibilityLabel="Delete" onPress={() => handleDelete(vendor.id)} className="w-8 h-8 rounded-full bg-error-container items-center justify-center" style={{ backgroundColor: '#9f4e3c20' }}>
                 <MaterialIcons name="delete-outline" size={16} color="#9f4e3c" />
               </Pressable>
             </View>

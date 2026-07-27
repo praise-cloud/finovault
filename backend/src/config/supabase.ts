@@ -2,6 +2,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { env } from './env';
 
 let _supabase: SupabaseClient | null = null;
+let _authClient: SupabaseClient | null = null;
 
 export function getSupabase(): SupabaseClient {
   if (!_supabase) {
@@ -13,6 +14,18 @@ export function getSupabase(): SupabaseClient {
     });
   }
   return _supabase;
+}
+
+export function getAuthClient(): SupabaseClient {
+  if (!_authClient) {
+    _authClient = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
+  }
+  return _authClient;
 }
 
 export function createNewClient(url?: string, key?: string): SupabaseClient {

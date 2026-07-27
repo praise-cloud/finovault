@@ -41,7 +41,7 @@ export default function DataPrivacy() {
     <View className="flex-1 bg-surface-bright" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
       <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center gap-3">
-          <Pressable onPress={() => router.back()} className="w-9 h-9 rounded-full bg-[#EEF0F5] items-center justify-center active:scale-90">
+          <Pressable onPress={() => router.back()} className="w-9 h-9 rounded-full bg-[#EEF0F5] items-center justify-center active:scale-90" accessibilityLabel="Go back" accessibilityRole="button">
             <MaterialIcons name="arrow-back" size={20} color={isDark ? '#9CA3B0' : '#43474d'} />
           </Pressable>
           <Text className={`font-body-bold font-bold ${isDark ? 'text-white' : 'text-[#1A1A1A]'}`} style={{ fontSize: 20 }}>Data Privacy</Text>
@@ -87,6 +87,9 @@ export default function DataPrivacy() {
                   <Pressable
                     onPress={() => toggle(item.key)}
                     className={`w-12 h-7 rounded-full items-center justify-center ${item.enabled ? (isDark ? 'bg-[#D4AF37]' : 'bg-[#08142E]') : (isDark ? 'bg-[#0D1B3E]' : 'bg-[#EEF0F5]')}`}
+                    accessibilityRole="switch"
+                    accessibilityLabel={item.label}
+                    accessibilityState={{ checked: item.enabled }}
                   >
                     <View className={`w-5 h-5 rounded-full bg-white ${item.enabled ? 'self-end mr-0.5' : 'self-start ml-0.5'}`} style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.2)', elevation: 2 }} />
                   </Pressable>
@@ -101,10 +104,10 @@ export default function DataPrivacy() {
               </View>
               <Text className={`mb-4 ${isDark ? 'text-gray-400' : 'text-[#6B6F76]'}`} style={{ fontSize: 14 }}>You can request a copy of all data we have stored or delete your account permanently.</Text>
               <View className="flex-row gap-3">
-                <Pressable className={`flex-1 py-3 rounded-full border items-center active:scale-[0.98] ${isDark ? 'border-[#1A2A4A]' : 'border-[#E4E7EE]'}`}>
+                <Pressable className={`flex-1 py-3 rounded-full border items-center active:scale-[0.98] ${isDark ? 'border-[#1A2A4A]' : 'border-[#E4E7EE]'}`} accessibilityRole="button" accessibilityLabel="Export Data">
                   <Text className={`font-body-semibold font-bold ${isDark ? 'text-white' : 'text-[#1A1A1A]'}`} style={{ fontSize: 14 }}>Export Data</Text>
                 </Pressable>
-                <Pressable className="flex-1 py-3 rounded-full bg-error-container items-center active:scale-[0.98]">
+                <Pressable className="flex-1 py-3 rounded-full bg-error-container items-center active:scale-[0.98]" accessibilityRole="button" accessibilityLabel="Delete Account">
                   <Text className="font-body-semibold text-[#BA1A1A] font-bold" style={{ fontSize: 14 }}>Delete Account</Text>
                 </Pressable>
               </View>

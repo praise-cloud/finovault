@@ -117,11 +117,11 @@ export default function AiAnalysis() {
             <Text className="font-body-bold text-primary font-bold">AI Analysis</Text>
           </View>
           <View className="flex-row items-center gap-3">
-            <Pressable onPress={loadData} className="active:scale-90">
+            <Pressable onPress={loadData} accessibilityLabel="Refresh" accessibilityRole="button" className="active:scale-90">
               <MaterialIcons name="refresh" size={24} color={isDark ? '#9CA3B0' : '#43474d'} />
             </Pressable>
             <NotificationIcon onPress={openNotifications} count={notifCount} />
-            <Pressable onPress={() => router.push('/(tabs)/profile')} className="active:scale-90">
+            <Pressable onPress={() => router.push('/(tabs)/profile')} accessibilityLabel="Profile" accessibilityRole="button" className="active:scale-90">
               <UserAvatar size={36} />
             </Pressable>
           </View>
@@ -141,10 +141,11 @@ export default function AiAnalysis() {
               className="flex-1 bg-white/20 rounded-xl px-4 py-3 text-white text-body-md"
               placeholder="Ask a question..."
               placeholderTextColor="rgba(255,255,255,0.5)"
+              accessibilityLabel="Ask a question"
               value={question}
               onChangeText={setQuestion}
             />
-            <Pressable onPress={handleAsk} disabled={isAsking} className={`w-12 h-12 ${isDark ? 'bg-[#0D1B3E]' : 'bg-white'} rounded-xl items-center justify-center active:scale-90`}>
+            <Pressable onPress={handleAsk} disabled={isAsking} accessibilityLabel="Ask question" accessibilityRole="button" className={`w-12 h-12 ${isDark ? 'bg-[#0D1B3E]' : 'bg-white'} rounded-xl items-center justify-center active:scale-90`}>
               {isAsking ? <ActivityIndicator size="small" color={isDark ? '#D4AF37' : '#08142E'} /> : <MaterialIcons name="send" size={20} color={isDark ? '#D4AF37' : '#08142E'} />}
             </Pressable>
           </View>
@@ -197,7 +198,7 @@ export default function AiAnalysis() {
               {insights.map((insight) => {
                 const style = getTypeStyle(insight.type);
                 return (
-                  <Pressable key={insight.id} className={`flex-row gap-3 p-4 ${isDark ? 'bg-[#0D1B3E]' : 'bg-white'} border border-outline-variant/20 rounded-2xl active:scale-[0.98]`}>
+                  <Pressable key={insight.id} accessibilityRole="button" className={`flex-row gap-3 p-4 ${isDark ? 'bg-[#0D1B3E]' : 'bg-white'} border border-outline-variant/20 rounded-2xl active:scale-[0.98]`}>
                     <View className={`w-10 h-10 rounded-full items-center justify-center ${style.bg}`}>
                       <MaterialIcons name={style.icon} size={20} color={style.color} />
                     </View>
@@ -207,7 +208,7 @@ export default function AiAnalysis() {
                         {insight.time ? <Text className="text-caption text-on-surface-variant text-xs ml-2">{insight.time}</Text> : null}
                       </View>
                       <Text className="text-body-md text-on-surface-variant text-sm mt-0.5">{insight.description}</Text>
-                      <Pressable onPress={() => router.push('/(tabs)/transactions')} className="mt-2"><Text className="text-secondary font-label-md text-xs font-bold">View Details</Text></Pressable>
+                      <Pressable onPress={() => router.push('/(tabs)/transactions')} accessibilityRole="button" className="mt-2"><Text className="text-secondary font-label-md text-xs font-bold">View Details</Text></Pressable>
                     </View>
                   </Pressable>
                 );

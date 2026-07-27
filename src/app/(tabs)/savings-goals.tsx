@@ -45,12 +45,12 @@ export default function SavingsGoalsScreen() {
       <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
-            <Pressable onPress={() => router.back()} className="active:scale-90">
+            <Pressable accessibilityRole="button" accessibilityLabel="Go back" onPress={() => router.back()} className="active:scale-90">
               <MaterialIcons name="arrow-back" size={24} color={isDark ? '#FFFFFF' : '#0A1F5C'} />
             </Pressable>
             <Text className="font-headline-md text-primary font-bold">Savings Goals</Text>
           </View>
-          <Pressable onPress={() => setShowAddModal(true)} className="bg-primary px-4 py-2 rounded-xl flex-row items-center gap-1 active:scale-90">
+          <Pressable accessibilityRole="button" accessibilityLabel="Add savings goal" onPress={() => setShowAddModal(true)} className="bg-primary px-4 py-2 rounded-xl flex-row items-center gap-1 active:scale-90">
             <MaterialIcons name="add" size={20} color="#fff" />
             <Text className="text-on-primary font-label-md">Goal</Text>
           </Pressable>
@@ -66,7 +66,7 @@ export default function SavingsGoalsScreen() {
           <View className="flex-1 items-center justify-center py-20">
             <MaterialIcons name="savings" size={64} color={isDark ? 'rgba(255,255,255,0.2)' : '#c4c7cb'} />
             <Text className="text-on-surface-variant text-body-md mt-4">No savings goals yet.</Text>
-            <Pressable onPress={() => setShowAddModal(true)} className="bg-primary px-6 py-3 rounded-xl mt-4 active:scale-95">
+            <Pressable accessibilityRole="button" onPress={() => setShowAddModal(true)} className="bg-primary px-6 py-3 rounded-xl mt-4 active:scale-95">
               <Text className="text-on-primary font-label-md">Create Goal</Text>
             </Pressable>
           </View>
@@ -88,7 +88,7 @@ export default function SavingsGoalsScreen() {
                         {goal.goal_type === 'rainy_day' ? 'Rainy Day Fund' : 'General Goal'} • {goal.status}
                       </Text>
                     </View>
-                    <Pressable onPress={() => handleDelete(goal.id)} className="active:scale-90">
+                    <Pressable accessibilityRole="button" accessibilityLabel="Delete" onPress={() => handleDelete(goal.id)} className="active:scale-90">
                       <MaterialIcons name="delete-outline" size={20} color="#ba1a1a" />
                     </Pressable>
                   </View>
@@ -123,6 +123,8 @@ export default function SavingsGoalsScreen() {
 }
 
 function AddGoalModal({ visible, onClose, onSaved }: { visible: boolean; onClose: () => void; onSaved: () => void }) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const [name, setName] = useState('');
   const [targetAmount, setTargetAmount] = useState('');
   const [currentAmount, setCurrentAmount] = useState('');
@@ -154,7 +156,7 @@ function AddGoalModal({ visible, onClose, onSaved }: { visible: boolean; onClose
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable className="flex-1 bg-black/40" onPress={onClose}>
+      <Pressable accessibilityRole="button" accessibilityLabel="Close" className="flex-1 bg-black/40" onPress={onClose}>
         <KeyboardAvoidingView className="flex-1 justify-end" behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <ScrollView className={`${isDark ? 'bg-[#0D1B3E]' : 'bg-white'} rounded-t-3xl p-6`} keyboardShouldPersistTaps="handled">
             <View className="items-center pt-3 pb-1">
@@ -163,12 +165,14 @@ function AddGoalModal({ visible, onClose, onSaved }: { visible: boolean; onClose
             <Text className="font-headline-md text-primary font-bold mb-4">Create Savings Goal</Text>
 
             <TextInput
+              accessibilityLabel="Goal name"
               placeholder="Goal name"
               value={name}
               onChangeText={setName}
               className="bg-surface-container rounded-xl px-4 py-3 mb-3 font-label-md"
             />
             <TextInput
+              accessibilityLabel="Target amount"
               placeholder="Target amount"
               value={targetAmount}
               onChangeText={setTargetAmount}
@@ -176,6 +180,7 @@ function AddGoalModal({ visible, onClose, onSaved }: { visible: boolean; onClose
               className="bg-surface-container rounded-xl px-4 py-3 mb-3 font-label-md"
             />
             <TextInput
+              accessibilityLabel="Current amount"
               placeholder="Current amount (optional)"
               value={currentAmount}
               onChangeText={setCurrentAmount}
@@ -185,7 +190,7 @@ function AddGoalModal({ visible, onClose, onSaved }: { visible: boolean; onClose
 
             <View className="flex-row gap-2 mb-4">
               {(['general', 'rainy_day'] as const).map((t) => (
-                <Pressable key={t} onPress={() => setGoalType(t)} className={`px-4 py-2 rounded-xl ${goalType === t ? 'bg-primary' : 'bg-surface-container'}`}>
+                <Pressable key={t} accessibilityRole="tab" accessibilityLabel={t === 'rainy_day' ? 'Rainy Day' : 'General'} accessibilityState={{ selected: goalType === t }} onPress={() => setGoalType(t)} className={`px-4 py-2 rounded-xl ${goalType === t ? 'bg-primary' : 'bg-surface-container'}`}>
                   <Text className={`font-label-md ${goalType === t ? 'text-on-primary' : 'text-on-surface-variant'}`}>
                     {t === 'rainy_day' ? 'Rainy Day' : 'General'}
                   </Text>
@@ -194,6 +199,7 @@ function AddGoalModal({ visible, onClose, onSaved }: { visible: boolean; onClose
             </View>
 
             <Pressable
+              accessibilityRole="button"
               onPress={handleSave}
               disabled={saving}
               className="bg-primary py-3 rounded-xl items-center mt-2 active:scale-95"

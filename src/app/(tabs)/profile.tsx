@@ -110,7 +110,7 @@ export default function Settings() {
 
         <ScrollView style={{ flex: 1, paddingHorizontal: 20 }} contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
           {/* Greeting row */}
-          <Pressable onPress={openEdit} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, marginBottom: 20 }}>
+          <Pressable onPress={openEdit} accessibilityRole="button" style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, marginBottom: 20 }}>
             <UserAvatar size={56} name={data.profile.full_name} />
             <View style={{ marginLeft: 14, flex: 1 }}>
               <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 18, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Hey, {firstName}</Text>
@@ -149,6 +149,7 @@ export default function Settings() {
           <View style={{ flexDirection: 'row', gap: 10 }}>
             <Pressable
               onPress={() => router.push('/(tabs)/linked-accounts')}
+              accessibilityRole="button"
               style={{ flex: 1, backgroundColor: BLUE, borderRadius: 14, padding: 14, minHeight: 76, justifyContent: 'space-between' }}
             >
               <MaterialIcons name="apps" size={18} color="#FFFFFF" />
@@ -162,6 +163,7 @@ export default function Settings() {
 
             <Pressable
               onPress={() => router.push('/(tabs)/vault')}
+              accessibilityRole="button"
               style={{ flex: 1, backgroundColor: GREEN, borderRadius: 14, padding: 14, minHeight: 76, justifyContent: 'space-between' }}
             >
               <MaterialIcons name="savings" size={18} color="#FFFFFF" />
@@ -175,6 +177,7 @@ export default function Settings() {
 
             <Pressable
               onPress={() => router.push('/(tabs)/linked-accounts')}
+              accessibilityRole="button"
               style={{ flex: 1, backgroundColor: GOLD, borderRadius: 14, padding: 14, minHeight: 76, justifyContent: 'space-between' }}
             >
               <MaterialIcons name="link" size={18} color="#FFFFFF" />
@@ -200,6 +203,7 @@ export default function Settings() {
                   else if (item.action === 'notifications') openNotifications();
                   else if ('route' in item && item.route) router.push(item.route as any);
                 }}
+                accessibilityRole="button"
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
@@ -219,6 +223,7 @@ export default function Settings() {
 
             <Pressable
               onPress={handleSignOut}
+              accessibilityRole="button"
               style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, borderTopWidth: 1, borderTopColor: isDark ? '#2A2A2A' : '#EEF0F5' }}
             >
               <MaterialIcons name="logout" size={20} color="#C0392B" />
@@ -234,7 +239,7 @@ export default function Settings() {
           <View style={{ backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF', borderRadius: 20, padding: 22 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
               <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 17, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Edit Personal Info</Text>
-              <Pressable onPress={() => setEditVisible(false)} hitSlop={8}>
+              <Pressable onPress={() => setEditVisible(false)} accessibilityLabel="Close" accessibilityRole="button" hitSlop={8}>
                 <MaterialIcons name="close" size={20} color={isDark ? '#9CA3B0' : '#6B6F76'} />
               </Pressable>
             </View>
@@ -252,6 +257,7 @@ export default function Settings() {
                   value={field.value}
                   onChangeText={field.setter}
                   keyboardType={field.keyboardType}
+                  accessibilityLabel={field.label}
                   style={{
                     height: 50,
                     borderRadius: 10,
@@ -270,12 +276,14 @@ export default function Settings() {
             <View style={{ flexDirection: 'row', gap: 10, marginTop: 6 }}>
               <Pressable
                 onPress={() => setEditVisible(false)}
+                accessibilityRole="button"
                 style={{ flex: 1, height: 50, borderRadius: 12, borderWidth: 1.5, borderColor: isDark ? '#2A2A2A' : '#E1E4EC', alignItems: 'center', justifyContent: 'center' }}
               >
                 <Text style={{ fontFamily: 'Montserrat_600SemiBold', fontSize: 15, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Cancel</Text>
               </Pressable>
               <Pressable
                 onPress={handleSaveProfile}
+                accessibilityRole="button"
                 style={{ flex: 1, height: 50, borderRadius: 12, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center' }}
               >
                 <Text style={{ fontFamily: 'Montserrat_600SemiBold', fontSize: 15, color: '#FFFFFF' }}>Save Changes</Text>

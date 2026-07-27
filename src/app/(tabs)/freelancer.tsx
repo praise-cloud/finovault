@@ -54,7 +54,7 @@ export default function FreelancerDashboard() {
           </View>
           <View className="flex-1 gap-1">
             {navItems.map((item) => (
-              <Pressable key={item.name} onPress={() => {
+              <Pressable accessibilityRole="button" key={item.name} onPress={() => {
                 const routes: Record<string, string> = {
                   'Dashboard': '/(tabs)',
                   'Wealth Growth': '/(tabs)/wealth-growth',
@@ -114,7 +114,7 @@ export default function FreelancerDashboard() {
                   <Text className="font-label-md font-bold text-primary">${d.income.retainers.toLocaleString()}</Text>
                 </View>
               </View>
-              <Pressable onPress={() => router.push('/(tabs)/transactions')} className="mt-4 w-full py-2 bg-surface-container-high rounded-lg items-center active:scale-95">
+              <Pressable accessibilityRole="button" onPress={() => router.push('/(tabs)/transactions')} className="mt-4 w-full py-2 bg-surface-container-high rounded-lg items-center active:scale-95">
                 <Text className="font-label-md text-primary">View Details</Text>
               </Pressable>
             </View>
@@ -140,7 +140,7 @@ export default function FreelancerDashboard() {
             <View className="w-full md:flex-[3] md:min-w-0 min-w-[280px] rounded-xl overflow-hidden" style={{ backgroundColor: isDark ? 'rgba(13,27,62,0.8)' : 'rgba(255,255,255,0.8)', borderWidth: 1, borderColor: isDark ? '#1A2A4A' : '#E6EBF1', boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2 }}>
               <View className="p-md border-b border-outline-variant flex-row justify-between items-center">
                 <Text className="font-headline-md text-[20px] font-bold">Recent Projects & Status</Text>
-                <Pressable onPress={() => router.push('/(tabs)/transactions')} className="flex-row items-center gap-1"><Text className="text-secondary font-label-md">All Projects</Text><MaterialIcons name="arrow-forward" size={18} color={isDark ? '#D4AF37' : '#08142E'} /></Pressable>
+                <Pressable accessibilityRole="button" onPress={() => router.push('/(tabs)/transactions')} className="flex-row items-center gap-1"><Text className="text-secondary font-label-md">All Projects</Text><MaterialIcons name="arrow-forward" size={18} color={isDark ? '#D4AF37' : '#08142E'} /></Pressable>
               </View>
               <View className="overflow-x-auto">
                 <View className="flex-row bg-surface-container-low px-md py-3">
@@ -160,14 +160,14 @@ export default function FreelancerDashboard() {
                         <Text className={`text-caption ${proj.status === 'Invoiced' ? 'text-on-secondary-container' : proj.status === 'In Progress' ? 'text-on-primary-container' : 'text-on-error-container'}`}>{proj.status}</Text>
                       </View>
                     </View>
-                    <Pressable onPress={() => router.push('/(tabs)/transactions')} className="w-8 items-center"><MaterialIcons name="more-vert" size={20} color={isDark ? '#9CA3B0' : '#74777e'} /></Pressable>
+                    <Pressable accessibilityRole="button" accessibilityLabel="More options" onPress={() => router.push('/(tabs)/transactions')} className="w-8 items-center"><MaterialIcons name="more-vert" size={20} color={isDark ? '#9CA3B0' : '#74777e'} /></Pressable>
                   </View>
                 ))}
               </View>
             </View>
 
             <View className="w-full md:flex-1 md:min-w-0 min-w-[200px] p-md rounded-xl items-center justify-center" style={{ backgroundColor: isDark ? 'rgba(13,27,62,0.8)' : 'rgba(255,255,255,0.8)', borderWidth: 1, borderColor: isDark ? '#1A2A4A' : '#E6EBF1', boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2 }}>
-              <Pressable onPress={() => router.push('/(tabs)/transactions')} className="items-center active:scale-95">
+              <Pressable accessibilityRole="button" onPress={() => router.push('/(tabs)/transactions')} className="items-center active:scale-95">
                 <View className="w-12 h-12 rounded-full bg-secondary-container items-center justify-center mb-3"><MaterialIcons name="add" size={24} color={isDark ? '#FFFFFF' : '#1A1A1A'} /></View>
                 <Text className="font-label-md font-bold">New Invoice</Text>
               </Pressable>
@@ -179,7 +179,7 @@ export default function FreelancerDashboard() {
               <View className="flex-1 min-w-[280px]">
                 <Text className="font-headline-lg text-headline-lg text-white mb-4">Optimize your Tax Shield</Text>
                 <Text className="font-body-md text-on-primary-container mb-6 max-w-md">{d.tax_shield_message}</Text>
-                <Pressable onPress={() => router.push('/(tabs)/ai-coach')} className="bg-secondary-fixed px-6 py-3 rounded-full self-start active:scale-95">
+                <Pressable accessibilityRole="button" onPress={() => router.push('/(tabs)/ai-coach')} className="bg-secondary-fixed px-6 py-3 rounded-full self-start active:scale-95">
                   <Text className="font-label-md font-bold text-on-secondary-fixed">Review Strategy</Text>
                 </Pressable>
               </View>

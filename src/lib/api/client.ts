@@ -52,23 +52,28 @@ function isTokenExpired(errorBody: any): boolean {
 
 async function refreshAccessToken(): Promise<boolean> {
   if (!_refreshToken) return false;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
   try {
     const response = await fetch(`${_baseUrl}${ENDPOINTS.auth.refresh}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refresh_token: _refreshToken }),
+      body: JSON.stringify({ refresh_token: _refreshToken! }),
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
     if (!response.ok) return false;
     const json = await response.json();
     const session = json.session || json.data?.session;
     if (session?.access_token) {
       _token = session.access_token;
       _refreshToken = session.refresh_token || _refreshToken;
-      await AsyncStorage.setItem(TOKEN_KEY, _token).catch(() => {});
+      await AsyncStorage.setItem(TOKEN_KEY, _token!).catch(() => {});
       return true;
     }
     return false;
   } catch {
+    clearTimeout(timeoutId);
     return false;
   }
 }
@@ -162,8 +167,8 @@ class ApiClient {
         throw new Error(`Request timeout after ${timeout}ms: ${endpoint}`);
       }
 
-      // Retry on network error (not API errors with status)
-      if (retryCount < MAX_RETRIES && err.message?.startsWith('API Error') === false) {
+      // Retry on network errors and server errors (5xx), but not client errors (4xx)
+      if (retryCount < MAX_RETRIES && (!err.message?.startsWith('API Error') || /^API Error 5\d{2}/.test(err.message))) {
         return this.request<T>(endpoint, options, retryCount + 1);
       }
 

@@ -88,12 +88,12 @@ export default function TransactionsScreen() {
       <View className="pt-14 pb-2 px-margin-mobile" style={{ backgroundColor: bg }}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
-            <Pressable onPress={() => router.back()} className="active:scale-90">
+            <Pressable onPress={() => router.back()} accessibilityLabel="Go back" accessibilityRole="button" className="active:scale-90">
               <MaterialIcons name="arrow-back" size={24} color={isDark ? '#FFFFFF' : '#1A1A1A'} />
             </Pressable>
             <Text className="font-body-bold" style={{ fontSize: 22, color: textColor }}>Transactions</Text>
           </View>
-          <Pressable onPress={() => setShowAddModal(true)} className="active:scale-90"
+          <Pressable onPress={() => setShowAddModal(true)} accessibilityLabel="Add transaction" accessibilityRole="button" className="active:scale-90"
             style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: isDark ? '#D4AF37' : '#08142E', borderRadius: 9999, paddingHorizontal: 16, paddingVertical: 8 }}
           >
             <View className="flex-row items-center gap-1">
@@ -116,13 +116,14 @@ export default function TransactionsScreen() {
           <TextInput
             placeholder="Search transactions"
             placeholderTextColor={isDark ? 'rgba(255,255,255,0.3)' : '#9ea0a5'}
+            accessibilityLabel="Search transactions"
             value={search}
             onChangeText={setSearch}
             className="flex-1 ml-2"
             style={{ fontSize: 15, fontFamily: 'Montserrat_400Regular', color: textColor }}
           />
           {search.length > 0 && (
-            <Pressable onPress={() => setSearch('')}>
+            <Pressable onPress={() => setSearch('')} accessibilityLabel="Clear search" accessibilityRole="button">
               <MaterialIcons name="close" size={18} color={mutedColor} />
             </Pressable>
           )}
@@ -136,6 +137,7 @@ export default function TransactionsScreen() {
               <Pressable
                 key={f}
                 onPress={() => setActiveFilter(f)}
+                accessibilityRole="button"
                 className="px-4 py-2 active:scale-[0.97]"
                 style={{
                   borderRadius: 9999,
@@ -171,6 +173,7 @@ export default function TransactionsScreen() {
             <Text className="font-body" style={{ fontSize: 15, color: mutedColor, marginTop: 12 }}>No transactions yet.</Text>
             <Pressable
               onPress={() => setShowAddModal(true)}
+              accessibilityRole="button"
               className="mt-5 py-3 px-6 active:scale-95"
               style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: isDark ? '#D4AF37' : '#08142E', borderRadius: 9999 }}
             >
@@ -208,7 +211,7 @@ export default function TransactionsScreen() {
                         {detail} • {new Date(tx.date).toLocaleDateString()}
                       </Text>
                     </View>
-                    <Pressable onPress={() => handleDelete(tx.id)} className="pr-1 pl-3 active:scale-90">
+                    <Pressable onPress={() => handleDelete(tx.id)} accessibilityLabel="Delete transaction" accessibilityRole="button" className="pr-1 pl-3 active:scale-90">
                       <MaterialIcons name="delete-outline" size={18} color={isDark ? 'rgba(255,255,255,0.3)' : '#BA1A1A'} />
                     </Pressable>
                   </View>
@@ -283,6 +286,7 @@ function AddTransactionModal({ visible, onClose, onSaved, isDark }: {
                 <Pressable
                   key={t}
                   onPress={() => setType(t)}
+                  accessibilityRole="button"
                   style={{
                     paddingHorizontal: 16,
                     paddingVertical: 8,
@@ -300,6 +304,7 @@ function AddTransactionModal({ visible, onClose, onSaved, isDark }: {
             <TextInput
               placeholder="Amount"
               placeholderTextColor={muted}
+              accessibilityLabel="Transaction amount"
               value={amount}
               onChangeText={setAmount}
               keyboardType="decimal-pad"
@@ -319,6 +324,7 @@ function AddTransactionModal({ visible, onClose, onSaved, isDark }: {
             <TextInput
               placeholder="Description"
               placeholderTextColor={muted}
+              accessibilityLabel="Transaction description"
               value={description}
               onChangeText={setDescription}
               style={{
@@ -337,6 +343,7 @@ function AddTransactionModal({ visible, onClose, onSaved, isDark }: {
             <TextInput
               placeholder="Category (optional)"
               placeholderTextColor={muted}
+              accessibilityLabel="Transaction category"
               value={category}
               onChangeText={setCategory}
               style={{
@@ -355,6 +362,7 @@ function AddTransactionModal({ visible, onClose, onSaved, isDark }: {
             <TextInput
               placeholder="Merchant (optional)"
               placeholderTextColor={muted}
+              accessibilityLabel="Transaction merchant"
               value={merchant}
               onChangeText={setMerchant}
               style={{
@@ -374,6 +382,7 @@ function AddTransactionModal({ visible, onClose, onSaved, isDark }: {
             <Pressable
               onPress={handleSave}
               disabled={saving}
+              accessibilityRole="button"
               className="w-full py-3.5 items-center mt-2 active:scale-[0.98]"
               style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: isDark ? '#D4AF37' : '#08142E', borderRadius: 9999 }}
             >

@@ -182,6 +182,7 @@ export default function EntrepreneurDashboard() {
                     {d.grant?.description ?? 'No grant information available.'}
                   </Text>
                   <Pressable
+                    accessibilityRole="button"
                     onPress={() => router.push("/(tabs)/ai-coach")}
                     className="bg-secondary-fixed py-4 rounded-xl flex-row items-center justify-center gap-2 active:scale-95"
                     style={{
@@ -237,7 +238,7 @@ export default function EntrepreneurDashboard() {
                 <Text className="font-headline-md text-headline-md text-primary">
                   Circle Network
                 </Text>
-                <Pressable onPress={() => router.push("/(tabs)/transactions")}><Text className="text-caption text-secondary">View All</Text></Pressable>
+                <Pressable accessibilityRole="button" onPress={() => router.push("/(tabs)/transactions")}><Text className="text-caption text-secondary">View All</Text></Pressable>
               </View>
               {(d.network || []).map((person) => (
                 <View

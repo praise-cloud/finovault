@@ -131,9 +131,9 @@ export default function SmeAnalytics() {
                 <Text className="text-caption text-on-surface-variant">Supply chain resilience and credit worthiness tracking</Text>
               </View>
               <View className="flex-row bg-surface-container-low rounded-lg p-1">
-                <Pressable onPress={() => setVendorFilter('High Risk')} className={`px-4 py-1.5 rounded-md ${vendorFilter === 'High Risk' ? 'bg-surface-container-lowest shadow-sm' : ''}`}><Text className={`font-label-md text-label-md ${vendorFilter === 'High Risk' ? 'text-primary' : 'text-on-surface-variant'}`}>High Risk</Text></Pressable>
-                <Pressable onPress={() => setVendorFilter('Reliable')} className={`px-4 py-1.5 rounded-md ${vendorFilter === 'Reliable' ? 'bg-surface-container-lowest shadow-sm' : ''}`}><Text className={`font-label-md text-label-md ${vendorFilter === 'Reliable' ? 'text-primary' : 'text-on-surface-variant'}`}>Reliable</Text></Pressable>
-                <Pressable onPress={() => setVendorFilter('Watchlist')} className={`px-4 py-1.5 rounded-md ${vendorFilter === 'Watchlist' ? 'bg-surface-container-lowest shadow-sm' : ''}`}><Text className={`font-label-md text-label-md ${vendorFilter === 'Watchlist' ? 'text-primary' : 'text-on-surface-variant'}`}>Watchlist</Text></Pressable>
+                <Pressable accessibilityRole="tab" accessibilityLabel="High Risk filter" accessibilityState={{ selected: vendorFilter === 'High Risk' }} onPress={() => setVendorFilter('High Risk')} className={`px-4 py-1.5 rounded-md ${vendorFilter === 'High Risk' ? 'bg-surface-container-lowest shadow-sm' : ''}`}><Text className={`font-label-md text-label-md ${vendorFilter === 'High Risk' ? 'text-primary' : 'text-on-surface-variant'}`}>High Risk</Text></Pressable>
+                <Pressable accessibilityRole="tab" accessibilityLabel="Reliable filter" accessibilityState={{ selected: vendorFilter === 'Reliable' }} onPress={() => setVendorFilter('Reliable')} className={`px-4 py-1.5 rounded-md ${vendorFilter === 'Reliable' ? 'bg-surface-container-lowest shadow-sm' : ''}`}><Text className={`font-label-md text-label-md ${vendorFilter === 'Reliable' ? 'text-primary' : 'text-on-surface-variant'}`}>Reliable</Text></Pressable>
+                <Pressable accessibilityRole="tab" accessibilityLabel="Watchlist filter" accessibilityState={{ selected: vendorFilter === 'Watchlist' }} onPress={() => setVendorFilter('Watchlist')} className={`px-4 py-1.5 rounded-md ${vendorFilter === 'Watchlist' ? 'bg-surface-container-lowest shadow-sm' : ''}`}><Text className={`font-label-md text-label-md ${vendorFilter === 'Watchlist' ? 'text-primary' : 'text-on-surface-variant'}`}>Watchlist</Text></Pressable>
               </View>
             </View>
             <View className="-mx-6 px-6">
@@ -183,7 +183,7 @@ export default function SmeAnalytics() {
               <Text className="font-headline-md text-headline-md text-primary mb-1">AI Smart Recommendation</Text>
               <Text className="text-body-md text-on-surface-variant">&ldquo;{d.ai_recommendation ?? 'No recommendations available.'}&rdquo;</Text>
             </View>
-            <Pressable onPress={() => router.push('/(tabs)/ai-coach')} className="px-8 py-3 bg-secondary rounded-xl active:scale-95" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
+            <Pressable accessibilityRole="button" onPress={() => router.push('/(tabs)/ai-coach')} className="px-8 py-3 bg-secondary rounded-xl active:scale-95" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
               <Text className="font-label-md text-label-md text-on-secondary">Execute Audit</Text>
             </Pressable>
           </View>

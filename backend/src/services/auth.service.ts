@@ -1,4 +1,4 @@
-import { getSupabase } from '../config/supabase';
+import { getSupabase, getAuthClient } from '../config/supabase';
 import { UnauthorizedError, ConflictError, InternalError } from '../utils/errors';
 import { createContextLogger } from '../utils/logger';
 
@@ -25,7 +25,8 @@ export async function signup(input: { email: string; password: string; full_name
     throw new InternalError('Failed to create account');
   }
 
-  const sessionRes = await supabase.auth.signInWithPassword({
+  const auth = getAuthClient();
+  const sessionRes = await auth.auth.signInWithPassword({
     email: input.email,
     password: input.password,
   });
@@ -37,9 +38,9 @@ export async function signup(input: { email: string; password: string; full_name
 }
 
 export async function login(input: { email: string; password: string }) {
-  const supabase = getSupabase();
+  const auth = getAuthClient();
 
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await auth.auth.signInWithPassword({
     email: input.email,
     password: input.password,
   });
@@ -55,10 +56,10 @@ export async function login(input: { email: string; password: string }) {
 }
 
 export async function googleAuth(tokenData: { access_token?: string }) {
-  const supabase = getSupabase();
+  const auth = getAuthClient();
 
   if (tokenData.access_token) {
-    const { data, error } = await supabase.auth.signInWithIdToken({
+    const { data, error } = await auth.auth.signInWithIdToken({
       provider: 'google',
       token: tokenData.access_token,
     });
@@ -73,7 +74,7 @@ export async function googleAuth(tokenData: { access_token?: string }) {
     };
   }
 
-  const { data, error } = await supabase.auth.signInWithOAuth({
+  const { data, error } = await auth.auth.signInWithOAuth({
     provider: 'google',
   });
 
@@ -106,9 +107,9 @@ export async function logout(userId: string): Promise<void> {
 }
 
 export async function refreshSession(refreshToken: string) {
-  const supabase = getSupabase();
+  const auth = getAuthClient();
 
-  const { data, error } = await supabase.auth.refreshSession({ refresh_token: refreshToken });
+  const { data, error } = await auth.auth.refreshSession({ refresh_token: refreshToken });
 
   if (error) {
     throw new UnauthorizedError('Failed to refresh session');
@@ -121,9 +122,9 @@ export async function refreshSession(refreshToken: string) {
 }
 
 export async function forgotPassword(email: string) {
-  const supabase = getSupabase();
+  const auth = getAuthClient();
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+  const { error } = await auth.auth.resetPasswordForEmail(email, {
     redirectTo: `${process.env.FRONTEND_URL || 'https://finovault.ai'}/reset-password`,
   });
 
@@ -136,10 +137,9 @@ export async function forgotPassword(email: string) {
 }
 
 export async function resetPassword(token: string, newPassword: string, email?: string) {
-  const supabase = getSupabase();
+  const auth = getAuthClient();
 
-  // Verify the token by exchanging it for a session
-  const { error } = await supabase.auth.verifyOtp({
+  const { error } = await auth.auth.verifyOtp({
     type: 'recovery',
     token,
     email: email || '',
@@ -149,8 +149,7 @@ export async function resetPassword(token: string, newPassword: string, email?: 
     throw new UnauthorizedError('Invalid or expired reset token');
   }
 
-  // Update the password
-  const { error: updateError } = await supabase.auth.updateUser({
+  const { error: updateError } = await auth.auth.updateUser({
     password: newPassword,
   });
 
@@ -164,15 +163,14 @@ export async function resetPassword(token: string, newPassword: string, email?: 
 
 export async function changePassword(userId: string, currentPassword: string, newPassword: string) {
   const supabase = getSupabase();
+  const auth = getAuthClient();
 
-  // Verify current password by checking against stored hash
   const { data: userData } = await supabase.auth.admin.getUserById(userId);
   if (!userData.user?.email) {
     throw new UnauthorizedError('User not found');
   }
 
-  // Verify current password using admin API — avoids mutating the shared session
-  const { error: signInError } = await supabase.auth.signInWithPassword({
+  const { error: signInError } = await auth.auth.signInWithPassword({
     email: userData.user.email,
     password: currentPassword,
   });
@@ -181,10 +179,8 @@ export async function changePassword(userId: string, currentPassword: string, ne
     throw new UnauthorizedError('Current password is incorrect');
   }
 
-  // Sign out the temp session to keep the admin client stateless
   await supabase.auth.admin.signOut(userId);
 
-  // Update password using admin API — no session mutation needed
   const { error: updateError } = await supabase.auth.admin.updateUserById(userId, {
     password: newPassword,
   });

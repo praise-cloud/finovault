@@ -82,7 +82,7 @@ export default function VaultAssistant() {
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 <NotificationIcon onPress={openNotifications} count={notifCount} />
-                <Pressable onPress={() => router.push('/(tabs)/profile')}>
+                <Pressable onPress={() => router.push('/(tabs)/profile')} accessibilityLabel="Profile" accessibilityRole="button">
                   <UserAvatar size={32} />
                 </Pressable>
               </View>
@@ -172,6 +172,7 @@ export default function VaultAssistant() {
                   <Pressable
                     key={s}
                     onPress={() => send(s)}
+                    accessibilityRole="button"
                     style={{
                       alignSelf: 'flex-start',
                       backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
@@ -209,16 +210,19 @@ export default function VaultAssistant() {
                 onChangeText={setInput}
                 placeholder="Ask Vault anything…"
                 placeholderTextColor="#9AA0AC"
+                accessibilityLabel="Message input"
                 style={{ flex: 1, fontFamily: 'Montserrat_400Regular', fontSize: 14, color: isDark ? '#FFFFFF' : '#1A1A1A' }}
                 onSubmitEditing={() => send()}
                 returnKeyType="send"
               />
-              <Pressable hitSlop={8} style={{ padding: 6 }}>
+              <Pressable accessibilityLabel="Voice input" accessibilityRole="button" hitSlop={8} style={{ padding: 6 }}>
                 <MaterialIcons name="mic-none" size={20} color={isDark ? '#D4AF37' : BLUE} />
               </Pressable>
               <Pressable
                 onPress={() => send()}
                 disabled={!input.trim()}
+                accessibilityLabel="Send message"
+                accessibilityRole="button"
                 style={{
                   width: 38,
                   height: 38,

@@ -50,7 +50,7 @@ export default function AICoachScreen() {
     <KeyboardAvoidingView className="flex-1 bg-[#FFFFFF]" style={{ backgroundColor: isDark ? '#08142E' : '#F2F2F2' }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View className="bg-[#FFFFFF] pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center gap-3">
-          <Pressable onPress={() => router.back()} className="active:scale-90">
+          <Pressable onPress={() => router.back()} accessibilityLabel="Go back" accessibilityRole="button" className="active:scale-90">
             <MaterialIcons name="arrow-back" size={24} color={isDark ? '#FFFFFF' : '#0A1F5C'} />
           </Pressable>
           <View className="flex-1">
@@ -88,6 +88,8 @@ export default function AICoachScreen() {
         <View className="flex-row items-center gap-2 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl px-4 py-2">
           <Pressable
             onPress={handleMicPress}
+            accessibilityLabel="Voice input"
+            accessibilityRole="button"
             className="active:scale-90"
             hitSlop={8}
           >
@@ -96,6 +98,7 @@ export default function AICoachScreen() {
           <TextInput
             className="flex-1 font-body-md py-2"
             placeholder="Ask your financial coach..."
+            accessibilityLabel="Ask your financial coach"
             value={input}
             onChangeText={setInput}
             multiline
@@ -104,6 +107,8 @@ export default function AICoachScreen() {
           <Pressable
             onPress={handleSend}
             disabled={isLoading || !input.trim()}
+            accessibilityLabel="Send message"
+            accessibilityRole="button"
             className={`w-10 h-10 rounded-full items-center justify-center ${input.trim() ? 'bg-primary' : 'bg-surface-container'}`}
           >
             <MaterialIcons name="send" size={20} color={input.trim() ? '#fff' : (isDark ? 'rgba(255,255,255,0.3)' : '#c4c7cb')} />
