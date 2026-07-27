@@ -1,6 +1,6 @@
 import { Job } from 'bull';
-import { getSupabase } from '../../src/config/supabase';
-import { createContextLogger } from '../../src/utils/logger';
+import { getSupabase } from '../../config/supabase';
+import { createContextLogger } from '../../utils/logger';
 
 const log = createContextLogger('TransactionAnalysisProcessor');
 

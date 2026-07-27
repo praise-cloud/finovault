@@ -1,6 +1,6 @@
 import { Job } from 'bull';
-import { generateDailyBriefing } from '../../src/services/scheduler.service';
-import { createContextLogger } from '../../src/utils/logger';
+import { generateDailyBriefing } from '../../services/scheduler.service';
+import { createContextLogger } from '../../utils/logger';
 
 const log = createContextLogger('DailyBriefingProcessor');
 

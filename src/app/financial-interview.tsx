@@ -27,7 +27,9 @@ export default function FinancialInterview() {
     try {
       await savePreferences();
       await submitFinancialInterview({ goals });
-    } catch {}
+    } catch (e) {
+      console.warn('Financial interview submission failed', e);
+    }
     router.push('/account-created');
   };
 

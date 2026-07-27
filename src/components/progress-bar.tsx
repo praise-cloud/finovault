@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { View } from 'react-native';
+import { View, useColorScheme } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 type Props = {
@@ -11,6 +11,8 @@ type Props = {
 };
 
 export function ProgressBar({ progress, height = 8, className = '', trackClassName = '', fillClassName = '' }: Props) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const width = useSharedValue(0);
 
   useEffect(() => {
@@ -22,10 +24,10 @@ export function ProgressBar({ progress, height = 8, className = '', trackClassNa
   }));
 
   return (
-    <View className={`w-full bg-surface-container-high overflow-hidden rounded-full ${trackClassName}`} style={{ height }}>
+    <View className={`w-full overflow-hidden rounded-full ${trackClassName}`} style={{ backgroundColor: isDark ? '#2A2A2A' : '#E1E4EC', height }}>
       <Animated.View
-        className={`h-full rounded-full ${fillClassName || 'bg-secondary'}`}
-        style={[animatedStyle, { height }]}
+        className={`h-full rounded-full ${fillClassName}`}
+        style={[animatedStyle, { backgroundColor: fillClassName ? undefined : (isDark ? '#D4AF37' : '#123B91'), height }]}
       />
     </View>
   );

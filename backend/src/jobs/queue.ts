@@ -1,9 +1,10 @@
 import Queue from 'bull';
-import { env } from '../src/config/env';
-import { createContextLogger } from '../src/utils/logger';
+import { env } from '../config/env';
+import { createContextLogger } from '../utils/logger';
 import { processDailyBriefing } from './processors/daily-briefing';
 import { processPatternLearning } from './processors/pattern-learning';
 import { processTransactionAnalysis } from './processors/transaction-analysis';
+import { processIncomeDetected } from './processors/income-detected';
 
 const log = createContextLogger('Queue');
 
@@ -32,10 +33,19 @@ export const patternLearningQueue = new Queue('pattern-learning', env.REDIS_URL,
   },
 });
 
+export const incomeDetectedQueue = new Queue('income-detected', env.REDIS_URL, {
+  defaultJobOptions: {
+    attempts: 2,
+    backoff: { type: 'fixed', delay: 5000 },
+    removeOnComplete: 50,
+  },
+});
+
 // Register processors
 dailyBriefingQueue.process(processDailyBriefing);
 patternLearningQueue.process(processPatternLearning);
 transactionAnalysisQueue.process(processTransactionAnalysis);
+incomeDetectedQueue.process(processIncomeDetected);
 
 transactionAnalysisQueue.on('completed', (job) => {
   log.info(`Transaction analysis job ${job.id} completed`);

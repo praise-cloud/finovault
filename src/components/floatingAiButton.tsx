@@ -1,8 +1,6 @@
-import { Pressable } from 'react-native';
+import { Pressable, useColorScheme } from 'react-native';
 import { router } from 'expo-router';
 import { Logo } from '@/src/components/logo';
-
-const BLUE = '#123B91';
 
 type FloatingAIButtonProps = {
   bottom?: number;
@@ -17,6 +15,8 @@ type FloatingAIButtonProps = {
  * cover the last item.
  */
 export function FloatingAIButton({ bottom = 90 }: FloatingAIButtonProps) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   return (
     <Pressable
       onPress={() => router.push('/(tabs)/vault')}
@@ -28,7 +28,7 @@ export function FloatingAIButton({ bottom = 90 }: FloatingAIButtonProps) {
         width: 52,
         height: 52,
         borderRadius: 26,
-        backgroundColor: BLUE,
+        backgroundColor: isDark ? '#D4AF37' : '#123B91',
         alignItems: 'center',
         justifyContent: 'center',
         opacity: pressed ? 0.85 : 1,

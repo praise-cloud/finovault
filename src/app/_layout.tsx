@@ -17,7 +17,9 @@ import { ActivityIndicator, Pressable, Text, View, useColorScheme } from "react-
 
 try {
   SplashScreen.preventAutoHideAsync();
-} catch {}
+} catch (e) {
+  console.warn('SplashScreen.preventAutoHideAsync failed', e);
+}
 
 export default function RootLayout() {
   return (
@@ -70,9 +72,9 @@ function RootContent() {
 
   useEffect(() => {
     if (fontsLoaded) {
-      try {
-        SplashScreen.hideAsync();
-      } catch {}
+      SplashScreen.hideAsync().catch((e) =>
+        console.warn('SplashScreen.hideAsync failed', e)
+      );
     }
   }, [fontsLoaded]);
 

@@ -28,16 +28,16 @@ export function StatusTimeline({ steps }: Props) {
               {isCompleted ? (
                 <View
                   className="w-5 h-5 rounded-full items-center justify-center"
-                  style={{ backgroundColor: '#08142E' }}
+                  style={{ backgroundColor: isDark ? '#D4AF37' : '#08142E' }}
                 >
                   <MaterialIcons name="check" size={12} color="#FFFFFF" />
                 </View>
               ) : isCurrent ? (
                 <View
                   className="w-5 h-5 rounded-full items-center justify-center"
-                  style={{ borderWidth: 2, borderColor: '#08142E', backgroundColor: 'transparent' }}
+                  style={{ borderWidth: 2, borderColor: isDark ? '#D4AF37' : '#08142E', backgroundColor: 'transparent' }}
                 >
-                  <View className="w-2 h-2 rounded-full" style={{ backgroundColor: '#08142E' }} />
+                  <View className="w-2 h-2 rounded-full" style={{ backgroundColor: isDark ? '#D4AF37' : '#08142E' }} />
                 </View>
               ) : (
                 <View
@@ -54,7 +54,7 @@ export function StatusTimeline({ steps }: Props) {
                   className="flex-1"
                   style={{
                     width: 1.5,
-                    backgroundColor: isCompleted ? '#08142E' : isDark ? 'rgba(255,255,255,0.1)' : '#E4E7EE',
+                    backgroundColor: isCompleted ? (isDark ? '#D4AF37' : '#08142E') : isDark ? 'rgba(255,255,255,0.1)' : '#E4E7EE',
                   }}
                 />
               )}

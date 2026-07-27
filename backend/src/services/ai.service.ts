@@ -58,6 +58,22 @@ export async function askCoach(
     context: coachContext,
   });
 
+  const persistSuggestions = async (suggestions: string[], source: string) => {
+    for (const sug of suggestions) {
+      try {
+        await supabase.from('ai_suggestions').insert({
+          user_id: userId,
+          title: sug,
+          description: `Suggested by AI Coach (${source})`,
+          type: 'coach_chat',
+          status: 'active',
+        });
+      } catch (e: any) {
+        log.warn('Failed to persist suggestion', { error: e.message });
+      }
+    }
+  };
+
   if (userToken) {
     try {
       const result = await aiClient.askCoach(question, coachContext, userToken, userId);
@@ -69,6 +85,7 @@ export async function askCoach(
         content: result.answer,
         context: { suggestions: result.suggestions },
       });
+      await persistSuggestions(result.suggestions || [], 'python_llm');
       return {
         answer: result.answer,
         suggestions: result.suggestions,
@@ -85,6 +102,8 @@ export async function askCoach(
   log.info(`[FALLBACK] Coach used rule-based response for user ${userId}`);
   const response = generateCoachResponse(question, profile, transactions, savingsGoals);
 
+  await persistSuggestions([response], 'keyword_fallback');
+
   return {
     answer: response,
     context: {
@@ -94,7 +113,7 @@ export async function askCoach(
   };
 }
 
-function generateCoachResponse(question: string, _profile: any, transactions: any[], savingsGoals: any[]): string {
+export function generateCoachResponse(question: string, _profile: any, transactions: any[], savingsGoals: any[]): string {
   const q = question.toLowerCase();
 
   if (q.includes('save') || q.includes('saving')) {

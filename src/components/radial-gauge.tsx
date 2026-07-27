@@ -1,4 +1,5 @@
 import Svg, { Circle, Text as SvgText, G } from 'react-native-svg';
+import { useColorScheme } from 'react-native';
 
 type Props = {
   size?: number;
@@ -15,10 +16,15 @@ export function RadialGauge({
   percentage = 78,
   label = 'Good',
   strokeWidth = 10,
-  activeColor = '#08142E',
-  trackColor = 'rgba(255,255,255,0.08)',
-  textColor = '#FFFFFF',
+  activeColor,
+  trackColor,
+  textColor,
 }: Props) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const resolvedActive = activeColor ?? (isDark ? '#D4AF37' : '#08142E');
+  const resolvedTrack = trackColor ?? (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)');
+  const resolvedText = textColor ?? (isDark ? '#FFFFFF' : '#1A1A1A');
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const clampedPct = Math.min(100, Math.max(0, percentage));
@@ -34,7 +40,7 @@ export function RadialGauge({
         cx={center}
         cy={center}
         r={radius}
-        stroke={trackColor}
+        stroke={resolvedTrack}
         strokeWidth={strokeWidth}
         fill="none"
       />
@@ -45,7 +51,7 @@ export function RadialGauge({
           cx={center}
           cy={center}
           r={radius}
-          stroke={activeColor}
+          stroke={resolvedActive}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           fill="none"
@@ -61,7 +67,7 @@ export function RadialGauge({
         textAnchor="middle"
         fontSize={fontSize}
         fontWeight="700"
-        fill={textColor}
+        fill={resolvedText}
         fontFamily="Montserrat_700Bold"
       >
         {Math.round(clampedPct)}%
@@ -74,7 +80,7 @@ export function RadialGauge({
         textAnchor="middle"
         fontSize={labelSize}
         fontWeight="500"
-        fill={textColor}
+        fill={resolvedText}
         opacity={0.7}
         fontFamily="Montserrat_500Medium"
       >

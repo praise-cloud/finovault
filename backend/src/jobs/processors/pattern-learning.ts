@@ -1,6 +1,6 @@
 import { Job } from 'bull';
-import { analyzeUserPatterns } from '../../src/services/pattern-recognition.service';
-import { createContextLogger } from '../../src/utils/logger';
+import { analyzeUserPatterns } from '../../services/pattern-recognition.service';
+import { createContextLogger } from '../../utils/logger';
 
 const log = createContextLogger('PatternLearningProcessor');
 

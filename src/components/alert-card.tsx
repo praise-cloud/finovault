@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 type AlertType = 'success' | 'error' | 'warning' | 'info';
@@ -44,11 +44,16 @@ const CONFIG = {
 };
 
 export function AlertCard({ type, title, message, action, dismissible, onDismiss }: Props) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const c = CONFIG[type];
+  const iconColor = isDark
+    ? { success: '#34D399', error: '#F87171', warning: '#FBBF24', info: '#60A5FA' }[type]
+    : c.iconColor;
 
   return (
     <View className={`flex-row items-start gap-3 p-4 rounded-xl border-l-4 ${c.bg} ${c.border}`}>
-      <MaterialIcons name={c.icon} size={22} color={c.iconColor} style={{ marginTop: 1 }} />
+      <MaterialIcons name={c.icon} size={22} color={iconColor} style={{ marginTop: 1 }} />
       <View className="flex-1">
         {title && <Text className={`font-label-md font-bold ${c.titleColor} mb-0.5`}>{title}</Text>}
         <Text className="font-body-md text-body-md text-on-surface-variant">{message}</Text>
@@ -60,7 +65,7 @@ export function AlertCard({ type, title, message, action, dismissible, onDismiss
       </View>
       {dismissible && onDismiss && (
         <Pressable onPress={onDismiss} className="p-1 active:scale-90">
-          <MaterialIcons name="close" size={18} color="#74777e" />
+          <MaterialIcons name="close" size={18} color={isDark ? '#9CA3B0' : '#74777e'} />
         </Pressable>
       )}
     </View>

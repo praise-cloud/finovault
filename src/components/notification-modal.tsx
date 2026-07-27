@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { View, Text, Pressable, Modal, ScrollView } from 'react-native';
+import { View, Text, Pressable, Modal, ScrollView, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import Animated from 'react-native-reanimated';
@@ -40,11 +40,13 @@ const TYPE_ROUTES: Record<NotificationType, string> = {
 };
 
 export function NotificationIcon({ onPress, count }: { onPress: () => void; count: number }) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   return (
     <Pressable onPress={onPress} className="p-2 rounded-full active:scale-95 relative">
-      <MaterialIcons name="notifications" size={22} color="#43474d" />
+      <MaterialIcons name="notifications" size={22} color={isDark ? '#FFFFFF' : '#43474d'} />
       {count > 0 && (
-        <View className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-error items-center justify-center px-1" style={{ borderWidth: 2, borderColor: '#fff' }}>
+        <View className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-error items-center justify-center px-1" style={{ borderWidth: 2, borderColor: isDark ? '#1A1A1A' : '#fff' }}>
           <Text className="text-white text-[10px] font-bold">{count > 9 ? '9+' : count}</Text>
         </View>
       )}
@@ -53,6 +55,8 @@ export function NotificationIcon({ onPress, count }: { onPress: () => void; coun
 }
 
 export function NotificationModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
 
   useEffect(() => {
@@ -79,7 +83,7 @@ export function NotificationModal({ visible, onClose }: { visible: boolean; onCl
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
       <Pressable className="flex-1 bg-black/40" onPress={onClose}>
-        <View className="mt-20 mx-4 bg-white rounded-3xl max-h-[70%] overflow-hidden" style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.15)', elevation: 16 }}>
+        <View className="mt-20 mx-4 rounded-3xl max-h-[70%] overflow-hidden" style={{ backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF', boxShadow: isDark ? '0 8px 24px rgba(0,0,0,0.4)' : '0 8px 24px rgba(0,0,0,0.15)', elevation: 16 }}>
           <View className="flex-row items-center justify-between px-6 pt-6 pb-4 border-b border-outline-variant/30">
             <View className="flex-row items-center gap-3">
               <Text className="font-headline-md text-primary font-bold">Notifications</Text>
@@ -87,14 +91,14 @@ export function NotificationModal({ visible, onClose }: { visible: boolean; onCl
                 <View className="bg-error px-2 py-0.5 rounded-full"><Text className="text-white text-xs font-bold">{unreadCount} new</Text></View>
               )}
             </View>
-            <Pressable onPress={onClose} className="w-8 h-8 rounded-full bg-surface-variant items-center justify-center active:scale-90">
-              <MaterialIcons name="close" size={18} color="#43474d" />
+            <Pressable onPress={onClose} className="w-8 h-8 rounded-full items-center justify-center active:scale-90" style={{ backgroundColor: isDark ? '#2A2A2A' : undefined }}>
+              <MaterialIcons name="close" size={18} color={isDark ? '#FFFFFF' : '#43474d'} />
             </Pressable>
           </View>
           <ScrollView className="px-6 py-4" contentContainerStyle={{ paddingBottom: 24 }}>
             {notifications.length === 0 ? (
               <View className="items-center py-12">
-                <MaterialIcons name="notifications-none" size={48} color="#c4c6ca" />
+                <MaterialIcons name="notifications-none" size={48} color={isDark ? '#6B6F7A' : '#c4c6ca'} />
                 <Text className="text-on-surface-variant text-body-md mt-4">No notifications yet</Text>
               </View>
             ) : (
@@ -102,7 +106,7 @@ export function NotificationModal({ visible, onClose }: { visible: boolean; onCl
                 const config = TYPE_CONFIG[n.type];
                 return (
                   <View key={n.id}>
-                    <Pressable onPress={() => handleNotificationPress(n)} className={`flex-row gap-4 p-4 rounded-xl mb-3 active:scale-[0.98] ${n.read ? 'bg-white' : 'bg-secondary-container/20'}`}>
+                    <Pressable onPress={() => handleNotificationPress(n)} className={`flex-row gap-4 p-4 rounded-xl mb-3 active:scale-[0.98] ${n.read ? '' : 'bg-secondary-container/20'}`} style={n.read ? { backgroundColor: isDark ? '#0F1A30' : '#FFFFFF' } : undefined}>
                       <View className={`w-10 h-10 rounded-full items-center justify-center ${config.bg}`}>
                         <MaterialIcons name={config.icon} size={20} color={config.color} />
                       </View>
@@ -114,7 +118,7 @@ export function NotificationModal({ visible, onClose }: { visible: boolean; onCl
                         <Text className="text-body-md text-on-surface-variant mt-1">{n.message}</Text>
                       </View>
                       <View className="justify-center">
-                        <MaterialIcons name="chevron-right" size={18} color="#c4c6ca" />
+                        <MaterialIcons name="chevron-right" size={18} color={isDark ? '#6B6F7A' : '#c4c6ca'} />
                       </View>
                     </Pressable>
                   </View>

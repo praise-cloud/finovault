@@ -1,6 +1,6 @@
 import { dailyBriefingQueue, patternLearningQueue } from './queue';
-import { createContextLogger } from '../src/utils/logger';
-import { getSupabase } from '../src/config/supabase';
+import { createContextLogger } from '../utils/logger';
+import { getSupabase } from '../config/supabase';
 
 const log = createContextLogger('Scheduler');
 

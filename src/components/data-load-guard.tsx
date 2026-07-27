@@ -42,7 +42,7 @@ export default function DataLoadGuard({
   if (isLoading) {
     return (
       <View className={className} style={[vaultContainer, style]}>
-        <ActivityIndicator size="large" color="#123B91" />
+        <ActivityIndicator size="large" color={isDark ? '#D4AF37' : '#123B91'} />
       </View>
     );
   }
