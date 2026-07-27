@@ -54,7 +54,7 @@ export default function SmeDashboard() {
         </View>
 
         <View className="flex-row flex-wrap" style={{ gap: 24 }}>
-          <View className="bg-surface-container-lowest rounded-xl p-6 border border-[#E6EBF1] flex-[2] min-w-[300px]" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2 }}>
+          <View className="bg-surface-container-lowest rounded-xl p-6 border border-[#E6EBF1] flex-[2] min-w-[260px]" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2 }}>
             <View className="flex-row justify-between items-center mb-6">
               <Text className="font-headline-md text-headline-md flex-row items-center gap-2"><MaterialIcons name="payments" size={22} color="#08142E" />{' Cash Flow Analysis'}</Text>
               <View className="bg-secondary-container px-3 py-1 rounded-full"><Text className="text-on-secondary-container text-caption font-bold">LIVE</Text></View>
@@ -196,7 +196,7 @@ export default function SmeDashboard() {
             </View>
           </View>
 
-          <View className="bg-surface-container-lowest rounded-xl p-6 border border-[#E6EBF1] flex-[2] min-w-[300px]" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2 }}>
+          <View className="bg-surface-container-lowest rounded-xl p-6 border border-[#E6EBF1] flex-[2] min-w-[260px]" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2 }}>
             <View className="flex-row items-center justify-between mb-6">
               <View className="flex-row items-center gap-3">
                 <View className="w-10 h-10 rounded-full bg-secondary-container items-center justify-center"><MaterialIcons name="security" size={20} color="#1A1A1A" /></View>

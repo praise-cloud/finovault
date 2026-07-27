@@ -18,7 +18,7 @@ export default function PayScreen() {
         </View>
       </View>
 
-      <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-margin-mobile" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {/* Pill segmented control */}
         <View className="flex-row mt-4" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5', borderRadius: 9999, padding: 3 }}>
           {(['send', 'request'] as const).map((tab) => (

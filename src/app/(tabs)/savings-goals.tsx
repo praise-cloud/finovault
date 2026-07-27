@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { View, Text, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Alert, useColorScheme } from 'react-native';
+import { View, Text, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Alert, useColorScheme, KeyboardAvoidingView, Platform } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import * as SavingsService from '@/src/lib/api/services/savings';
@@ -57,7 +57,7 @@ export default function SavingsGoalsScreen() {
         </View>
       </View>
 
-      <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }}>
+      <ScrollView className="flex-1 px-margin-mobile" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 120 }}>
         {isLoading ? (
           <View className="flex-1 items-center justify-center py-20">
             <ActivityIndicator size="large" color="#08142E" />
@@ -155,8 +155,8 @@ function AddGoalModal({ visible, onClose, onSaved }: { visible: boolean; onClose
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <Pressable className="flex-1 bg-black/40" onPress={onClose}>
-        <Pressable className="flex-1 justify-end" onPress={() => {}}>
-          <Pressable className="bg-white rounded-t-3xl p-6" onPress={() => {}}>
+        <KeyboardAvoidingView className="flex-1 justify-end" behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+          <ScrollView className="bg-white rounded-t-3xl p-6" keyboardShouldPersistTaps="handled">
             <View className="items-center pt-3 pb-1">
               <View className="w-10 h-1 rounded-full bg-outline/40" />
             </View>
@@ -202,8 +202,8 @@ function AddGoalModal({ visible, onClose, onSaved }: { visible: boolean; onClose
                 {saving ? 'Creating...' : 'Create Goal'}
               </Text>
             </Pressable>
-          </Pressable>
-        </Pressable>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </Pressable>
     </Modal>
   );

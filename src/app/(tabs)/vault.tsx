@@ -73,7 +73,7 @@ export default function VaultAssistant() {
   return (
     <KeyboardAvoidingView style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={{ flex: 1, alignItems: 'center' }}>
-        <View style={{ width: Math.min(width, 390), flex: 1 }}>
+        <View style={{ width: Math.min(width, 600), flex: 1 }}>
           <View style={{ paddingHorizontal: 20, paddingTop: 60, paddingBottom: 12 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -92,6 +92,7 @@ export default function VaultAssistant() {
           <ScrollView
             ref={scrollRef}
             style={{ flex: 1, paddingHorizontal: 20 }}
+            keyboardShouldPersistTaps="handled"
             contentContainerStyle={{ paddingBottom: 16 }}
             showsVerticalScrollIndicator={false}
           >

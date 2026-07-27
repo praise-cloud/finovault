@@ -19,7 +19,7 @@ export default function WelcomeTour() {
 
   return (
     <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center', justifyContent: 'center' }}>
-      <View style={{ width: Math.min(width, 390), flex: 1, maxHeight: '100%', backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 18, paddingTop: 54, paddingBottom: 30 }}>
+      <View style={{ width: Math.min(width, 600), flex: 1, maxHeight: '100%', backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 18, paddingTop: 54, paddingBottom: 30 }}>
         <View style={{width: '100%', height: 5, borderRadius: 10, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center'}}></View>
         <View style={{ alignItems: 'center', marginTop: 18 }}>
           <View style={{ width: '100%', height: 246, borderRadius: 5, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center' }}>

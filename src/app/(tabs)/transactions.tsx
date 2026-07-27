@@ -160,7 +160,7 @@ export default function TransactionsScreen() {
       </View>
 
       {/* Transaction list */}
-      <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-margin-mobile" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {isLoading ? (
           <View className="items-center justify-center py-20">
             <ActivityIndicator size="large" color="#08142E" />

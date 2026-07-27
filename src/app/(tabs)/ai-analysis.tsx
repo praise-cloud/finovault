@@ -128,7 +128,7 @@ export default function AiAnalysis() {
         </View>
       </View>
 
-      <ScrollView ref={scrollRef} className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+      <ScrollView ref={scrollRef} className="flex-1 px-margin-mobile" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         <View className="bg-[#0A1F5C] rounded-2xl p-5 mt-4 mb-4 relative overflow-hidden">
           <View className="absolute -top-8 -right-8 w-32 h-32 bg-white/5 rounded-full" />
           <View className="flex-row items-center gap-2 mb-2">

@@ -66,7 +66,7 @@ export default function FinancialProfile() {
 
   return (
     <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
-      <View style={{ width: Math.min(width, 390), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER }}>
+      <View style={{ width: Math.min(width, 600), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER }}>
         <View style={{ paddingHorizontal: 24, paddingTop: 60 }}>
           <View style={styles.topbar}>
             <Pressable onPress={() => router.back()} hitSlop={12}>
@@ -78,6 +78,7 @@ export default function FinancialProfile() {
 
         <ScrollView
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}
         >
           <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#111111' }]}>Your financial profile</Text>

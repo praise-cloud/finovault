@@ -91,7 +91,7 @@ export default function FraudProtection() {
 
         <View className="flex-row flex-wrap mb-4" style={{ gap: 12 }}>
           {statusCards.map((card) => (
-            <View key={card.label} className="flex-row items-center gap-3 p-4 rounded-xl bg-white border border-outline-variant/20" style={{ width: '47%', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', elevation: 1 }}>
+            <View key={card.label} className="flex-row items-center gap-3 p-4 rounded-xl bg-white border border-outline-variant/20" style={{ flex: 1, minWidth: 140, boxShadow: '0 2px 8px rgba(0,0,0,0.04)', elevation: 1 }}>
               <View className={`w-10 h-10 rounded-xl ${card.bg} items-center justify-center`}>
                 <MaterialIcons name={card.icon} size={18} color={card.color} />
               </View>

@@ -94,7 +94,7 @@ export default function Settings() {
 
   return (
     <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
-      <View style={{ width: Math.min(width, 390), flex: 1 }}>
+      <View style={{ width: Math.min(width, 600), flex: 1 }}>
         <View style={{ paddingHorizontal: 20, paddingTop: 60, paddingBottom: 12 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>

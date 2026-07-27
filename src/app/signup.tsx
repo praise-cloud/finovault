@@ -36,7 +36,7 @@ export default function SignUp() {
 
   return (
     <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
-      <View style={{ width: Math.min(width, 390), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 20, paddingTop: 54 }}>
+      <View style={{ width: Math.min(width, 600), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 20, paddingTop: 54 }}>
         <View style={styles.topbar}>
           <Pressable onPress={() => router.back()}>
             <MaterialIcons name="arrow-back" size={24} color={isDark ? '#D4AF37' : BLUE} />
@@ -44,7 +44,7 @@ export default function SignUp() {
           <Logo width={40} height={40} />
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30, paddingTop: 20 }}>
+        <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 30, paddingTop: 20 }}>
           <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#111111' }]}>Personal details</Text>
           <Text style={[styles.subtitle, { color: isDark ? '#B0B0B0' : '#666B76' }]}>Tell us a little about yourself to get started.</Text>
 

@@ -35,7 +35,7 @@ export default function Login() {
 
   return (
     <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
-      <View style={{ width: Math.min(width, 390), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 24, paddingTop: 60 }}>
+      <View style={{ width: Math.min(width, 600), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 24, paddingTop: 60 }}>
         <View style={styles.topbar}>
           <Pressable onPress={() => router.back()} hitSlop={12}>
             <MaterialIcons name="arrow-back" size={24} color={isDark ? '#D4AF37' : BLUE} />
@@ -45,7 +45,7 @@ export default function Login() {
           </Pressable>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30 }}>
+        <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 30 }}>
           <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#111111' }]}>Welcome back!</Text>
           <Text style={[styles.subtitle, { color: isDark ? '#B0B0B0' : '#666B76' }]}>Let's get you back into building wealth</Text>
 

@@ -61,7 +61,7 @@ export default function AICoachScreen() {
         </View>
       </View>
 
-      <ScrollView ref={scrollRef} className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingVertical: 16, paddingBottom: 16 }}>
+      <ScrollView ref={scrollRef} className="flex-1 px-margin-mobile" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingVertical: 16, paddingBottom: 16 }}>
         {messages.map((msg, i) => (
           <View key={i} className={`mb-4 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
             <View className={`max-w-[80%] rounded-2xl px-4 py-3 ${msg.role === 'user' ? 'bg-primary' : 'bg-surface-container-lowest border border-outline-variant/20'}`}>
