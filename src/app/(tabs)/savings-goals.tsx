@@ -46,7 +46,7 @@ export default function SavingsGoalsScreen() {
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
             <Pressable onPress={() => router.back()} className="active:scale-90">
-              <MaterialIcons name="arrow-back" size={24} color="#0A1F5C" />
+              <MaterialIcons name="arrow-back" size={24} color={isDark ? '#FFFFFF' : '#0A1F5C'} />
             </Pressable>
             <Text className="font-headline-md text-primary font-bold">Savings Goals</Text>
           </View>
@@ -60,11 +60,11 @@ export default function SavingsGoalsScreen() {
       <ScrollView className="flex-1 px-margin-mobile" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 120 }}>
         {isLoading ? (
           <View className="flex-1 items-center justify-center py-20">
-            <ActivityIndicator size="large" color="#08142E" />
+            <ActivityIndicator size="large" color={isDark ? '#D4AF37' : '#08142E'} />
           </View>
         ) : goals.length === 0 ? (
           <View className="flex-1 items-center justify-center py-20">
-            <MaterialIcons name="savings" size={64} color="#c4c7cb" />
+            <MaterialIcons name="savings" size={64} color={isDark ? 'rgba(255,255,255,0.2)' : '#c4c7cb'} />
             <Text className="text-on-surface-variant text-body-md mt-4">No savings goals yet.</Text>
             <Pressable onPress={() => setShowAddModal(true)} className="bg-primary px-6 py-3 rounded-xl mt-4 active:scale-95">
               <Text className="text-on-primary font-label-md">Create Goal</Text>
@@ -81,7 +81,7 @@ export default function SavingsGoalsScreen() {
                       <View className="flex-row items-center gap-2">
                         <Text className="font-headline-md text-primary font-bold">{goal.name}</Text>
                         {goal.status === 'completed' && (
-                          <MaterialIcons name="check-circle" size={18} color="#08142E" />
+                          <MaterialIcons name="check-circle" size={18} color={isDark ? '#D4AF37' : '#08142E'} />
                         )}
                       </View>
                       <Text className="text-caption text-on-surface-variant mt-1">
@@ -156,7 +156,7 @@ function AddGoalModal({ visible, onClose, onSaved }: { visible: boolean; onClose
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <Pressable className="flex-1 bg-black/40" onPress={onClose}>
         <KeyboardAvoidingView className="flex-1 justify-end" behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-          <ScrollView className="bg-white rounded-t-3xl p-6" keyboardShouldPersistTaps="handled">
+          <ScrollView className={`${isDark ? 'bg-[#0D1B3E]' : 'bg-white'} rounded-t-3xl p-6`} keyboardShouldPersistTaps="handled">
             <View className="items-center pt-3 pb-1">
               <View className="w-10 h-1 rounded-full bg-outline/40" />
             </View>

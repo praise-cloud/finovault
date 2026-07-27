@@ -29,7 +29,7 @@ export default function SmartSavings() {
   }, [data]);
 
   if (!data) {
-    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}><ActivityIndicator size="large" color="#08142E" /></View>;
+    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}><ActivityIndicator size="large" color={isDark ? '#D4AF37' : '#08142E'} /></View>;
   }
 
   const d = data;
@@ -57,7 +57,7 @@ export default function SmartSavings() {
               </View>
             )}
             <View className="w-10 h-10 rounded-full border-2 border-primary-fixed items-center justify-center bg-surface-container-high overflow-hidden">
-              <MaterialIcons name="person" size={22} color="#43474d" />
+              <MaterialIcons name="person" size={22} color={isDark ? '#9CA3B0' : '#43474d'} />
             </View>
           </View>
         </View>
@@ -79,10 +79,10 @@ export default function SmartSavings() {
         <View className="gap-gutter">
           <View className="flex-row flex-wrap" style={{ gap: 24 }}>
             <View className="bg-surface-container-lowest rounded-xl p-md border border-outline-variant/30 relative overflow-hidden" style={[{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2 }, isMd ? { flex: 2 } : { width: '100%' }]}>
-              <View className="absolute top-0 right-0 p-md opacity-10"><MaterialIcons name="umbrella" size={120} color="#08142E" /></View>
+              <View className="absolute top-0 right-0 p-md opacity-10"><MaterialIcons name="umbrella" size={120} color={isDark ? '#D4AF37' : '#08142E'} /></View>
               <View>
                 <View className="flex-row items-center gap-2 mb-md">
-                  <MaterialIcons name="water" size={24} color="#08142E" />
+                  <MaterialIcons name="water" size={24} color={isDark ? '#D4AF37' : '#08142E'} />
                   <Text className="font-headline-md text-headline-md">Rainy Day Fund</Text>
                 </View>
                 <View className="mb-lg">
@@ -108,7 +108,7 @@ export default function SmartSavings() {
                   </View>
                 </View>
                 <View className="flex-row items-center gap-3 bg-surface-container px-4 py-2 rounded-lg">
-                  <MaterialIcons name="lock" size={18} color="#08142E" />
+                  <MaterialIcons name="lock" size={18} color={isDark ? '#D4AF37' : '#08142E'} />
                   <View>
                     <Text className="text-caption font-caption text-on-surface-variant">Status</Text>
                     <Text className="font-label-md text-label-md text-secondary">Safe & Growing</Text>
@@ -118,7 +118,7 @@ export default function SmartSavings() {
             </View>
 
             <View className="bg-primary-container rounded-xl p-md relative overflow-hidden" style={isMd ? { flex: 1 } : { width: '100%' }}>
-              <View style={{ position: 'absolute', top: -48, right: -48, width: 192, height: 192, borderRadius: 96, backgroundColor: '#08142E', opacity: 0.2 }} />
+              <View style={{ position: 'absolute', top: -48, right: -48, width: 192, height: 192, borderRadius: 96, backgroundColor: isDark ? '#D4AF37' : '#08142E', opacity: isDark ? 0.15 : 0.2 }} />
               <View>
                 <View className="flex-row items-center gap-2 mb-md">
                   <MaterialIcons name="auto-awesome" size={20} color="#F4D35E" />
@@ -144,7 +144,7 @@ export default function SmartSavings() {
                   <View key={r.id || i} className="flex-row items-center justify-between p-3 border-b border-outline-variant/10">
                     <View className="flex-row items-center gap-4">
                       <View className="w-10 h-10 rounded-full bg-surface-container-high items-center justify-center">
-                        <MaterialIcons name={r.category === 'food' ? 'shopping-cart' : r.category === 'transport' ? 'local-gas-station' : 'coffee'} size={18} color="#43474d" />
+                        <MaterialIcons name={r.category === 'food' ? 'shopping-cart' : r.category === 'transport' ? 'local-gas-station' : 'coffee'} size={18} color={isDark ? '#9CA3B0' : '#43474d'} />
                       </View>
                       <View>
                         <Text className="font-label-md text-label-md">{r.merchant}</Text>
@@ -163,7 +163,7 @@ export default function SmartSavings() {
 
             <View className="gap-gutter" style={isMd ? { flex: 5 } : { width: '100%' }}>
               <View className="bg-surface-container-lowest rounded-xl p-md border border-outline-variant/30 items-center" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 2 }}>
-                <View className="mb-sm"><MaterialIcons name="savings" size={48} color="#08142E" /></View>
+                <View className="mb-sm"><MaterialIcons name="savings" size={48} color={isDark ? '#D4AF37' : '#08142E'} /></View>
                 <Text className="font-label-md text-label-md text-on-surface-variant mb-1">Total Savings Impact</Text>
                 <Text className="font-headline-lg text-headline-lg text-primary">${(d?.total_savings_impact || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</Text>
                 {d?.savings_trend ? (
@@ -174,10 +174,10 @@ export default function SmartSavings() {
                 ) : null}
               </View>
 
-              <View className="rounded-xl p-md" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(230, 235, 241, 0.5)' }}>
+              <View className="rounded-xl p-md" style={{ backgroundColor: isDark ? 'rgba(13,27,62,0.8)' : 'rgba(255,255,255,0.7)', borderWidth: 1, borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(230, 235, 241, 0.5)' }}>
                 <View className="flex-row items-start gap-4">
-                  <View className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(21, 0, 130, 0.1)' }}>
-                    <MaterialIcons name="tips-and-updates" size={20} color="#150082" />
+                  <View className="p-2 rounded-lg" style={{ backgroundColor: isDark ? 'rgba(212,175,55,0.12)' : 'rgba(21, 0, 130, 0.1)' }}>
+                    <MaterialIcons name="tips-and-updates" size={20} color={isDark ? '#D4AF37' : '#150082'} />
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text className="font-label-md text-label-md font-bold mb-1">Optimization Suggestion</Text>

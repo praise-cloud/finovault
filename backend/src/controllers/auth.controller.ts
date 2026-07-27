@@ -51,8 +51,8 @@ export async function forgotPassword(req: Request, res: Response): Promise<void>
 }
 
 export async function resetPassword(req: Request, res: Response): Promise<void> {
-  const { token, password } = req.body;
-  const result = await authService.resetPassword(token, password);
+  const { token, password, email } = req.body;
+  const result = await authService.resetPassword(token, password, email);
   sendSuccess(res, result);
 }
 

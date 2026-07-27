@@ -19,15 +19,15 @@ export default function FraudProtection() {
   const { count: notifCount, open: openNotifications, visible: notifVisible, close: closeNotifications } = useNotificationStore();
 
   if (!data) {
-    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}><ActivityIndicator size="large" color="#08142E" /></View>;
+    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}><ActivityIndicator size="large" color={isDark ? '#D4AF37' : '#08142E'} /></View>;
   }
 
   const d = data;
   const statusCards = [
     { icon: 'lock-open' as const, label: 'Encryption', value: d.metrics?.encryption_level || 'Active', status: 'Active', bg: 'bg-primary-container', color: '#768dad', dot: 'bg-secondary' },
-    { icon: 'psychology' as const, label: 'AI Monitoring', value: 'Pattern Detection', status: 'Active', bg: 'bg-secondary-container', color: '#1A1A1A', dot: 'bg-secondary' },
+    { icon: 'psychology' as const, label: 'AI Monitoring', value: 'Pattern Detection', status: 'Active', bg: 'bg-secondary-container', color: isDark ? '#FFFFFF' : '#1A1A1A', dot: 'bg-secondary' },
     { icon: 'key' as const, label: 'Key Custody', value: 'Secure Enclave', status: 'Protected', bg: 'bg-tertiary-fixed', color: '#321ed2', dot: 'bg-secondary' },
-    { icon: 'verified-user' as const, label: 'Identity', value: d.metrics?.identity_verified ? 'Verified Account' : 'Unverified', status: d.metrics?.identity_verified ? 'Confirmed' : 'Action Needed', bg: 'bg-primary-container', color: '#0A1F5C', dot: 'bg-secondary' },
+    { icon: 'verified-user' as const, label: 'Identity', value: d.metrics?.identity_verified ? 'Verified Account' : 'Unverified', status: d.metrics?.identity_verified ? 'Confirmed' : 'Action Needed', bg: 'bg-primary-container', color: isDark ? '#D4AF37' : '#0A1F5C', dot: 'bg-secondary' },
   ];
 
   return (
@@ -50,7 +50,7 @@ export default function FraudProtection() {
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         <View className="mt-4 mb-4">
           <View className="flex-row items-center gap-2 bg-secondary-container px-3 py-1.5 rounded-full self-start mb-3">
-            <MaterialIcons name="verified-user" size={14} color="#1A1A1A" />
+            <MaterialIcons name="verified-user" size={14} color={isDark ? '#FFFFFF' : '#1A1A1A'} />
             <Text className="text-on-secondary-container font-label-md font-bold">Vigilance Active</Text>
           </View>
           <Text className="font-headline-lg text-headline-lg text-primary">Fraud Protection</Text>
@@ -61,13 +61,13 @@ export default function FraudProtection() {
           <View className="absolute -top-12 -right-12 w-40 h-40 bg-secondary/5 rounded-full" />
           <View className="flex-row items-center justify-between mb-4">
             <Text className="font-headline-md text-primary font-bold">Security Score</Text>
-            <MaterialIcons name="info" size={20} color="#08142E" />
+            <MaterialIcons name="info" size={20} color={isDark ? '#D4AF37' : '#08142E'} />
           </View>
           <View className="items-center py-2">
             <View className="relative w-36 h-36 items-center justify-center">
               <Svg width={144} height={144} viewBox="0 0 100 100" style={{ transform: [{ rotate: '-90deg' }] }}>
-                <Circle cx={50} cy={50} r={45} fill="none" stroke="#e0e3e6" strokeWidth={8} />
-                <Circle cx={50} cy={50} r={45} fill="none" stroke="#08142E" strokeDasharray="282.7" strokeDashoffset={282.7 - (282.7 * d.security_score / 100)} strokeLinecap="round" strokeWidth={8} />
+                <Circle cx={50} cy={50} r={45} fill="none" stroke={isDark ? '#2A3A5C' : '#e0e3e6'} strokeWidth={8} />
+                <Circle cx={50} cy={50} r={45} fill="none" stroke={isDark ? '#D4AF37' : '#08142E'} strokeDasharray="282.7" strokeDashoffset={282.7 - (282.7 * d.security_score / 100)} strokeLinecap="round" strokeWidth={8} />
               </Svg>
               <View className="absolute items-center">
                 <Text className="font-display-lg text-display-lg text-primary">{d.security_score}</Text>
@@ -77,12 +77,12 @@ export default function FraudProtection() {
           </View>
           <View className="flex-row gap-3 mt-2">
             <View className="flex-1 flex-row items-center gap-2 p-2.5 bg-surface-container rounded-xl">
-              <MaterialIcons name="check-circle" size={16} color="#08142E" />
+              <MaterialIcons name="check-circle" size={16} color={isDark ? '#D4AF37' : '#08142E'} />
               <Text className="text-body-md text-xs flex-1">Identity Verified</Text>
               <Text className="text-secondary font-bold text-xs">Safe</Text>
             </View>
             <View className="flex-1 flex-row items-center gap-2 p-2.5 bg-surface-container rounded-xl">
-              <MaterialIcons name="check-circle" size={16} color="#08142E" />
+              <MaterialIcons name="check-circle" size={16} color={isDark ? '#D4AF37' : '#08142E'} />
               <Text className="text-body-md text-xs flex-1">Encryption</Text>
               <Text className="text-secondary font-bold text-xs">{d?.metrics?.encryption_level ?? 'Active'}</Text>
             </View>
@@ -91,7 +91,7 @@ export default function FraudProtection() {
 
         <View className="flex-row flex-wrap mb-4" style={{ gap: 12 }}>
           {statusCards.map((card) => (
-            <View key={card.label} className="flex-row items-center gap-3 p-4 rounded-xl bg-white border border-outline-variant/20" style={{ flex: 1, minWidth: 140, boxShadow: '0 2px 8px rgba(0,0,0,0.04)', elevation: 1 }}>
+            <View key={card.label} className={`flex-row items-center gap-3 p-4 rounded-xl ${isDark ? 'bg-[#0D1B3E]' : 'bg-white'} border border-outline-variant/20`} style={{ flex: 1, minWidth: 140, boxShadow: '0 2px 8px rgba(0,0,0,0.04)', elevation: 1 }}>
               <View className={`w-10 h-10 rounded-xl ${card.bg} items-center justify-center`}>
                 <MaterialIcons name={card.icon} size={18} color={card.color} />
               </View>
@@ -110,12 +110,12 @@ export default function FraudProtection() {
         <View className="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant/20 mb-4">
           <View className="flex-row justify-between items-center mb-4">
             <Text className="font-headline-md text-primary font-bold">Real-time Monitoring</Text>
-            <Pressable className="bg-surface-variant p-2 rounded-lg"><MaterialIcons name="filter-list" size={18} color="#43474d" /></Pressable>
+            <Pressable accessibilityRole="button" accessibilityLabel="Filter events" className="bg-surface-variant p-2 rounded-lg"><MaterialIcons name="filter-list" size={18} color={isDark ? '#9CA3B0' : '#43474d'} /></Pressable>
           </View>
           {(d.events || []).map((event, i) => (
-            <View key={event.id || i} className="flex-row items-start gap-3 p-3.5 bg-surface-container-low rounded-xl mb-2.5" style={{ borderLeftWidth: 3, borderLeftColor: event.severity === 'critical' ? '#ba1a1a' : event.severity === 'warning' ? '#08142E' : '#060045' }}>
+            <View key={event.id || i} className="flex-row items-start gap-3 p-3.5 bg-surface-container-low rounded-xl mb-2.5" style={{ borderLeftWidth: 3, borderLeftColor: event.severity === 'critical' ? '#ba1a1a' : event.severity === 'warning' ? (isDark ? '#D4AF37' : '#08142E') : (isDark ? '#D4AF37' : '#060045') }}>
               <View className={`p-2 rounded-full ${event.severity === 'critical' ? 'bg-error-container' : 'bg-secondary-container'}`}>
-                <MaterialIcons name={event.severity === 'critical' ? 'warning' : 'verified-user'} size={18} color={event.severity === 'critical' ? '#ba1a1a' : '#1A1A1A'} />
+                <MaterialIcons name={event.severity === 'critical' ? 'warning' : 'verified-user'} size={18} color={event.severity === 'critical' ? '#ba1a1a' : (isDark ? '#FFFFFF' : '#1A1A1A')} />
               </View>
               <View className="flex-1">
                 <View className="flex-row justify-between items-start">
@@ -126,7 +126,7 @@ export default function FraudProtection() {
               </View>
             </View>
           ))}
-          <Pressable className="mt-2 w-full py-3 items-center rounded-xl active:scale-[0.98]"><Text className="text-secondary font-label-md font-bold">View Historical Logs</Text></Pressable>
+          <Pressable accessibilityRole="button" className="mt-2 w-full py-3 items-center rounded-xl active:scale-[0.98]"><Text className="text-secondary font-label-md font-bold">View Historical Logs</Text></Pressable>
         </View>
 
         <View className="bg-primary rounded-2xl overflow-hidden p-5 relative mb-4">
@@ -137,10 +137,10 @@ export default function FraudProtection() {
           </View>
           <Text className="text-white/80 text-body-md mb-4">Multi-dimensional fraud detection analyzing 500+ signals across our global network.</Text>
           <View className="flex-row flex-wrap gap-3">
-            <Pressable onPress={() => router.push('/(tabs)/guardrails' as any)} className="bg-secondary px-5 py-2.5 rounded-full active:scale-95">
+            <Pressable accessibilityRole="button" onPress={() => router.push('/(tabs)/guardrails' as any)} className="bg-secondary px-5 py-2.5 rounded-full active:scale-95">
               <Text className="text-on-secondary font-bold text-sm">Configure Guardrails</Text>
             </Pressable>
-            <Pressable onPress={() => router.push('/(tabs)/audit-report' as any)} className="border border-white/30 px-5 py-2.5 rounded-full active:scale-95">
+            <Pressable accessibilityRole="button" onPress={() => router.push('/(tabs)/audit-report' as any)} className="border border-white/30 px-5 py-2.5 rounded-full active:scale-95">
               <Text className="text-white font-bold text-sm">Audit Report</Text>
             </Pressable>
           </View>

@@ -135,13 +135,14 @@ export async function forgotPassword(email: string) {
   return { message: 'Password reset email sent' };
 }
 
-export async function resetPassword(token: string, newPassword: string) {
+export async function resetPassword(token: string, newPassword: string, email?: string) {
   const supabase = getSupabase();
 
   // Verify the token by exchanging it for a session
   const { error } = await supabase.auth.verifyOtp({
     type: 'recovery',
     token,
+    email: email || '',
   });
 
   if (error) {

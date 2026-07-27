@@ -12,6 +12,7 @@ type Props = {
   secureTextEntry?: boolean;
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   rightLabel?: string;
+  accessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -25,6 +26,7 @@ export function TextInput({
   secureTextEntry,
   autoCapitalize,
   rightLabel,
+  accessibilityLabel,
   style,
 }: Props) {
   const [focused, setFocused] = useState(false);
@@ -92,6 +94,7 @@ export function TextInput({
             keyboardType={keyboardType}
             secureTextEntry={effectiveSecure}
             autoCapitalize={autoCapitalize}
+            accessibilityLabel={accessibilityLabel}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             underlineColorAndroid="transparent"
@@ -108,7 +111,7 @@ export function TextInput({
             ]}
           />
           {isPassword && (
-            <Pressable onPress={() => setShowPassword(!showPassword)} className="active:scale-95" style={{ marginLeft: 8 }}>
+            <Pressable onPress={() => setShowPassword(!showPassword)} accessibilityRole="button" accessibilityLabel={showPassword ? 'Hide password' : 'Show password'} className="active:scale-95" style={{ marginLeft: 8 }}>
               <MaterialIcons
                 name={showPassword ? 'visibility-off' : 'visibility'}
                 size={20}

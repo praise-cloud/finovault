@@ -76,7 +76,7 @@ export default function PayScreen() {
               borderRadius: 14,
             }}
           >
-            <Text className="font-display-bold" style={{ fontSize: 22, color: '#08142E' }}>$</Text>
+            <Text className="font-display-bold" style={{ fontSize: 22, color: isDark ? '#FFFFFF' : '#08142E' }}>$</Text>
             <RNTextInput
               placeholder="0.00"
               placeholderTextColor={isDark ? 'rgba(255,255,255,0.3)' : '#9ea0a5'}
@@ -91,26 +91,26 @@ export default function PayScreen() {
         <Pressable
           className="w-full py-3.5 items-center justify-center flex-row active:scale-[0.98] mt-5"
           style={{
-            backgroundColor: 'rgba(8,20,46,0.08)',
+            backgroundColor: isDark ? 'rgba(212,175,55,0.15)' : 'rgba(8,20,46,0.08)',
             borderWidth: 1.5,
-            borderColor: '#08142E',
+            borderColor: isDark ? '#D4AF37' : '#08142E',
             borderRadius: 9999,
           }}
         >
-          <MaterialIcons name={activeTab === 'send' ? 'arrow-upward' : 'arrow-downward'} size={20} color="#08142E" />
-          <Text className="font-body-semibold ml-2" style={{ fontSize: 16, color: '#08142E' }}>
+          <MaterialIcons name={activeTab === 'send' ? 'arrow-upward' : 'arrow-downward'} size={20} color={isDark ? '#D4AF37' : '#08142E'} />
+          <Text className="font-body-semibold ml-2" style={{ fontSize: 16, color: isDark ? '#D4AF37' : '#08142E' }}>
             {activeTab === 'send' ? 'Send' : 'Request'}
           </Text>
         </Pressable>
 
         {/* Trust footer */}
         <View className="flex-row items-center justify-center mt-6 gap-2">
-          <MaterialIcons name="lock" size={14} color="#08142E" />
+          <MaterialIcons name="lock" size={14} color={isDark ? '#D4AF37' : '#08142E'} />
           <Text className="font-body" style={{ fontSize: 13, color: isDark ? 'rgba(255,255,255,0.4)' : '#6B6F76' }}>
             Encrypted transfer
           </Text>
           <View className="w-1 h-1 rounded-full" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.2)' : '#c4c6ce' }} />
-          <MaterialIcons name="verified" size={14} color="#08142E" />
+          <MaterialIcons name="verified" size={14} color={isDark ? '#D4AF37' : '#08142E'} />
           <Text className="font-body" style={{ fontSize: 13, color: isDark ? 'rgba(255,255,255,0.4)' : '#6B6F76' }}>
             Verified recipient
           </Text>

@@ -15,7 +15,7 @@ export default function WealthGrowth() {
   useEffect(() => { load(); }, [load]);
 
   if (!data) {
-    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}><ActivityIndicator size="large" color="#08142E" /></View>;
+    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}><ActivityIndicator size="large" color={isDark ? '#D4AF37' : '#08142E'} /></View>;
   }
 
   const d = data;
@@ -34,7 +34,7 @@ export default function WealthGrowth() {
               <Text className="font-label-md text-on-surface-variant">Fraud Protection</Text>
             </View>
             <View className="w-10 h-10 rounded-full border-2 border-primary items-center justify-center bg-surface-container-high">
-              <MaterialIcons name="person" size={22} color="#43474d" />
+              <MaterialIcons name="person" size={22} color={isDark ? '#9CA3B0' : '#43474d'} />
             </View>
           </View>
         </View>
@@ -68,19 +68,19 @@ export default function WealthGrowth() {
                   <Text className="font-caption text-on-surface-variant">AI-projected growth over 12 months</Text>
                 </View>
                 <View className="flex-row gap-2 bg-surface-container-low p-1 rounded-lg">
-                  <Pressable className="px-4 py-1 bg-white rounded shadow-sm"><Text className="font-label-md text-primary">1Y</Text></Pressable>
+                  <Pressable className={`px-4 py-1 ${isDark ? 'bg-[#0D1B3E]' : 'bg-white'} rounded shadow-sm`}><Text className="font-label-md text-primary">1Y</Text></Pressable>
                   <Pressable className="px-4 py-1"><Text className="font-label-md text-on-surface-variant">5Y</Text></Pressable>
                   <Pressable className="px-4 py-1"><Text className="font-label-md text-on-surface-variant">MAX</Text></Pressable>
                 </View>
               </View>
               <View className="h-80 w-full relative overflow-hidden rounded-lg bg-surface-bright flex items-end px-4 pb-8">
-                <View className="absolute inset-0 opacity-10 bg-surface-bright"><View className="h-full w-full" style={{ backgroundColor: '#08142E' }} /></View>
+                <View className="absolute inset-0 opacity-10 bg-surface-bright"><View className="h-full w-full" style={{ backgroundColor: isDark ? '#D4AF37' : '#08142E' }} /></View>
                 <View className="flex-row items-end justify-between w-full h-full gap-2 z-10">
                   {(d.performance_forecast || []).map((h, i) => (
-                    <View key={i} className="flex-1 rounded-t-sm" style={{ height: `${h}%`, backgroundColor: i > 5 ? '#08142E' : '#0A1F5C', opacity: i > 5 ? 0.8 : 0.2 + (i * 0.1) }} />
+                    <View key={i} className="flex-1 rounded-t-sm" style={{ height: `${h}%`, backgroundColor: i > 5 ? (isDark ? '#D4AF37' : '#08142E') : (isDark ? '#D4AF37' : '#0A1F5C'), opacity: i > 5 ? 0.8 : 0.2 + (i * 0.1) }} />
                   ))}
                 </View>
-                <View className="absolute right-0 top-0 h-full w-1/3 flex items-center justify-center" style={{ backgroundColor: 'rgba(8,20,46,0.03)' }}>
+                <View className="absolute right-0 top-0 h-full w-1/3 flex items-center justify-center" style={{ backgroundColor: isDark ? 'rgba(212,175,55,0.08)' : 'rgba(8,20,46,0.03)' }}>
                   <Text className="text-[10px] font-bold tracking-widest text-secondary/40 uppercase" style={{ transform: [{ rotate: '90deg' }] }}>AI Projection</Text>
                 </View>
               </View>
@@ -91,9 +91,9 @@ export default function WealthGrowth() {
               <View className="items-center my-md">
                 <View className="relative w-48 h-48 items-center justify-center">
                   <Svg width={192} height={192} viewBox="0 0 192 192" style={{ transform: [{ rotate: '-90deg' }] }}>
-                    <Circle cx={96} cy={96} r={80} fill="transparent" stroke="#ebeef1" strokeWidth={24} />
-                    <Circle cx={96} cy={96} r={80} fill="transparent" stroke="#0A1F5C" strokeDasharray="502" strokeDashoffset="150" strokeWidth={24} />
-                    <Circle cx={96} cy={96} r={80} fill="transparent" stroke="#08142E" strokeDasharray="502" strokeDashoffset="400" strokeWidth={24} />
+                    <Circle cx={96} cy={96} r={80} fill="transparent" stroke={isDark ? '#2A3A5C' : '#ebeef1'} strokeWidth={24} />
+                    <Circle cx={96} cy={96} r={80} fill="transparent" stroke={isDark ? '#D4AF37' : '#0A1F5C'} strokeDasharray="502" strokeDashoffset="150" strokeWidth={24} />
+                    <Circle cx={96} cy={96} r={80} fill="transparent" stroke={isDark ? '#D4AF37' : '#08142E'} strokeDasharray="502" strokeDashoffset="400" strokeWidth={24} />
                     <Circle cx={96} cy={96} r={80} fill="transparent" stroke="#321ed2" strokeDasharray="502" strokeDashoffset="450" strokeWidth={24} />
                   </Svg>
                   <View className="absolute items-center">
@@ -118,7 +118,7 @@ export default function WealthGrowth() {
             <View className="w-full md:w-[58.3333%] bg-surface-container-lowest rounded-xl p-md border border-outline-variant shadow-sm">
               <View className="flex-row items-center justify-between mb-md">
                 <Text className="font-headline-md text-primary">Market Intelligence</Text>
-                <MaterialIcons name="psychology" size={24} color="#08142E" />
+                <MaterialIcons name="psychology" size={24} color={isDark ? '#D4AF37' : '#08142E'} />
               </View>
               {(d.market_insights || []).map((item, i) => (
                 <View key={item.id || i} className="flex-row gap-md items-start p-sm rounded-lg">

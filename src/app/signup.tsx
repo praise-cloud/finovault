@@ -38,7 +38,7 @@ export default function SignUp() {
     <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
       <View style={{ width: Math.min(width, 600), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 20, paddingTop: 54 }}>
         <View style={styles.topbar}>
-          <Pressable onPress={() => router.back()}>
+          <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back">
             <MaterialIcons name="arrow-back" size={24} color={isDark ? '#D4AF37' : BLUE} />
           </Pressable>
           <Logo width={40} height={40} />
@@ -48,10 +48,10 @@ export default function SignUp() {
           <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#111111' }]}>Personal details</Text>
           <Text style={[styles.subtitle, { color: isDark ? '#B0B0B0' : '#666B76' }]}>Tell us a little about yourself to get started.</Text>
 
-          <TextInput label="Full Name" value={name} onChangeText={setName} placeholder="John Doe" />
-          <TextInput label="Email Address" value={email} onChangeText={setEmail} placeholder="name@example.com" keyboardType="email-address" autoCapitalize="none" />
-          <TextInput label="Phone Number" value={phone} onChangeText={setPhone} placeholder="+1 555 000 0000" keyboardType="phone-pad" />
-          <TextInput label="Password" value={password} onChangeText={setPassword} placeholder="••••••••" secureTextEntry />
+          <TextInput label="Full Name" value={name} onChangeText={setName} placeholder="John Doe" accessibilityLabel="Full name" />
+          <TextInput label="Email Address" value={email} onChangeText={setEmail} placeholder="name@example.com" keyboardType="email-address" autoCapitalize="none" accessibilityLabel="Email address" />
+          <TextInput label="Phone Number" value={phone} onChangeText={setPhone} placeholder="+1 555 000 0000" keyboardType="phone-pad" accessibilityLabel="Phone number" />
+          <TextInput label="Password" value={password} onChangeText={setPassword} placeholder="••••••••" secureTextEntry accessibilityLabel="Password" />
 
           <View style={{ flexDirection: 'row', gap: 2, marginTop: -17, marginBottom: 9 }}>
             {[0, 1, 2, 3].map((item) => (
@@ -66,11 +66,11 @@ export default function SignUp() {
             ))}
           </View>
 
-          <TextInput label="Confirm Password" value={confirmPassword} onChangeText={setConfirmPassword} placeholder="••••••••" secureTextEntry />
+          <TextInput label="Confirm Password" value={confirmPassword} onChangeText={setConfirmPassword} placeholder="••••••••" secureTextEntry accessibilityLabel="Confirm password" />
 
           {!!error && <Text style={styles.error}>{error}</Text>}
 
-          <Pressable onPress={submit} disabled={loading} style={styles.cta}>
+          <Pressable onPress={submit} disabled={loading} accessibilityRole="button" style={styles.cta}>
             {loading ? (
               <ActivityIndicator color="#FFFFFF" size="small" />
             ) : (

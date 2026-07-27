@@ -39,10 +39,11 @@ export default function EntrepreneurDashboard() {
   return (
     <View className="flex-1 bg-surface-bright" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
       <View
-        className="bg-surface-bright pt-14 pb-3 px-margin-mobile md:px-margin-desktop"
+              className="pt-14 pb-3 px-margin-mobile md:px-margin-desktop"
         style={{
           elevation: 4,
           boxShadow: '0 4px 4px rgba(0,0,0,0.04)',
+          backgroundColor: isDark ? '#0D1B3E' : '#FFFFFF',
         }}
       >
         <View
@@ -67,7 +68,7 @@ export default function EntrepreneurDashboard() {
               </Text>
             </View>
             <View className="w-10 h-10 rounded-full bg-secondary-container border-2 border-white items-center justify-center overflow-hidden">
-              <MaterialIcons name="person" size={20} color="#1A1A1A" />
+              <MaterialIcons name="person" size={20} color={isDark ? '#FFFFFF' : '#1A1A1A'} />
             </View>
           </View>
         </View>
@@ -125,7 +126,7 @@ export default function EntrepreneurDashboard() {
                       <MaterialIcons
                         name="arrow-upward"
                         size={18}
-                        color="#1A1A1A"
+                        color={isDark ? '#FFFFFF' : '#1A1A1A'}
                       />
                       <Text className="text-on-secondary-container font-label-md">
                         {d.mrr_growth ?? 0}% vs LY
@@ -194,7 +195,7 @@ export default function EntrepreneurDashboard() {
                     <MaterialIcons
                       name="chevron-right"
                       size={18}
-                      color="#00201a"
+                      color={isDark ? '#D4AF37' : '#00201a'}
                     />
                   </Pressable>
                 </View>
@@ -207,7 +208,7 @@ export default function EntrepreneurDashboard() {
 
             <BentoCard>
               <View className="flex-row items-center gap-2 mb-4">
-                <MaterialIcons name="verified-user" size={20} color="#08142E" />
+                <MaterialIcons name="verified-user" size={20} color={isDark ? '#D4AF37' : '#08142E'} />
                 <Text className="font-label-md text-primary">
                   Smart Savings
                 </Text>
@@ -244,7 +245,7 @@ export default function EntrepreneurDashboard() {
                   className="flex-row items-center gap-4 mb-6"
                 >
                   <View className="w-12 h-12 rounded-full bg-surface-container items-center justify-center shrink-0">
-                    <MaterialIcons name="person" size={24} color="#43474d" />
+                    <MaterialIcons name="person" size={24} color={isDark ? '#9CA3B0' : '#43474d'} />
                   </View>
                   <View className="flex-1">
                     <Text className="font-label-md text-primary font-bold">
@@ -254,7 +255,7 @@ export default function EntrepreneurDashboard() {
                       {person.role}
                     </Text>
                   </View>
-                  <MaterialIcons name="chat" size={20} color="#0A1F5C" />
+                  <MaterialIcons name="chat" size={20} color={isDark ? '#D4AF37' : '#0A1F5C'} />
                 </View>
               ))}
               <View className="mt-8 pt-6 border-t border-surface-variant/50">
@@ -285,7 +286,7 @@ export default function EntrepreneurDashboard() {
                   </Text>
                 </View>
                 <View className="flex-row bg-surface-container-low rounded-lg p-1">
-                  <Text className="px-4 py-1.5 bg-white shadow-sm rounded-md font-label-md text-primary">
+                  <Text className={`px-4 py-1.5 ${isDark ? 'bg-[#0D1B3E]' : 'bg-white'} shadow-sm rounded-md font-label-md text-primary`}>
                     Week
                   </Text>
                   <Text className="px-4 py-1.5 font-label-md text-on-surface-variant">
@@ -363,7 +364,7 @@ export default function EntrepreneurDashboard() {
                       <MaterialIcons
                         name="tips-and-updates"
                         size={18}
-                        color="#1A1A1A"
+                        color={isDark ? '#FFFFFF' : '#1A1A1A'}
                       />{" "}
                       Rebalancing suggested for Q4 based on female-led VC
                       trends.

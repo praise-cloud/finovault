@@ -51,13 +51,13 @@ export default function AICoachScreen() {
       <View className="bg-[#FFFFFF] pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center gap-3">
           <Pressable onPress={() => router.back()} className="active:scale-90">
-            <MaterialIcons name="arrow-back" size={24} color="#0A1F5C" />
+            <MaterialIcons name="arrow-back" size={24} color={isDark ? '#FFFFFF' : '#0A1F5C'} />
           </Pressable>
           <View className="flex-1">
             <Text className="font-headline-md text-primary font-bold">AI Coach</Text>
             <Text className="text-caption text-on-surface-variant">Your personal financial advisor</Text>
           </View>
-          <MaterialIcons name="auto-awesome" size={24} color="#08142E" />
+          <MaterialIcons name="auto-awesome" size={24} color={isDark ? '#D4AF37' : '#08142E'} />
         </View>
       </View>
 
@@ -91,7 +91,7 @@ export default function AICoachScreen() {
             className="active:scale-90"
             hitSlop={8}
           >
-            <MaterialIcons name="mic-off" size={24} color="#c4c7cb" />
+            <MaterialIcons name="mic-off" size={24} color={isDark ? 'rgba(255,255,255,0.3)' : '#c4c7cb'} />
           </Pressable>
           <TextInput
             className="flex-1 font-body-md py-2"
@@ -106,7 +106,7 @@ export default function AICoachScreen() {
             disabled={isLoading || !input.trim()}
             className={`w-10 h-10 rounded-full items-center justify-center ${input.trim() ? 'bg-primary' : 'bg-surface-container'}`}
           >
-            <MaterialIcons name="send" size={20} color={input.trim() ? '#fff' : '#c4c7cb'} />
+            <MaterialIcons name="send" size={20} color={input.trim() ? '#fff' : (isDark ? 'rgba(255,255,255,0.3)' : '#c4c7cb')} />
           </Pressable>
         </View>
       </View>

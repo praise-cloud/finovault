@@ -94,11 +94,11 @@ export default function TransactionsScreen() {
             <Text className="font-body-bold" style={{ fontSize: 22, color: textColor }}>Transactions</Text>
           </View>
           <Pressable onPress={() => setShowAddModal(true)} className="active:scale-90"
-            style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: '#08142E', borderRadius: 9999, paddingHorizontal: 16, paddingVertical: 8 }}
+            style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: isDark ? '#D4AF37' : '#08142E', borderRadius: 9999, paddingHorizontal: 16, paddingVertical: 8 }}
           >
             <View className="flex-row items-center gap-1">
-              <MaterialIcons name="add" size={18} color="#08142E" />
-              <Text className="font-body-semibold" style={{ fontSize: 13, color: '#08142E' }}>Add</Text>
+              <MaterialIcons name="add" size={18} color={isDark ? '#D4AF37' : '#08142E'} />
+              <Text className="font-body-semibold" style={{ fontSize: 13, color: isDark ? '#D4AF37' : '#08142E' }}>Add</Text>
             </View>
           </Pressable>
         </View>
@@ -141,14 +141,14 @@ export default function TransactionsScreen() {
                   borderRadius: 9999,
                   backgroundColor: isActive ? 'rgba(8,20,46,0.08)' : isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5',
                   borderWidth: isActive ? 0 : 1,
-                  borderColor: isActive ? '#08142E' : isDark ? 'rgba(255,255,255,0.1)' : '#E4E7EE',
+                  borderColor: isActive ? (isDark ? '#D4AF37' : '#08142E') : isDark ? 'rgba(255,255,255,0.1)' : '#E4E7EE',
                 }}
               >
                 <Text
                   className="font-body-medium"
                   style={{
                     fontSize: 13,
-                    color: isActive ? '#08142E' : mutedColor,
+                    color: isActive ? (isDark ? '#D4AF37' : '#08142E') : mutedColor,
                   }}
                 >
                   {f}
@@ -163,7 +163,7 @@ export default function TransactionsScreen() {
       <ScrollView className="flex-1 px-margin-mobile" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {isLoading ? (
           <View className="items-center justify-center py-20">
-            <ActivityIndicator size="large" color="#08142E" />
+            <ActivityIndicator size="large" color={isDark ? '#D4AF37' : '#08142E'} />
           </View>
         ) : transactions.length === 0 ? (
           <View className="items-center justify-center py-20">
@@ -172,16 +172,16 @@ export default function TransactionsScreen() {
             <Pressable
               onPress={() => setShowAddModal(true)}
               className="mt-5 py-3 px-6 active:scale-95"
-              style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: '#08142E', borderRadius: 9999 }}
+              style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: isDark ? '#D4AF37' : '#08142E', borderRadius: 9999 }}
             >
-              <Text className="font-body-semibold" style={{ fontSize: 15, color: '#08142E' }}>Add Transaction</Text>
+              <Text className="font-body-semibold" style={{ fontSize: 15, color: isDark ? '#D4AF37' : '#08142E' }}>Add Transaction</Text>
             </Pressable>
           </View>
         ) : (
           <View className="mt-2">
             {transactions.map((tx: any) => {
               const icon = getIconForTx(tx);
-              const iconColor = tx.type === 'income' ? '#2E7D5B' : tx.type === 'expense' ? '#BA1A1A' : '#08142E';
+              const iconColor = tx.type === 'income' ? '#2E7D5B' : tx.type === 'expense' ? '#BA1A1A' : (isDark ? '#D4AF37' : '#08142E');
               const amountStr = `${tx.type === 'income' ? '+' : '-'}${formatCurrency(convertAmount(tx.amount, currency.rate), currency.code)}`;
               const amountColor = tx.type === 'income' ? '#2E7D5B' : textColor;
               const detail = [tx.merchant || tx.category || 'General', tx.status === 'flagged' ? '🚩 Flagged' : ''].filter(Boolean).join(' • ');
@@ -290,7 +290,7 @@ function AddTransactionModal({ visible, onClose, onSaved, isDark }: {
                     backgroundColor: type === t ? 'rgba(8,20,46,0.08)' : isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5',
                   }}
                 >
-                  <Text className="font-body-semibold" style={{ fontSize: 13, color: type === t ? '#08142E' : muted }}>
+                  <Text className="font-body-semibold" style={{ fontSize: 13, color: type === t ? (isDark ? '#D4AF37' : '#08142E') : muted }}>
                     {t.charAt(0).toUpperCase() + t.slice(1)}
                   </Text>
                 </Pressable>
@@ -375,9 +375,9 @@ function AddTransactionModal({ visible, onClose, onSaved, isDark }: {
               onPress={handleSave}
               disabled={saving}
               className="w-full py-3.5 items-center mt-2 active:scale-[0.98]"
-              style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: '#08142E', borderRadius: 9999 }}
+              style={{ backgroundColor: 'rgba(8,20,46,0.08)', borderWidth: 1.5, borderColor: isDark ? '#D4AF37' : '#08142E', borderRadius: 9999 }}
             >
-              <Text className="font-body-semibold" style={{ fontSize: 15, color: '#08142E' }}>
+              <Text className="font-body-semibold" style={{ fontSize: 15, color: isDark ? '#D4AF37' : '#08142E' }}>
                 {saving ? 'Saving...' : 'Save Transaction'}
               </Text>
             </Pressable>

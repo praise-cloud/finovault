@@ -77,7 +77,7 @@ export default function VaultAssistant() {
           <View style={{ paddingHorizontal: 20, paddingTop: 60, paddingBottom: 12 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <Logo width={20} height={18} color={BLUE} />
+                <Logo width={20} height={18} color={isDark ? '#D4AF37' : BLUE} />
                 <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 18, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Vault</Text>
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -111,7 +111,7 @@ export default function VaultAssistant() {
                       width: 26,
                       height: 26,
                       borderRadius: 13,
-                      backgroundColor: BLUE,
+                      backgroundColor: isDark ? '#D4AF37' : BLUE,
                       alignItems: 'center',
                       justifyContent: 'center',
                       marginRight: 8,
@@ -123,7 +123,7 @@ export default function VaultAssistant() {
                 <View
                   style={{
                     maxWidth: '75%',
-                    backgroundColor: m.role === 'user' ? BLUE : (isDark ? '#1A1A1A' : '#FFFFFF'),
+                    backgroundColor: m.role === 'user' ? (isDark ? '#D4AF37' : BLUE) : (isDark ? '#1A1A1A' : '#FFFFFF'),
                     borderRadius: 16,
                     borderTopLeftRadius: m.role === 'assistant' ? 4 : 16,
                     borderTopRightRadius: m.role === 'user' ? 4 : 16,
@@ -154,7 +154,7 @@ export default function VaultAssistant() {
                     width: 26,
                     height: 26,
                     borderRadius: 13,
-                    backgroundColor: BLUE,
+                    backgroundColor: isDark ? '#D4AF37' : BLUE,
                     alignItems: 'center',
                     justifyContent: 'center',
                     marginRight: 8,
@@ -183,7 +183,7 @@ export default function VaultAssistant() {
                       maxWidth: '90%',
                     }}
                   >
-                    <Text style={{ fontFamily: 'Montserrat_500Medium', fontSize: 13, color: BLUE }}>{s}</Text>
+                    <Text style={{ fontFamily: 'Montserrat_500Medium', fontSize: 13, color: isDark ? '#D4AF37' : BLUE }}>{s}</Text>
                   </Pressable>
                 ))}
               </View>
@@ -214,7 +214,7 @@ export default function VaultAssistant() {
                 returnKeyType="send"
               />
               <Pressable hitSlop={8} style={{ padding: 6 }}>
-                <MaterialIcons name="mic-none" size={20} color={BLUE} />
+                <MaterialIcons name="mic-none" size={20} color={isDark ? '#D4AF37' : BLUE} />
               </Pressable>
               <Pressable
                 onPress={() => send()}
@@ -223,7 +223,7 @@ export default function VaultAssistant() {
                   width: 38,
                   height: 38,
                   borderRadius: 19,
-                  backgroundColor: input.trim() ? BLUE : '#C9CEDD',
+                  backgroundColor: input.trim() ? (isDark ? '#D4AF37' : BLUE) : '#C9CEDD',
                   alignItems: 'center',
                   justifyContent: 'center',
                   marginLeft: 6,

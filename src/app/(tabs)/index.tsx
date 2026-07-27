@@ -19,31 +19,34 @@ function SegmentedControl({
   options,
   value,
   onChange,
+  isDark,
 }: {
   options: string[];
   value: string;
   onChange: (v: string) => void;
+  isDark?: boolean;
 }) {
   return (
-    <View style={{ flexDirection: 'row', backgroundColor: '#EEF0F5', borderRadius: 9999, padding: 3 }}>
+    <View style={{ flexDirection: 'row', backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5', borderRadius: 9999, padding: 3 }}>
       {options.map((opt) => {
         const active = opt === value;
         return (
           <Pressable
             key={opt}
             onPress={() => onChange(opt)}
+            accessibilityRole="button"
             style={{
               paddingHorizontal: 18,
               paddingVertical: 8,
               borderRadius: 9999,
-              backgroundColor: active ? BLUE : 'transparent',
+              backgroundColor: active ? (isDark ? '#D4AF37' : BLUE) : 'transparent',
             }}
           >
             <Text
               style={{
                 fontFamily: 'Montserrat_600SemiBold',
                 fontSize: 13,
-                color: active ? '#FFFFFF' : '#4B5163',
+                color: active ? '#FFFFFF' : (isDark ? 'rgba(255,255,255,0.5)' : '#4B5163'),
               }}
             >
               {opt}
@@ -101,7 +104,7 @@ export default function IndividualDashboard() {
   if (isLoading && !summary) {
     return (
       <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
-        <ActivityIndicator size="large" color={BLUE} />
+        <ActivityIndicator size="large" color={isDark ? '#D4AF37' : BLUE} />
       </View>
     );
   }
@@ -122,7 +125,7 @@ export default function IndividualDashboard() {
           </View>
           <View className="flex-row items-center gap-3">
             <NotificationIcon onPress={openNotifications} count={notifCount} />
-            <Pressable onPress={() => router.push('/(tabs)/profile')} className="active:scale-90">
+            <Pressable onPress={() => router.push('/(tabs)/profile')} accessibilityLabel="Profile" accessibilityRole="button" className="active:scale-90">
               <UserAvatar size={36} />
             </Pressable>
           </View>
@@ -132,7 +135,7 @@ export default function IndividualDashboard() {
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {/* Segment control + net worth */}
         <View className="flex-row items-center justify-between mt-2">
-          <SegmentedControl options={['Budgets', 'Accounts']} value={view} onChange={(v) => setView(v as any)} />
+          <SegmentedControl options={['Budgets', 'Accounts']} value={view} onChange={(v) => setView(v as any)} isDark={isDark} />
           <View style={{ alignItems: 'flex-end' }}>
             <Text className="font-body" style={{ fontSize: 11, color: isDark ? 'rgba(255,255,255,0.5)' : '#8A8E98' }}>
               Net worth
@@ -144,14 +147,14 @@ export default function IndividualDashboard() {
         </View>
 
         {/* Balance / tax liability card */}
-        <View style={{ backgroundColor: BLUE, borderRadius: 20, padding: 20, marginTop: 16 }}>
+        <View style={{ backgroundColor: isDark ? '#0D1B3E' : BLUE, borderRadius: 20, padding: 20, marginTop: 16 }}>
           <View className="flex-row items-center justify-between">
             <View style={{ backgroundColor: 'rgba(46,125,91,0.9)', borderRadius: 9999, paddingHorizontal: 12, paddingVertical: 5 }}>
               <Text className="font-body-semibold" style={{ fontSize: 11, color: '#FFFFFF' }}>
                 Estimated Tax Liability
               </Text>
             </View>
-            <Pressable hitSlop={10}>
+            <Pressable accessibilityLabel="More options" accessibilityRole="button" hitSlop={10}>
               <MaterialIcons name="more-horiz" size={20} color="rgba(255,255,255,0.7)" />
             </Pressable>
           </View>
@@ -183,8 +186,8 @@ export default function IndividualDashboard() {
             <Text className="font-body-bold" style={{ fontSize: 17, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>
               Transactions
             </Text>
-            <Pressable onPress={() => showSheet({ title: 'All Activity', children: activitySheetContent() })}>
-              <Text className="font-body-semibold" style={{ fontSize: 14, color: BLUE }}>See all</Text>
+            <Pressable onPress={() => showSheet({ title: 'All Activity', children: activitySheetContent() })} accessibilityRole="button">
+              <Text className="font-body-semibold" style={{ fontSize: 14, color: isDark ? '#D4AF37' : BLUE }}>See all</Text>
             </Pressable>
           </View>
           <FlatCard className="px-4">
@@ -193,7 +196,7 @@ export default function IndividualDashboard() {
                 <ListRow
                   key={tx.id || i}
                   icon={tx.type === 'income' ? 'arrow-downward' : 'arrow-upward'}
-                  iconColor={tx.type === 'income' ? '#2E7D5B' : '#1A1A1A'}
+                  iconColor={tx.type === 'income' ? '#2E7D5B' : (isDark ? '#FFFFFF' : '#1A1A1A')}
                   label={tx.description}
                   secondary={`Added: ${tx.date_label || tx.merchant || tx.category}`}
                   amount={formatCurrency(convertAmount(tx.amount, currency.rate), currency.code)}
@@ -217,8 +220,8 @@ export default function IndividualDashboard() {
             <Text className="font-body-bold" style={{ fontSize: 17, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>
               Asset Allocation
             </Text>
-            <Pressable onPress={() => router.push('/(tabs)/vault')}>
-              <Text className="font-body-semibold" style={{ fontSize: 14, color: BLUE }}>See all</Text>
+            <Pressable onPress={() => router.push('/(tabs)/vault')} accessibilityRole="button">
+              <Text className="font-body-semibold" style={{ fontSize: 14, color: isDark ? '#D4AF37' : BLUE }}>See all</Text>
             </Pressable>
           </View>
           <FlatCard className="px-4">
@@ -227,7 +230,7 @@ export default function IndividualDashboard() {
                 <ListRow
                   key={asset.id || i}
                   icon={ASSET_ICONS[asset.category_key] || ASSET_ICONS.default}
-                  iconColor={BLUE}
+                  iconColor={isDark ? '#D4AF37' : BLUE}
                   label={asset.label}
                   secondary={`${asset.portfolio_pct}% of portfolio`}
                   amount={formatCurrency(convertAmount(asset.value, currency.rate), currency.code)}
@@ -254,7 +257,7 @@ export default function IndividualDashboard() {
       <ListRow
         key={tx.id || i}
         icon={tx.type === 'income' ? 'arrow-downward' : 'arrow-upward'}
-        iconColor={tx.type === 'income' ? '#2E7D5B' : '#1A1A1A'}
+        iconColor={tx.type === 'income' ? '#2E7D5B' : (isDark ? '#FFFFFF' : '#1A1A1A')}
         label={tx.description}
         secondary={`Added: ${tx.date_label || tx.merchant || tx.category}`}
         amount={formatCurrency(convertAmount(tx.amount, currency.rate), currency.code)}

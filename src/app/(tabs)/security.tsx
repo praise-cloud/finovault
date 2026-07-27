@@ -34,8 +34,8 @@ export default function Security() {
     <View className="flex-1 bg-surface-bright" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
       <View className="bg-surface-bright pt-14 pb-3 px-margin-mobile" style={{ boxShadow: '0 4px 4px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center gap-3">
-          <Pressable onPress={() => router.back()} className="w-9 h-9 rounded-xl bg-surface-variant items-center justify-center active:scale-90">
-            <MaterialIcons name="arrow-back" size={20} color="#43474d" />
+          <Pressable onPress={() => router.back()} className="w-9 h-9 rounded-xl bg-surface-variant items-center justify-center active:scale-90" accessibilityLabel="Go back" accessibilityRole="button">
+            <MaterialIcons name="arrow-back" size={20} color={isDark ? '#FFFFFF' : '#43474d'} />
           </Pressable>
           <Text className="font-headline-md text-primary font-bold">Security</Text>
         </View>
@@ -44,14 +44,14 @@ export default function Security() {
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {loading ? (
           <View className="flex-1 items-center justify-center mt-20">
-            <ActivityIndicator size="large" color="#1A1A1A" />
+            <ActivityIndicator size="large" color={isDark ? '#FFFFFF' : '#1A1A1A'} />
           </View>
         ) : (
           <View className="mt-4 mb-6">
-            <View className="bg-white border border-outline-variant/20 rounded-2xl p-5 mb-4">
+            <View className={`${isDark ? 'bg-[#0D1B3E]' : 'bg-white'} border border-outline-variant/20 rounded-2xl p-5 mb-4`}>
               <View className="flex-row items-center gap-3 mb-4">
                 <View className="w-12 h-12 rounded-full bg-secondary-container items-center justify-center">
-                  <MaterialIcons name="shield-moon" size={24} color="#1A1A1A" />
+                  <MaterialIcons name="shield-moon" size={24} color={isDark ? '#FFFFFF' : '#1A1A1A'} />
                 </View>
                 <View className="flex-1">
                   <Text className="font-headline-md text-primary font-bold">Security Status</Text>
@@ -73,12 +73,13 @@ export default function Security() {
               </View>
             </View>
 
-            <View className="bg-white border border-outline-variant/20 rounded-2xl overflow-hidden">
+            <View className={`${isDark ? 'bg-[#0D1B3E]' : 'bg-white'} border border-outline-variant/20 rounded-2xl overflow-hidden`}>
               {items.map((item, i) => (
                 <Pressable
                   key={item.label}
                   onPress={() => item.route ? router.push(item.route as any) : null}
                   className={`flex-row items-center gap-3 p-4 ${i < items.length - 1 ? 'border-b border-outline-variant/10' : ''} active:scale-[0.98]`}
+                  accessibilityRole="button"
                 >
                   <View className="w-10 h-10 rounded-xl bg-primary-container items-center justify-center">
                     <MaterialIcons name={item.icon} size={20} color="#ffffff" />
@@ -92,7 +93,7 @@ export default function Security() {
                       <Text className="text-on-secondary-container text-xs font-bold">{item.status}</Text>
                     </View>
                   )}
-                  <MaterialIcons name="chevron-right" size={18} color="#c4c6ca" />
+                  <MaterialIcons name="chevron-right" size={18} color={isDark ? 'rgba(255,255,255,0.2)' : '#c4c6ca'} />
                 </Pressable>
               ))}
             </View>

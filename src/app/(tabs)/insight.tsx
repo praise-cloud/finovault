@@ -21,20 +21,23 @@ function SegmentedControl({
   value,
   onChange,
   activeColor,
+  isDark,
 }: {
   options: string[];
   value: string;
   onChange: (v: string) => void;
   activeColor: string;
+  isDark?: boolean;
 }) {
   return (
-    <View style={{ flexDirection: 'row', backgroundColor: '#EEF0F5', borderRadius: 9999, padding: 3, alignSelf: 'flex-start' }}>
+    <View style={{ flexDirection: 'row', backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5', borderRadius: 9999, padding: 3, alignSelf: 'flex-start' }}>
       {options.map((opt) => {
         const active = opt === value;
         return (
           <Pressable
             key={opt}
             onPress={() => onChange(opt)}
+            accessibilityRole="button"
             style={{
               paddingHorizontal: 20,
               paddingVertical: 9,
@@ -46,7 +49,7 @@ function SegmentedControl({
               style={{
                 fontFamily: 'Montserrat_600SemiBold',
                 fontSize: 13,
-                color: active ? '#FFFFFF' : '#4B5163',
+                color: active ? '#FFFFFF' : (isDark ? 'rgba(255,255,255,0.5)' : '#4B5163'),
               }}
             >
               {opt}
@@ -93,14 +96,14 @@ export default function InsightScreen() {
   if (isLoading && !summary) {
     return (
       <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
-        <ActivityIndicator size="large" color={BLUE} />
+        <ActivityIndicator size="large" color={isDark ? '#D4AF37' : BLUE} />
       </View>
     );
   }
 
   const isIncome = mode === 'Income';
-  const cardColor = isIncome ? BLUE : OUTCOME_RED;
-  const rowIconColor = isIncome ? BLUE : OUTCOME_RED;
+  const cardColor = isIncome ? (isDark ? '#D4AF37' : BLUE) : OUTCOME_RED;
+  const rowIconColor = isIncome ? (isDark ? '#D4AF37' : BLUE) : OUTCOME_RED;
   const rowIconBg = isIncome ? 'rgba(18,59,145,0.1)' : 'rgba(192,57,43,0.1)';
   const transactions = isIncome ? data.income_transactions : data.outcome_transactions;
 
@@ -116,7 +119,7 @@ export default function InsightScreen() {
           </View>
           <View className="flex-row items-center gap-3">
             <NotificationIcon onPress={openNotifications} count={notifCount} />
-            <Pressable onPress={() => router.push('/(tabs)/profile')} className="active:scale-90">
+            <Pressable onPress={() => router.push('/(tabs)/profile')} accessibilityLabel="Profile" accessibilityRole="button" className="active:scale-90">
               <UserAvatar size={32} />
             </Pressable>
           </View>
@@ -125,7 +128,7 @@ export default function InsightScreen() {
 
       <ScrollView className="flex-1 px-margin-mobile" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         <View className="mt-2">
-          <SegmentedControl options={['Income', 'Outcome']} value={mode} onChange={(v) => setMode(v as any)} activeColor={cardColor} />
+          <SegmentedControl options={['Income', 'Outcome']} value={mode} onChange={(v) => setMode(v as any)} activeColor={cardColor} isDark={isDark} />
         </View>
 
         {/* Amount card — recolors between blue (Income) and red (Outcome) */}

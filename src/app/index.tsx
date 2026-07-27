@@ -31,10 +31,10 @@ export default function WelcomeTour() {
         </View>
 
         <View style={{ flexDirection: 'row', gap: 12 , marginBottom: '5%', marginTop: '5%' }}>
-          <Pressable onPress={() => router.push('/login')} style={({ pressed }) => [styles.button, { flex: 1, opacity: pressed ? 0.78 : 1 }]}>
+          <Pressable onPress={() => router.push('/login')} accessibilityRole="button" style={({ pressed }) => [styles.button, { flex: 1, opacity: pressed ? 0.78 : 1 }]}>
             <Text style={styles.buttonText}>Log In</Text>
           </Pressable>
-          <Pressable onPress={() => router.push('/signup')} style={({ pressed }) => [styles.button, { flex: 1, opacity: pressed ? 0.78 : 1 }]}>
+          <Pressable onPress={() => router.push('/signup')} accessibilityRole="button" style={({ pressed }) => [styles.button, { flex: 1, opacity: pressed ? 0.78 : 1 }]}>
             <Text style={styles.buttonText}>Register</Text>
           </Pressable>
         </View>

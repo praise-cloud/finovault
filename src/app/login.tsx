@@ -37,10 +37,10 @@ export default function Login() {
     <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
       <View style={{ width: Math.min(width, 600), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 24, paddingTop: 60 }}>
         <View style={styles.topbar}>
-          <Pressable onPress={() => router.back()} hitSlop={12}>
+          <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" hitSlop={12}>
             <MaterialIcons name="arrow-back" size={24} color={isDark ? '#D4AF37' : BLUE} />
           </Pressable>
-          <Pressable onPress={() => router.push('/signup')} hitSlop={12}>
+          <Pressable onPress={() => router.push('/signup')} accessibilityRole="button" hitSlop={12}>
             <Text style={styles.signUp}>Sign UP</Text>
           </Pressable>
         </View>
@@ -56,6 +56,7 @@ export default function Login() {
             placeholder="name@example.com"
             keyboardType="email-address"
             autoCapitalize="none"
+            accessibilityLabel="Email address"
           />
 
           <TextInput
@@ -64,9 +65,10 @@ export default function Login() {
             onChangeText={setPassword}
             placeholder="••••••••"
             secureTextEntry
+            accessibilityLabel="Password"
           />
 
-          <Pressable style={{ alignSelf: 'flex-start', marginTop: 4, marginBottom: 24 }}>
+          <Pressable accessibilityRole="button" style={{ alignSelf: 'flex-start', marginTop: 4, marginBottom: 24 }}>
             <Text style={styles.link}>Forgot your password?</Text>
           </Pressable>
 
@@ -75,6 +77,7 @@ export default function Login() {
           <Pressable
             onPress={submit}
             disabled={loading}
+            accessibilityRole="button"
             style={({ pressed }) => [styles.cta, { opacity: pressed ? 0.85 : 1 }]}
           >
             {loading ? <ActivityIndicator color="#FFFFFF" size="small" /> : <Text style={styles.ctaText}>Log in</Text>}

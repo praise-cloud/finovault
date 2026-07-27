@@ -16,14 +16,14 @@ export default function SmeAnalytics() {
   useEffect(() => { load(); }, [load]);
 
   if (!data) {
-    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}><ActivityIndicator size="large" color="#08142E" /></View>;
+    return <View className="flex-1 items-center justify-center" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}><ActivityIndicator size="large" color={isDark ? '#D4AF37' : '#08142E'} /></View>;
   }
 
   const d = data;
 
   return (
     <View className="flex-1" style={{ backgroundColor: isDark ? '#08142E' : '#FFFFFF' }}>
-      <View className="bg-[#FFFFFF] pt-14 pb-3 px-margin-mobile md:px-margin-desktop" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 4 }}>
+      <View className="pt-14 pb-3 px-margin-mobile md:px-margin-desktop" style={{ backgroundColor: isDark ? '#0D1B3E' : '#FFFFFF', boxShadow: '0 4px 20px rgba(0,0,0,0.04)', elevation: 4 }}>
         <View className="flex-row items-center justify-between max-w-[1440px] mx-auto w-full">
           <View className="flex-row items-center gap-4">
             <Text className="font-headline-md text-headline-md text-primary font-bold">Finovault AI</Text>
@@ -40,18 +40,18 @@ export default function SmeAnalytics() {
 
       <ScrollView className="flex-1 px-margin-mobile md:px-margin-desktop" contentContainerStyle={{ paddingBottom: 120 }}>
         <View className="my-6 md:my-8">
-          <View className="flex-row items-center gap-2 mb-2"><MaterialIcons name="analytics" size={18} color="#08142E" /><Text className="font-label-md text-label-md text-secondary uppercase tracking-wider">Business Intelligence</Text></View>
+          <View className="flex-row items-center gap-2 mb-2"><MaterialIcons name="analytics" size={18} color={isDark ? '#D4AF37' : '#08142E'} /><Text className="font-label-md text-label-md text-secondary uppercase tracking-wider">Business Intelligence</Text></View>
           <View className="flex-col md:flex-row md:items-end justify-between gap-4">
             <View>
               <Text className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">SME Analytics Dashboard</Text>
               <Text className="text-on-surface-variant mt-2 max-w-2xl">Advanced cashflow forensics and vendor risk assessment powered by Finovault AI.</Text>
             </View>
             <View className="flex-row gap-3">
-              <Pressable onPress={() => router.push('/(tabs)/transactions')} className="flex-row items-center gap-2 px-4 py-2.5 rounded-xl border border-outline-variant active:scale-95">
-                <MaterialIcons name="calendar-today" size={20} color="#181c1e" />
+              <Pressable accessibilityRole="button" onPress={() => router.push('/(tabs)/transactions')} className="flex-row items-center gap-2 px-4 py-2.5 rounded-xl border border-outline-variant active:scale-95">
+                <MaterialIcons name="calendar-today" size={20} color={isDark ? '#FFFFFF' : '#181c1e'} />
                 <Text className="font-label-md text-label-md text-on-surface">Last 30 Days</Text>
               </Pressable>
-              <Pressable onPress={() => router.push('/(tabs)/ai-coach')} className="flex-row items-center gap-2 px-6 py-2.5 rounded-xl bg-primary active:scale-95" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
+              <Pressable accessibilityRole="button" onPress={() => router.push('/(tabs)/ai-coach')} className="flex-row items-center gap-2 px-6 py-2.5 rounded-xl bg-primary active:scale-95" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
                 <MaterialIcons name="file-download" size={20} color="#ffffff" />
                 <Text className="font-label-md text-label-md text-on-primary">Export Report</Text>
               </Pressable>
@@ -74,7 +74,7 @@ export default function SmeAnalytics() {
             <View className="h-64 relative mb-6">
               <View className="absolute inset-0 flex-row items-end justify-between px-2">
                 {(d.cashflow_forensics?.chart_data || []).map((h, i) => (
-                  <View key={i} className="w-[10%] rounded-t-lg" style={{ height: `${h}%`, backgroundColor: ['#d2e4ff', '#b0c8eb', '#d2e4ff', '#08142E', '#d2e4ff', '#b0c8eb', '#d2e4ff', '#b0c8eb'][i] }} />
+                  <View key={i} className="w-[10%] rounded-t-lg" style={{ height: `${h}%`, backgroundColor: ['#d2e4ff', '#b0c8eb', '#d2e4ff', isDark ? '#D4AF37' : '#08142E', '#d2e4ff', '#b0c8eb', '#d2e4ff', '#b0c8eb'][i] }} />
                 ))}
               </View>
               <View className="absolute inset-x-0 bottom-0 border-t border-outline-variant" />
@@ -93,7 +93,7 @@ export default function SmeAnalytics() {
               <View className="flex-1">
                 <Text className="text-caption text-on-surface-variant uppercase tracking-tighter">Runway</Text>
                     <Text className="font-headline-md text-headline-md text-primary">{d.cashflow_forensics?.runway_months ?? 0} Mo</Text>
-                <View className="flex-row items-center gap-1"><MaterialIcons name="verified" size={14} color="#08142E" /><Text className="text-caption text-secondary">High Security</Text></View>
+                <View className="flex-row items-center gap-1"><MaterialIcons name="verified" size={14} color={isDark ? '#D4AF37' : '#08142E'} /><Text className="text-caption text-secondary">High Security</Text></View>
               </View>
             </View>
           </BentoCard>
@@ -118,7 +118,7 @@ export default function SmeAnalytics() {
               </View>
               <View className="mt-8 pt-6 border-t border-white/10">
                 <Text className="text-caption text-white/70">You are outperforming 85% of regional SMEs in your sector.</Text>
-                <Pressable onPress={() => router.push('/(tabs)/ai-coach')} className="mt-4 flex-row items-center gap-1"><Text className="text-secondary-fixed font-label-md text-label-md">View detailed peer analysis</Text><MaterialIcons name="chevron-right" size={16} color="#F4D35E" /></Pressable>
+                <Pressable accessibilityRole="button" onPress={() => router.push('/(tabs)/ai-coach')} className="mt-4 flex-row items-center gap-1"><Text className="text-secondary-fixed font-label-md text-label-md">View detailed peer analysis</Text><MaterialIcons name="chevron-right" size={16} color="#F4D35E" /></Pressable>
               </View>
             </View>
             <View className="absolute -right-20 -bottom-20 w-64 h-64 bg-secondary/20 rounded-full" />
@@ -158,17 +158,17 @@ export default function SmeAnalytics() {
                   <View className="flex-1"><Text className="text-body-md">${row.monthly_spend.toLocaleString()}</Text></View>
                   <View className="flex-1 flex-row gap-1">
                     {[1, 2, 3, 4].map((j) => (
-                      <View key={j} className="w-6 h-1 rounded-full" style={{ backgroundColor: row.health_score >= 80 ? '#08142E' : row.health_score >= 50 ? '#181c1e' : '#ba1a1a', opacity: j <= Math.round(row.health_score / 25) ? 1 : 0.2 }} />
+                      <View key={j} className="w-6 h-1 rounded-full" style={{ backgroundColor: row.health_score >= 80 ? (isDark ? '#D4AF37' : '#08142E') : row.health_score >= 50 ? (isDark ? '#FFFFFF' : '#181c1e') : '#ba1a1a', opacity: j <= Math.round(row.health_score / 25) ? 1 : 0.2 }} />
                     ))}
                   </View>
                   <View className="flex-1">
-                    <View className="self-start px-2 py-0.5 rounded-md" style={{ backgroundColor: row.health_score >= 80 ? 'rgba(8,20,46,0.2)' : row.health_score >= 50 ? 'rgba(24,28,30,0.1)' : 'rgba(186,26,26,0.2)' }}>
-                      <Text className="font-bold text-label-md" style={{ color: row.health_score >= 80 ? '#08142E' : row.health_score >= 50 ? '#181c1e' : '#ba1a1a' }}>{row.health_score}/100</Text>
+                    <View className="self-start px-2 py-0.5 rounded-md" style={{ backgroundColor: row.health_score >= 80 ? (isDark ? 'rgba(212,175,55,0.2)' : 'rgba(8,20,46,0.2)') : row.health_score >= 50 ? 'rgba(24,28,30,0.1)' : 'rgba(186,26,26,0.2)' }}>
+                      <Text className="font-bold text-label-md" style={{ color: row.health_score >= 80 ? (isDark ? '#D4AF37' : '#08142E') : row.health_score >= 50 ? (isDark ? '#FFFFFF' : '#181c1e') : '#ba1a1a' }}>{row.health_score}/100</Text>
                     </View>
                   </View>
                   <View className="flex-1 flex-row items-center gap-1.5">
-                    <View className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: row.health_score >= 80 ? '#08142E' : row.health_score >= 50 ? '#181c1e' : '#ba1a1a' }} />
-                    <Text className="text-caption" style={{ color: row.health_score >= 80 ? '#08142E' : row.health_score >= 50 ? '#181c1e' : '#ba1a1a' }}>{row.health_score >= 80 ? 'Optimal' : row.health_score >= 50 ? 'Stable' : 'Delayed Risk'}</Text>
+                    <View className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: row.health_score >= 80 ? (isDark ? '#D4AF37' : '#08142E') : row.health_score >= 50 ? (isDark ? '#FFFFFF' : '#181c1e') : '#ba1a1a' }} />
+                    <Text className="text-caption" style={{ color: row.health_score >= 80 ? (isDark ? '#D4AF37' : '#08142E') : row.health_score >= 50 ? (isDark ? '#FFFFFF' : '#181c1e') : '#ba1a1a' }}>{row.health_score >= 80 ? 'Optimal' : row.health_score >= 50 ? 'Stable' : 'Delayed Risk'}</Text>
                   </View>
                 </View>
               ))}

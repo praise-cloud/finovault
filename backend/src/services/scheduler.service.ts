@@ -3,7 +3,7 @@ import { createContextLogger } from '../utils/logger';
 
 const log = createContextLogger('SchedulerService');
 
-interface DailyBriefing {
+export interface DailyBriefing {
   title: string;
   content: string;
   action_items: { type: string; label: string; impact: string }[];

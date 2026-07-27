@@ -69,7 +69,7 @@ export default function FinancialProfile() {
       <View style={{ width: Math.min(width, 600), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER }}>
         <View style={{ paddingHorizontal: 24, paddingTop: 60 }}>
           <View style={styles.topbar}>
-            <Pressable onPress={() => router.back()} hitSlop={12}>
+            <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" hitSlop={12}>
               <MaterialIcons name="arrow-back" size={24} color={isDark ? '#D4AF37' : BLUE} />
             </Pressable>
             <Logo width={26} height={23.5} color={isDark ? '#D4AF37' : BLUE} />
@@ -93,6 +93,7 @@ export default function FinancialProfile() {
                   <Pressable
                     key={opt}
                     onPress={() => updateField('employment_status', opt)}
+                    accessibilityRole="button"
                     style={[styles.chip, { backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF' }, active && styles.chipActive]}
                   >
                     <Text style={[styles.chipText, active && styles.chipTextActive]}>{opt}</Text>
@@ -111,6 +112,7 @@ export default function FinancialProfile() {
               keyboardType="numeric"
               value={profile.annual_income}
               onChangeText={(v) => updateField('annual_income', v)}
+              accessibilityLabel="Annual income"
             />
           </View>
 
@@ -123,6 +125,7 @@ export default function FinancialProfile() {
               keyboardType="numeric"
               value={profile.monthly_expenses}
               onChangeText={(v) => updateField('monthly_expenses', v)}
+              accessibilityLabel="Monthly expenses"
             />
           </View>
 
@@ -135,6 +138,7 @@ export default function FinancialProfile() {
                   <Pressable
                     key={opt.value}
                     onPress={() => updateField('risk_level', opt.value)}
+                    accessibilityRole="button"
                     style={[styles.chip, { backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF' }, active && styles.chipActive]}
                   >
                     <Text style={[styles.chipText, active && styles.chipTextActive]}>{opt.label}</Text>
@@ -146,7 +150,7 @@ export default function FinancialProfile() {
         </ScrollView>
 
         <View style={{ paddingHorizontal: 24, paddingBottom: 32, paddingTop: 8 }}>
-          <Pressable onPress={handleSave} disabled={saving} style={styles.cta}>
+          <Pressable onPress={handleSave} disabled={saving} accessibilityRole="button" style={styles.cta}>
             {saving ? (
               <ActivityIndicator color="#FFFFFF" size="small" />
             ) : (

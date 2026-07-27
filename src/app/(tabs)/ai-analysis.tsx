@@ -62,7 +62,7 @@ export default function AiAnalysis() {
         const c = t.category || 'General';
         cats.set(c, (cats.get(c) || 0) + t.amount);
       });
-      const colors = ['#08142E', '#08142E', '#321ed2', '#ba1a1a', '#1A1A1A', '#43474d', '#150082', '#C8A030'];
+      const colors = [isDark ? '#D4AF37' : '#08142E', isDark ? '#D4AF37' : '#08142E', '#321ed2', '#ba1a1a', '#1A1A1A', '#43474d', '#150082', '#C8A030'];
       let i = 0;
       const breakdown = Array.from(cats.entries())
         .sort(([, a], [, b]) => b - a)
@@ -100,9 +100,9 @@ export default function AiAnalysis() {
 
   const getTypeStyle = (type: string) => {
     switch (type) {
-      case 'opportunity': return { icon: 'trending-up' as const, bg: 'bg-[#08142E]20', color: '#1A1A1A' };
+      case 'opportunity': return { icon: 'trending-up' as const, bg: `bg-[${isDark ? '#D4AF37' : '#08142E'}]20`, color: isDark ? '#FFFFFF' : '#1A1A1A' };
       case 'alert': return { icon: 'warning' as const, bg: 'bg-[#BA1A1A]20', color: '#ba1a1a' };
-      default: return { icon: 'lightbulb' as const, bg: 'bg-[#08142E]20', color: '#0A1F5C' };
+      default: return { icon: 'lightbulb' as const, bg: `bg-[${isDark ? '#D4AF37' : '#08142E'}]20`, color: isDark ? '#D4AF37' : '#0A1F5C' };
     }
   };
 
@@ -118,7 +118,7 @@ export default function AiAnalysis() {
           </View>
           <View className="flex-row items-center gap-3">
             <Pressable onPress={loadData} className="active:scale-90">
-              <MaterialIcons name="refresh" size={24} color="#43474d" />
+              <MaterialIcons name="refresh" size={24} color={isDark ? '#9CA3B0' : '#43474d'} />
             </Pressable>
             <NotificationIcon onPress={openNotifications} count={notifCount} />
             <Pressable onPress={() => router.push('/(tabs)/profile')} className="active:scale-90">
@@ -144,19 +144,19 @@ export default function AiAnalysis() {
               value={question}
               onChangeText={setQuestion}
             />
-            <Pressable onPress={handleAsk} disabled={isAsking} className="w-12 h-12 bg-white rounded-xl items-center justify-center active:scale-90">
-              {isAsking ? <ActivityIndicator size="small" color="#08142E" /> : <MaterialIcons name="send" size={20} color="#08142E" />}
+            <Pressable onPress={handleAsk} disabled={isAsking} className={`w-12 h-12 ${isDark ? 'bg-[#0D1B3E]' : 'bg-white'} rounded-xl items-center justify-center active:scale-90`}>
+              {isAsking ? <ActivityIndicator size="small" color={isDark ? '#D4AF37' : '#08142E'} /> : <MaterialIcons name="send" size={20} color={isDark ? '#D4AF37' : '#08142E'} />}
             </Pressable>
           </View>
         </View>
 
         {chat.length > 1 && (
-          <View className="bg-white border border-outline-variant/20 rounded-2xl p-4 mb-4 max-h-48 overflow-hidden">
+          <View className={`${isDark ? 'bg-[#0D1B3E]' : 'bg-white'} border border-outline-variant/20 rounded-2xl p-4 mb-4 max-h-48 overflow-hidden`}>
             <ScrollView className="max-h-40">
               {chat.slice(-6).map((msg, i) => (
                 <View key={i} className={`mb-2 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                    <View className={`max-w-[80%] rounded-2xl px-4 py-2.5 ${msg.role === 'user' ? 'bg-[#08142E] rounded-br-sm' : 'bg-[#E4E7EE] rounded-bl-sm'}`}>
-                    <Text className={msg.role === 'user' ? 'text-[#FFFFFF]' : 'text-on-surface'}>{msg.text}</Text>
+                    <View className={`max-w-[80%] rounded-2xl px-4 py-2.5 ${msg.role === 'user' ? `${isDark ? 'bg-[#D4AF37]' : 'bg-[#08142E]'} rounded-br-sm` : `${isDark ? 'bg-[#1A2A4A]' : 'bg-[#E4E7EE]'} rounded-bl-sm`}`}>
+                    <Text className={msg.role === 'user' ? (isDark ? 'text-[#08142E]' : 'text-[#FFFFFF]') : 'text-on-surface'}>{msg.text}</Text>
                   </View>
                 </View>
               ))}
@@ -165,22 +165,22 @@ export default function AiAnalysis() {
         )}
 
         {isLoading ? (
-          <View className="items-center py-12"><ActivityIndicator size="large" color="#08142E" /></View>
+          <View className="items-center py-12"><ActivityIndicator size="large" color={isDark ? '#D4AF37' : '#08142E'} /></View>
         ) : (
           <>
             {patternSummary.length > 0 && (
-              <View className="bg-white border border-outline-variant/20 rounded-2xl p-4 mb-4">
+              <View className={`${isDark ? 'bg-[#0D1B3E]' : 'bg-white'} border border-outline-variant/20 rounded-2xl p-4 mb-4`}>
                 <View className="flex-row items-center justify-between mb-3">
-                  <Text className="font-body-bold text-[#1A1A1A] font-bold">Spending Patterns</Text>
-                  <Text className="font-body text-[#6B6F76]">${totalSpent.toLocaleString()} total</Text>
+                  <Text className={`font-body-bold ${isDark ? 'text-[#FFFFFF]' : 'text-[#1A1A1A]'} font-bold`}>Spending Patterns</Text>
+                  <Text className={`font-body ${isDark ? 'text-[#9CA3B0]' : 'text-[#6B6F76]'}`}>${totalSpent.toLocaleString()} total</Text>
                 </View>
                 {patternSummary.map((p, i) => (
                   <View key={i} className="mb-2">
                     <View className="flex-row justify-between items-center mb-1">
-                      <Text className="font-body-semibold text-[#1A1A1A]">{p.label}</Text>
-                      <Text className="font-body-semibold text-[#6B6F76]">${p.amount.toLocaleString()} ({p.pct}%)</Text>
+                      <Text className={`font-body-semibold ${isDark ? 'text-[#FFFFFF]' : 'text-[#1A1A1A]'}`}>{p.label}</Text>
+                      <Text className={`font-body-semibold ${isDark ? 'text-[#9CA3B0]' : 'text-[#6B6F76]'}`}>${p.amount.toLocaleString()} ({p.pct}%)</Text>
                     </View>
-                    <View className="w-full bg-[#EEF0F5] rounded-full h-2 overflow-hidden">
+                    <View className={`w-full ${isDark ? 'bg-[#1A2A4A]' : 'bg-[#EEF0F5]'} rounded-full h-2 overflow-hidden`}>
                       <View className="h-full rounded-full" style={{ width: `${p.pct}%`, backgroundColor: p.color }} />
                     </View>
                   </View>
@@ -189,15 +189,15 @@ export default function AiAnalysis() {
             )}
 
             <View className="flex-row items-center justify-between mb-3">
-              <Text className="font-body-bold text-[#1A1A1A] font-bold">AI Insights</Text>
-              <Text className="font-body text-[#6B6F76]">{insights.length} updates</Text>
+              <Text className={`font-body-bold ${isDark ? 'text-[#FFFFFF]' : 'text-[#1A1A1A]'} font-bold`}>AI Insights</Text>
+              <Text className={`font-body ${isDark ? 'text-[#9CA3B0]' : 'text-[#6B6F76]'}`}>{insights.length} updates</Text>
             </View>
 
             <View className="space-y-3 mb-4">
               {insights.map((insight) => {
                 const style = getTypeStyle(insight.type);
                 return (
-                  <Pressable key={insight.id} className="flex-row gap-3 p-4 bg-white border border-outline-variant/20 rounded-2xl active:scale-[0.98]">
+                  <Pressable key={insight.id} className={`flex-row gap-3 p-4 ${isDark ? 'bg-[#0D1B3E]' : 'bg-white'} border border-outline-variant/20 rounded-2xl active:scale-[0.98]`}>
                     <View className={`w-10 h-10 rounded-full items-center justify-center ${style.bg}`}>
                       <MaterialIcons name={style.icon} size={20} color={style.color} />
                     </View>

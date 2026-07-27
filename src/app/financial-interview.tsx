@@ -37,7 +37,7 @@ export default function FinancialInterview() {
     <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
       <View style={{ width: Math.min(width, 600), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 24, paddingTop: 60 }}>
         <View style={styles.topbar}>
-          <Pressable onPress={() => router.back()} hitSlop={12}>
+          <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" hitSlop={12}>
             <MaterialIcons name="arrow-back" size={24} color={isDark ? '#D4AF37' : BLUE} />
           </Pressable>
           <Logo width={26} height={23.5} color={isDark ? '#D4AF37' : BLUE} />
@@ -53,6 +53,7 @@ export default function FinancialInterview() {
               <Pressable
                 key={goal.key}
                 onPress={() => toggleGoal(goal.key)}
+                accessibilityRole="button"
                 style={[
                   styles.goal,
                   { backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF', borderColor: isDark ? '#2A2A2A' : '#E1E4EC' },
@@ -73,7 +74,7 @@ export default function FinancialInterview() {
           })}
         </View>
 
-        <Pressable onPress={complete} style={[styles.cta, { marginTop: 24 }]}>
+        <Pressable onPress={complete} accessibilityRole="button" style={[styles.cta, { marginTop: 24 }]}>
           <Text style={styles.ctaText}>Continue</Text>
           <MaterialIcons name="arrow-forward" size={18} color="#FFFFFF" />
         </Pressable>
