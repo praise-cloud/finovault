@@ -13,9 +13,22 @@ export interface SignInParams {
   password: string;
 }
 
+export interface UserProfile {
+  id: string;
+  email?: string;
+  full_name?: string;
+  avatar_url?: string;
+  [key: string]: unknown;
+}
+
+export interface AuthSession {
+  access_token: string;
+  user: UserProfile;
+}
+
 export interface AuthResult {
-  user: any;
-  session: any;
+  user: UserProfile | null;
+  session: AuthSession | null;
   error?: string;
 }
 
@@ -45,10 +58,11 @@ export async function updateUserPassword(currentPassword: string, newPassword: s
   }
 }
 
-export async function updateUserMetadata(data: Record<string, any>): Promise<any> {
+export async function updateUserMetadata(data: Record<string, unknown>): Promise<Record<string, unknown> | null> {
   try {
-    return await apiClient.put<any>(ENDPOINTS.profile.update, data);
-  } catch (e: any) {
+    return await apiClient.put<Record<string, unknown>>(ENDPOINTS.profile.update, data);
+  } catch (e: unknown) {
+    console.error('Failed to update user metadata', e);
     return null;
   }
 }
@@ -75,23 +89,23 @@ export async function signOut(): Promise<void> {
   try {
     await apiClient.post(ENDPOINTS.auth.logout, {});
   } catch {
-    // ignore
+    console.error('Sign-out API call failed');
   }
 }
 
-export async function getCurrentSession(): Promise<any> {
+export async function getCurrentSession(): Promise<AuthSession | null> {
   const token = getApiToken();
   if (!token) return null;
 
   try {
-    const result = await apiClient.post<{ user: any }>(ENDPOINTS.auth.verify, { token });
+    const result = await apiClient.post<{ user: UserProfile }>(ENDPOINTS.auth.verify, { token });
     return { access_token: token, user: result.user };
   } catch {
     return null;
   }
 }
 
-export async function getCurrentUser(): Promise<any> {
+export async function getCurrentUser(): Promise<UserProfile | null> {
   const session = await getCurrentSession();
   return session?.user || null;
 }

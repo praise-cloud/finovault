@@ -10,6 +10,7 @@ import aiRoutes from './ai.routes';
 import businessRoutes from './business.routes';
 import onboardingRoutes from './onboarding.routes';
 import settingsRoutes from './settings.routes';
+import notificationsRoutes from './notifications.routes';
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.use('/ai', aiRoutes);
 router.use('/business', businessRoutes);
 router.use('/onboarding', onboardingRoutes);
 router.use('/settings', settingsRoutes);
+router.use('/notifications', notificationsRoutes);
 
 export default router;

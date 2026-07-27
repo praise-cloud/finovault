@@ -62,6 +62,12 @@ export const ENDPOINTS = {
     financialInterview: '/onboarding/financial-interview',
     financialProfile: '/onboarding/financial-profile',
   },
+  notifications: {
+    list: '/notifications',
+    unreadCount: '/notifications/unread-count',
+    markRead: (id: string) => `/notifications/${id}/read`,
+    markAllRead: '/notifications/read-all',
+  },
   settings: {
     security: '/settings/security',
     securityTwoFactor: '/settings/security/two-factor',

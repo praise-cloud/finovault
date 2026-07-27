@@ -1,4 +1,5 @@
 import { getSupabase } from '../config/supabase';
+import { NotFoundError } from '../utils/errors';
 import { createContextLogger } from '../utils/logger';
 
 const log = createContextLogger('NotificationService');
@@ -27,6 +28,74 @@ export async function sendNotification(payload: NotificationPayload): Promise<vo
   if (error) {
     log.error('Failed to send notification', { userId: payload.user_id, error: error.message });
   }
+}
+
+export async function listNotifications(userId: string, limit = 50) {
+  const supabase = getSupabase();
+
+  const { data, error } = await supabase
+    .from('notifications')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    log.error('List notifications failed', { userId, error: error.message });
+    return [];
+  }
+
+  return data || [];
+}
+
+export async function markNotificationRead(userId: string, notificationId: string) {
+  const supabase = getSupabase();
+
+  const { data, error } = await supabase
+    .from('notifications')
+    .update({ read: true })
+    .eq('id', notificationId)
+    .eq('user_id', userId)
+    .select()
+    .single();
+
+  if (error) {
+    throw new NotFoundError('Notification');
+  }
+
+  return data;
+}
+
+export async function markAllNotificationsRead(userId: string) {
+  const supabase = getSupabase();
+
+  const { error } = await supabase
+    .from('notifications')
+    .update({ read: true })
+    .eq('user_id', userId)
+    .eq('read', false);
+
+  if (error) {
+    log.error('Mark all notifications read failed', { userId, error: error.message });
+    throw new Error('Failed to mark notifications as read');
+  }
+}
+
+export async function getUnreadCount(userId: string): Promise<number> {
+  const supabase = getSupabase();
+
+  const { count, error } = await supabase
+    .from('notifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .eq('read', false);
+
+  if (error) {
+    log.error('Get unread count failed', { userId, error: error.message });
+    return 0;
+  }
+
+  return count || 0;
 }
 
 export async function checkSpendingAlert(userId: string, currentSpending: number, limit: number): Promise<void> {

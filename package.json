@@ -54,7 +54,7 @@
     "eslint": "^9.0.0",
     "eslint-config-expo": "~56.0.4",
     "react-native-svg-transformer": "^1.5.3",
-    "typescript": "~6.0.3"
+    "typescript": "~5.7.2"
   },
   "scripts": {
     "start": "expo start",

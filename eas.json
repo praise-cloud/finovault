@@ -10,12 +10,22 @@
     "preview": {
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://tlidraqocrjuiobnyvef.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRsaWRyYXFvY3JqdWlvYm55dmVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjE4OTg2MTMsImV4cCI6MjAzNzQ3NDYxM30.sf7k4rnPZ2_1PG78kfl3zYqAS8mbGfnAeFhG0dX_D3Q",
+        "EXPO_PUBLIC_API_URL": "http://10.0.2.2:4000"
       }
     },
     "production": {
       "channel": "production",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://tlidraqocrjuiobnyvef.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRsaWRyYXFvY3JqdWlvYm55dmVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjE4OTg2MTMsImV4cCI6MjAzNzQ3NDYxM30.sf7k4rnPZ2_1PG78kfl3zYqAS8mbGfnAeFhG0dX_D3Q",
+        "EXPO_PUBLIC_API_URL": "https://finovault-api.onrender.com"
       }
     }
   },

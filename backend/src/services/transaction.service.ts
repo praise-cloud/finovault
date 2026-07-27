@@ -1,6 +1,7 @@
 import { getSupabase } from '../config/supabase';
 import { NotFoundError } from '../utils/errors';
 import { createContextLogger } from '../utils/logger';
+import { incomeDetectedQueue } from '../jobs/queue';
 
 const log = createContextLogger('TransactionService');
 
@@ -81,6 +82,17 @@ export async function createTransaction(userId: string, input: {
   if (error) {
     log.error('Create transaction failed', { userId, error: error.message });
     throw new Error('Failed to create transaction');
+  }
+
+  if (data.type === 'income') {
+    incomeDetectedQueue.add({
+      userId,
+      transactionId: data.id,
+      amount: data.amount,
+      merchant: data.merchant,
+      description: data.description,
+      category: data.category,
+    }).catch((e: any) => log.warn('Failed to enqueue income event', { error: e.message }));
   }
 
   return data;

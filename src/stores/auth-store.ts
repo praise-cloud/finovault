@@ -2,9 +2,22 @@ import { create } from 'zustand';
 import { setApiToken, loadStoredToken, getApiToken } from '@/src/lib/api/client';
 import * as AuthService from '@/src/lib/api/services/auth';
 
+interface UserProfile {
+  id: string;
+  email?: string;
+  full_name?: string;
+  avatar_url?: string;
+  [key: string]: unknown;
+}
+
+interface AuthSession {
+  access_token: string;
+  user: UserProfile;
+}
+
 interface AuthState {
-  user: any | null;
-  session: any | null;
+  user: UserProfile | null;
+  session: AuthSession | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   avatarUri: string | null;
@@ -14,7 +27,7 @@ interface AuthState {
   signIn: (params: AuthService.SignInParams) => Promise<string | null>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
-  setSession: (session: any) => void;
+  setSession: (session: AuthSession | null) => void;
   setAvatarUri: (uri: string | null) => void;
 }
 
@@ -82,7 +95,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         await Linking.openURL(result.url);
       }
     } catch (e) {
-      console.warn('Google sign-in failed', e);
+      console.error('Google sign-in failed', e);
     }
     set({ isLoading: false });
   },
@@ -92,7 +105,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       await AuthService.signOut();
     } catch (e) {
-      console.warn('Sign-out API call failed', e);
+      console.error('Sign-out API call failed', e);
     }
     setApiToken(null);
     set({ user: null, session: null, isAuthenticated: false, isLoading: false });

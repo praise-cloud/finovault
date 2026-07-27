@@ -9,6 +9,7 @@ import { FinovaultProvider } from "@/src/lib/gluestack-provider";
 import "@/src/lib/nativewind-interop";
 import { useAuthStore } from "@/src/stores/auth-store";
 import { usePreferencesStore } from "@/src/stores/preferences-store";
+import { startNotificationPolling, stopNotificationPolling } from "@/src/stores/notification-store";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -44,7 +45,11 @@ function RootContent() {
   }, [initialize]);
 
   useEffect(() => {
-    if (user) void loadPreferences();
+    if (user) {
+      void loadPreferences();
+      startNotificationPolling();
+    }
+    return () => { stopNotificationPolling(); };
   }, [user, loadPreferences]);
 
   useEffect(() => {
