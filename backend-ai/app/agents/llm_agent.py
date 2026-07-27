@@ -1,4 +1,5 @@
 import json
+import httpx
 from openai import AsyncOpenAI
 from app.core.config import settings
 from app.core.logger import setup_logger
@@ -8,6 +9,7 @@ logger = setup_logger("llm_agent")
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 DEFAULT_MODEL = "openai/gpt-4o-mini"
 BUSINESS_MODEL = "anthropic/claude-3.5-sonnet"
+LLM_TIMEOUT_SECONDS = 25
 
 _client: AsyncOpenAI | None = None
 
@@ -26,6 +28,7 @@ def get_client() -> AsyncOpenAI | None:
             "HTTP-Referer": "https://finovault.ai",
             "X-Title": "Finovault AI Engine",
         },
+        http_client=httpx.AsyncClient(timeout=httpx.Timeout(LLM_TIMEOUT_SECONDS)),
     )
     return _client
 
@@ -90,7 +93,8 @@ async def ask(
     selected_model = model or (BUSINESS_MODEL if role == "business" else DEFAULT_MODEL)
 
     try:
-        response = await client.chat.completions.create(
+        model_is_openai = selected_model.startswith("openai/")
+        kwargs = dict(
             model=selected_model,
             messages=[
                 {"role": "system", "content": system},
@@ -104,8 +108,10 @@ async def ask(
             ],
             temperature=0.7,
             max_tokens=800,
-            response_format={"type": "json_object"},
         )
+        if model_is_openai:
+            kwargs["response_format"] = {"type": "json_object"}
+        response = await client.chat.completions.create(**kwargs)
         content = response.choices[0].message.content
         if not content:
             raise ValueError("Empty LLM response")

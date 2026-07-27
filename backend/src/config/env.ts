@@ -16,7 +16,9 @@ export const env = {
   SUPABASE_URL: required('SUPABASE_URL'),
   SUPABASE_SERVICE_KEY: required('SUPABASE_SERVICE_KEY'),
   SUPABASE_ANON_KEY: required('SUPABASE_ANON_KEY'),
-  SUPABASE_JWT_SECRET: required('SUPABASE_JWT_SECRET'),
+  SUPABASE_JWT_SECRET: process.env.SUPABASE_JWT_SECRET || '',
+
+  FRONTEND_URL: process.env.FRONTEND_URL || 'https://finovault.ai',
 
   AI_SERVICE_KEY: process.env.AI_SERVICE_KEY || '',
   PYTHON_AI_URL: process.env.PYTHON_AI_URL || 'https://finovault-ai.onrender.com',

@@ -47,18 +47,16 @@ patternLearningQueue.process(processPatternLearning);
 transactionAnalysisQueue.process(processTransactionAnalysis);
 incomeDetectedQueue.process(processIncomeDetected);
 
-transactionAnalysisQueue.on('completed', (job) => {
-  log.info(`Transaction analysis job ${job.id} completed`);
-});
+function addListeners(queue: Queue.Queue, name: string) {
+  queue.on('completed', (job) => {
+    log.info(`${name} job ${job.id} completed`);
+  });
+  queue.on('failed', (job, err) => {
+    log.error(`${name} job ${job.id} failed`, { error: err.message });
+  });
+}
 
-transactionAnalysisQueue.on('failed', (job, err) => {
-  log.error(`Transaction analysis job ${job.id} failed`, { error: err.message });
-});
-
-dailyBriefingQueue.on('completed', (job) => {
-  log.info(`Daily briefing job ${job.id} completed`);
-});
-
-dailyBriefingQueue.on('failed', (job, err) => {
-  log.error(`Daily briefing job ${job.id} failed`, { error: err.message });
-});
+addListeners(transactionAnalysisQueue, 'Transaction analysis');
+addListeners(dailyBriefingQueue, 'Daily briefing');
+addListeners(patternLearningQueue, 'Pattern learning');
+addListeners(incomeDetectedQueue, 'Income detected');

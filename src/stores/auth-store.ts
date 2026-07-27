@@ -45,7 +45,10 @@ export const useAuthStore = create<AuthState>((set) => ({
         set({ isLoading: false });
         return;
       }
-      const session = await AuthService.getCurrentSession();
+      const session = await Promise.race([
+        AuthService.getCurrentSession(),
+        new Promise<null>((_, reject) => setTimeout(() => reject(new Error('Session check timed out')), 10000)),
+      ]);
       if (session) {
         set({ user: session.user, session, isAuthenticated: true, isLoading: false });
       } else {

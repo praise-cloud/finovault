@@ -1,5 +1,5 @@
 import { getSupabase } from '../config/supabase';
-import { NotFoundError } from '../utils/errors';
+import { NotFoundError, InternalError } from '../utils/errors';
 import { createContextLogger } from '../utils/logger';
 import { incomeDetectedQueue } from '../jobs/queue';
 
@@ -81,7 +81,7 @@ export async function createTransaction(userId: string, input: {
 
   if (error) {
     log.error('Create transaction failed', { userId, error: error.message });
-    throw new Error('Failed to create transaction');
+    throw new InternalError('Failed to create transaction');
   }
 
   if (data.type === 'income') {

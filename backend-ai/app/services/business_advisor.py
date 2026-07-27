@@ -1,3 +1,5 @@
+import asyncio
+from datetime import datetime, timedelta
 from app.models.schemas import BusinessAdviceRequest, BusinessAdviceResponse
 from app.core.supabase import async_execute, get_supabase
 from app.core.logger import setup_logger
@@ -10,18 +12,23 @@ class BusinessAdvisor:
     async def advise(self, request: BusinessAdviceRequest, user_id: str) -> BusinessAdviceResponse:
         supabase = get_supabase()
 
-        tx_result = await async_execute(
+        cutoff = (datetime.utcnow() - timedelta(days=365)).isoformat()
+
+        tx_task = async_execute(
             supabase.table("transactions")
             .select("type, amount")
             .eq("user_id", user_id)
+            .gte("date", cutoff)
             .limit(100)
         )
 
-        vendor_result = await async_execute(
+        vendor_task = async_execute(
             supabase.table("vendors")
             .select("*")
             .eq("user_id", user_id)
         )
+
+        tx_result, vendor_result = await asyncio.gather(tx_task, vendor_task)
 
         transactions = tx_result.data or []
         vendors = vendor_result.data or []

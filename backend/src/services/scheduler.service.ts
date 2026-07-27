@@ -19,7 +19,7 @@ export async function generateDailyBriefing(userId: string): Promise<DailyBriefi
     .select('id')
     .eq('user_id', userId)
     .eq('briefing_date', today)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     return null;

@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+import sys
+
+
 class Settings:
     AI_SERVICE_KEY: str = os.getenv("AI_SERVICE_KEY", "")
     SUPABASE_URL: str = os.getenv("SUPABASE_URL", "")
@@ -16,5 +19,16 @@ class Settings:
     def cors_origins(self) -> list[str]:
         return os.getenv("CORS_ORIGINS", "http://localhost:4000,http://localhost:8081,http://localhost:8082,https://finovault.ai").split(",")
 
+    def validate(self) -> None:
+        missing = []
+        if not self.SUPABASE_URL:
+            missing.append("SUPABASE_URL")
+        if not self.SUPABASE_SERVICE_KEY:
+            missing.append("SUPABASE_SERVICE_KEY")
+        if missing:
+            print(f"FATAL: Missing required env vars: {', '.join(missing)}", file=sys.stderr)
+            sys.exit(1)
+
 
 settings = Settings()
+settings.validate()

@@ -1,31 +1,22 @@
 import { Request, Response, NextFunction } from 'express';
+import { AppError } from '../utils/errors';
 import { createContextLogger } from '../utils/logger';
 
 const log = createContextLogger('ErrorHandler');
 
-export interface ApiError {
-  status: number;
-  message: string;
-  details?: unknown;
-}
-
-export class AppError extends Error {
-  public status: number;
-  public details?: unknown;
-
-  constructor(status: number, message: string, details?: unknown) {
-    super(message);
-    this.status = status;
-    this.details = details;
-    this.name = 'AppError';
-  }
-}
-
 export function errorHandler(err: Error, _req: Request, res: Response, _next: NextFunction): void {
   if (err instanceof AppError) {
-    res.status(err.status).json({ error: { status: err.status, message: err.message, details: err.details } });
+    res.status(err.statusCode).json({
+      success: false,
+      error: { code: err.code, message: err.message },
+      meta: { timestamp: new Date().toISOString(), version: '1.0.0' },
+    });
     return;
   }
   log.error(`Unhandled error: ${err.message}`, { stack: err.stack });
-  res.status(500).json({ error: { status: 500, message: 'Internal Server Error' } });
+  res.status(500).json({
+    success: false,
+    error: { code: 'INTERNAL_ERROR', message: 'An unexpected error occurred' },
+    meta: { timestamp: new Date().toISOString(), version: '1.0.0' },
+  });
 }

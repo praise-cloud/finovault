@@ -1,3 +1,4 @@
+import asyncio
 from collections import defaultdict
 from app.models.schemas import PatternAnalysisRequest, PatternAnalysisResponse
 from app.core.supabase import async_execute, get_supabase
@@ -35,20 +36,23 @@ class PatternRecognizer:
         patterns.extend(merchant_patterns)
         patterns.extend(category_patterns)
 
-        for p in patterns:
-            await async_execute(
-                supabase.table("behavior_patterns").upsert({
-                    "user_id": user_id,
-                    "pattern_type": p["type"],
-                    "pattern_name": p["name"],
-                    "description": p["description"],
-                    "category": p.get("category", "general"),
-                    "frequency": p.get("frequency", "monthly"),
-                    "confidence_score": p.get("confidence", 50),
-                    "last_observed_at": p.get("last_observed", ""),
-                    "metadata": p.get("metadata", {}),
-                }, on_conflict="user_id,pattern_type,pattern_name")
-            )
+        if patterns:
+            await asyncio.gather(*[
+                async_execute(
+                    supabase.table("behavior_patterns").upsert({
+                        "user_id": user_id,
+                        "pattern_type": p["type"],
+                        "pattern_name": p["name"],
+                        "description": p["description"],
+                        "category": p.get("category", "general"),
+                        "frequency": p.get("frequency", "monthly"),
+                        "confidence_score": p.get("confidence", 50),
+                        "last_observed_at": p.get("last_observed", ""),
+                        "metadata": p.get("metadata", {}),
+                    }, on_conflict="user_id,pattern_type,pattern_name")
+                )
+                for p in patterns
+            ])
 
         return PatternAnalysisResponse(
             patterns_detected=len(patterns),

@@ -1,4 +1,5 @@
 import { getSupabase } from '../config/supabase';
+import { InternalError } from '../utils/errors';
 import { createContextLogger } from '../utils/logger';
 import { aiClient } from '../lib/ai-client';
 
@@ -107,7 +108,7 @@ export async function reportEvent(userId: string, input: { event_type: string; d
 
   if (error) {
     log.error('Report fraud event failed', { userId, error: error.message });
-    throw new Error('Failed to report event');
+    throw new InternalError('Failed to report event');
   }
 
   return data;
@@ -126,7 +127,7 @@ export async function resolveEvent(userId: string, eventId: string) {
 
   if (error) {
     log.error('Resolve event failed', { userId, eventId, error: error.message });
-    throw new Error('Failed to resolve event');
+    throw new InternalError('Failed to resolve event');
   }
 
   return data;

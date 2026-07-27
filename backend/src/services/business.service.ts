@@ -1,4 +1,5 @@
 import { getSupabase } from '../config/supabase';
+import { InternalError } from '../utils/errors';
 import { createContextLogger } from '../utils/logger';
 import { aiClient } from '../lib/ai-client';
 
@@ -135,7 +136,7 @@ export async function addVendor(userId: string, input: { name: string; category?
 
   if (error) {
     log.error('Add vendor failed', { userId, error: error.message });
-    throw error;
+    throw new InternalError('Failed to add vendor');
   }
 
   return data;
@@ -154,7 +155,7 @@ export async function updateVendor(userId: string, vendorId: string, input: Reco
 
   if (error) {
     log.error('Update vendor failed', { userId, vendorId, error: error.message });
-    throw error;
+    throw new InternalError('Failed to update vendor');
   }
 
   return data;
@@ -171,7 +172,7 @@ export async function deleteVendor(userId: string, vendorId: string) {
 
   if (error) {
     log.error('Delete vendor failed', { userId, vendorId, error: error.message });
-    throw error;
+    throw new InternalError('Failed to delete vendor');
   }
 }
 

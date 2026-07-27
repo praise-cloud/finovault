@@ -63,10 +63,10 @@ export default function TabsLayout() {
   const role = usePreferencesStore((s) => s.role);
   const prefsLoaded = usePreferencesStore((s) => !s.isLoading);
   const loadPreferences = usePreferencesStore((s) => s.loadPreferences);
-  const dashboardStore = useDashboardStore();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const initialRedirectDone = useRef(false);
+  const loaderRef = useRef<(() => Promise<void>) | null>(null);
 
   const defaultTab = ROLE_HOME[role] || "home";
 
@@ -83,12 +83,16 @@ export default function TabsLayout() {
     initialRedirectDone.current = true;
 
     const loader = ROLE_LOADER[role];
-    if (loader) loader(dashboardStore)();
+    if (loader) {
+      const store = useDashboardStore.getState();
+      loaderRef.current = loader(store);
+      loaderRef.current();
+    }
 
     const targetRoute = ROLE_ROUTE[role] || "/(tabs)";
     setActiveTab(defaultTab);
     router.replace(targetRoute as any);
-  }, [isAuthenticated, prefsLoaded, role, defaultTab, dashboardStore]);
+  }, [isAuthenticated, prefsLoaded, role, defaultTab]);
 
   const handleTabPress = (key: string) => {
     setActiveTab(key);

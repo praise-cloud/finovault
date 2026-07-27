@@ -1,3 +1,4 @@
+import asyncio
 import secrets
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -11,7 +12,6 @@ async def get_current_user(
     request: Request,
     credentials: HTTPAuthorizationCredentials | None = Depends(_bearer),
 ) -> str:
-    # Check for inter-service auth (X-Api-Key + X-User-Id)
     api_key = request.headers.get("X-Api-Key")
     if api_key and settings.AI_SERVICE_KEY and secrets.compare_digest(api_key, settings.AI_SERVICE_KEY):
         user_id = request.headers.get("X-User-Id")
@@ -19,7 +19,6 @@ async def get_current_user(
             return user_id
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing X-User-Id header")
 
-    # Fall back to JWT auth for direct browser requests
     if credentials is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing Authorization header")
 
@@ -29,10 +28,10 @@ async def get_current_user(
 
     try:
         supabase = get_supabase()
-        user = supabase.auth.get_user(token)
+        user = await asyncio.to_thread(supabase.auth.get_user, token)
         if user and user.user:
             return user.user.id
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Token verification failed: {e}")
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token verification failed")
 
     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")

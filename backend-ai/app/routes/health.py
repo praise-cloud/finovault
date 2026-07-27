@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.core.supabase import get_supabase
+from app.core.supabase import async_execute, get_supabase
 
 router = APIRouter()
 
@@ -9,7 +9,7 @@ async def health_check():
     db_status = "ok"
     try:
         supabase = get_supabase()
-        supabase.table("profiles").select("id").limit(1).execute()
+        await async_execute(supabase.table("profiles").select("id").limit(1))
     except Exception:
         db_status = "error"
 

@@ -1,5 +1,5 @@
 import { getSupabase } from '../config/supabase';
-import { NotFoundError } from '../utils/errors';
+import { NotFoundError, InternalError } from '../utils/errors';
 import { createContextLogger } from '../utils/logger';
 
 const log = createContextLogger('NotificationService');
@@ -77,7 +77,7 @@ export async function markAllNotificationsRead(userId: string) {
 
   if (error) {
     log.error('Mark all notifications read failed', { userId, error: error.message });
-    throw new Error('Failed to mark notifications as read');
+    throw new InternalError('Failed to mark notifications as read');
   }
 }
 

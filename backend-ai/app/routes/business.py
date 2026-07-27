@@ -18,4 +18,4 @@ async def get_business_advice(request: Request, body: BusinessAdviceRequest, use
         return result
     except Exception as e:
         logger.error(f"Business advice failed for user {user_id}: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")

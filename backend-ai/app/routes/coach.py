@@ -18,4 +18,4 @@ async def ask_coach(request: Request, body: CoachRequest, user_id: str = Depends
         return result
     except Exception as e:
         logger.error(f"Coach failed for user {user_id}: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")

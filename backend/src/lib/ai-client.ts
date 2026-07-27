@@ -66,6 +66,9 @@ async function request<T>(
           const errBody = (await response.json()) as Record<string, unknown>;
           detail = (errBody.detail as string) || detail;
         } catch {}
+        if (response.status >= 500) {
+          throw new Error(detail);
+        }
         throw new AIClientError(detail, response.status, endpoint);
       }
 

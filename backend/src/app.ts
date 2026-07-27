@@ -27,7 +27,11 @@ app.use(standardRateLimit);
 app.use(API_PREFIX, routes);
 
 app.use((_req, res) => {
-  res.status(404).json({ error: { status: 404, message: 'Not Found', path: _req.originalUrl } });
+  res.status(404).json({
+    success: false,
+    error: { code: 'NOT_FOUND', message: `Route not found: ${_req.method} ${_req.originalUrl}` },
+    meta: { timestamp: new Date().toISOString(), version: '1.0.0' },
+  });
 });
 
 app.use(errorHandler);

@@ -1,5 +1,5 @@
 import { getSupabase } from '../config/supabase';
-import { NotFoundError } from '../utils/errors';
+import { NotFoundError, InternalError } from '../utils/errors';
 import { createContextLogger } from '../utils/logger';
 
 const log = createContextLogger('SavingsService');
@@ -55,7 +55,7 @@ export async function createGoal(userId: string, input: { name: string; target_a
 
   if (error) {
     log.error('Create goal failed', { userId, error: error.message });
-    throw new Error('Failed to create savings goal');
+    throw new InternalError('Failed to create savings goal');
   }
 
   return data;

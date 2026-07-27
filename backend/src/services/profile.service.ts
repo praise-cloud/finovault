@@ -1,5 +1,5 @@
 import { getSupabase } from '../config/supabase';
-import { NotFoundError } from '../utils/errors';
+import { NotFoundError, InternalError } from '../utils/errors';
 import { createContextLogger } from '../utils/logger';
 import type { UpdateProfileInput, UpdatePreferencesInput } from '../models/user.schema';
 
@@ -10,9 +10,9 @@ export async function getProfile(userId: string) {
 
   const [profileRes, prefsRes, accountsRes, securityRes] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', userId).single(),
-    supabase.from('user_preferences').select('*').eq('user_id', userId).single(),
+    supabase.from('user_preferences').select('*').eq('user_id', userId).maybeSingle(),
     supabase.from('linked_accounts').select('*').eq('user_id', userId),
-    supabase.from('security_metrics').select('*').eq('user_id', userId).single(),
+    supabase.from('security_metrics').select('*').eq('user_id', userId).maybeSingle(),
   ]);
 
   if (profileRes.error) {
@@ -93,7 +93,7 @@ export async function updatePreferences(userId: string, input: UpdatePreferences
 
   if (result.error) {
     log.error('Preferences update failed', { userId, error: result.error.message });
-    throw new Error('Failed to update preferences');
+    throw new InternalError('Failed to update preferences');
   }
 
   return result.data;
@@ -116,7 +116,7 @@ export async function linkAccount(userId: string, input: { bank_name: string; ac
 
   if (error) {
     log.error('Link account failed', { userId, error: error.message });
-    throw new Error('Failed to link account');
+    throw new InternalError('Failed to link account');
   }
 
   return data;

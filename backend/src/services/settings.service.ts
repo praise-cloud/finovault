@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import { getSupabase } from '../config/supabase';
+import { InternalError } from '../utils/errors';
 import { createContextLogger } from '../utils/logger';
 
 const log = createContextLogger('SettingsService');
@@ -54,13 +55,13 @@ export async function updateSecuritySettings(userId: string, updates: {
     const { error } = await supabase.from('security_settings').update({ ...updates, updated_at: new Date().toISOString() }).eq('user_id', userId);
     if (error) {
       log.error('updateSecuritySettings error', { error: error.message });
-      throw new Error('Failed to update security settings');
+      throw new InternalError('Failed to update security settings');
     }
   } else {
     const { error } = await supabase.from('security_settings').insert({ user_id: userId, ...updates });
     if (error) {
       log.error('insertSecuritySettings error', { error: error.message });
-      throw new Error('Failed to create security settings');
+      throw new InternalError('Failed to create security settings');
     }
   }
 
@@ -93,7 +94,7 @@ export async function enableTwoFactorWithCodes(userId: string, method?: string):
   const { error } = await supabase.from('recovery_codes').insert(hashed);
   if (error) {
     log.error('storeRecoveryCodes error', { error: error.message });
-    throw new Error('Failed to store recovery codes');
+    throw new InternalError('Failed to store recovery codes');
   }
 
   return { message: 'Two-factor authentication enabled', recovery_codes: codes };

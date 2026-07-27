@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import { getSupabase } from '../config/supabase';
+import { InternalError } from '../utils/errors';
 import { createContextLogger } from '../utils/logger';
 import { aiClient } from '../lib/ai-client';
 
@@ -201,7 +202,7 @@ export async function updateSuggestion(userId: string, suggestionId: string, inp
 
   if (error) {
     log.error('Update suggestion failed', { userId, suggestionId, error: error.message });
-    throw new Error('Failed to update suggestion');
+    throw new InternalError('Failed to update suggestion');
   }
 
   return data;

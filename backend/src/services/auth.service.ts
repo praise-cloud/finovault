@@ -1,3 +1,4 @@
+import { env } from '../config/env';
 import { getSupabase, getAuthClient } from '../config/supabase';
 import { UnauthorizedError, ConflictError, InternalError } from '../utils/errors';
 import { createContextLogger } from '../utils/logger';
@@ -125,7 +126,7 @@ export async function forgotPassword(email: string) {
   const auth = getAuthClient();
 
   const { error } = await auth.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.FRONTEND_URL || 'https://finovault.ai'}/reset-password`,
+    redirectTo: `${env.FRONTEND_URL}/reset-password`,
   });
 
   if (error) {
@@ -165,21 +166,20 @@ export async function changePassword(userId: string, currentPassword: string, ne
   const supabase = getSupabase();
   const auth = getAuthClient();
 
-  const { data: userData } = await supabase.auth.admin.getUserById(userId);
-  if (!userData.user?.email) {
+  const userResult = await supabase.auth.admin.getUserById(userId);
+  const userEmail = userResult.data?.user?.email;
+  if (!userEmail) {
     throw new UnauthorizedError('User not found');
   }
 
   const { error: signInError } = await auth.auth.signInWithPassword({
-    email: userData.user.email,
+    email: userEmail,
     password: currentPassword,
   });
 
   if (signInError) {
     throw new UnauthorizedError('Current password is incorrect');
   }
-
-  await supabase.auth.admin.signOut(userId);
 
   const { error: updateError } = await supabase.auth.admin.updateUserById(userId, {
     password: newPassword,
@@ -189,6 +189,8 @@ export async function changePassword(userId: string, currentPassword: string, ne
     log.error('Change password failed', { error: updateError.message });
     throw new InternalError('Failed to change password');
   }
+
+  await supabase.auth.admin.signOut(userId);
 
   return { message: 'Password changed successfully' };
 }

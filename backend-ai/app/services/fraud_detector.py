@@ -1,5 +1,4 @@
 import numpy as np
-from sklearn.ensemble import IsolationForest
 from app.models.schemas import FraudCheckRequest, FraudCheckResponse
 from app.core.supabase import async_execute, get_supabase
 from app.core.logger import setup_logger
@@ -8,12 +7,15 @@ logger = setup_logger("fraud_detector")
 
 
 class FraudDetector:
-    def __init__(self):
-        self.model = IsolationForest(
-            contamination=0.1,
-            random_state=42,
-            n_estimators=100,
-        )
+    @staticmethod
+    def _z_score_anomaly(value: float, amounts: list[float], threshold: float = 2.5) -> bool:
+        arr = np.array(amounts)
+        mean = np.mean(arr)
+        std = np.std(arr, ddof=0)
+        if std < 1e-6:
+            return False
+        z = abs(value - mean) / std
+        return z > threshold
 
     async def analyze(self, request: FraudCheckRequest, user_id: str) -> FraudCheckResponse:
         signals = []
@@ -31,14 +33,9 @@ class FraudDetector:
 
         amounts = [float(t["amount"]) for t in result.data] if result.data else []
 
-        if len(amounts) >= 10:
-            amounts.append(request.amount)
-            X = np.array(amounts).reshape(-1, 1)
-            preds = self.model.fit_predict(X)
-
-            if preds[-1] == -1:
-                risk_score += 35
-                signals.append("Amount is anomalous compared to transaction history")
+        if len(amounts) >= 10 and self._z_score_anomaly(request.amount, amounts):
+            risk_score += 35
+            signals.append("Amount is anomalous compared to transaction history")
 
         if request.amount > 10000:
             risk_score += 20

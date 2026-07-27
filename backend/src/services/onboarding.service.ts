@@ -1,5 +1,5 @@
 import { getSupabase } from '../config/supabase';
-import { NotFoundError } from '../utils/errors';
+import { NotFoundError, InternalError } from '../utils/errors';
 import { createContextLogger } from '../utils/logger';
 
 const log = createContextLogger('OnboardingService');
@@ -19,7 +19,7 @@ export async function submitInterview(userId: string, input: Record<string, any>
 
   if (error) {
     log.error('Submit interview failed', { userId, error: error.message });
-    throw new Error('Failed to save financial profile');
+    throw new InternalError('Failed to save financial profile');
   }
 
   return data;

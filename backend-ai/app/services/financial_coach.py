@@ -1,3 +1,4 @@
+import asyncio
 from collections import defaultdict
 from app.models.schemas import CoachRequest, CoachResponse
 from app.core.supabase import async_execute, get_supabase
@@ -172,7 +173,6 @@ async def _fetch_user_data(supabase, user_id: str):
         .eq("user_id", user_id)
     )
 
-    import asyncio
     results = await asyncio.gather(
         profile_fut, tx_fut, goals_fut, patterns_fut, accounts_fut,
         return_exceptions=True,
