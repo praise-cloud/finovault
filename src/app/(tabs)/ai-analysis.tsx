@@ -163,7 +163,6 @@ export default function AiAnalysis() {
                 </View>
               ))}
 </ScrollView>
-      </KeyboardAvoidingView>
           </View>
         )}
 
@@ -221,6 +220,7 @@ export default function AiAnalysis() {
           </>
         )}
       </ScrollView>
+      </KeyboardAvoidingView>
 
       <NotificationModal visible={notifVisible} onClose={closeNotifications} />
     </View>
