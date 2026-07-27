@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View, useWindowDimensions, useColorScheme } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View, useWindowDimensions, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { getFinancialProfile, updateFinancialProfile } from '@/src/lib/api/services/onboarding';
@@ -65,105 +65,107 @@ export default function FinancialProfile() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
-      <View style={{ width: Math.min(width, 600), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER }}>
-        <View style={{ paddingHorizontal: 24, paddingTop: 60 }}>
-          <View style={styles.topbar}>
-            <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" hitSlop={12}>
-              <MaterialIcons name="arrow-back" size={24} color={isDark ? '#D4AF37' : BLUE} />
+    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
+        <View style={{ width: Math.min(width, 600), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER }}>
+          <View style={{ paddingHorizontal: 24, paddingTop: 60 }}>
+            <View style={styles.topbar}>
+              <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" hitSlop={12}>
+                <MaterialIcons name="arrow-back" size={24} color={isDark ? '#D4AF37' : BLUE} />
+              </Pressable>
+              <Logo width={26} height={23.5} color={isDark ? '#D4AF37' : BLUE} />
+            </View>
+          </View>
+
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}
+          >
+            <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#111111' }]}>Your financial profile</Text>
+            <Text style={[styles.subtitle, { color: isDark ? '#B0B0B0' : '#666B76' }]}>Review and update your financial information.</Text>
+
+            <View style={{ marginTop: 28 }}>
+              <Text style={[styles.label, { color: isDark ? '#FFFFFF' : '#111111' }]}>Employment Status</Text>
+              <View style={styles.chipRow}>
+                {EMPLOYMENT_OPTIONS.map((opt) => {
+                  const active = profile.employment_status === opt;
+                  return (
+                    <Pressable
+                      key={opt}
+                      onPress={() => updateField('employment_status', opt)}
+                      accessibilityRole="button"
+                      style={[styles.chip, { backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF' }, active && styles.chipActive]}
+                    >
+                      <Text style={[styles.chipText, active && styles.chipTextActive]}>{opt}</Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+
+            <View style={{ marginTop: 24 }}>
+              <Text style={[styles.label, { color: isDark ? '#FFFFFF' : '#111111' }]}>Annual Income (MUR)</Text>
+              <TextInput
+                style={[styles.input, { backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF', borderColor: isDark ? '#2A2A2A' : '#C9CEDD', color: isDark ? '#FFFFFF' : '#111111' }]}
+                placeholder="e.g. 750,000"
+                placeholderTextColor={isDark ? '#6B6F7A' : '#9AA0AC'}
+                keyboardType="numeric"
+                value={profile.annual_income}
+                onChangeText={(v) => updateField('annual_income', v)}
+                accessibilityLabel="Annual income"
+              />
+            </View>
+
+            <View style={{ marginTop: 24 }}>
+              <Text style={[styles.label, { color: isDark ? '#FFFFFF' : '#111111' }]}>Monthly Expenses (MUR)</Text>
+              <TextInput
+                style={[styles.input, { backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF', borderColor: isDark ? '#2A2A2A' : '#C9CEDD', color: isDark ? '#FFFFFF' : '#111111' }]}
+                placeholder="e.g. 30,000"
+                placeholderTextColor={isDark ? '#6B6F7A' : '#9AA0AC'}
+                keyboardType="numeric"
+                value={profile.monthly_expenses}
+                onChangeText={(v) => updateField('monthly_expenses', v)}
+                accessibilityLabel="Monthly expenses"
+              />
+            </View>
+
+            <View style={{ marginTop: 24 }}>
+              <Text style={[styles.label, { color: isDark ? '#FFFFFF' : '#111111' }]}>Risk Tolerance</Text>
+              <View style={styles.chipRow}>
+                {RISK_OPTIONS.map((opt) => {
+                  const active = profile.risk_level === opt.value;
+                  return (
+                    <Pressable
+                      key={opt.value}
+                      onPress={() => updateField('risk_level', opt.value)}
+                      accessibilityRole="button"
+                      style={[styles.chip, { backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF' }, active && styles.chipActive]}
+                    >
+                      <Text style={[styles.chipText, active && styles.chipTextActive]}>{opt.label}</Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+          </ScrollView>
+
+          <View style={{ paddingHorizontal: 24, paddingBottom: 32, paddingTop: 8 }}>
+            <Pressable onPress={handleSave} disabled={saving} accessibilityRole="button" style={styles.cta}>
+              {saving ? (
+                <ActivityIndicator color="#FFFFFF" size="small" />
+              ) : (
+                <>
+                  <Text style={styles.ctaText}>Continue</Text>
+                  <MaterialIcons name="arrow-forward" size={18} color="#FFFFFF" />
+                </>
+              )}
             </Pressable>
-            <Logo width={26} height={23.5} color={isDark ? '#D4AF37' : BLUE} />
+            <Text style={[styles.helper, { color: isDark ? '#8C8F9E' : '#969AA3' }]}>Step 3 of 4 • Financial Profile</Text>
           </View>
-        </View>
-
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}
-        >
-          <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#111111' }]}>Your financial profile</Text>
-          <Text style={[styles.subtitle, { color: isDark ? '#B0B0B0' : '#666B76' }]}>Review and update your financial information.</Text>
-
-          <View style={{ marginTop: 28 }}>
-            <Text style={[styles.label, { color: isDark ? '#FFFFFF' : '#111111' }]}>Employment Status</Text>
-            <View style={styles.chipRow}>
-              {EMPLOYMENT_OPTIONS.map((opt) => {
-                const active = profile.employment_status === opt;
-                return (
-                  <Pressable
-                    key={opt}
-                    onPress={() => updateField('employment_status', opt)}
-                    accessibilityRole="button"
-                    style={[styles.chip, { backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF' }, active && styles.chipActive]}
-                  >
-                    <Text style={[styles.chipText, active && styles.chipTextActive]}>{opt}</Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-          </View>
-
-          <View style={{ marginTop: 24 }}>
-            <Text style={[styles.label, { color: isDark ? '#FFFFFF' : '#111111' }]}>Annual Income (MUR)</Text>
-            <TextInput
-              style={[styles.input, { backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF', borderColor: isDark ? '#2A2A2A' : '#C9CEDD', color: isDark ? '#FFFFFF' : '#111111' }]}
-              placeholder="e.g. 750,000"
-              placeholderTextColor={isDark ? '#6B6F7A' : '#9AA0AC'}
-              keyboardType="numeric"
-              value={profile.annual_income}
-              onChangeText={(v) => updateField('annual_income', v)}
-              accessibilityLabel="Annual income"
-            />
-          </View>
-
-          <View style={{ marginTop: 24 }}>
-            <Text style={[styles.label, { color: isDark ? '#FFFFFF' : '#111111' }]}>Monthly Expenses (MUR)</Text>
-            <TextInput
-              style={[styles.input, { backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF', borderColor: isDark ? '#2A2A2A' : '#C9CEDD', color: isDark ? '#FFFFFF' : '#111111' }]}
-              placeholder="e.g. 30,000"
-              placeholderTextColor={isDark ? '#6B6F7A' : '#9AA0AC'}
-              keyboardType="numeric"
-              value={profile.monthly_expenses}
-              onChangeText={(v) => updateField('monthly_expenses', v)}
-              accessibilityLabel="Monthly expenses"
-            />
-          </View>
-
-          <View style={{ marginTop: 24 }}>
-            <Text style={[styles.label, { color: isDark ? '#FFFFFF' : '#111111' }]}>Risk Tolerance</Text>
-            <View style={styles.chipRow}>
-              {RISK_OPTIONS.map((opt) => {
-                const active = profile.risk_level === opt.value;
-                return (
-                  <Pressable
-                    key={opt.value}
-                    onPress={() => updateField('risk_level', opt.value)}
-                    accessibilityRole="button"
-                    style={[styles.chip, { backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF' }, active && styles.chipActive]}
-                  >
-                    <Text style={[styles.chipText, active && styles.chipTextActive]}>{opt.label}</Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-          </View>
-        </ScrollView>
-
-        <View style={{ paddingHorizontal: 24, paddingBottom: 32, paddingTop: 8 }}>
-          <Pressable onPress={handleSave} disabled={saving} accessibilityRole="button" style={styles.cta}>
-            {saving ? (
-              <ActivityIndicator color="#FFFFFF" size="small" />
-            ) : (
-              <>
-                <Text style={styles.ctaText}>Continue</Text>
-                <MaterialIcons name="arrow-forward" size={18} color="#FFFFFF" />
-              </>
-            )}
-          </Pressable>
-          <Text style={[styles.helper, { color: isDark ? '#8C8F9E' : '#969AA3' }]}>Step 3 of 4 • Financial Profile</Text>
         </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

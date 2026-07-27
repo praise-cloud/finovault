@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Pressable, ActivityIndicator, TextInput, useColorScheme } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, View, Text, Pressable, ActivityIndicator, TextInput, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { getBusinessVendors, addVendor, deleteVendor } from '@/src/lib/api/services/business';
@@ -65,7 +65,8 @@ export default function BusinessVendors() {
         </View>
       </View>
 
-      <ScrollView className="flex-1 px-margin-mobile" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 120 }}>
+      <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+        <ScrollView className="flex-1 px-margin-mobile" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 120 }}>
         <View className="mt-6 mb-8">
           <Text className="font-body-bold text-[#1A1A1A] mb-2" style={{ fontSize: 28 }}>Vendor Management</Text>
           <Text className="text-[#6B6F76]" style={{ fontSize: 16 }}>{vendors.length} vendor{vendors.length !== 1 ? 's' : ''} registered.</Text>
@@ -125,6 +126,7 @@ export default function BusinessVendors() {
           ))}
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

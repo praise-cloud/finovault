@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View, useWindowDimensions, useColorScheme } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View, useWindowDimensions, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuthStore } from '@/src/stores/auth-store';
 import { TextInput } from '@/src/components/ui/text-input';
@@ -35,56 +35,58 @@ export default function SignUp() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
-      <View style={{ width: Math.min(width, 600), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 20, paddingTop: 54 }}>
-        <View style={styles.topbar}>
-          <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back">
-            <MaterialIcons name="arrow-back" size={24} color={isDark ? '#D4AF37' : BLUE} />
-          </Pressable>
-          <Logo width={40} height={40} />
-        </View>
-
-        <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 30, paddingTop: 20 }}>
-          <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#111111' }]}>Personal details</Text>
-          <Text style={[styles.subtitle, { color: isDark ? '#B0B0B0' : '#666B76' }]}>Tell us a little about yourself to get started.</Text>
-
-          <TextInput label="Full Name" value={name} onChangeText={setName} placeholder="John Doe" accessibilityLabel="Full name" />
-          <TextInput label="Email Address" value={email} onChangeText={setEmail} placeholder="name@example.com" keyboardType="email-address" autoCapitalize="none" accessibilityLabel="Email address" />
-          <TextInput label="Phone Number" value={phone} onChangeText={setPhone} placeholder="+1 555 000 0000" keyboardType="phone-pad" accessibilityLabel="Phone number" />
-          <TextInput label="Password" value={password} onChangeText={setPassword} placeholder="••••••••" secureTextEntry accessibilityLabel="Password" />
-
-          <View style={{ flexDirection: 'row', gap: 2, marginTop: -17, marginBottom: 9 }}>
-            {[0, 1, 2, 3].map((item) => (
-              <View
-                key={item}
-                style={{
-                  height: 2,
-                  flex: 1,
-                  backgroundColor: item < Math.min(4, Math.floor(password.length / 3)) ? BLUE : (isDark ? '#2A2A2A' : '#C8CEDA'),
-                }}
-              />
-            ))}
+    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
+        <View style={{ width: Math.min(width, 600), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 20, paddingTop: 54 }}>
+          <View style={styles.topbar}>
+            <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back">
+              <MaterialIcons name="arrow-back" size={24} color={isDark ? '#D4AF37' : BLUE} />
+            </Pressable>
+            <Logo width={40} height={40} />
           </View>
 
-          <TextInput label="Confirm Password" value={confirmPassword} onChangeText={setConfirmPassword} placeholder="••••••••" secureTextEntry accessibilityLabel="Confirm password" />
+          <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 30, paddingTop: 20 }}>
+            <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#111111' }]}>Personal details</Text>
+            <Text style={[styles.subtitle, { color: isDark ? '#B0B0B0' : '#666B76' }]}>Tell us a little about yourself to get started.</Text>
 
-          {!!error && <Text style={styles.error}>{error}</Text>}
+            <TextInput label="Full Name" value={name} onChangeText={setName} placeholder="John Doe" accessibilityLabel="Full name" />
+            <TextInput label="Email Address" value={email} onChangeText={setEmail} placeholder="name@example.com" keyboardType="email-address" autoCapitalize="none" accessibilityLabel="Email address" />
+            <TextInput label="Phone Number" value={phone} onChangeText={setPhone} placeholder="+1 555 000 0000" keyboardType="phone-pad" accessibilityLabel="Phone number" />
+            <TextInput label="Password" value={password} onChangeText={setPassword} placeholder="••••••••" secureTextEntry accessibilityLabel="Password" />
 
-          <Pressable onPress={submit} disabled={loading} accessibilityRole="button" style={styles.cta}>
-            {loading ? (
-              <ActivityIndicator color="#FFFFFF" size="small" />
-            ) : (
-              <>
-                <Text style={styles.ctaText}>Continue</Text>
-                <MaterialIcons name="arrow-forward" size={14} color="#FFFFFF" />
-              </>
-            )}
-          </Pressable>
+            <View style={{ flexDirection: 'row', gap: 2, marginTop: -17, marginBottom: 9 }}>
+              {[0, 1, 2, 3].map((item) => (
+                <View
+                  key={item}
+                  style={{
+                    height: 2,
+                    flex: 1,
+                    backgroundColor: item < Math.min(4, Math.floor(password.length / 3)) ? BLUE : (isDark ? '#2A2A2A' : '#C8CEDA'),
+                  }}
+                />
+              ))}
+            </View>
 
-          <Text style={[styles.helper, { color: isDark ? '#8C8F9E' : '#969AA3' }]}>Step 1 of 3</Text>
-        </ScrollView>
+            <TextInput label="Confirm Password" value={confirmPassword} onChangeText={setConfirmPassword} placeholder="••••••••" secureTextEntry accessibilityLabel="Confirm password" />
+
+            {!!error && <Text style={styles.error}>{error}</Text>}
+
+            <Pressable onPress={submit} disabled={loading} accessibilityRole="button" style={styles.cta}>
+              {loading ? (
+                <ActivityIndicator color="#FFFFFF" size="small" />
+              ) : (
+                <>
+                  <Text style={styles.ctaText}>Continue</Text>
+                  <MaterialIcons name="arrow-forward" size={14} color="#FFFFFF" />
+                </>
+              )}
+            </Pressable>
+
+            <Text style={[styles.helper, { color: isDark ? '#8C8F9E' : '#969AA3' }]}>Step 1 of 3</Text>
+          </ScrollView>
+        </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

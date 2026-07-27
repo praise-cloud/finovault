@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Pressable, ActivityIndicator, TextInput, Modal, Alert, useWindowDimensions, useColorScheme } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, View, Text, Pressable, ActivityIndicator, TextInput, Modal, Alert, useWindowDimensions, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useDashboardStore } from '@/src/stores/dashboard-store';
@@ -235,8 +235,10 @@ export default function Settings() {
 
       {/* Edit personal info */}
       <Modal visible={editVisible} transparent animationType="slide" onRequestClose={() => setEditVisible(false)}>
-        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', paddingHorizontal: 20 }}>
-          <View style={{ backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF', borderRadius: 20, padding: 22 }}>
+        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+          <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', paddingHorizontal: 20 }}>
+            <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
+            <View style={{ backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF', borderRadius: 20, padding: 22 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
               <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: 17, color: isDark ? '#FFFFFF' : '#1A1A1A' }}>Edit Personal Info</Text>
               <Pressable onPress={() => setEditVisible(false)} accessibilityLabel="Close" accessibilityRole="button" hitSlop={8}>
@@ -289,8 +291,10 @@ export default function Settings() {
                 <Text style={{ fontFamily: 'Montserrat_600SemiBold', fontSize: 15, color: '#FFFFFF' }}>Save Changes</Text>
               </Pressable>
             </View>
+</View>
+            </ScrollView>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       <NotificationModal visible={notifVisible} onClose={closeNotifications} />

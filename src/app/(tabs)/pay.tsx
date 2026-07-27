@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ScrollView, View, Text, Pressable, TextInput as RNTextInput, useColorScheme } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, View, Text, Pressable, TextInput as RNTextInput, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { VaultMonogram } from '@/src/components/vault-monogram';
 import { FlatCard } from '@/src/components/flat-card';
@@ -18,7 +18,8 @@ export default function PayScreen() {
         </View>
       </View>
 
-      <ScrollView className="flex-1 px-margin-mobile" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+        <ScrollView className="flex-1 px-margin-mobile" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {/* Pill segmented control */}
         <View className="flex-row mt-4" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#EEF0F5', borderRadius: 9999, padding: 3 }}>
           {(['send', 'request'] as const).map((tab) => (
@@ -120,6 +121,7 @@ export default function PayScreen() {
           </Text>
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

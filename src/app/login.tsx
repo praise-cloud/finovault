@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View, useWindowDimensions, useColorScheme } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View, useWindowDimensions, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuthStore } from '@/src/stores/auth-store';
 import { TextInput } from '@/src/components/ui/text-input';
@@ -34,57 +34,59 @@ export default function Login() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
-      <View style={{ width: Math.min(width, 600), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 24, paddingTop: 60 }}>
-        <View style={styles.topbar}>
-          <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" hitSlop={12}>
-            <MaterialIcons name="arrow-back" size={24} color={isDark ? '#D4AF37' : BLUE} />
-          </Pressable>
-          <Pressable onPress={() => router.push('/signup')} accessibilityRole="button" hitSlop={12}>
-            <Text style={styles.signUp}>Sign UP</Text>
-          </Pressable>
+    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, alignItems: 'center' }}>
+        <View style={{ width: Math.min(width, 600), flex: 1, backgroundColor: isDark ? '#08142E' : PAPER, paddingHorizontal: 24, paddingTop: 60 }}>
+          <View style={styles.topbar}>
+            <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" hitSlop={12}>
+              <MaterialIcons name="arrow-back" size={24} color={isDark ? '#D4AF37' : BLUE} />
+            </Pressable>
+            <Pressable onPress={() => router.push('/signup')} accessibilityRole="button" hitSlop={12}>
+              <Text style={styles.signUp}>Sign UP</Text>
+            </Pressable>
+          </View>
+
+          <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 30 }}>
+            <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#111111' }]}>Welcome back!</Text>
+            <Text style={[styles.subtitle, { color: isDark ? '#B0B0B0' : '#666B76' }]}>Let's get you back into building wealth</Text>
+
+            <TextInput
+              label="Email address"
+              value={email}
+              onChangeText={setEmail}
+              placeholder="name@example.com"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              accessibilityLabel="Email address"
+            />
+
+            <TextInput
+              label="Password"
+              value={password}
+              onChangeText={setPassword}
+              placeholder="••••••••"
+              secureTextEntry
+              accessibilityLabel="Password"
+            />
+
+            <Pressable accessibilityRole="button" style={{ alignSelf: 'flex-start', marginTop: 4, marginBottom: 24 }}>
+              <Text style={styles.link}>Forgot your password?</Text>
+            </Pressable>
+
+            {!!error && <Text style={styles.error}>{error}</Text>}
+
+            <Pressable
+              onPress={submit}
+              disabled={loading}
+              accessibilityRole="button"
+              style={({ pressed }) => [styles.cta, { opacity: pressed ? 0.85 : 1 }]}
+            >
+              {loading ? <ActivityIndicator color="#FFFFFF" size="small" /> : <Text style={styles.ctaText}>Log in</Text>}
+            </Pressable>
+          </ScrollView>
         </View>
-
-        <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 30 }}>
-          <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#111111' }]}>Welcome back!</Text>
-          <Text style={[styles.subtitle, { color: isDark ? '#B0B0B0' : '#666B76' }]}>Let's get you back into building wealth</Text>
-
-          <TextInput
-            label="Email address"
-            value={email}
-            onChangeText={setEmail}
-            placeholder="name@example.com"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            accessibilityLabel="Email address"
-          />
-
-          <TextInput
-            label="Password"
-            value={password}
-            onChangeText={setPassword}
-            placeholder="••••••••"
-            secureTextEntry
-            accessibilityLabel="Password"
-          />
-
-          <Pressable accessibilityRole="button" style={{ alignSelf: 'flex-start', marginTop: 4, marginBottom: 24 }}>
-            <Text style={styles.link}>Forgot your password?</Text>
-          </Pressable>
-
-          {!!error && <Text style={styles.error}>{error}</Text>}
-
-          <Pressable
-            onPress={submit}
-            disabled={loading}
-            accessibilityRole="button"
-            style={({ pressed }) => [styles.cta, { opacity: pressed ? 0.85 : 1 }]}
-          >
-            {loading ? <ActivityIndicator color="#FFFFFF" size="small" /> : <Text style={styles.ctaText}>Log in</Text>}
-          </Pressable>
-        </ScrollView>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

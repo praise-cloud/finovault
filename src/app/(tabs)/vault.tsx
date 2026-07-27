@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import {
   KeyboardAvoidingView,
-  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -71,7 +70,7 @@ export default function VaultAssistant() {
   const hasConversation = messages.length > 1;
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: isDark ? '#08142E' : PAPER }} behavior="padding">
       <View style={{ flex: 1, alignItems: 'center' }}>
         <View style={{ width: Math.min(width, 600), flex: 1 }}>
           <View style={{ paddingHorizontal: 20, paddingTop: 60, paddingBottom: 12 }}>

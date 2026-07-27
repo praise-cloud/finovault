@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { View, Text, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Alert, useColorScheme, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Alert, useColorScheme, KeyboardAvoidingView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import * as SavingsService from '@/src/lib/api/services/savings';
@@ -157,7 +157,7 @@ function AddGoalModal({ visible, onClose, onSaved }: { visible: boolean; onClose
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <Pressable accessibilityRole="button" accessibilityLabel="Close" className="flex-1 bg-black/40" onPress={onClose}>
-        <KeyboardAvoidingView className="flex-1 justify-end" behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <KeyboardAvoidingView className="flex-1 justify-end" behavior="padding">
           <ScrollView className={`${isDark ? 'bg-[#0D1B3E]' : 'bg-white'} rounded-t-3xl p-6`} keyboardShouldPersistTaps="handled">
             <View className="items-center pt-3 pb-1">
               <View className="w-10 h-1 rounded-full bg-outline/40" />

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Alert, useColorScheme } from 'react-native';
+import { KeyboardAvoidingView, Platform, View, Text, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Alert, useColorScheme } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import * as TransactionsService from '@/src/lib/api/services/transactions';
@@ -214,8 +214,9 @@ export default function TransactionsScreen() {
                     <Pressable onPress={() => handleDelete(tx.id)} accessibilityLabel="Delete transaction" accessibilityRole="button" className="pr-1 pl-3 active:scale-90">
                       <MaterialIcons name="delete-outline" size={18} color={isDark ? 'rgba(255,255,255,0.3)' : '#BA1A1A'} />
                     </Pressable>
-                  </View>
-                </View>
+</ScrollView>
+            </KeyboardAvoidingView>
+          </View>
               );
             })}
           </View>
@@ -275,6 +276,8 @@ function AddTransactionModal({ visible, onClose, onSaved, isDark }: {
       <Pressable className="flex-1" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }} onPress={onClose}>
         <Pressable className="flex-1 justify-end" onPress={() => {}}>
           <View style={{ backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF', borderTopLeftRadius: 18, borderTopRightRadius: 18, padding: 24, maxHeight: '80%' }}>
+            <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+              <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
             <View className="items-center pb-3">
               <View className="w-10 h-1 rounded-full" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.2)' : '#c4c6ce' }} />
             </View>
