@@ -214,14 +214,13 @@ export default function TransactionsScreen() {
                     <Pressable onPress={() => handleDelete(tx.id)} accessibilityLabel="Delete transaction" accessibilityRole="button" className="pr-1 pl-3 active:scale-90">
                       <MaterialIcons name="delete-outline" size={18} color={isDark ? 'rgba(255,255,255,0.3)' : '#BA1A1A'} />
                     </Pressable>
-</ScrollView>
-            </KeyboardAvoidingView>
-          </View>
-              );
-            })}
-          </View>
-        )}
-      </ScrollView>
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          )}
+        </ScrollView>
 
       <AddTransactionModal
         visible={showAddModal}
@@ -393,6 +392,8 @@ function AddTransactionModal({ visible, onClose, onSaved, isDark }: {
                 {saving ? 'Saving...' : 'Save Transaction'}
               </Text>
             </Pressable>
+              </ScrollView>
+            </KeyboardAvoidingView>
           </View>
         </Pressable>
       </Pressable>
