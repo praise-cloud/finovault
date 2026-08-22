@@ -2,6 +2,8 @@
 /// types/index.ts so all three apps speak the same contract.
 library;
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 enum PrimaryRole { individual, freelancer, entrepreneur, sme }
@@ -339,6 +341,211 @@ class GoalContribution {
         amount: (j['amount'] as num).toDouble(),
         date: DateTime.tryParse((j['date'] as String?) ?? '') ?? DateTime.now(),
         sourceAccountId: j['sourceAccountId'] as String?,
+      );
+}
+
+enum PensionFrequency { daily, weekly, monthly }
+
+/// Flexible micro-pension product (Phase 4). Splits savings into a short-term
+/// pot (liquid, near goals) and a long-term pot (retirement), each with its own
+/// target. Mirrors the web/backend `/pension` contract.
+class PensionPlan {
+  const PensionPlan({
+    required this.id,
+    required this.shortPotTarget,
+    required this.longPotTarget,
+    this.frequency = PensionFrequency.monthly,
+    this.contributionAmount = 0,
+    this.currentShortPot = 0,
+    this.currentLongPot = 0,
+    this.assumedReturnPct = 7,
+    this.inflationPct = 4,
+    this.currentAge = 30,
+    this.retirementAge = 65,
+    this.autoDebit = false,
+    this.updatedAt,
+  });
+
+  final String id;
+  final double shortPotTarget;
+  final double longPotTarget;
+  final PensionFrequency frequency;
+  final double contributionAmount;
+  final double currentShortPot;
+  final double currentLongPot;
+  final double assumedReturnPct;
+  final double inflationPct;
+  final int currentAge;
+  final int retirementAge;
+  final bool autoDebit;
+  final DateTime? updatedAt;
+
+  /// Contribution amount expressed as a monthly equivalent.
+  double get monthlyContribution => contributionAmount * _frequencyMultiplier;
+
+  double get _frequencyMultiplier {
+    switch (frequency) {
+      case PensionFrequency.daily:
+        return 30.0;
+      case PensionFrequency.weekly:
+        return 4.33;
+      case PensionFrequency.monthly:
+        return 1.0;
+    }
+  }
+
+  PensionPlan copyWith({
+    double? shortPotTarget,
+    double? longPotTarget,
+    PensionFrequency? frequency,
+    double? contributionAmount,
+    double? currentShortPot,
+    double? currentLongPot,
+    double? assumedReturnPct,
+    double? inflationPct,
+    int? currentAge,
+    int? retirementAge,
+    bool? autoDebit,
+    DateTime? updatedAt,
+  }) =>
+      PensionPlan(
+        id: id,
+        shortPotTarget: shortPotTarget ?? this.shortPotTarget,
+        longPotTarget: longPotTarget ?? this.longPotTarget,
+        frequency: frequency ?? this.frequency,
+        contributionAmount: contributionAmount ?? this.contributionAmount,
+        currentShortPot: currentShortPot ?? this.currentShortPot,
+        currentLongPot: currentLongPot ?? this.currentLongPot,
+        assumedReturnPct: assumedReturnPct ?? this.assumedReturnPct,
+        inflationPct: inflationPct ?? this.inflationPct,
+        currentAge: currentAge ?? this.currentAge,
+        retirementAge: retirementAge ?? this.retirementAge,
+        autoDebit: autoDebit ?? this.autoDebit,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'shortPotTarget': shortPotTarget,
+        'longPotTarget': longPotTarget,
+        'frequency': frequency.name,
+        'contributionAmount': contributionAmount,
+        'currentShortPot': currentShortPot,
+        'currentLongPot': currentLongPot,
+        'assumedReturnPct': assumedReturnPct,
+        'inflationPct': inflationPct,
+        'currentAge': currentAge,
+        'retirementAge': retirementAge,
+        'autoDebit': autoDebit,
+        'updatedAt': updatedAt?.toIso8601String(),
+      };
+
+  static PensionPlan fromJson(Map<String, dynamic> j) => PensionPlan(
+        id: j['id'] as String,
+        shortPotTarget: (j['shortPotTarget'] as num).toDouble(),
+        longPotTarget: (j['longPotTarget'] as num).toDouble(),
+        frequency: enumFromString(PensionFrequency.values, j['frequency'] as String?, PensionFrequency.monthly),
+        contributionAmount: (j['contributionAmount'] as num?)?.toDouble() ?? 0,
+        currentShortPot: (j['currentShortPot'] as num?)?.toDouble() ?? 0,
+        currentLongPot: (j['currentLongPot'] as num?)?.toDouble() ?? 0,
+        assumedReturnPct: (j['assumedReturnPct'] as num?)?.toDouble() ?? 7,
+        inflationPct: (j['inflationPct'] as num?)?.toDouble() ?? 4,
+        currentAge: (j['currentAge'] as num?)?.toInt() ?? 30,
+        retirementAge: (j['retirementAge'] as num?)?.toInt() ?? 65,
+        autoDebit: (j['autoDebit'] as bool?) ?? false,
+        updatedAt: j['updatedAt'] == null ? null : DateTime.tryParse(j['updatedAt'] as String),
+      );
+
+  /// Simple projection: monthly compounding at the assumed nominal return,
+  /// discounted to today's money by the inflation assumption. Inspired by
+  /// common African micro-pension models (short + long pot split).
+  PensionProjection computeProjection() {
+    final years = (retirementAge - currentAge).clamp(0, 100);
+    final months = years * 12;
+    final monthly = monthlyContribution;
+    final r = (assumedReturnPct / 100) / 12;
+
+    double futureValue(double start) {
+      if (months <= 0 || monthly <= 0) return start;
+      final factor = (r == 0) ? months.toDouble() : (pow(1 + r, months) - 1) / r;
+      return start + monthly * factor;
+    }
+
+    final shortNominal = futureValue(currentShortPot);
+    final longNominal = futureValue(currentLongPot);
+    final inflFactor = pow(1 + inflationPct / 100, years).toDouble();
+    final realShort = inflFactor > 0 ? shortNominal / inflFactor : shortNominal;
+    final realLong = inflFactor > 0 ? longNominal / inflFactor : longNominal;
+    return PensionProjection(
+      shortPotProjected: realShort,
+      longPotProjected: realLong,
+      totalProjected: realShort + realLong,
+      yearsToRetirement: years,
+    );
+  }
+}
+
+class PensionContribution {
+  const PensionContribution({
+    required this.id,
+    required this.planId,
+    required this.pot,
+    required this.amount,
+    required this.date,
+    this.sourceAccountId,
+  });
+
+  final String id;
+  final String planId;
+  final String pot;
+  final double amount;
+  final DateTime date;
+  final String? sourceAccountId;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'planId': planId,
+        'pot': pot,
+        'amount': amount,
+        'date': date.toIso8601String(),
+        'sourceAccountId': sourceAccountId,
+      };
+
+  static PensionContribution fromJson(Map<String, dynamic> j) => PensionContribution(
+        id: j['id'] as String,
+        planId: j['planId'] as String,
+        pot: (j['pot'] as String?) ?? 'short',
+        amount: (j['amount'] as num).toDouble(),
+        date: DateTime.tryParse((j['date'] as String?) ?? '') ?? DateTime.now(),
+        sourceAccountId: j['sourceAccountId'] as String?,
+      );
+}
+
+class PensionProjection {
+  const PensionProjection({
+    required this.shortPotProjected,
+    required this.longPotProjected,
+    required this.totalProjected,
+    required this.yearsToRetirement,
+  });
+
+  final double shortPotProjected;
+  final double longPotProjected;
+  final double totalProjected;
+  final int yearsToRetirement;
+
+  Map<String, dynamic> toJson() => {
+        'shortPotProjected': shortPotProjected,
+        'longPotProjected': longPotProjected,
+        'totalProjected': totalProjected,
+        'yearsToRetirement': yearsToRetirement,
+      };
+
+  factory PensionProjection.fromJson(Map<String, dynamic> j) => PensionProjection(
+        shortPotProjected: (j['shortPotProjected'] as num).toDouble(),
+        longPotProjected: (j['longPotProjected'] as num).toDouble(),
+        totalProjected: (j['totalProjected'] as num).toDouble(),
+        yearsToRetirement: j['yearsToRetirement'] as int,
       );
 }
 

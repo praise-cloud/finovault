@@ -116,6 +116,71 @@ class _SectionTitle extends StatelessWidget {
 
 // ---- Individual --------------------------------------------------------------
 
+class _PensionTile extends ConsumerWidget {
+  const _PensionTile();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final plan = ref.watch(pensionPlanProvider);
+    final projection = ref.watch(pensionProjectionProvider);
+    final hasPlan = plan.value != null;
+
+    final current = (plan.value?.currentShortPot ?? 0) + (plan.value?.currentLongPot ?? 0);
+    final target = (plan.value?.shortPotTarget ?? 0) + (plan.value?.longPotTarget ?? 0);
+    final progress = target <= 0 ? 0.0 : (current / target).clamp(0.0, 1.0);
+
+    return FvCard(
+      onTap: () => openPension(context),
+      margin: const EdgeInsets.only(bottom: FvSpacing.x4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: context.fvSurface,
+                  borderRadius: BorderRadius.circular(FvRadius.iconContainer),
+                  border: Border.all(color: context.fvCardBorder),
+                ),
+                child: const Icon(Icons.account_balance_outlined, color: FvColors.primary, size: 20),
+              ),
+              const SizedBox(width: FvSpacing.x3),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Pension', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 2),
+                    Text(
+                      hasPlan
+                          ? 'Projected ${FvFormat.formatMoney(projection.totalProjected, language: ref.watch(preferencesProvider).language)} at retirement'
+                          : 'Start a flexible micro-pension',
+                      style: const TextStyle(fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right, size: 18),
+            ],
+          ),
+          if (hasPlan) ...[
+            const SizedBox(height: FvSpacing.x3),
+            LinearProgressIndicator(
+              value: progress,
+              backgroundColor: context.fvBorder,
+              color: FvColors.primary,
+              minHeight: 6,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
 class IndividualHome extends ConsumerWidget {
   const IndividualHome({super.key});
 
@@ -193,6 +258,7 @@ class IndividualHome extends ConsumerWidget {
                 : 'Start an emergency goal',
           ),
         ),
+        const _PensionTile(),
         const _LinkAccountCta(),
       ],
     );
@@ -312,6 +378,7 @@ class EntrepreneurHome extends ConsumerWidget {
             ),
           ),
         ],
+        const _PensionTile(),
         const _LinkAccountCta(),
       ],
     );

@@ -79,6 +79,27 @@ final securityEventsProvider = FutureProvider<List<SecurityEvent>>((ref) async {
   return api.securityEvents(currentToken(ref));
 });
 
+final pensionPlanProvider = FutureProvider<PensionPlan?>((ref) async {
+  ref.watch(authProvider);
+  final api = ref.watch(apiProvider);
+  return api.getPensionPlan(currentToken(ref));
+});
+
+final pensionContributionsProvider = FutureProvider<List<PensionContribution>>((ref) async {
+  ref.watch(authProvider);
+  final api = ref.watch(apiProvider);
+  return api.pensionContributions(currentToken(ref));
+});
+
+/// Derived projection for the current plan (zeros when no plan yet).
+final pensionProjectionProvider = Provider<PensionProjection>((ref) {
+  final plan = ref.watch(pensionPlanProvider).value;
+  if (plan == null) {
+    return const PensionProjection(shortPotProjected: 0, longPotProjected: 0, totalProjected: 0, yearsToRetirement: 0);
+  }
+  return plan.computeProjection();
+});
+
 /// Selected bottom tab of the HomeShell (lets quick actions deep-link tabs).
 final homeTabIndexProvider = StateProvider<int>((ref) => 0);
 

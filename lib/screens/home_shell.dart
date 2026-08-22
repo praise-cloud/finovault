@@ -13,6 +13,7 @@ import 'money/bills_screen.dart';
 import 'money/budgets_screen.dart';
 import 'money/goal_new_screen.dart';
 import 'money/goals_list_screen.dart';
+import 'money/pension_screen.dart';
 import 'money/invoices_screen.dart';
 import 'money/security_screen.dart';
 import 'money/transactions_screen.dart';
@@ -193,3 +194,4 @@ void openInvoices(BuildContext context) => pushScreen(context, const InvoicesScr
 void openVendors(BuildContext context) => pushScreen(context, const VendorsScreen());
 void openTransfer(BuildContext context) => pushScreen(context, const TransferScreen());
 void openBills(BuildContext context) => pushScreen(context, const BillsScreen());
+void openPension(BuildContext context) => pushScreen(context, const PensionScreen());

@@ -17,13 +17,121 @@ class AuthResult {
 
   final UserProfile user;
   final String token;
+
+  Map<String, dynamic> toJson() => {'user': user.toJson(), 'token': token};
+
+  factory AuthResult.fromJson(Map<String, dynamic> j) =>
+      AuthResult(user: UserProfile.fromJson(j['user'] as Map<String, dynamic>), token: j['token'] as String);
+}
+
+/// Backend-agnostic contract. `MockFinovaultApi` implements it against an
+/// in-memory store; `HttpFinovaultApi` implements it against the BFF. Both
+/// honour the envelope documented in 18-API-CONTRACTS.md.
+abstract class FinovaultApi {
+  Future<AuthResult> signup({
+    required String fullName,
+    required String email,
+    required String password,
+  });
+  Future<AuthResult> login({required String email, required String password});
+  Future<UserProfile?> getSession(String? token);
+  Future<void> logout(String? token);
+  Future<UserProfile> updateMe(
+    String? token, {
+    String? fullName,
+    String? avatarUrl,
+    String? preferredLanguage,
+    String? preferredCurrency,
+  });
+  Future<UserPreferences> getPreferences(String? token);
+  Future<UserPreferences> savePreferences(String? token, UserPreferences patch);
+  Future<UserProfile> setRole(String? token, {required PrimaryRole primaryRole, required RoleScheme scheme});
+  Future<List<Account>> accounts(String? token);
+  Future<Account> linkAccount(String? token,
+      {required String name, required AccountType type, double balance = 0, String? institution});
+  Future<void> unlinkAccount(String? token, String accountId);
+  Future<List<Transaction>> transactions(String? token, {int limit = 20});
+  Future<Transaction> createTransaction(
+    String? token, {
+    required String accountId,
+    required double amount,
+    required TransactionDirection direction,
+    required String category,
+    String? merchantName,
+  });
+  Future<List<Budget>> budgets(String? token);
+  Future<Budget> createBudget(String? token, {required String category, required double amount});
+  Future<List<SavingsGoal>> goals(String? token);
+  Future<SavingsGoal> goal(String? token, String goalId);
+  Future<SavingsGoal> createGoal(String? token,
+      {required String name, required GoalType type, required double targetAmount, DateTime? targetDate});
+  Future<SavingsGoal> contribute(String? token,
+      {required String goalId, required double amount, String? sourceAccountId});
+  Future<PensionPlan?> getPensionPlan(String? token);
+  Future<PensionProjection> pensionProjection(String? token);
+  Future<PensionPlan> upsertPensionPlan(
+    String? token, {
+    required double shortPotTarget,
+    required double longPotTarget,
+    required PensionFrequency frequency,
+    required double contributionAmount,
+    required double currentShortPot,
+    required double currentLongPot,
+    required double assumedReturnPct,
+    required double inflationPct,
+    required int currentAge,
+    required int retirementAge,
+    required bool autoDebit,
+  });
+  Future<PensionContribution> contributePension(
+    String? token, {
+    required String pot,
+    required double amount,
+    String? sourceAccountId,
+  });
+  Future<List<PensionContribution>> pensionContributions(String? token);
+  Future<SecurityOverview> securityOverview(String? token);
+  Future<SecurityOverview> setTwoFactor(String? token, {required bool enabled});
+  Future<List<SecurityDevice>> devices(String? token);
+  Future<List<SecurityEvent>> securityEvents(String? token);
+  Future<SecurityEvent> resolveSecurityEvent(String? token, String eventId);
+  Future<List<Invoice>> invoices(String? token);
+  Future<Invoice> createInvoice(String? token,
+      {required String clientName, required double amount, required DateTime dueDate});
+  Future<Invoice> updateInvoiceStatus(String? token,
+      {required String invoiceId, required InvoiceStatus status});
+  Future<List<Vendor>> vendors(String? token);
+  Future<Vendor> createVendor(String? token, {required String name});
+  Future<List<Transfer>> transfers(String? token);
+  Future<Transfer> transferById(String? token, String id);
+  Future<Transfer> createTransfer(String? token,
+      {required String sourceAccountId,
+      required String payeeName,
+      required String destination,
+      required double amount,
+      required String idempotencyKey});
+  Future<List<Payee>> payees(String? token);
+  Future<Payee> createPayee(String? token, {required String name, String? destination});
+  Future<List<BillPayment>> billPayments(String? token);
+  Future<BillPayment> payBill(String? token,
+      {required BillCategory category,
+      required String billerName,
+      required double amount,
+      required String customerRef,
+      String? sourceAccountId});
+  Future<BillPayment> scheduleBill(String? token,
+      {required BillCategory category,
+      required String billerName,
+      required double amount,
+      required String customerRef,
+      required DateTime scheduledFor});
 }
 
 /// Mock API standing in for the future Finovault backend — same endpoints and
 /// envelope semantics as finovault-web/lib/api + the Expo app's handlers.
 /// Swap the internals for HTTP when the real backend lands.
-class FinovaultApi {
-  FinovaultApi({required MockDb db, this.latency = const Duration(milliseconds: 250)})
+class MockFinovaultApi extends FinovaultApi {
+  MockFinovaultApi({required MockDb db, this.latency = const Duration(milliseconds: 250)})
       : _db = db;
 
   final MockDb _db;
@@ -316,6 +424,115 @@ class FinovaultApi {
     list[index] = updated;
     await _db.persist();
     return updated;
+  }
+
+  // ---- pension (Phase 4) -------------------------------------------------------
+
+  Future<PensionPlan?> getPensionPlan(String? token) async {
+    final uid = tokenUserId(token);
+    if (uid == null) return null;
+    return _db.pensions[uid];
+  }
+
+  Future<PensionProjection> pensionProjection(String? token) async {
+    final plan = await getPensionPlan(token);
+    if (plan == null) {
+      return const PensionProjection(shortPotProjected: 0, longPotProjected: 0, totalProjected: 0, yearsToRetirement: 0);
+    }
+    return plan.computeProjection();
+  }
+
+  Future<PensionPlan> upsertPensionPlan(
+    String? token, {
+    required double shortPotTarget,
+    required double longPotTarget,
+    required PensionFrequency frequency,
+    required double contributionAmount,
+    required double currentShortPot,
+    required double currentLongPot,
+    required double assumedReturnPct,
+    required double inflationPct,
+    required int currentAge,
+    required int retirementAge,
+    required bool autoDebit,
+  }) async {
+    final uid = tokenUserId(token);
+    if (uid == null) throw FvApiException('unauthorized', 'Your session has expired. Please log in again.');
+    if (shortPotTarget <= 0 || longPotTarget <= 0 || contributionAmount <= 0) {
+      throw FvApiException('validation', 'Set a positive target and contribution for both pots.');
+    }
+    final existing = _db.pensions[uid];
+    final plan = PensionPlan(
+      id: existing?.id ?? _db.nextId('pen'),
+      shortPotTarget: shortPotTarget,
+      longPotTarget: longPotTarget,
+      frequency: frequency,
+      contributionAmount: contributionAmount,
+      currentShortPot: currentShortPot,
+      currentLongPot: currentLongPot,
+      assumedReturnPct: assumedReturnPct,
+      inflationPct: inflationPct,
+      currentAge: currentAge,
+      retirementAge: retirementAge,
+      autoDebit: autoDebit,
+      updatedAt: DateTime.now(),
+    );
+    _db.pensions[uid] = plan;
+    await _db.persist();
+    return plan;
+  }
+
+  Future<PensionContribution> contributePension(
+    String? token, {
+    required String pot,
+    required double amount,
+    String? sourceAccountId,
+  }) async {
+    final user = await _requireUser(token);
+    final plan = _db.pensions[user.id];
+    if (plan == null) throw FvApiException('not_found', 'No pension plan found. Create one first.');
+    if (amount <= 0) throw FvApiException('validation', 'Amount must be greater than zero.');
+
+    final isShort = pot == 'short';
+    if (sourceAccountId != null) {
+      final accs = _db.accounts[user.id] ?? [];
+      final ai = accs.indexWhere((a) => a.id == sourceAccountId);
+      if (ai < 0) throw FvApiException('not_found', 'Account not found.');
+      if (accs[ai].balance < amount) throw FvApiException('insufficient_funds', 'Not enough funds in this account.');
+      accs[ai] = accs[ai].copyWith(balance: accs[ai].balance - amount);
+      (_db.transactions[user.id] ??= []).add(Transaction(
+            id: _db.nextId('tx'),
+            accountId: sourceAccountId,
+            amount: amount,
+            direction: TransactionDirection.out,
+            category: 'Pension',
+            merchantName: 'Finovault Pension',
+            date: DateTime.now(),
+          ));
+    }
+
+    _db.pensions[user.id] = plan.copyWith(
+      currentShortPot: isShort ? plan.currentShortPot + amount : plan.currentShortPot,
+      currentLongPot: isShort ? plan.currentLongPot : plan.currentLongPot + amount,
+    );
+
+    final contribution = PensionContribution(
+      id: _db.nextId('pencon'),
+      planId: plan.id,
+      pot: pot,
+      amount: amount,
+      date: DateTime.now(),
+      sourceAccountId: sourceAccountId,
+    );
+    (_db.pensionContributions[user.id] ??= []).add(contribution);
+    await _db.persist();
+    return contribution;
+  }
+
+  Future<List<PensionContribution>> pensionContributions(String? token) async {
+    final user = await _requireUser(token);
+    final list = _db.pensionContributions[user.id] ?? const <PensionContribution>[];
+    return [...list]..sort((a, b) => b.date.compareTo(a.date));
   }
 
   // ---- security ----------------------------------------------------------------

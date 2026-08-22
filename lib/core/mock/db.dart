@@ -45,6 +45,8 @@ class MockDb {
   final transfers = <String, List<Transfer>>{};
   final billPayments = <String, List<BillPayment>>{};
   final payees = <String, List<Payee>>{};
+  final pensions = <String, PensionPlan>{};
+  final pensionContributions = <String, List<PensionContribution>>{};
   int _counter = 0;
 
   String nextId(String prefix) {
@@ -96,6 +98,9 @@ class MockDb {
     list(j['transfers'] as Map<String, dynamic>?, transfers, Transfer.fromJson);
     list(j['billPayments'] as Map<String, dynamic>?, billPayments, BillPayment.fromJson);
     list(j['payees'] as Map<String, dynamic>?, payees, Payee.fromJson);
+    pensions.addEntries(((j['pensions'] as Map?) ?? {}).entries
+        .map((e) => MapEntry(e.key as String, PensionPlan.fromJson(e.value as Map<String, dynamic>))));
+    list(j['pensionContributions'] as Map<String, dynamic>?, pensionContributions, PensionContribution.fromJson);
     ((j['securityOverviews'] as Map?) ?? {}).forEach(
       (k, v) => securityOverviews[k as String] = SecurityOverview.fromJson(v as Map<String, dynamic>),
     );
@@ -120,6 +125,8 @@ class MockDb {
       'transfers': transfers.map((k, v) => MapEntry(k, v.map((e) => e.toJson()).toList())),
       'billPayments': billPayments.map((k, v) => MapEntry(k, v.map((e) => e.toJson()).toList())),
       'payees': payees.map((k, v) => MapEntry(k, v.map((e) => e.toJson()).toList())),
+      'pensions': pensions.map((k, v) => MapEntry(k, v.toJson())),
+      'pensionContributions': pensionContributions.map((k, v) => MapEntry(k, v.map((e) => e.toJson()).toList())),
     };
     await _store.setString(storageKey, jsonEncode(j));
   }
@@ -256,6 +263,20 @@ class MockDb {
       ),
     ];
     securityOverviews[uid] = const SecurityOverview(score: 72, twoFactorEnabled: false);
+    pensions[uid] = PensionPlan(
+      id: 'pen_demo',
+      shortPotTarget: 50000,
+      longPotTarget: 750000,
+      frequency: PensionFrequency.monthly,
+      contributionAmount: 2500,
+      currentShortPot: 18500,
+      currentLongPot: 42000,
+      assumedReturnPct: 7,
+      inflationPct: 4,
+      currentAge: 34,
+      retirementAge: 65,
+      autoDebit: true,
+    );
     invoices[uid] = [
       Invoice(
           id: nextId('inv'),

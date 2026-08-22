@@ -43,7 +43,7 @@ class VaultTab extends ConsumerWidget {
                     child: FvButton(
                       label: 'Start Pension',
                       variant: FvButtonVariant.secondary,
-                      onPressed: () => openNewGoal(context),
+                      onPressed: () => openPension(context),
                       expanded: false,
                     ),
                   ),
