@@ -1,0 +1,251 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../core/models.dart';
+import '../core/state/onboarding.dart';
+import '../theme/tokens.dart';
+import '../widgets/vault_mark.dart';
+
+/// Onboarding step 2 — the Individual vs SME (vs Freelancer/Entrepreneur)
+/// choice that drives every downstream screen (goals, dashboard, modules).
+class RoleScreen extends ConsumerStatefulWidget {
+  const RoleScreen({super.key});
+
+  @override
+  ConsumerState<RoleScreen> createState() => _RoleScreenState();
+}
+
+class _RoleScreenState extends ConsumerState<RoleScreen> {
+  PrimaryRole? _selected;
+  bool _femaleFounder = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final saved = ref.read(onboardingProvider);
+    if (saved.step == OnboardingStep.role) {
+      _selected = saved.role;
+      _femaleFounder = saved.scheme == RoleScheme.femaleFounder;
+    }
+  }
+
+  void _continue() {
+    final role = _selected;
+    if (role == null) return;
+    ref.read(onboardingProvider.notifier).selectRole(role, femaleFounder: _femaleFounder);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final secondaryText = isDark ? FvColors.textSecondaryDark : FvColors.textSecondary;
+
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            radius: 1.2,
+            colors: [FvColors.wash, FvColors.bg],
+            stops: [0, 0.55],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(FvSpacing.x6, FvSpacing.x4, FvSpacing.x6, 0),
+                child: Row(
+                  children: [
+                    const VaultMark(size: 28),
+                    const SizedBox(width: 10),
+                    Text(
+                      'Finovault',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: FvColors.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(FvSpacing.x6, FvSpacing.x8, FvSpacing.x6, FvSpacing.x6),
+                  children: [
+                    Text(
+                      'How will you use Finovault?',
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.4,
+                        color: isDark ? FvColors.textDark : FvColors.text,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Pick the way you want to manage your money. You can add more later.',
+                      style: TextStyle(fontSize: 15, height: 1.5, color: secondaryText),
+                    ),
+                    const SizedBox(height: 24),
+                    for (final role in PrimaryRole.values) ...[
+                      _RoleCard(
+                        role: role,
+                        selected: _selected == role,
+                        onTap: () => setState(() => _selected = role),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (_selected == PrimaryRole.entrepreneur)
+                      _FemaleFounderCard(
+                        checked: _femaleFounder,
+                        onChanged: (v) => setState(() => _femaleFounder = v),
+                      ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _selected == null ? null : _continue,
+                        child: const Text('Continue'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RoleCard extends StatelessWidget {
+  const _RoleCard({required this.role, required this.selected, required this.onTap});
+
+  final PrimaryRole role;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final secondaryText = isDark ? FvColors.textSecondaryDark : FvColors.textSecondary;
+
+    return Material(
+      color: selected ? FvColors.wash : (isDark ? FvColors.surfaceDark : FvColors.surface),
+      borderRadius: BorderRadius.circular(FvRadius.card),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(FvRadius.card),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(FvRadius.card),
+            border: Border.all(
+              color: selected ? FvColors.primary : (isDark ? FvColors.primaryBorderDark : FvColors.primaryBorder),
+              width: selected ? 1.5 : 1,
+            ),
+          ),
+          padding: const EdgeInsets.all(FvSpacing.x4),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: selected ? FvColors.primary : FvColors.wash,
+                  borderRadius: BorderRadius.circular(FvRadius.iconContainer),
+                ),
+                child: Icon(
+                  role.icon,
+                  size: 20,
+                  color: selected ? Colors.white : FvColors.primary,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      role.label,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? FvColors.textDark : FvColors.text,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      role.description,
+                      style: TextStyle(fontSize: 13, color: secondaryText),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: selected ? FvColors.primary : Colors.transparent,
+                  border: Border.all(
+                    color: selected ? FvColors.primary : (isDark ? FvColors.borderDark : FvColors.border),
+                  ),
+                ),
+                child: selected
+                    ? const Icon(Icons.check, size: 14, color: Colors.white)
+                    : null,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FemaleFounderCard extends StatelessWidget {
+  const _FemaleFounderCard({required this.checked, required this.onChanged});
+
+  final bool checked;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: FvColors.wash,
+      borderRadius: BorderRadius.circular(FvRadius.button),
+      child: InkWell(
+        onTap: () => onChanged(!checked),
+        borderRadius: BorderRadius.circular(FvRadius.button),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(FvRadius.button),
+            border: Border.all(color: FvColors.primaryBorder),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: FvSpacing.x4, vertical: FvSpacing.x3),
+          child: Row(
+            children: [
+              Checkbox(
+                value: checked,
+                onChanged: (v) => onChanged(v ?? false),
+                activeColor: FvColors.primary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+              ),
+              const SizedBox(width: 4),
+              const Expanded(
+                child: Text(
+                  'Women-led / Female founder path',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
