@@ -17,7 +17,7 @@ class WelcomeScreen extends ConsumerWidget {
     final s = AppLocalizations.of(context)!;
     return Scaffold(
       body: Container(
-        decoration: context.fvPageDecoration,
+        decoration: context.fvOnboardingDecoration,
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: FvSpacing.x6),

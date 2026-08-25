@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models.dart';
 import '../mock/api.dart';
 import '../providers.dart';
+import 'onboarding.dart';
 
 class AuthState {
   const AuthState({this.user, this.restoring = true, this.busy = false, this.error});
@@ -39,6 +40,9 @@ class AuthController extends Notifier<AuthState> {
     }
     try {
       final user = await _api.getSession(token);
+      if (user != null && user.primaryRole != null) {
+        await ref.read(onboardingProvider.notifier).completeFromAuth();
+      }
       state = AuthState(user: user, restoring: false);
       if (user == null) await ref.read(kvStoreProvider).remove(sessionKey);
     } on FvApiException {
@@ -59,6 +63,9 @@ class AuthController extends Notifier<AuthState> {
     try {
       final result = await _api.login(email: email, password: password);
       await ref.read(kvStoreProvider).setString(sessionKey, result.token);
+      if (result.user.primaryRole != null) {
+        await ref.read(onboardingProvider.notifier).completeFromAuth();
+      }
       state = AuthState(user: result.user, restoring: false);
       return true;
     } on FvApiException catch (e) {

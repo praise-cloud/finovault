@@ -42,7 +42,7 @@ class _RoleScreenState extends ConsumerState<RoleScreen> {
     final s = AppLocalizations.of(context)!;
     return Scaffold(
       body: Container(
-        decoration: context.fvPageDecoration,
+        decoration: context.fvOnboardingDecoration,
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

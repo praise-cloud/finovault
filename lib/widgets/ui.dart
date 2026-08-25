@@ -30,6 +30,12 @@ extension FvContext on BuildContext {
             stops: [0, 0.55],
           ),
         );
+
+  /// Plain background for onboarding & auth screens — white in light mode, a dark
+  /// neutral in dark mode so text keeps its contrast.
+  BoxDecoration get fvOnboardingDecoration => fvIsDark
+      ? const BoxDecoration(color: FvColors.bgDark)
+      : const BoxDecoration(color: Colors.white);
 }
 
 class FvButton extends StatelessWidget {
