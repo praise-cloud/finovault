@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/state/auth.dart';
 import '../../core/state/preferences.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/ui.dart';
 import '../home_shell.dart';
@@ -13,6 +14,7 @@ class ProfileTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
+    final s = AppLocalizations.of(context)!;
 
     return ListView(
       padding: const EdgeInsets.all(FvSpacing.x5),
@@ -44,13 +46,13 @@ class ProfileTab extends ConsumerWidget {
             ],
           ),
         ),
-        _Row(icon: Icons.security_outlined, label: 'Security', onTap: () => openSecurity(context)),
-        _Row(icon: Icons.account_balance_outlined, label: 'Linked accounts', onTap: () => openAccounts(context)),
-        _Row(icon: Icons.tune_outlined, label: 'Settings & plan', onTap: () => _openSettings(context, ref)),
+        _Row(icon: Icons.security_outlined, label: s.security, onTap: () => openSecurity(context)),
+        _Row(icon: Icons.account_balance_outlined, label: s.linkedAccounts, onTap: () => openAccounts(context)),
+        _Row(icon: Icons.tune_outlined, label: s.settingsAndPlan, onTap: () => _openSettings(context, ref)),
         const SizedBox(height: FvSpacing.x3),
         _Row(
           icon: Icons.logout_outlined,
-          label: 'Log out',
+          label: s.logout,
           danger: true,
           onTap: () => _confirmLogout(context, ref),
         ),
@@ -60,6 +62,7 @@ class ProfileTab extends ConsumerWidget {
 
   void _openSettings(BuildContext context, WidgetRef ref) {
     final prefs = ref.read(preferencesProvider);
+    final s = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -73,9 +76,9 @@ class ProfileTab extends ConsumerWidget {
           children: [
             Center(child: Container(width: 36, height: 4, decoration: BoxDecoration(color: context.fvBorder, borderRadius: BorderRadius.circular(2)))),
             const SizedBox(height: FvSpacing.x4),
-            Text('Settings', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: context.fvText)),
+            Text(s.settings, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: context.fvText)),
             const SizedBox(height: FvSpacing.x4),
-            const Text('Language', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+            Text(s.language, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
             const SizedBox(height: FvSpacing.x2),
             Row(
               children: [
@@ -85,18 +88,18 @@ class ProfileTab extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: FvSpacing.x4),
-            const Text('Appearance', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+            Text(s.appearance, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
             const SizedBox(height: FvSpacing.x2),
             Consumer(
               builder: (context, ref, _) {
                 final mode = ref.watch(preferencesProvider).themeMode;
                 return Row(
                   children: [
-                    _ChoiceChip(selected: mode == ThemeModePref.light, label: 'Light', onTap: () => ref.read(preferencesProvider.notifier).setThemeMode(ThemeModePref.light)),
+                    _ChoiceChip(selected: mode == ThemeModePref.light, label: s.themeLight, onTap: () => ref.read(preferencesProvider.notifier).setThemeMode(ThemeModePref.light)),
                     const SizedBox(width: FvSpacing.x2),
-                    _ChoiceChip(selected: mode == ThemeModePref.dark, label: 'Dark', onTap: () => ref.read(preferencesProvider.notifier).setThemeMode(ThemeModePref.dark)),
+                    _ChoiceChip(selected: mode == ThemeModePref.dark, label: s.themeDark, onTap: () => ref.read(preferencesProvider.notifier).setThemeMode(ThemeModePref.dark)),
                     const SizedBox(width: FvSpacing.x2),
-                    _ChoiceChip(selected: mode == ThemeModePref.system, label: 'System', onTap: () => ref.read(preferencesProvider.notifier).setThemeMode(ThemeModePref.system)),
+                    _ChoiceChip(selected: mode == ThemeModePref.system, label: s.themeSystem, onTap: () => ref.read(preferencesProvider.notifier).setThemeMode(ThemeModePref.system)),
                   ],
                 );
               },
@@ -107,8 +110,8 @@ class ProfileTab extends ConsumerWidget {
                 children: [
                   const Icon(Icons.fingerprint, size: 20, color: FvColors.primary),
                   const SizedBox(width: FvSpacing.x3),
-                  const Expanded(child: Text('Biometric unlock', style: TextStyle(fontSize: 14))),
-                  const StatusBadge(label: 'Soon', foreground: FvColors.textSecondary, background: FvColors.wash),
+                  Expanded(child: Text(s.biometricUnlock, style: const TextStyle(fontSize: 14))),
+                  StatusBadge(label: s.soon, foreground: FvColors.textSecondary, background: FvColors.wash),
                 ],
               ),
             ),
@@ -120,19 +123,20 @@ class ProfileTab extends ConsumerWidget {
   }
 
   void _confirmLogout(BuildContext context, WidgetRef ref) {
+    final s = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (dialog) => AlertDialog(
-        title: const Text('Log out?'),
-        content: const Text('You will need to sign in again to access your vault.'),
+        title: Text(s.logoutConfirmTitle),
+        content: Text(s.logoutConfirmBody),
         actions: [
-          TextButton(onPressed: () => Navigator.of(dialog).pop(), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.of(dialog).pop(), child: Text(s.cancel)),
           TextButton(
             onPressed: () {
               Navigator.of(dialog).pop();
               ref.read(authProvider.notifier).logout();
             },
-            child: const Text('Log out', style: TextStyle(color: FvColors.error)),
+            child: Text(s.logout, style: const TextStyle(color: FvColors.error)),
           ),
         ],
       ),

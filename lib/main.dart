@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'l10n/app_localizations.dart';
 
 import 'core/providers.dart';
 import 'core/state/auth.dart';
@@ -66,6 +69,14 @@ class _FinovaultAppState extends ConsumerState<FinovaultApp> {
     return MaterialApp(
       title: 'Finovault',
       debugShowCheckedModeBanner: false,
+      locale: Locale(prefs.language),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: FvTheme.light(),
       darkTheme: FvTheme.dark(),
       themeMode: flutterThemeMode(prefs.themeMode),

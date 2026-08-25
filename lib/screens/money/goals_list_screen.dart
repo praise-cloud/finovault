@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/format.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,7 +21,7 @@ class GoalsListScreen extends ConsumerWidget {
     final language = ref.watch(preferencesProvider).language;
 
     return ScreenPage(
-      title: 'Goals',
+      title: AppLocalizations.of(context)!.goals,
       actions: [IconButton(icon: const Icon(Icons.add, color: FvColors.primary), onPressed: () => openNewGoal(context))],
       child: goals.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -200,5 +201,6 @@ class GoalDetailScreen extends ConsumerWidget {
     );
   }
 }
+
 
 

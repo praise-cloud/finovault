@@ -13,6 +13,20 @@ class FvFormat {
 
   static bool isFrench(String language) => language.startsWith('fr');
 
+  /// Maps a currency code to a display symbol; falls back to the code itself.
+  static const _symbols = {
+    'MUR': 'Rs',
+    'USD': '\$',
+    'EUR': '€',
+    'GBP': '£',
+    'JPY': '¥',
+    'ZAR': 'R',
+    'INR': '₹',
+    'KES': 'KSh',
+  };
+
+  static String _currencySymbol(String currency) => _symbols[currency] ?? currency;
+
   static String _group(String digits, {required bool french}) {
     final sep = french ? ' ' : ',';
     final buf = StringBuffer();
@@ -33,7 +47,7 @@ class FvFormat {
     final centsStr = cents == 100 ? '00' : cents.toString().padLeft(2, '0');
     final wholeStr = _group(cents == 100 ? (whole + 1).toString() : whole.toString(), french: french);
     final decSep = french ? ',' : '.';
-    return '${negative ? '-' : ''}$currency $wholeStr$decSep$centsStr';
+    return '${negative ? '-' : ''}${_currencySymbol(currency)} $wholeStr$decSep$centsStr';
   }
 
   static String formatMoneySigned(num amount, {String currency = 'MUR', String language = 'en'}) {
@@ -45,7 +59,7 @@ class FvFormat {
       {String currency = 'MUR', String language = 'en'}) {
     final abs = amount.abs().toDouble();
     final prefix = amount < 0 ? '-' : '';
-    final sym = '$currency ';
+    final sym = '${_currencySymbol(currency)} ';
     String trim(String s) => s.endsWith('.0') ? s.substring(0, s.length - 2) : s;
     if (abs >= 1000000) return '$prefix$sym${trim((abs / 1000000).toStringAsFixed(1))}M';
     if (abs >= 1000) return '$prefix$sym${trim((abs / 1000).toStringAsFixed(1))}K';

@@ -25,10 +25,10 @@ Future<ProviderContainer> makeContainer({Duration latency = Duration.zero}) asyn
 
 void main() {
   group('format + fees', () {
-    test('formatMoney uses MUR and thousands separators', () {
-      expect(FvFormat.formatMoney(42500), 'MUR 42,500.00');
-      expect(FvFormat.formatMoney(0), 'MUR 0.00');
-      expect(FvFormat.formatMoney(1234.5), 'MUR 1,234.50');
+    test('formatMoney uses the MUR symbol and thousands separators', () {
+      expect(FvFormat.formatMoney(42500), 'Rs 42,500.00');
+      expect(FvFormat.formatMoney(0), 'Rs 0.00');
+      expect(FvFormat.formatMoney(1234.5), 'Rs 1,234.50');
     });
 
     test('passwordStrength rates length and variety', () {

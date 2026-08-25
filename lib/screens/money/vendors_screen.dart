@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/format.dart';
@@ -20,7 +21,7 @@ class _VendorsScreenState extends ConsumerState<VendorsScreen> {
     final vendors = ref.watch(vendorsProvider);
 
     return ScreenPage(
-      title: 'Vendors',
+      title: AppLocalizations.of(context)!.vendors,
       actions: [IconButton(icon: const Icon(Icons.add, color: FvColors.primary), onPressed: _add)],
       child: vendors.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -100,3 +101,4 @@ class _VendorsScreenState extends ConsumerState<VendorsScreen> {
     );
   }
 }
+

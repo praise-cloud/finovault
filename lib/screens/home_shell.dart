@@ -5,6 +5,7 @@ import '../core/models.dart';
 import '../core/state/auth.dart';
 import '../core/state/money.dart';
 import '../core/state/onboarding.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/tokens.dart';
 import '../widgets/ui.dart';
 import 'home/persona_homes.dart';
@@ -35,6 +36,7 @@ class HomeShell extends ConsumerWidget {
     final index = ref.watch(homeTabIndexProvider);
     final scheme = ref.watch(onboardingProvider).scheme;
     final user = ref.watch(currentUserProvider);
+    final s = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: Container(
@@ -57,12 +59,12 @@ class HomeShell extends ConsumerWidget {
         onDestinationSelected: (i) => ref.read(homeTabIndexProvider.notifier).state = i,
         backgroundColor: context.fvIsDark ? FvColors.bgDark : FvColors.surface,
         indicatorColor: FvColors.wash,
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.psychology_outlined), selectedIcon: Icon(Icons.psychology), label: 'Insights'),
-          NavigationDestination(icon: Icon(Icons.lock_outline), selectedIcon: Icon(Icons.lock), label: 'Vault'),
-          NavigationDestination(icon: Icon(Icons.send_outlined), selectedIcon: Icon(Icons.send), label: 'Pay'),
-          NavigationDestination(icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person), label: 'Profile'),
+        destinations: [
+          NavigationDestination(icon: const Icon(Icons.home_outlined), selectedIcon: const Icon(Icons.home), label: s.navHome),
+          NavigationDestination(icon: const Icon(Icons.psychology_outlined), selectedIcon: const Icon(Icons.psychology), label: s.navInsights),
+          NavigationDestination(icon: const Icon(Icons.lock_outline), selectedIcon: const Icon(Icons.lock), label: s.navVault),
+          NavigationDestination(icon: const Icon(Icons.send_outlined), selectedIcon: const Icon(Icons.send), label: s.navPay),
+          NavigationDestination(icon: const Icon(Icons.person_outline), selectedIcon: const Icon(Icons.person), label: s.navProfile),
         ],
       ),
     );
@@ -104,9 +106,10 @@ class GreetingHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final s = AppLocalizations.of(context)!;
     final firstName = name.split(' ').first;
     final hour = DateTime.now().hour;
-    final greeting = hour < 12 ? 'Good morning' : (hour < 18 ? 'Good afternoon' : 'Good evening');
+    final greeting = hour < 12 ? s.goodMorning : (hour < 18 ? s.goodAfternoon : s.goodEvening);
 
     return Row(
       children: [
@@ -117,7 +120,7 @@ class GreetingHeader extends ConsumerWidget {
               Text('$greeting, $firstName',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, letterSpacing: -0.3, color: context.fvText)),
               const SizedBox(height: 4),
-              Text('Vault Your Future. Grow Your Wealth.',
+              Text(s.appTagline,
                   style: TextStyle(fontSize: 13, color: context.fvTextSecondary)),
             ],
           ),

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/models.dart';
 import '../../core/state/auth.dart';
 import '../../core/state/onboarding.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/vault_mark.dart';
@@ -16,16 +17,16 @@ const _roleGoals = <PrimaryRole, List<String>>{
   PrimaryRole.sme: ['business', 'cash_buffer', 'equipment', 'tax_shield'],
 };
 
-String goalLabel(String key) => switch (key) {
-      'emergency' => 'Emergency fund',
-      'retirement' => 'Retirement',
-      'debt' => 'Pay down debt',
-      'home' => 'Buy a home',
-      'education' => 'Education',
-      'tax_shield' => 'Tax shield',
-      'equipment' => 'New equipment',
-      'business' => 'Business growth',
-      'cash_buffer' => 'Cash buffer',
+String goalLabel(AppLocalizations s, String key) => switch (key) {
+      'emergency' => s.goalEmergency,
+      'retirement' => s.goalRetirement,
+      'debt' => s.goalDebt,
+      'home' => s.goalHome,
+      'education' => s.goalEducation,
+      'tax_shield' => s.goalTaxShield,
+      'equipment' => s.goalEquipment,
+      'business' => s.goalBusiness,
+      'cash_buffer' => s.goalCashBuffer,
       _ => key,
     };
 
@@ -61,6 +62,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = AppLocalizations.of(context)!;
     final onboarding = ref.watch(onboardingProvider);
     final role = onboarding.role ?? PrimaryRole.individual;
     final options = _roleGoals[role] ?? _roleGoals[PrimaryRole.individual]!;
@@ -88,11 +90,11 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(FvSpacing.x6, FvSpacing.x8, FvSpacing.x6, FvSpacing.x6),
                   children: [
-                    Text('What are you working towards?',
+                    Text(s.whatWorkingTowards,
                         style: TextStyle(
                             fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -0.4, color: FvColors.primary)),
                     const SizedBox(height: 8),
-                    Text('Pick a few goals so your vault can be shaped around them.',
+                    Text(s.goalsSubtitle,
                         style: TextStyle(fontSize: 15, height: 1.5, color: context.fvTextSecondary)),
                     const SizedBox(height: FvSpacing.x5),
                     Wrap(
@@ -101,7 +103,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                       children: [
                         for (final key in options)
                           _GoalChip(
-                            label: goalLabel(key),
+                            label: goalLabel(s, key),
                             selected: _selected.contains(key),
                             onTap: () => setState(() =>
                                 _selected.contains(key) ? _selected.remove(key) : _selected.add(key)),
@@ -109,7 +111,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                       ],
                     ),
                     const SizedBox(height: FvSpacing.x6),
-                    Text('How do you feel about risk?',
+                    Text(s.riskHeading,
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: FvColors.primary)),
                     const SizedBox(height: FvSpacing.x3),
                     for (final risk in RiskTolerance.values)
@@ -117,16 +119,16 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                         padding: const EdgeInsets.only(bottom: FvSpacing.x2),
                         child: _RiskRow(
                           label: switch (risk) {
-                            RiskTolerance.low => 'Low — protect what I have',
-                            RiskTolerance.moderate => 'Moderate — steady growth',
-                            RiskTolerance.high => 'High — grow aggressively',
+                            RiskTolerance.low => s.riskLow,
+                            RiskTolerance.moderate => s.riskModerate,
+                            RiskTolerance.high => s.riskHigh,
                           },
                           selected: _risk == risk,
                           onTap: () => setState(() => _risk = risk),
                         ),
                       ),
                     const SizedBox(height: FvSpacing.x5),
-                    FvButton(label: 'Continue', onPressed: _continue),
+                    FvButton(label: s.continueCta, onPressed: _continue),
                   ],
                 ),
               ),

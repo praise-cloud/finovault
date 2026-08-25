@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/format.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,7 +28,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     final language = ref.watch(preferencesProvider).language;
 
     return ScreenPage(
-      title: 'Transactions',
+      title: AppLocalizations.of(context)!.transactions,
       actions: [
         IconButton(icon: const Icon(Icons.add, color: FvColors.primary), onPressed: () => _add(accounts.value)),
       ],
@@ -172,5 +173,6 @@ class _DirChip extends StatelessWidget {
         ),
       );
 }
+
 
 
