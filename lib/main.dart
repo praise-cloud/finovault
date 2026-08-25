@@ -10,12 +10,14 @@ import 'core/state/auth.dart';
 import 'core/state/onboarding.dart';
 import 'core/state/preferences.dart';
 import 'core/mock/db.dart';
+import 'core/state/biometric.dart';
 import 'screens/home_shell.dart';
 import 'screens/onboarding/goals_screen.dart';
 import 'screens/onboarding/link_accounts_screen.dart';
 import 'screens/role_screen.dart';
 import 'screens/welcome_screen.dart';
 import 'theme/app_theme.dart';
+import 'theme/tokens.dart';
 import 'widgets/ui.dart';
 import 'widgets/vault_mark.dart';
 
@@ -123,6 +125,62 @@ class RootGate extends ConsumerWidget {
       };
     }
 
+    final biometricEnabled = ref.watch(preferencesProvider).biometricEnabled;
+    if (biometricEnabled && !ref.watch(biometricSessionUnlockedProvider)) {
+      return const BiometricGate();
+    }
+
     return const HomeShell();
+  }
+}
+
+class BiometricGate extends ConsumerStatefulWidget {
+  const BiometricGate({super.key});
+
+  @override
+  ConsumerState<BiometricGate> createState() => _BiometricGateState();
+}
+
+class _BiometricGateState extends ConsumerState<BiometricGate> {
+  bool _busy = false;
+
+  Future<void> _unlock() async {
+    setState(() => _busy = true);
+    final ok = await ref.read(biometricServiceProvider).authenticate();
+    if (ok && mounted) {
+      ref.read(biometricSessionUnlockedProvider.notifier).state = true;
+    }
+    if (mounted) setState(() => _busy = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = AppLocalizations.of(context)!;
+    return Scaffold(
+      body: Container(
+        decoration: context.fvPageDecoration,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(FvSpacing.x5),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const VaultMark(size: 72),
+                const SizedBox(height: FvSpacing.x5),
+                Text(s.biometricUnlock, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+                const SizedBox(height: FvSpacing.x2),
+                Text(s.biometricPrompt, style: const TextStyle(fontSize: 13, color: FvColors.textSecondary), textAlign: TextAlign.center),
+                const SizedBox(height: FvSpacing.x5),
+                FilledButton.icon(
+                  onPressed: _busy ? null : _unlock,
+                  icon: const Icon(Icons.fingerprint),
+                  label: Text(s.biometricUnlock),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

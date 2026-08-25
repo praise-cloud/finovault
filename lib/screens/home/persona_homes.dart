@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/state/money.dart';
 import '../../core/state/preferences.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/vault_mark.dart';
@@ -121,8 +122,10 @@ class _PensionTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final s = AppLocalizations.of(context)!;
     final plan = ref.watch(pensionPlanProvider);
     final projection = ref.watch(pensionProjectionProvider);
+    final language = ref.watch(preferencesProvider).language;
     final hasPlan = plan.value != null;
 
     final current = (plan.value?.currentShortPot ?? 0) + (plan.value?.currentLongPot ?? 0);
@@ -152,12 +155,12 @@ class _PensionTile extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Pension', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                    Text(s.pension, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
                     const SizedBox(height: 2),
                     Text(
                       hasPlan
-                          ? 'Projected ${FvFormat.formatMoney(projection.totalProjected, language: ref.watch(preferencesProvider).language)} at retirement'
-                          : 'Start a flexible micro-pension',
+                          ? s.pensionProjected(FvFormat.formatMoney(projection.totalProjected, language: language))
+                          : s.pensionStart,
                       style: const TextStyle(fontSize: 13),
                     ),
                   ],
@@ -186,6 +189,7 @@ class IndividualHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final s = AppLocalizations.of(context)!;
     final summary = ref.watch(moneySummaryProvider);
     final goals = ref.watch(goalsProvider);
     final security = ref.watch(securityOverviewProvider);
@@ -199,7 +203,7 @@ class IndividualHome extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        HeroCard(label: 'Total net worth', amount: summary.totalBalance, currency: 'MUR'),
+        HeroCard(label: s.totalNetWorth, amount: summary.totalBalance, currency: 'MUR'),
         FvCard(
           margin: const EdgeInsets.only(bottom: FvSpacing.x4),
           child: Column(
@@ -207,7 +211,7 @@ class IndividualHome extends ConsumerWidget {
               Row(
                 children: [
                   StatCard(
-                    label: 'Security score',
+                    label: s.securityScore,
                     value: security.value == null ? '—' : '${security.value!.score}',
                     sub: FvFormat.formatPercent(pct),
                   ),
@@ -227,35 +231,35 @@ class IndividualHome extends ConsumerWidget {
           ),
         ),
         QuickActionsRow(actions: [
-          QuickAction('Send', Icons.send_outlined, () => openTransfer(context)),
-          QuickAction('Save', Icons.savings_outlined, () => openNewGoal(context)),
-          QuickAction('Pay Bill', Icons.receipt_long_outlined, () => openBills(context)),
-          QuickAction('Insights', Icons.psychology_outlined, () => ref.read(homeTabIndexProvider.notifier).state = 1),
+          QuickAction(s.qaSend, Icons.send_outlined, () => openTransfer(context)),
+          QuickAction(s.qaSave, Icons.savings_outlined, () => openNewGoal(context)),
+          QuickAction(s.payBill, Icons.receipt_long_outlined, () => openBills(context)),
+          QuickAction(s.insights, Icons.psychology_outlined, () => ref.read(homeTabIndexProvider.notifier).state = 1),
         ]),
         Padding(
           padding: const EdgeInsets.only(bottom: FvSpacing.x3, top: FvSpacing.x2),
-          child: Text('Spending vs budget',
+          child: Text(s.spendingVsBudget,
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, letterSpacing: -0.2, color: context.fvText)),
         ),
         FvCard(
           margin: const EdgeInsets.only(bottom: FvSpacing.x4),
           child: StatCard(
-            label: 'Monthly spending',
+            label: s.monthlySpending,
             amount: summary.monthExpense,
             currency: 'MUR',
-            sub: 'vs your monthly budget',
+            sub: s.vsMonthlyBudget,
           ),
         ),
-        const _SectionTitle('Savings'),
+        _SectionTitle(s.savingsSection),
         FvCard(
           margin: const EdgeInsets.only(bottom: FvSpacing.x4),
           child: StatCard(
-            label: 'Rainy-day fund',
+            label: s.rainyDayFund,
             amount: goal?.currentAmount ?? 0,
             currency: 'MUR',
             sub: goal != null
-                ? 'of ${FvFormat.formatMoney(goal.targetAmount, language: language)} goal'
-                : 'Start an emergency goal',
+                ? s.goalAmountTarget(FvFormat.formatMoney(goal.targetAmount, language: language))
+                : s.startEmergencyGoal,
           ),
         ),
         const _PensionTile(),
@@ -272,6 +276,7 @@ class FreelancerHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final s = AppLocalizations.of(context)!;
     final summary = ref.watch(moneySummaryProvider);
     final goals = ref.watch(goalsProvider);
 
@@ -282,28 +287,28 @@ class FreelancerHome extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        HeroCard(label: 'Income this month', amount: summary.monthIncome, currency: 'MUR'),
+        HeroCard(label: s.incomeThisMonth, amount: summary.monthIncome, currency: 'MUR'),
         StatPair(
-          left: StatCard(label: 'Unpaid invoices', value: '${summary.unpaidInvoiceCount}', sub: summary.unpaidInvoiceTotal == 0 ? 'all settled' : FvFormat.formatMoney(summary.unpaidInvoiceTotal)),
-          right: StatCard(label: 'Tax estimate', amount: summary.taxEstimate, currency: 'MUR', sub: '≈ 15% of income'),
+          left: StatCard(label: s.unpaidInvoices, value: '${summary.unpaidInvoiceCount}', sub: summary.unpaidInvoiceTotal == 0 ? s.allSettled : FvFormat.formatMoney(summary.unpaidInvoiceTotal)),
+          right: StatCard(label: s.taxEstimate, amount: summary.taxEstimate, currency: 'MUR', sub: s.approxTax),
         ),
         StatPair(
-          left: StatCard(label: 'Runway', value: runway, sub: 'months of cover'),
-          right: StatCard(label: 'Active projects', value: '${goals.value?.length ?? 0}', sub: 'across your vault'),
+          left: StatCard(label: s.runwayLabel, value: runway, sub: s.monthsOfCover),
+          right: StatCard(label: s.activeProjects, value: '${goals.value?.length ?? 0}', sub: s.acrossYourVault),
         ),
         QuickActionsRow(actions: [
-          QuickAction('Add invoice', Icons.add, () => openInvoices(context)),
-          QuickAction('Set aside tax', Icons.umbrella_outlined, () => openNewGoal(context)),
-          QuickAction('Transfer', Icons.send_outlined, () => openTransfer(context)),
-          QuickAction('Coach', Icons.psychology_outlined, () => ref.read(homeTabIndexProvider.notifier).state = 1),
+          QuickAction(s.qaAddInvoice, Icons.add, () => openInvoices(context)),
+          QuickAction(s.qaSetAsideTax, Icons.umbrella_outlined, () => openNewGoal(context)),
+          QuickAction(s.qaTransfer, Icons.send_outlined, () => openTransfer(context)),
+          QuickAction(s.qaCoach, Icons.psychology_outlined, () => ref.read(homeTabIndexProvider.notifier).state = 1),
         ]),
-        const _SectionTitle('Recent projects'),
+        _SectionTitle(s.recentProjects),
         FvCard(
           margin: const EdgeInsets.only(bottom: FvSpacing.x4),
           child: StatCard(
-            label: 'Active goals',
+            label: s.activeGoalsLabel,
             value: '${goals.value?.length ?? 0}',
-            sub: 'Add a project or goal to track it here',
+            sub: s.addProjectHint,
           ),
         ),
         const _LinkAccountCta(),
@@ -321,6 +326,7 @@ class EntrepreneurHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final s = AppLocalizations.of(context)!;
     final summary = ref.watch(moneySummaryProvider);
 
     final runway = summary.monthExpense > 0
@@ -330,23 +336,23 @@ class EntrepreneurHome extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        HeroCard(label: 'Combined wealth', amount: summary.totalBalance, currency: 'MUR'),
+        HeroCard(label: s.combinedWealth, amount: summary.totalBalance, currency: 'MUR'),
         StatPair(
-          left: StatCard(label: 'Revenue / MRR', amount: summary.monthIncome, currency: 'MUR'),
-          right: StatCard(label: 'Runway', value: runway, sub: 'months of cover'),
+          left: StatCard(label: s.revenueMrr, amount: summary.monthIncome, currency: 'MUR'),
+          right: StatCard(label: s.runwayLabel, value: runway, sub: s.monthsOfCover),
         ),
         StatPair(
-          left: StatCard(label: 'Burn rate', amount: summary.monthExpense, currency: 'MUR', sub: 'per month'),
-          right: StatCard(label: 'Saved in goals', amount: summary.savedInGoals, currency: 'MUR'),
+          left: StatCard(label: s.burnRate, amount: summary.monthExpense, currency: 'MUR', sub: s.perMonth),
+          right: StatCard(label: s.savedInGoalsLabel, amount: summary.savedInGoals, currency: 'MUR'),
         ),
         QuickActionsRow(actions: [
-          QuickAction('Cash flow', Icons.trending_up, () => openTransactions(context)),
-          QuickAction('Grants', Icons.business_center_outlined, () {}),
-          QuickAction('Transfer', Icons.send_outlined, () => openTransfer(context)),
-          QuickAction('Coach', Icons.psychology_outlined, () => ref.read(homeTabIndexProvider.notifier).state = 1),
+          QuickAction(s.qaCashFlow, Icons.trending_up, () => openTransactions(context)),
+          QuickAction(s.qaGrants, Icons.business_center_outlined, () {}),
+          QuickAction(s.qaTransfer, Icons.send_outlined, () => openTransfer(context)),
+          QuickAction(s.qaCoach, Icons.psychology_outlined, () => ref.read(homeTabIndexProvider.notifier).state = 1),
         ]),
         if (femaleFounder) ...[
-          const _SectionTitle('Opportunities'),
+          _SectionTitle(s.opportunitiesLabel),
           FvCard(
             onTap: () => ref.read(homeTabIndexProvider.notifier).state = 1,
             margin: const EdgeInsets.only(bottom: FvSpacing.x4),
@@ -363,13 +369,13 @@ class EntrepreneurHome extends ConsumerWidget {
                   child: const Icon(Icons.emoji_events_outlined, color: FvColors.primary, size: 20),
                 ),
                 const SizedBox(width: FvSpacing.x3),
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Female Innovators Seed Fund', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
-                      SizedBox(height: 2),
-                      Text('Curated for women-led ventures', style: TextStyle(fontSize: 13)),
+                      Text(s.femaleSeedFund, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 2),
+                      Text(s.femaleSeedBlurb, style: const TextStyle(fontSize: 13)),
                     ],
                   ),
                 ),
@@ -392,6 +398,7 @@ class SMEHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final s = AppLocalizations.of(context)!;
     final summary = ref.watch(moneySummaryProvider);
     final vendors = ref.watch(vendorsProvider);
     final overdue = summary.overdueInvoiceCount;
@@ -401,40 +408,40 @@ class SMEHome extends ConsumerWidget {
         : null;
 
     final attention = <String>[];
-    if (overdue > 0) attention.add('$overdue overdue invoice${overdue > 1 ? 's' : ''} need attention');
-    if (vendors.value?.isEmpty ?? true) attention.add('No vendors linked yet');
-    if (runway != null && runway < 3) attention.add('Runway is low — $runway months left');
+    if (overdue > 0) attention.add(s.smeOverdue(overdue));
+    if (vendors.value?.isEmpty ?? true) attention.add(s.smeNoVendors);
+    if (runway != null && runway < 3) attention.add(s.smeRunwayLow(runway));
 
     final vendorCount = vendors.value?.length ?? 0;
-    final vendorSpend = vendors.value?.fold<double>(0, (s, v) => s + v.totalSpend) ?? 0;
+    final vendorSpend = vendors.value?.fold<double>(0, (a, v) => a + v.totalSpend) ?? 0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        HeroCard(label: 'Cash position', amount: summary.totalBalance, currency: 'MUR'),
+        HeroCard(label: s.cashPosition, amount: summary.totalBalance, currency: 'MUR'),
         StatPair(
-          left: StatCard(label: 'Revenue', amount: summary.monthIncome, currency: 'MUR'),
-          right: StatCard(label: 'Runway', value: runway == null ? '—' : '$runway', sub: 'months of cover'),
+          left: StatCard(label: s.revenue, amount: summary.monthIncome, currency: 'MUR'),
+          right: StatCard(label: s.runwayLabel, value: runway == null ? '—' : '$runway', sub: s.monthsOfCover),
         ),
         StatPair(
-          left: StatCard(label: 'Burn rate', amount: summary.monthExpense, currency: 'MUR', sub: 'per month'),
-          right: StatCard(label: 'Saved in goals', amount: summary.savedInGoals, currency: 'MUR'),
+          left: StatCard(label: s.burnRate, amount: summary.monthExpense, currency: 'MUR', sub: s.perMonth),
+          right: StatCard(label: s.savedInGoalsLabel, amount: summary.savedInGoals, currency: 'MUR'),
         ),
         QuickActionsRow(actions: [
-          QuickAction('Pay vendor', Icons.send_outlined, () => openVendors(context)),
-          QuickAction('Record invoice', Icons.add, () => openInvoices(context)),
-          QuickAction('Cash flow', Icons.trending_up, () => openTransactions(context)),
-          QuickAction('Advisor', Icons.psychology_outlined, () => ref.read(homeTabIndexProvider.notifier).state = 1),
+          QuickAction(s.qaPayVendor, Icons.send_outlined, () => openVendors(context)),
+          QuickAction(s.qaRecordInvoice, Icons.add, () => openInvoices(context)),
+          QuickAction(s.qaCashFlow, Icons.trending_up, () => openTransactions(context)),
+          QuickAction(s.qaAdvisor, Icons.psychology_outlined, () => ref.read(homeTabIndexProvider.notifier).state = 1),
         ]),
         Padding(
           padding: const EdgeInsets.only(bottom: FvSpacing.x3, top: FvSpacing.x2),
-          child: Text('Needs attention',
+          child: Text(s.needsAttention,
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, letterSpacing: -0.2, color: context.fvText)),
         ),
         FvCard(
           margin: const EdgeInsets.only(bottom: FvSpacing.x4),
           child: attention.isEmpty
-              ? Text('All clear — nothing needs your attention.', style: TextStyle(fontSize: 14, color: context.fvTextSecondary))
+              ? Text(s.allClear, style: TextStyle(fontSize: 14, color: context.fvTextSecondary))
               : Column(
                   children: [
                     for (final item in attention)
@@ -456,10 +463,10 @@ class SMEHome extends ConsumerWidget {
           padding: const EdgeInsets.only(bottom: FvSpacing.x3),
           child: Row(
             children: [
-              Expanded(child: Text('Vendors', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, letterSpacing: -0.2, color: context.fvText))),
+              Expanded(child: Text(s.vendors, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, letterSpacing: -0.2, color: context.fvText))),
               GestureDetector(
                 onTap: () => openVendors(context),
-                child: const Text('Add', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FvColors.primary)),
+                child: Text(s.add, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FvColors.primary)),
               ),
             ],
           ),
@@ -498,36 +505,39 @@ class _LinkAccountCta extends StatelessWidget {
   const _LinkAccountCta();
 
   @override
-  Widget build(BuildContext context) => FvCard(
-        onTap: () => openAccounts(context),
-        margin: const EdgeInsets.only(bottom: FvSpacing.x4),
-        child: Row(
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: FvColors.wash,
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: context.fvCardBorder),
-              ),
-              child: const Icon(Icons.link_outlined, size: 18, color: FvColors.primary),
+  Widget build(BuildContext context) {
+    final s = AppLocalizations.of(context)!;
+    return FvCard(
+      onTap: () => openAccounts(context),
+      margin: const EdgeInsets.only(bottom: FvSpacing.x4),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: FvColors.wash,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: context.fvCardBorder),
             ),
-            const SizedBox(width: FvSpacing.x3),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Link an account', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: context.fvText)),
-                  const SizedBox(height: 2),
-                  Text('See everything in one place', style: TextStyle(fontSize: 13, color: context.fvTextSecondary)),
-                ],
-              ),
+            child: const Icon(Icons.link_outlined, size: 18, color: FvColors.primary),
+          ),
+          const SizedBox(width: FvSpacing.x3),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(s.linkAccount, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: context.fvText)),
+                const SizedBox(height: 2),
+                Text(s.seeEverything, style: TextStyle(fontSize: 13, color: context.fvTextSecondary)),
+              ],
             ),
-            const Icon(Icons.chevron_right, size: 16),
-          ],
-        ),
-      );
+          ),
+          const Icon(Icons.chevron_right, size: 16),
+        ],
+      ),
+    );
+  }
 }
 
 

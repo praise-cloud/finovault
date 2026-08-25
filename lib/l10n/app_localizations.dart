@@ -272,17 +272,47 @@ abstract class AppLocalizations {
   /// **'Settings & plan'**
   String get settingsAndPlan;
 
+  /// No description provided for @soon.
+  ///
+  /// In en, this message translates to:
+  /// **'Soon'**
+  String get soon;
+
   /// No description provided for @biometricUnlock.
   ///
   /// In en, this message translates to:
   /// **'Biometric unlock'**
   String get biometricUnlock;
 
-  /// No description provided for @soon.
+  /// No description provided for @biometricPrompt.
   ///
   /// In en, this message translates to:
-  /// **'Soon'**
-  String get soon;
+  /// **'Use your fingerprint or face to open Finovault'**
+  String get biometricPrompt;
+
+  /// No description provided for @biometricUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometrics unavailable — please try again'**
+  String get biometricUnavailable;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @billReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Bill due reminders'**
+  String get billReminders;
+
+  /// No description provided for @lowBalanceAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Low-balance alerts'**
+  String get lowBalanceAlert;
 
   /// No description provided for @whatWorkingTowards.
   ///
@@ -757,6 +787,516 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Long-term pot'**
   String get longTermPot;
+
+  /// No description provided for @totalNetWorth.
+  ///
+  /// In en, this message translates to:
+  /// **'Total net worth'**
+  String get totalNetWorth;
+
+  /// No description provided for @incomeThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Income this month'**
+  String get incomeThisMonth;
+
+  /// No description provided for @combinedWealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Combined wealth'**
+  String get combinedWealth;
+
+  /// No description provided for @cashPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash position'**
+  String get cashPosition;
+
+  /// No description provided for @securityScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Security score'**
+  String get securityScore;
+
+  /// No description provided for @spendingVsBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending vs budget'**
+  String get spendingVsBudget;
+
+  /// No description provided for @monthlySpending.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly spending'**
+  String get monthlySpending;
+
+  /// No description provided for @vsMonthlyBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'vs your monthly budget'**
+  String get vsMonthlyBudget;
+
+  /// No description provided for @savingsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings'**
+  String get savingsSection;
+
+  /// No description provided for @rainyDayFund.
+  ///
+  /// In en, this message translates to:
+  /// **'Rainy-day fund'**
+  String get rainyDayFund;
+
+  /// No description provided for @startEmergencyGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Start an emergency goal'**
+  String get startEmergencyGoal;
+
+  /// Goal progress, amount is money
+  ///
+  /// In en, this message translates to:
+  /// **'of {amount} goal'**
+  String goalAmountTarget(Object amount);
+
+  /// No description provided for @pensionStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a flexible micro-pension'**
+  String get pensionStart;
+
+  /// Pension projection, amount is money
+  ///
+  /// In en, this message translates to:
+  /// **'Projected {amount} at retirement'**
+  String pensionProjected(Object amount);
+
+  /// No description provided for @allSettled.
+  ///
+  /// In en, this message translates to:
+  /// **'all settled'**
+  String get allSettled;
+
+  /// No description provided for @approxTax.
+  ///
+  /// In en, this message translates to:
+  /// **'≈ 15% of income'**
+  String get approxTax;
+
+  /// No description provided for @runwayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Runway'**
+  String get runwayLabel;
+
+  /// No description provided for @monthsOfCover.
+  ///
+  /// In en, this message translates to:
+  /// **'months of cover'**
+  String get monthsOfCover;
+
+  /// No description provided for @activeProjects.
+  ///
+  /// In en, this message translates to:
+  /// **'Active projects'**
+  String get activeProjects;
+
+  /// No description provided for @acrossYourVault.
+  ///
+  /// In en, this message translates to:
+  /// **'across your vault'**
+  String get acrossYourVault;
+
+  /// No description provided for @recentProjects.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent projects'**
+  String get recentProjects;
+
+  /// No description provided for @activeGoalsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active goals'**
+  String get activeGoalsLabel;
+
+  /// No description provided for @addProjectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a project or goal to track it here'**
+  String get addProjectHint;
+
+  /// No description provided for @revenueMrr.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue / MRR'**
+  String get revenueMrr;
+
+  /// No description provided for @burnRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Burn rate'**
+  String get burnRate;
+
+  /// No description provided for @perMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'per month'**
+  String get perMonth;
+
+  /// No description provided for @savedInGoalsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved in goals'**
+  String get savedInGoalsLabel;
+
+  /// No description provided for @opportunitiesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Opportunities'**
+  String get opportunitiesLabel;
+
+  /// No description provided for @femaleSeedFund.
+  ///
+  /// In en, this message translates to:
+  /// **'Female Innovators Seed Fund'**
+  String get femaleSeedFund;
+
+  /// No description provided for @femaleSeedBlurb.
+  ///
+  /// In en, this message translates to:
+  /// **'Curated for women-led ventures'**
+  String get femaleSeedBlurb;
+
+  /// No description provided for @needsAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs attention'**
+  String get needsAttention;
+
+  /// No description provided for @allClear.
+  ///
+  /// In en, this message translates to:
+  /// **'All clear — nothing needs your attention.'**
+  String get allClear;
+
+  /// No description provided for @seeEverything.
+  ///
+  /// In en, this message translates to:
+  /// **'See everything in one place'**
+  String get seeEverything;
+
+  /// No description provided for @qaSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get qaSend;
+
+  /// No description provided for @qaSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get qaSave;
+
+  /// No description provided for @qaAddInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Add invoice'**
+  String get qaAddInvoice;
+
+  /// No description provided for @qaSetAsideTax.
+  ///
+  /// In en, this message translates to:
+  /// **'Set aside tax'**
+  String get qaSetAsideTax;
+
+  /// No description provided for @qaTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get qaTransfer;
+
+  /// No description provided for @qaCoach.
+  ///
+  /// In en, this message translates to:
+  /// **'Coach'**
+  String get qaCoach;
+
+  /// No description provided for @qaCashFlow.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash flow'**
+  String get qaCashFlow;
+
+  /// No description provided for @qaGrants.
+  ///
+  /// In en, this message translates to:
+  /// **'Grants'**
+  String get qaGrants;
+
+  /// No description provided for @qaPayVendor.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay vendor'**
+  String get qaPayVendor;
+
+  /// No description provided for @qaRecordInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Record invoice'**
+  String get qaRecordInvoice;
+
+  /// No description provided for @qaAdvisor.
+  ///
+  /// In en, this message translates to:
+  /// **'Advisor'**
+  String get qaAdvisor;
+
+  /// No description provided for @revenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue'**
+  String get revenue;
+
+  /// No description provided for @add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
+  /// No description provided for @totalSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Total saved'**
+  String get totalSaved;
+
+  /// No description provided for @createGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Goal'**
+  String get createGoal;
+
+  /// No description provided for @startPension.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Pension'**
+  String get startPension;
+
+  /// No description provided for @couldNotLoadGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load goals'**
+  String get couldNotLoadGoals;
+
+  /// No description provided for @pleaseRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Please try again in a moment.'**
+  String get pleaseRetry;
+
+  /// No description provided for @noGoalsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No goals yet'**
+  String get noGoalsYet;
+
+  /// No description provided for @goalsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a goal to start building your rainy-day fund or retirement pot.'**
+  String get goalsEmptyBody;
+
+  /// No description provided for @createAGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a goal'**
+  String get createAGoal;
+
+  /// No description provided for @allGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'All goals'**
+  String get allGoals;
+
+  /// No description provided for @completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completed;
+
+  /// No description provided for @transferLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get transferLabel;
+
+  /// No description provided for @sendToPayee.
+  ///
+  /// In en, this message translates to:
+  /// **'Send to a payee or account'**
+  String get sendToPayee;
+
+  /// No description provided for @payABill.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay a bill'**
+  String get payABill;
+
+  /// No description provided for @billBlurb.
+  ///
+  /// In en, this message translates to:
+  /// **'Electricity, water, airtime and more'**
+  String get billBlurb;
+
+  /// No description provided for @recentPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent payments'**
+  String get recentPayments;
+
+  /// No description provided for @noPaymentsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No payments yet'**
+  String get noPaymentsYet;
+
+  /// No description provided for @paymentsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfers and bill payments will show up here.'**
+  String get paymentsEmptyBody;
+
+  /// No description provided for @moneyCoach.
+  ///
+  /// In en, this message translates to:
+  /// **'Your money coach'**
+  String get moneyCoach;
+
+  /// No description provided for @coachBlurb.
+  ///
+  /// In en, this message translates to:
+  /// **'Guidance tailored to your vault'**
+  String get coachBlurb;
+
+  /// No description provided for @exportCsv.
+  ///
+  /// In en, this message translates to:
+  /// **'Export CSV'**
+  String get exportCsv;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get thisMonth;
+
+  /// No description provided for @incomeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get incomeLabel;
+
+  /// No description provided for @expensesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses'**
+  String get expensesLabel;
+
+  /// No description provided for @netLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Net'**
+  String get netLabel;
+
+  /// No description provided for @spendingByCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending by category'**
+  String get spendingByCategory;
+
+  /// No description provided for @notEnoughData.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough data yet.'**
+  String get notEnoughData;
+
+  /// No description provided for @dailyBriefing.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily briefing'**
+  String get dailyBriefing;
+
+  /// No description provided for @topCategoryThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Top category this month'**
+  String get topCategoryThisMonth;
+
+  /// No description provided for @noSpendingYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No spending yet'**
+  String get noSpendingYet;
+
+  /// amount is money
+  ///
+  /// In en, this message translates to:
+  /// **'You spent {amount} so far this month.'**
+  String spentSoFar(Object amount);
+
+  /// No description provided for @csvCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'CSV copied to clipboard'**
+  String get csvCopied;
+
+  /// No description provided for @csvDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get csvDate;
+
+  /// No description provided for @csvType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get csvType;
+
+  /// No description provided for @csvAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get csvAmount;
+
+  /// No description provided for @csvCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get csvCategory;
+
+  /// No description provided for @csvMerchant.
+  ///
+  /// In en, this message translates to:
+  /// **'Merchant'**
+  String get csvMerchant;
+
+  /// No description provided for @smeNoVendors.
+  ///
+  /// In en, this message translates to:
+  /// **'No vendors linked yet'**
+  String get smeNoVendors;
+
+  /// No description provided for @smeRunwayLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Runway is low — {months} months left'**
+  String smeRunwayLow(Object months);
+
+  /// No description provided for @smeOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} overdue invoice needs attention'**
+  String smeOverdue(Object count);
 }
 
 class _AppLocalizationsDelegate

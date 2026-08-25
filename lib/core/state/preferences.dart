@@ -9,15 +9,32 @@ import '../mock/db.dart';
 enum ThemeModePref { light, dark, system }
 
 class PreferencesState {
-  const PreferencesState({this.language = 'en', this.themeMode = ThemeModePref.system});
+  const PreferencesState({
+    this.language = 'en',
+    this.themeMode = ThemeModePref.system,
+    this.biometricEnabled = false,
+  });
 
   final String language;
   final ThemeModePref themeMode;
+  final bool biometricEnabled;
 
-  PreferencesState copyWith({String? language, ThemeModePref? themeMode}) =>
-      PreferencesState(language: language ?? this.language, themeMode: themeMode ?? this.themeMode);
+  PreferencesState copyWith({
+    String? language,
+    ThemeModePref? themeMode,
+    bool? biometricEnabled,
+  }) =>
+      PreferencesState(
+        language: language ?? this.language,
+        themeMode: themeMode ?? this.themeMode,
+        biometricEnabled: biometricEnabled ?? this.biometricEnabled,
+      );
 
-  Map<String, dynamic> toJson() => {'language': language, 'themeMode': themeMode.name};
+  Map<String, dynamic> toJson() => {
+        'language': language,
+        'themeMode': themeMode.name,
+        'biometricEnabled': biometricEnabled,
+      };
 
   static PreferencesState fromJson(Map<String, dynamic>? j) => PreferencesState(
         language: (j?['language'] as String?) ?? 'en',
@@ -26,6 +43,7 @@ class PreferencesState {
           'dark' => ThemeModePref.dark,
           _ => ThemeModePref.system,
         },
+        biometricEnabled: (j?['biometricEnabled'] as bool?) ?? false,
       );
 }
 
@@ -56,6 +74,11 @@ class PreferencesController extends Notifier<PreferencesState> {
 
   Future<void> setThemeMode(ThemeModePref mode) async {
     state = state.copyWith(themeMode: mode);
+    await _persist();
+  }
+
+  Future<void> setBiometricEnabled(bool enabled) async {
+    state = state.copyWith(biometricEnabled: enabled);
     await _persist();
   }
 }

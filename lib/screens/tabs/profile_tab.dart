@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/state/auth.dart';
+import '../../core/state/biometric.dart';
+import '../../core/state/notifications.dart';
 import '../../core/state/preferences.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
@@ -105,15 +107,93 @@ class ProfileTab extends ConsumerWidget {
               },
             ),
             const SizedBox(height: FvSpacing.x4),
-            FvCard(
-              child: Row(
-                children: [
-                  const Icon(Icons.fingerprint, size: 20, color: FvColors.primary),
-                  const SizedBox(width: FvSpacing.x3),
-                  Expanded(child: Text(s.biometricUnlock, style: const TextStyle(fontSize: 14))),
-                  StatusBadge(label: s.soon, foreground: FvColors.textSecondary, background: FvColors.wash),
-                ],
-              ),
+            Consumer(
+              builder: (context, ref, _) {
+                final enabled = ref.watch(preferencesProvider).biometricEnabled;
+                return FvCard(
+                  child: Row(
+                    children: [
+                      const Icon(Icons.fingerprint, size: 20, color: FvColors.primary),
+                      const SizedBox(width: FvSpacing.x3),
+                      Expanded(child: Text(s.biometricUnlock, style: const TextStyle(fontSize: 14))),
+                      Switch(
+                        value: enabled,
+                        activeColor: FvColors.primary,
+                        onChanged: (v) async {
+                          if (v) {
+                            final ok = await ref.read(biometricServiceProvider).authenticate();
+                            if (!ok) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(content: Text(s.biometricUnavailable)));
+                              }
+                              return;
+                            }
+                          }
+                          await ref.read(preferencesProvider.notifier).setBiometricEnabled(v);
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: FvSpacing.x4),
+            Text(s.notifications, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+            const SizedBox(height: FvSpacing.x2),
+            Consumer(
+              builder: (context, ref, _) {
+                final n = ref.watch(notificationSettingsProvider);
+                final notif = ref.read(notificationSettingsProvider.notifier);
+                return Column(
+                  children: [
+                    FvCard(
+                      child: Row(
+                        children: [
+                          const Icon(Icons.notifications, size: 20, color: FvColors.primary),
+                          const SizedBox(width: FvSpacing.x3),
+                          Expanded(child: Text(s.notifications, style: const TextStyle(fontSize: 14))),
+                          Switch(
+                            value: n.enabled,
+                            activeColor: FvColors.primary,
+                            onChanged: (v) => notif.setEnabled(v),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: FvSpacing.x3),
+                    FvCard(
+                      child: Row(
+                        children: [
+                          const Icon(Icons.receipt_long, size: 20, color: FvColors.primary),
+                          const SizedBox(width: FvSpacing.x3),
+                          Expanded(child: Text(s.billReminders, style: const TextStyle(fontSize: 14))),
+                          Switch(
+                            value: n.billReminders,
+                            activeColor: FvColors.primary,
+                            onChanged: (v) => notif.setBillReminders(v),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: FvSpacing.x3),
+                    FvCard(
+                      child: Row(
+                        children: [
+                          const Icon(Icons.account_balance_wallet, size: 20, color: FvColors.primary),
+                          const SizedBox(width: FvSpacing.x3),
+                          Expanded(child: Text(s.lowBalanceAlert, style: const TextStyle(fontSize: 14))),
+                          Switch(
+                            value: n.lowBalance,
+                            activeColor: FvColors.primary,
+                            onChanged: (v) => notif.setLowBalance(v),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: FvSpacing.x4),
           ],
@@ -134,6 +214,7 @@ class ProfileTab extends ConsumerWidget {
           TextButton(
             onPressed: () {
               Navigator.of(dialog).pop();
+              ref.read(biometricSessionUnlockedProvider.notifier).state = false;
               ref.read(authProvider.notifier).logout();
             },
             child: Text(s.logout, style: const TextStyle(color: FvColors.error)),

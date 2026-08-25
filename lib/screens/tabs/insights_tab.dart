@@ -8,6 +8,7 @@ import '../../core/format.dart';
 import '../../core/models.dart';
 import '../../core/state/money.dart';
 import '../../core/state/preferences.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/ui.dart';
 
@@ -27,6 +28,7 @@ class InsightsTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final s = AppLocalizations.of(context)!;
     final summary = ref.watch(moneySummaryProvider);
     final language = ref.watch(preferencesProvider).language;
     final txs = ref.watch(transactionsProvider).value ?? const <Transaction>[];
@@ -61,34 +63,34 @@ class InsightsTab extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Your money coach', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: context.fvText)),
+                    Text(s.moneyCoach, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: context.fvText)),
                     const SizedBox(height: 2),
-                    Text('Guidance tailored to your vault', style: TextStyle(fontSize: 13, color: context.fvTextSecondary)),
+                    Text(s.coachBlurb, style: TextStyle(fontSize: 13, color: context.fvTextSecondary)),
                   ],
                 ),
               ),
               FilledButton.icon(
                 onPressed: txs.isEmpty ? null : () => _exportCsv(context, txs),
                 icon: const Icon(Icons.download_outlined, size: 16),
-                label: const Text('Export CSV'),
+                label: Text(s.exportCsv),
               ),
             ],
           ),
         ),
-        const SectionHeader(title: 'This month'),
+        SectionHeader(title: s.thisMonth),
         FvCard(
           margin: const EdgeInsets.only(bottom: FvSpacing.x4),
           child: Row(
             children: [
               Expanded(
-                child: _Stat(label: 'Income', value: FvFormat.formatMoney(income, language: language), color: FvColors.success),
+                child: _Stat(label: s.incomeLabel, value: FvFormat.formatMoney(income, language: language), color: FvColors.success),
               ),
               Expanded(
-                child: _Stat(label: 'Expenses', value: FvFormat.formatMoney(expense, language: language), color: FvColors.error),
+                child: _Stat(label: s.expensesLabel, value: FvFormat.formatMoney(expense, language: language), color: FvColors.error),
               ),
               Expanded(
                 child: _Stat(
-                  label: 'Net',
+                  label: s.netLabel,
                   value: FvFormat.formatMoney(income - expense, language: language),
                   color: (income - expense) >= 0 ? FvColors.success : FvColors.error,
                 ),
@@ -96,11 +98,11 @@ class InsightsTab extends ConsumerWidget {
             ],
           ),
         ),
-        const SectionHeader(title: 'Spending by category'),
+        SectionHeader(title: s.spendingByCategory),
         FvCard(
           margin: const EdgeInsets.only(bottom: FvSpacing.x4),
           child: cats.isEmpty
-              ? Text('Not enough data yet.', style: TextStyle(fontSize: 13, color: context.fvTextSecondary))
+              ? Text(s.notEnoughData, style: TextStyle(fontSize: 13, color: context.fvTextSecondary))
               : Column(
                   children: [
                     SizedBox(
@@ -144,18 +146,18 @@ class InsightsTab extends ConsumerWidget {
                   ],
                 ),
         ),
-        const SectionHeader(title: 'Daily briefing'),
+        SectionHeader(title: s.dailyBriefing),
         FvCard(
           margin: const EdgeInsets.only(bottom: FvSpacing.x4),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Top category this month', style: TextStyle(fontSize: 12, color: context.fvTextSecondary)),
+              Text(s.topCategoryThisMonth, style: TextStyle(fontSize: 12, color: context.fvTextSecondary)),
               const SizedBox(height: 4),
-              Text(summary.topExpenseCategory ?? 'No spending yet',
+              Text(summary.topExpenseCategory ?? s.noSpendingYet,
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: context.fvText)),
               const SizedBox(height: 4),
-              Text('You spent ${FvFormat.formatMoney(summary.monthExpense, language: language)} so far this month.',
+              Text(s.spentSoFar(FvFormat.formatMoney(summary.monthExpense, language: language)),
                   style: TextStyle(fontSize: 13, color: context.fvTextSecondary)),
             ],
           ),
@@ -165,8 +167,9 @@ class InsightsTab extends ConsumerWidget {
   }
 
   Future<void> _exportCsv(BuildContext context, List<Transaction> txs) async {
+    final s = AppLocalizations.of(context)!;
     final List<List<String>> rows = [
-      ['Date', 'Type', 'Amount', 'Category', 'Merchant'],
+      [s.csvDate, s.csvType, s.csvAmount, s.csvCategory, s.csvMerchant],
       for (final t in txs)
         [
           t.date.toIso8601String(),
@@ -179,7 +182,7 @@ class InsightsTab extends ConsumerWidget {
     final csv = rows.map((r) => r.map((c) => '"${(c ?? '').replaceAll('"', '""')}"').join(',')).join('\n');
     await downloadCsv('finovault-transactions.csv', csv);
     if (!kIsWeb && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('CSV copied to clipboard')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(s.csvCopied)));
     }
   }
 }

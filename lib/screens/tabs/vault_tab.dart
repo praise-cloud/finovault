@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/models.dart';
 import '../../core/state/money.dart';
 import '../../core/state/preferences.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/ui.dart';
 import '../home_shell.dart';
@@ -14,6 +15,7 @@ class VaultTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final s = AppLocalizations.of(context)!;
     final goals = ref.watch(goalsProvider);
     final summary = ref.watch(moneySummaryProvider);
 
@@ -25,7 +27,7 @@ class VaultTab extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Total saved', style: TextStyle(fontSize: 13, color: context.fvTextSecondary)),
+              Text(s.totalSaved, style: TextStyle(fontSize: 13, color: context.fvTextSecondary)),
               const SizedBox(height: 4),
               MoneyText(summary.savedInGoals, size: MoneySize.lg, currency: 'MUR'),
               const SizedBox(height: FvSpacing.x4),
@@ -33,13 +35,13 @@ class VaultTab extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   FvButton(
-                    label: 'Create Goal',
+                    label: s.createGoal,
                     onPressed: () => openNewGoal(context),
                     expanded: true,
                   ),
                   const SizedBox(height: FvSpacing.x3),
                   FvButton(
-                    label: 'Start Pension',
+                    label: s.startPension,
                     variant: FvButtonVariant.secondary,
                     onPressed: () => openPension(context),
                     expanded: true,
@@ -52,12 +54,12 @@ class VaultTab extends ConsumerWidget {
         if (goals.isLoading)
           const Center(child: CircularProgressIndicator())
         else if (goals.hasError)
-          const EmptyState(title: 'Could not load goals', body: 'Please try again in a moment.')
+          EmptyState(title: s.couldNotLoadGoals, body: s.pleaseRetry)
         else if ((goals.value ?? []).isEmpty)
-          const EmptyState(
-            title: 'No goals yet',
-            body: 'Create a goal to start building your rainy-day fund or retirement pot.',
-            ctaLabel: 'Create a goal',
+          EmptyState(
+            title: s.noGoalsYet,
+            body: s.goalsEmptyBody,
+            ctaLabel: s.createAGoal,
           )
         else ...[
           for (final g in (goals.value!).take(4)) _GoalRow(goal: g),
@@ -66,7 +68,7 @@ class VaultTab extends ConsumerWidget {
           Center(
             child: TextButton(
               onPressed: () => openGoals(context),
-              child: const Text('All goals', style: TextStyle(color: FvColors.primary, fontWeight: FontWeight.w600)),
+              child: Text(s.allGoals, style: const TextStyle(color: FvColors.primary, fontWeight: FontWeight.w600)),
             ),
           ),
       ],
@@ -81,6 +83,7 @@ class _GoalRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final s = AppLocalizations.of(context)!;
     final language = ref.watch(preferencesProvider).language;
     final pct = goal.targetAmount > 0 ? (goal.currentAmount / goal.targetAmount).clamp(0.0, 1.0) : 0.0;
 
@@ -99,7 +102,7 @@ class _GoalRow extends ConsumerWidget {
                 const SizedBox(height: 2),
                 Text(
                   goal.completed
-                      ? 'Completed'
+                      ? s.completed
                       : '${FvFormat.formatMoney(goal.currentAmount, language: language)} of ${FvFormat.formatMoney(goal.targetAmount, language: language)}',
                   style: TextStyle(fontSize: 12.5, color: context.fvTextSecondary),
                 ),

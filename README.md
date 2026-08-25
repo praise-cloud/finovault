@@ -22,6 +22,17 @@ brand-primary theming, no layout-overflow, and full en/fr internationalization.
   (`app_en.arb` + `app_fr.arb`), locale wired from `preferencesProvider.language`
   with a live language switcher in Profile → Settings. `FvFormat` renders
   currency symbols (`MUR` → `Rs`, `USD` → `$`, …) with locale-aware grouping.
+  Persona homes and the Vault / Pay / Insights tabs are fully localized.
+- **Biometric unlock**: `local_auth` gates the vault. Enable it in
+  Profile → Settings → Biometric unlock; the app then prompts for a fingerprint /
+  face challenge on launch (and after logout) before showing the home shell.
+- **Notifications**: bill-due and low-balance preference toggles in Profile →
+  Settings. Delivery goes through a `NotificationService` interface
+  (`DebugNotificationService` for now) so the UI is decoupled from the transport
+  (swap in `firebase_messaging` / `flutter_local_notifications` later).
+- **BFF smoke test**: `test/bff_smoke_test.dart` verifies `apiProvider` swaps to
+  `HttpFinovaultApi` only when `API_BASE_URL` is set. Run against a real backend
+  with `flutter test --dart-define=API_BASE_URL=https://your-bff.example.com`.
 
 ## Develop
 ```

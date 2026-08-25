@@ -100,10 +100,27 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsAndPlan => 'Paramètres et forfait';
 
   @override
+  String get soon => 'Bientôt';
+
+  @override
   String get biometricUnlock => 'Déverrouillage biométrique';
 
   @override
-  String get soon => 'Bientôt';
+  String get biometricPrompt =>
+      'Utilisez votre empreinte ou votre visage pour ouvrir Finovault';
+
+  @override
+  String get biometricUnavailable =>
+      'Biometrics unavailable — please try again';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get billReminders => 'Bill due reminders';
+
+  @override
+  String get lowBalanceAlert => 'Low-balance alerts';
 
   @override
   String get whatWorkingTowards => 'Vers quoi travaillez-vous ?';
@@ -347,4 +364,272 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get longTermPot => 'Pot long terme';
+
+  @override
+  String get totalNetWorth => 'Valeur nette totale';
+
+  @override
+  String get incomeThisMonth => 'Revenus ce mois-ci';
+
+  @override
+  String get combinedWealth => 'Patrimoine combiné';
+
+  @override
+  String get cashPosition => 'Position de trésorerie';
+
+  @override
+  String get securityScore => 'Score de sécurité';
+
+  @override
+  String get spendingVsBudget => 'Dépenses vs budget';
+
+  @override
+  String get monthlySpending => 'Dépenses mensuelles';
+
+  @override
+  String get vsMonthlyBudget => 'par rapport à votre budget mensuel';
+
+  @override
+  String get savingsSection => 'Épargne';
+
+  @override
+  String get rainyDayFund => 'Fonds de précaution';
+
+  @override
+  String get startEmergencyGoal => 'Démarrez un objectif d\'urgence';
+
+  @override
+  String goalAmountTarget(Object amount) {
+    return 'sur $amount d\'objectif';
+  }
+
+  @override
+  String get pensionStart => 'Démarrez une micro-retraite flexible';
+
+  @override
+  String pensionProjected(Object amount) {
+    return 'Projeté $amount à la retraite';
+  }
+
+  @override
+  String get allSettled => 'tout est réglé';
+
+  @override
+  String get approxTax => '≈ 15% des revenus';
+
+  @override
+  String get runwayLabel => 'Réserve';
+
+  @override
+  String get monthsOfCover => 'mois de couverture';
+
+  @override
+  String get activeProjects => 'Projets actifs';
+
+  @override
+  String get acrossYourVault => 'dans votre coffre';
+
+  @override
+  String get recentProjects => 'Projets récents';
+
+  @override
+  String get activeGoalsLabel => 'Objectifs actifs';
+
+  @override
+  String get addProjectHint => 'Ajoutez un projet ou un objectif à suivre ici';
+
+  @override
+  String get revenueMrr => 'Revenus / MRR';
+
+  @override
+  String get burnRate => 'Taux de brûlage';
+
+  @override
+  String get perMonth => 'par mois';
+
+  @override
+  String get savedInGoalsLabel => 'Épargné dans les objectifs';
+
+  @override
+  String get opportunitiesLabel => 'Opportunités';
+
+  @override
+  String get femaleSeedFund => 'Fonds Semence pour Innovatrices';
+
+  @override
+  String get femaleSeedBlurb =>
+      'Sélectionné pour les entreprises dirigées par des femmes';
+
+  @override
+  String get needsAttention => 'Nécessite attention';
+
+  @override
+  String get allClear => 'Tout est clair — rien ne nécessite votre attention.';
+
+  @override
+  String get seeEverything => 'Tout voir en un seul endroit';
+
+  @override
+  String get qaSend => 'Envoyer';
+
+  @override
+  String get qaSave => 'Épargner';
+
+  @override
+  String get qaAddInvoice => 'Ajouter facture';
+
+  @override
+  String get qaSetAsideTax => 'Mettre de côté l\'impôt';
+
+  @override
+  String get qaTransfer => 'Transférer';
+
+  @override
+  String get qaCoach => 'Coach';
+
+  @override
+  String get qaCashFlow => 'Flux de trésorerie';
+
+  @override
+  String get qaGrants => 'Subventions';
+
+  @override
+  String get qaPayVendor => 'Payer fournisseur';
+
+  @override
+  String get qaRecordInvoice => 'Enregistrer facture';
+
+  @override
+  String get qaAdvisor => 'Conseiller';
+
+  @override
+  String get revenue => 'Revenus';
+
+  @override
+  String get add => 'Ajouter';
+
+  @override
+  String get totalSaved => 'Total épargné';
+
+  @override
+  String get createGoal => 'Créer un objectif';
+
+  @override
+  String get startPension => 'Démarrer la retraite';
+
+  @override
+  String get couldNotLoadGoals => 'Impossible de charger les objectifs';
+
+  @override
+  String get pleaseRetry => 'Veuillez réessayer dans un instant.';
+
+  @override
+  String get noGoalsYet => 'Aucun objectif pour l\'instant';
+
+  @override
+  String get goalsEmptyBody =>
+      'Créez un objectif pour commencer à constituer votre fonds de précaution ou votre retraite.';
+
+  @override
+  String get createAGoal => 'Créer un objectif';
+
+  @override
+  String get allGoals => 'Tous les objectifs';
+
+  @override
+  String get completed => 'Terminé';
+
+  @override
+  String get transferLabel => 'Transfert';
+
+  @override
+  String get sendToPayee => 'Envoyer à un bénéficiaire ou un compte';
+
+  @override
+  String get payABill => 'Payer une facture';
+
+  @override
+  String get billBlurb => 'Électricité, eau, crédit et plus';
+
+  @override
+  String get recentPayments => 'Paiements récents';
+
+  @override
+  String get noPaymentsYet => 'Aucun paiement pour l\'instant';
+
+  @override
+  String get paymentsEmptyBody =>
+      'Les transferts et paiements de factures apparaîtront ici.';
+
+  @override
+  String get moneyCoach => 'Votre coach financier';
+
+  @override
+  String get coachBlurb => 'Conseils adaptés à votre coffre';
+
+  @override
+  String get exportCsv => 'Exporter CSV';
+
+  @override
+  String get thisMonth => 'Ce mois-ci';
+
+  @override
+  String get incomeLabel => 'Revenus';
+
+  @override
+  String get expensesLabel => 'Dépenses';
+
+  @override
+  String get netLabel => 'Net';
+
+  @override
+  String get spendingByCategory => 'Dépenses par catégorie';
+
+  @override
+  String get notEnoughData => 'Pas assez de données pour l\'instant.';
+
+  @override
+  String get dailyBriefing => 'Briefing quotidien';
+
+  @override
+  String get topCategoryThisMonth => 'Catégorie principale ce mois-ci';
+
+  @override
+  String get noSpendingYet => 'Aucune dépense pour l\'instant';
+
+  @override
+  String spentSoFar(Object amount) {
+    return 'Vous avez dépensé $amount ce mois-ci.';
+  }
+
+  @override
+  String get csvCopied => 'CSV copié dans le presse-papiers';
+
+  @override
+  String get csvDate => 'Date';
+
+  @override
+  String get csvType => 'Type';
+
+  @override
+  String get csvAmount => 'Montant';
+
+  @override
+  String get csvCategory => 'Catégorie';
+
+  @override
+  String get csvMerchant => 'Commerçant';
+
+  @override
+  String get smeNoVendors => 'Aucun fournisseur lié pour l\'instant';
+
+  @override
+  String smeRunwayLow(Object months) {
+    return 'La réserve est faible — $months mois restants';
+  }
+
+  @override
+  String smeOverdue(Object count) {
+    return '$count facture en retard nécessite attention';
+  }
 }

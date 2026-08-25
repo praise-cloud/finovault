@@ -3,6 +3,7 @@ import '../../core/format.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/state/money.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/ui.dart';
 import '../home_shell.dart';
@@ -12,6 +13,7 @@ class PayTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final s = AppLocalizations.of(context)!;
     final payments = ref.watch(billPaymentsProvider);
     final recent = (payments.value ?? []).take(3).toList();
 
@@ -34,9 +36,9 @@ class PayTab extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Transfer', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: context.fvText)),
+                    Text(s.transferLabel, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: context.fvText)),
                     const SizedBox(height: 2),
-                    Text('Send to a payee or account', style: TextStyle(fontSize: 13, color: context.fvTextSecondary)),
+                    Text(s.sendToPayee, style: TextStyle(fontSize: 13, color: context.fvTextSecondary)),
                   ],
                 ),
               ),
@@ -60,9 +62,9 @@ class PayTab extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Pay a bill', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: context.fvText)),
+                    Text(s.payABill, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: context.fvText)),
                     const SizedBox(height: 2),
-                    Text('Electricity, water, airtime and more', style: TextStyle(fontSize: 13, color: context.fvTextSecondary)),
+                    Text(s.billBlurb, style: TextStyle(fontSize: 13, color: context.fvTextSecondary)),
                   ],
                 ),
               ),
@@ -70,11 +72,11 @@ class PayTab extends ConsumerWidget {
             ],
           ),
         ),
-        const SectionHeader(title: 'Recent payments'),
+        SectionHeader(title: s.recentPayments),
         if (payments.isLoading)
           const Center(child: CircularProgressIndicator())
         else if (recent.isEmpty)
-          const EmptyState(title: 'No payments yet', body: 'Transfers and bill payments will show up here.')
+          EmptyState(title: s.noPaymentsYet, body: s.paymentsEmptyBody)
         else
           for (final p in recent)
             FvCard(
