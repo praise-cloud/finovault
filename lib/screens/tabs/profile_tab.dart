@@ -75,16 +75,17 @@ class ProfileTab extends ConsumerWidget {
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (sheet) => Padding(
         padding: const EdgeInsets.all(FvSpacing.x5),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(child: Container(width: 36, height: 4, decoration: BoxDecoration(color: context.fvBorder, borderRadius: BorderRadius.circular(2)))),
-            const SizedBox(height: FvSpacing.x4),
-            Text(s.settings, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: context.fvText)),
-            const SizedBox(height: FvSpacing.x4),
-            Text(s.language, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-            const SizedBox(height: FvSpacing.x2),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(child: Container(width: 36, height: 4, decoration: BoxDecoration(color: context.fvBorder, borderRadius: BorderRadius.circular(2)))),
+              const SizedBox(height: FvSpacing.x4),
+              Text(s.settings, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: context.fvText)),
+              const SizedBox(height: FvSpacing.x4),
+              Text(s.language, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+              const SizedBox(height: FvSpacing.x2),
             Row(
               children: [
                 _ChoiceChip(selected: prefs.language == 'en', label: 'English', onTap: () => ref.read(preferencesProvider.notifier).setLanguage('en')),
@@ -113,31 +114,23 @@ class ProfileTab extends ConsumerWidget {
             Consumer(
               builder: (context, ref, _) {
                 final enabled = ref.watch(preferencesProvider).biometricEnabled;
-                return FvCard(
-                  child: Row(
-                    children: [
-                      const Icon(Icons.fingerprint, size: 20, color: FvColors.primary),
-                      const SizedBox(width: FvSpacing.x3),
-                      Expanded(child: Text(s.biometricUnlock, style: const TextStyle(fontSize: 14))),
-                      Switch(
-                        value: enabled,
-                        activeColor: FvColors.primary,
-                        onChanged: (v) async {
-                          if (v) {
-                            final ok = await ref.read(biometricServiceProvider).authenticate();
-                            if (!ok) {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(content: Text(s.biometricUnavailable)));
-                              }
-                              return;
-                            }
-                          }
-                          await ref.read(preferencesProvider.notifier).setBiometricEnabled(v);
-                        },
-                      ),
-                    ],
-                  ),
+                return _SwitchRow(
+                  icon: Icons.fingerprint,
+                  label: s.biometricUnlock,
+                  value: enabled,
+                  onChanged: (v) async {
+                    if (v) {
+                      final ok = await ref.read(biometricServiceProvider).authenticate();
+                      if (!ok) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(SnackBar(content: Text(s.biometricUnavailable)));
+                        }
+                        return;
+                      }
+                    }
+                    await ref.read(preferencesProvider.notifier).setBiometricEnabled(v);
+                  },
                 );
               },
             ),
@@ -150,57 +143,33 @@ class ProfileTab extends ConsumerWidget {
                 final notif = ref.read(notificationSettingsProvider.notifier);
                 return Column(
                   children: [
-                    FvCard(
-                      child: Row(
-                        children: [
-                          const Icon(Icons.notifications, size: 20, color: FvColors.primary),
-                          const SizedBox(width: FvSpacing.x3),
-                          Expanded(child: Text(s.notifications, style: const TextStyle(fontSize: 14))),
-                          Switch(
-                            value: n.enabled,
-                            activeColor: FvColors.primary,
-                            onChanged: (v) async {
-                              await notif.setEnabled(v);
-                              if (v) {
-                                await ref.read(notificationServiceProvider).notifyBillDue(
-                                      'Finovault alerts are on',
-                                      DateTime.now().add(const Duration(days: 2)),
-                                    );
-                              }
-                            },
-                          ),
-                        ],
-                      ),
+                    _SwitchRow(
+                      icon: Icons.notifications,
+                      label: s.notifications,
+                      value: n.enabled,
+                      onChanged: (v) async {
+                        await notif.setEnabled(v);
+                        if (v) {
+                          await ref.read(notificationServiceProvider).notifyBillDue(
+                                'Finovault alerts are on',
+                                DateTime.now().add(const Duration(days: 2)),
+                              );
+                        }
+                      },
                     ),
                     const SizedBox(height: FvSpacing.x3),
-                    FvCard(
-                      child: Row(
-                        children: [
-                          const Icon(Icons.receipt_long, size: 20, color: FvColors.primary),
-                          const SizedBox(width: FvSpacing.x3),
-                          Expanded(child: Text(s.billReminders, style: const TextStyle(fontSize: 14))),
-                          Switch(
-                            value: n.billReminders,
-                            activeColor: FvColors.primary,
-                            onChanged: (v) => notif.setBillReminders(v),
-                          ),
-                        ],
-                      ),
+                    _SwitchRow(
+                      icon: Icons.receipt_long,
+                      label: s.billReminders,
+                      value: n.billReminders,
+                      onChanged: (v) => notif.setBillReminders(v),
                     ),
                     const SizedBox(height: FvSpacing.x3),
-                    FvCard(
-                      child: Row(
-                        children: [
-                          const Icon(Icons.account_balance_wallet, size: 20, color: FvColors.primary),
-                          const SizedBox(width: FvSpacing.x3),
-                          Expanded(child: Text(s.lowBalanceAlert, style: const TextStyle(fontSize: 14))),
-                          Switch(
-                            value: n.lowBalance,
-                            activeColor: FvColors.primary,
-                            onChanged: (v) => notif.setLowBalance(v),
-                          ),
-                        ],
-                      ),
+                    _SwitchRow(
+                      icon: Icons.account_balance_wallet,
+                      label: s.lowBalanceAlert,
+                      value: n.lowBalance,
+                      onChanged: (v) => notif.setLowBalance(v),
                     ),
                   ],
                 );
@@ -213,7 +182,8 @@ class ProfileTab extends ConsumerWidget {
           ],
         ),
       ),
-    );
+    ),
+  );
   }
 
   void _confirmLogout(BuildContext context, WidgetRef ref) {
@@ -253,13 +223,47 @@ class _Row extends StatelessWidget {
     return FvCard(
       onTap: onTap,
       margin: const EdgeInsets.only(bottom: FvSpacing.x3),
-      child: Row(
-        children: [
-          Icon(icon, size: 20, color: danger ? FvColors.error : FvColors.primary),
-          const SizedBox(width: FvSpacing.x3),
-          Expanded(child: Text(label, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: color))),
-          const Icon(Icons.chevron_right, size: 18),
-        ],
+      child: Semantics(
+        button: true,
+        label: label,
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: danger ? FvColors.error : FvColors.primary),
+            const SizedBox(width: FvSpacing.x3),
+            Expanded(child: Text(label, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: color))),
+            const ExcludeSemantics(child: Icon(Icons.chevron_right, size: 18)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SwitchRow extends StatelessWidget {
+  const _SwitchRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return FvCard(
+      child: MergeSemantics(
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: FvColors.primary),
+            const SizedBox(width: FvSpacing.x3),
+            Expanded(child: Text(label, style: const TextStyle(fontSize: 14))),
+            Switch(value: value, activeColor: FvColors.primary, onChanged: onChanged),
+          ],
+        ),
       ),
     );
   }
@@ -347,6 +351,7 @@ class _BackendUrlTileState extends ConsumerState<_BackendUrlTile> {
           TextField(
             controller: _controller,
             decoration: InputDecoration(
+              labelText: s.backendUrl,
               hintText: s.backendUrlHint,
               isDense: true,
               border: InputBorder.none,
@@ -354,7 +359,10 @@ class _BackendUrlTileState extends ConsumerState<_BackendUrlTile> {
             style: const TextStyle(fontSize: 14),
           ),
           const SizedBox(height: FvSpacing.x2),
-          Row(
+          Wrap(
+            spacing: FvSpacing.x3,
+            runSpacing: FvSpacing.x2,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               FilledButton(
                 onPressed: _testing
@@ -366,11 +374,14 @@ class _BackendUrlTileState extends ConsumerState<_BackendUrlTile> {
                       },
                 child: Text(s.save),
               ),
-              const SizedBox(width: FvSpacing.x3),
               OutlinedButton(
                 onPressed: _testing ? null : _test,
                 child: _testing
-                    ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2, semanticsLabel: 'Testing connection'),
+                      )
                     : Text(s.testConnection),
               ),
               if (_status != null) ...[

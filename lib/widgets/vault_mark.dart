@@ -13,10 +13,13 @@ class VaultMark extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final stroke = subdued ? FvColors.textSecondaryDark : FvColors.primary;
-    return SizedBox(
-      width: size,
-      height: size,
-      child: CustomPaint(painter: _VaultMarkPainter(stroke)),
+    return Semantics(
+      label: 'Finovault',
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: CustomPaint(painter: _VaultMarkPainter(stroke)),
+      ),
     );
   }
 }
