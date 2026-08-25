@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/format.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,7 +24,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     final language = ref.watch(preferencesProvider).language;
 
     return ScreenPage(
-      title: 'Invoices',
+      title: AppLocalizations.of(context)!.invoices,
       actions: [IconButton(icon: const Icon(Icons.add, color: FvColors.primary), onPressed: _add)],
       child: invoices.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -151,5 +152,6 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     );
   }
 }
+
 
 

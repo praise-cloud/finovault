@@ -6,6 +6,7 @@ import '../../core/mock/api.dart';
 import '../../core/providers.dart';
 import '../../core/state/money.dart';
 import '../../core/state/onboarding.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/vault_mark.dart';
@@ -50,9 +51,10 @@ class _LinkAccountsScreenState extends ConsumerState<LinkAccountsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = AppLocalizations.of(context)!;
     final bank = _InstitutionRow(
       icon: Icons.account_balance_outlined,
-      title: 'Bank account',
+      title: s.bankAccount,
       subtitle: 'MCB, SBM, Barclays and more',
       accountName: 'My Bank Account',
       type: AccountType.bank,
@@ -62,7 +64,7 @@ class _LinkAccountsScreenState extends ConsumerState<LinkAccountsScreen> {
     );
     final momo = _InstitutionRow(
       icon: Icons.smartphone_outlined,
-      title: 'Mobile money',
+      title: s.mobileMoney,
       subtitle: 'MyT, Juice, Ezi Cash',
       accountName: 'My Mobile Money',
       type: AccountType.mobileMoney,
@@ -91,11 +93,11 @@ class _LinkAccountsScreenState extends ConsumerState<LinkAccountsScreen> {
                   child: ListView(
                     padding: const EdgeInsets.only(top: FvSpacing.x8),
                     children: <Widget>[
-                      Text('Link your accounts',
+                      Text(s.linkAccounts,
                           style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -0.4, color: FvColors.primary)),
                       const SizedBox(height: 8),
                       Text(
-                        'Connect an account to see your full picture in one place. You can skip this and add accounts later.',
+                        s.linkSubtitle,
                         style: TextStyle(fontSize: 15, height: 1.5, color: context.fvTextSecondary),
                       ),
                       const SizedBox(height: FvSpacing.x6),
@@ -105,12 +107,12 @@ class _LinkAccountsScreenState extends ConsumerState<LinkAccountsScreen> {
                     ],
                   ),
                 ),
-                FvButton(label: 'Finish', onPressed: _finishing ? null : _finish, loading: _finishing),
+                FvButton(label: s.finish, onPressed: _finishing ? null : _finish, loading: _finishing),
                 const SizedBox(height: FvSpacing.x3),
                 Center(
                   child: TextButton(
                     onPressed: _finishing ? null : _finish,
-                    child: Text('Skip for now',
+                    child: Text(s.skipForNow,
                         style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600, color: context.fvTextSecondary)),
                   ),
                 ),
@@ -175,9 +177,9 @@ class _LinkCard extends StatelessWidget {
           ),
           const SizedBox(width: FvSpacing.x2),
           if (row.linked)
-            const StatusBadge(label: 'Linked', foreground: FvColors.success, background: FvColors.successBg)
+            StatusBadge(label: AppLocalizations.of(context)!.linked, foreground: FvColors.success, background: FvColors.successBg)
           else
-            FvButton(label: 'Link', onPressed: onLink, variant: FvButtonVariant.secondary, expanded: false),
+            FvButton(label: AppLocalizations.of(context)!.linkAccount, onPressed: onLink, variant: FvButtonVariant.secondary, expanded: false),
         ],
       ),
     );

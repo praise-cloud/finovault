@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/format.dart';
@@ -24,7 +25,7 @@ class _BudgetsScreenState extends ConsumerState<BudgetsScreen> {
     final language = ref.watch(preferencesProvider).language;
 
     return ScreenPage(
-      title: 'Budgets',
+      title: AppLocalizations.of(context)!.budgets,
       actions: [IconButton(icon: const Icon(Icons.add, color: FvColors.primary), onPressed: _add)],
       child: budgets.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -129,3 +130,4 @@ class _BudgetsScreenState extends ConsumerState<BudgetsScreen> {
     );
   }
 }
+

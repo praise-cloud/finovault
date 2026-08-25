@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/format.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,7 +20,7 @@ class SecurityScreen extends ConsumerWidget {
     final events = ref.watch(securityEventsProvider);
 
     return ScreenPage(
-      title: 'Security',
+      title: AppLocalizations.of(context)!.security,
       child: ListView(
         padding: const EdgeInsets.all(FvSpacing.x5),
         children: [
@@ -141,5 +142,6 @@ class SecurityScreen extends ConsumerWidget {
     );
   }
 }
+
 
 

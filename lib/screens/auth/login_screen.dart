@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/state/auth.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/vault_mark.dart';
@@ -37,6 +38,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final auth = ref.watch(authProvider);
     final error = auth.error;
+    final s = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: Container(
@@ -53,7 +55,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const VaultMark(size: 44),
                     const SizedBox(height: FvSpacing.x3),
                     Center(
-                      child: Text('Welcome back',
+                      child: Text(s.welcomeBack,
                           style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
@@ -61,7 +63,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               color: context.fvText)),
                     ),
                     const SizedBox(height: 6),
-                    Text('Log in to keep growing your wealth.',
+                    Text(s.loginSubtitle,
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 14, height: 1.5, color: context.fvTextSecondary)),
                     const SizedBox(height: FvSpacing.x6),
@@ -83,16 +85,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             const SizedBox(height: FvSpacing.x4),
                           ],
                           FvTextField(
-                            label: 'Email',
+                            label: s.email,
                             controller: _email,
                             keyboardType: TextInputType.emailAddress,
-                            hint: 'you@example.com',
+                            hint: s.emailHint,
                           ),
                           const SizedBox(height: FvSpacing.x4),
-                          FvTextField(label: 'Password', controller: _password, obscure: true),
+                          FvTextField(label: s.password, controller: _password, obscure: true),
                           const SizedBox(height: FvSpacing.x5),
                           FvButton(
-                            label: 'Log In',
+                            label: s.loginCta,
                             onPressed: auth.busy ? null : _submit,
                             loading: auth.busy,
                           ),
@@ -101,10 +103,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             onPressed: () => pushScreen(context, const SignupScreen()),
                             child: Text.rich(
                               TextSpan(
-                                text: "Don't have an account? ",
+                                text: s.signUpPrompt,
                                 style: TextStyle(color: context.fvTextSecondary, fontSize: 13),
-                                children: const [
-                                  TextSpan(text: 'Sign up', style: TextStyle(color: FvColors.primary, fontWeight: FontWeight.w700)),
+                                children: [
+                                  TextSpan(text: s.signUp, style: const TextStyle(color: FvColors.primary, fontWeight: FontWeight.w700)),
                                 ],
                               ),
                             ),
@@ -120,7 +122,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           const SizedBox(width: FvSpacing.x2),
                           Expanded(
                             child: Text(
-                              'Demo account — demo@finovault.app / Vault123!',
+                              s.demoAccount,
                               style: TextStyle(fontSize: 12.5, color: context.fvTextSecondary),
                             ),
                           ),

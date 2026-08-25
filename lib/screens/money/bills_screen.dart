@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/format.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -146,5 +147,6 @@ class _BillsScreenState extends ConsumerState<BillsScreen> {
     );
   }
 }
+
 
 

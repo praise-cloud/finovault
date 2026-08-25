@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/models.dart';
 import '../core/state/onboarding.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/tokens.dart';
 import '../widgets/ui.dart';
 import '../widgets/vault_mark.dart';
@@ -38,6 +39,7 @@ class _RoleScreenState extends ConsumerState<RoleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = AppLocalizations.of(context)!;
     return Scaffold(
       body: Container(
         decoration: context.fvPageDecoration,
@@ -67,7 +69,7 @@ class _RoleScreenState extends ConsumerState<RoleScreen> {
                   padding: const EdgeInsets.fromLTRB(FvSpacing.x6, FvSpacing.x8, FvSpacing.x6, FvSpacing.x6),
                   children: [
                     Text(
-                      'How will you use Finovault?',
+                      s.howWillYouUse,
                       style: const TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.w700,
@@ -77,12 +79,13 @@ class _RoleScreenState extends ConsumerState<RoleScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Pick the way you want to manage your money. You can add more later.',
+                      s.pickManageMoney,
                       style: const TextStyle(fontSize: 15, height: 1.5, color: FvColors.primary),
                     ),
                     const SizedBox(height: 24),
                     for (final role in PrimaryRole.values) ...[
                       _RoleCard(
+                        s: s,
                         role: role,
                         selected: _selected == role,
                         onTap: () => setState(() => _selected = role),
@@ -99,7 +102,7 @@ class _RoleScreenState extends ConsumerState<RoleScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: _selected == null ? null : _continue,
-                        child: const Text('Continue'),
+                        child: Text(s.continueCta),
                       ),
                     ),
                   ],
@@ -114,11 +117,26 @@ class _RoleScreenState extends ConsumerState<RoleScreen> {
 }
 
 class _RoleCard extends StatelessWidget {
-  const _RoleCard({required this.role, required this.selected, required this.onTap});
+  const _RoleCard({required this.s, required this.role, required this.selected, required this.onTap});
 
+  final AppLocalizations s;
   final PrimaryRole role;
   final bool selected;
   final VoidCallback onTap;
+
+  String get _label => switch (role) {
+        PrimaryRole.individual => s.roleIndividual,
+        PrimaryRole.freelancer => s.roleFreelancer,
+        PrimaryRole.entrepreneur => s.roleEntrepreneur,
+        PrimaryRole.sme => s.roleSme,
+      };
+
+  String get _description => switch (role) {
+        PrimaryRole.individual => s.roleIndividualDesc,
+        PrimaryRole.freelancer => s.roleFreelancerDesc,
+        PrimaryRole.entrepreneur => s.roleEntrepreneurDesc,
+        PrimaryRole.sme => s.roleSmeDesc,
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +178,7 @@ class _RoleCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      role.label,
+                      _label,
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -169,7 +187,7 @@ class _RoleCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      role.description,
+                      _description,
                       style: const TextStyle(fontSize: 13, color: FvColors.primary),
                     ),
                   ],
@@ -227,10 +245,10 @@ class _FemaleFounderCard extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
               ),
               const SizedBox(width: 4),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Women-led / Female founder path',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: FvColors.primary),
+                  AppLocalizations.of(context)!.femaleFounderPath,
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: FvColors.primary),
                 ),
               ),
             ],

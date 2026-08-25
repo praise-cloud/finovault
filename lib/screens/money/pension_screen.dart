@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/providers.dart';
@@ -105,7 +106,7 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
     final contributions = ref.watch(pensionContributionsProvider);
 
     return ScreenPage(
-      title: 'Pension',
+      title: AppLocalizations.of(context)!.pension,
       actions: [
         if (plan.value != null)
           IconButton(icon: const Icon(Icons.edit_outlined, color: FvColors.primary), onPressed: () => pushScreen(context, const PensionSetupScreen()))
@@ -232,3 +233,4 @@ class _PotCard extends StatelessWidget {
     );
   }
 }
+

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -7,6 +8,7 @@ import 'package:finovault_flutter/core/providers.dart';
 import 'package:finovault_flutter/core/state/auth.dart';
 import 'package:finovault_flutter/core/state/onboarding.dart';
 import 'package:finovault_flutter/core/state/preferences.dart';
+import 'package:finovault_flutter/l10n/app_localizations.dart';
 
 /// Logged-out container mirroring the app's provider wiring against the
 /// in-memory mock backend.
@@ -47,6 +49,14 @@ Future<void> pumpScreen(
       container: container,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        locale: const Locale('en'),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
         theme: theme ?? ThemeData.light(),
         home: screen,
       ),

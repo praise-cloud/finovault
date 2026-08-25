@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/models.dart';
@@ -55,7 +56,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
   Widget build(BuildContext context) {
     final accounts = ref.watch(accountsProvider);
     return ScreenPage(
-      title: 'Accounts',
+      title: AppLocalizations.of(context)!.accounts,
       child: accounts.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Could not load accounts: $e')),
@@ -182,3 +183,4 @@ class _LinkSheetState extends ConsumerState<_LinkSheet> {
     );
   }
 }
+
