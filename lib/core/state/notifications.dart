@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers.dart';
@@ -61,16 +62,21 @@ class NotificationSettingsController extends Notifier<NotificationSettings> {
 final notificationSettingsProvider =
     NotifierProvider<NotificationSettingsController, NotificationSettings>(NotificationSettingsController.new);
 
-/// Placeholder delivery channel. Swap this for `firebase_messaging` /
-/// `flutter_local_notifications` later; the UI only depends on this interface so
-/// the rest of the app stays decoupled from the transport.
+/// Delivery channel for user alerts. The UI only depends on this interface so
+/// the transport stays swappable — `LocalNotificationService` (on-device) today,
+/// `firebase_messaging` push later.
 abstract class NotificationService {
+  /// Platform permission + channel setup. Safe to call once at startup.
+  Future<void> initialize();
   Future<void> notifyBillDue(String biller, DateTime due);
   Future<void> notifyLowBalance(String account, double balance);
 }
 
 class DebugNotificationService implements NotificationService {
   final List<String> delivered = [];
+
+  @override
+  Future<void> initialize() async {}
 
   @override
   Future<void> notifyBillDue(String biller, DateTime due) async {
@@ -89,4 +95,67 @@ class DebugNotificationService implements NotificationService {
   }
 }
 
-final notificationServiceProvider = Provider<NotificationService>((ref) => DebugNotificationService());
+/// Real on-device notifications via `flutter_local_notifications`.
+class LocalNotificationService implements NotificationService {
+  LocalNotificationService(this._plugin);
+  final FlutterLocalNotificationsPlugin _plugin;
+
+  static const String _channelId = 'finovault_alerts';
+  static const String _channelName = 'Finovault Alerts';
+
+  bool _ready = false;
+
+  @override
+  Future<void> initialize() async {
+    const settings = InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      iOS: DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+      ),
+    );
+    await _plugin.initialize(settings: settings);
+    // Android 13+ runtime permission.
+    await _plugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
+    _ready = true;
+  }
+
+  Future<void> _show(String title, String body) async {
+    if (!_ready) return;
+    await _plugin.show(
+      id: title.hashCode,
+      title: title,
+      body: body,
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails(
+          _channelId,
+          _channelName,
+          importance: Importance.high,
+          priority: Priority.high,
+        ),
+        iOS: DarwinNotificationDetails(),
+      ),
+    );
+  }
+
+  @override
+  Future<void> notifyBillDue(String biller, DateTime due) async {
+    final date = '${due.year}-${due.month.toString().padLeft(2, '0')}-${due.day.toString().padLeft(2, '0')}';
+    await _show('Bill due soon', '$biller is due on $date');
+  }
+
+  @override
+  Future<void> notifyLowBalance(String account, double balance) async {
+    await _show('Low balance', '$account balance is low: \$${balance.toStringAsFixed(2)}');
+  }
+}
+
+final notificationServiceProvider = Provider<NotificationService>((ref) {
+  final svc = LocalNotificationService(FlutterLocalNotificationsPlugin());
+  // Initialize fires-and-forgets; the app also awaits it at startup.
+  svc.initialize();
+  return svc;
+});

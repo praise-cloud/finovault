@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:finovault_flutter/core/mock/db.dart';
 import 'package:finovault_flutter/core/providers.dart';
 import 'package:finovault_flutter/core/state/auth.dart';
+import 'package:finovault_flutter/core/state/notifications.dart';
 import 'package:finovault_flutter/core/state/onboarding.dart';
 import 'package:finovault_flutter/core/state/preferences.dart';
 import 'package:finovault_flutter/l10n/app_localizations.dart';
@@ -20,6 +21,7 @@ Future<ProviderContainer> makeContainer({Duration latency = Duration.zero}) asyn
     kvStoreProvider.overrideWithValue(store),
     mockDbProvider.overrideWithValue(db),
     apiLatencyProvider.overrideWith((ref) => latency),
+    notificationServiceProvider.overrideWithValue(DebugNotificationService()),
     initialPreferencesProvider.overrideWithValue(loadInitialPreferences(store)),
     initialOnboardingProvider.overrideWithValue(loadInitialOnboarding(store)),
   ]);
