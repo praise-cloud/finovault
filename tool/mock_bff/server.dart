@@ -307,23 +307,30 @@ class _BffError {
   final String message;
 }
 
+/// Builds the shelf handler backed by a fresh [MockBff]. Exposed so the app's
+/// integration tests can spin up the reference server in-process instead of
+/// needing a separately running process.
+shelf.Handler mockBffHandler([MockBff? bff]) {
+  final server = bff ?? MockBff();
+  return const shelf.Pipeline()
+      .addMiddleware(shelf.logRequests())
+      .addHandler((shelf.Request req) async {
+    if (req.method != 'POST' || req.url.path != 'rpc') {
+      return shelf.Response.notFound(jsonEncode(server._fail('not_found', 'Use POST /rpc')));
+    }
+    final body = jsonDecode(await req.readAsString()) as Map<String, dynamic>;
+    final env = server._envelope(req, body);
+    return shelf.Response.ok(jsonEncode(env), headers: {'content-type': 'application/json'});
+  });
+}
+
 Future<void> main(List<String> argv) async {
   var port = 8080;
   for (var i = 0; i < argv.length - 1; i++) {
     if (argv[i] == '--port' || argv[i] == '-p') port = int.tryParse(argv[i + 1]) ?? port;
   }
 
-  final bff = MockBff();
-  final handler = const shelf.Pipeline()
-      .addMiddleware(shelf.logRequests())
-      .addHandler((shelf.Request req) async {
-    if (req.method != 'POST' || req.url.path != 'rpc') {
-      return shelf.Response.notFound(jsonEncode(bff._fail('not_found', 'Use POST /rpc')));
-    }
-    final body = jsonDecode(await req.readAsString()) as Map<String, dynamic>;
-    final env = bff._envelope(req, body);
-    return shelf.Response.ok(jsonEncode(env), headers: {'content-type': 'application/json'});
-  });
+  final handler = mockBffHandler();
 
   final server = await io.serve(handler, InternetAddress.anyIPv4, port);
   // ignore: avoid_print
