@@ -165,14 +165,14 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                 ref.invalidate(accountsProvider);
                 ref.invalidate(transfersProvider);
                 ref.invalidate(transactionsProvider);
-                if (mounted) {
+                if (context.mounted) {
                   await pushScreen(context, TransferReceiptScreen(transfer: transfer));
                 }
-              } on FvApiException catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+                } on FvApiException catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+                  }
                 }
-              }
             },
             child: const Text('Confirm'),
           ),

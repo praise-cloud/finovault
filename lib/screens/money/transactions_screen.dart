@@ -39,7 +39,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
             : ListView.separated(
                 padding: const EdgeInsets.all(FvSpacing.x5),
                 itemCount: list.length,
-                separatorBuilder: (_, __) => const SizedBox(height: FvSpacing.x3),
+                separatorBuilder: (_, _) => const SizedBox(height: FvSpacing.x3),
                 itemBuilder: (_, i) {
                   final t = list[i];
                   final color = t.direction == TransactionDirection.inn ? FvColors.success : context.fvText;
@@ -133,7 +133,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                   if (value <= 0) return;
                   await api.createTransaction(token, accountId: accountId, amount: value, direction: _dir, category: category.text, merchantName: merchant.text);
                   ref.invalidate(transactionsProvider);
-                  if (mounted) Navigator.of(sheet).pop();
+                  if (sheet.mounted) Navigator.of(sheet).pop();
                 },
               ),
             ],

@@ -45,7 +45,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
         onLink: (name, type, institution, balance) async {
           await api.linkAccount(token, name: name, type: type, institution: institution, balance: balance);
           ref.invalidate(accountsProvider);
-          if (mounted) Navigator.of(sheet).pop();
+          if (sheet.mounted) Navigator.of(sheet).pop();
         },
       ),
     );

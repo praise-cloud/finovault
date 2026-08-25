@@ -176,7 +176,7 @@ class InsightsTab extends ConsumerWidget {
           t.merchantName ?? '',
         ],
     ];
-    final csv = rows.map((r) => r.map((c) => '"${(c ?? '').replaceAll('"', '""')}"').join(',')).join('\n');
+    final csv = rows.map((r) => r.map((c) => '"${c.replaceAll('"', '""')}"').join(',')).join('\n');
     await downloadCsv('finovault-transactions.csv', csv);
     if (!kIsWeb && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('CSV copied to clipboard')));

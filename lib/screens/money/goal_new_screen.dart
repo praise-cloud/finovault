@@ -58,7 +58,7 @@ class _GoalNewScreenState extends ConsumerState<GoalNewScreen> {
               if (_name.text.isEmpty || target <= 0) return;
               await api.createGoal(token, name: _name.text, type: _type, targetAmount: target);
               ref.invalidate(goalsProvider);
-              if (mounted) Navigator.of(context).pop();
+              if (context.mounted) Navigator.of(context).pop();
             },
           ),
         ],

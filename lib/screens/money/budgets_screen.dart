@@ -41,7 +41,7 @@ class _BudgetsScreenState extends ConsumerState<BudgetsScreen> {
               : ListView.separated(
                   padding: const EdgeInsets.all(FvSpacing.x5),
                   itemCount: list.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: FvSpacing.x3),
+                  separatorBuilder: (_, _) => const SizedBox(height: FvSpacing.x3),
                   itemBuilder: (_, i) {
                     final b = list[i];
                     final spent = spentFor(b);
@@ -119,7 +119,7 @@ class _BudgetsScreenState extends ConsumerState<BudgetsScreen> {
                   if (category.text.isEmpty || value <= 0) return;
                   await api.createBudget(token, category: category.text, amount: value);
                   ref.invalidate(budgetsProvider);
-                  if (mounted) Navigator.of(sheet).pop();
+                  if (sheet.mounted) Navigator.of(sheet).pop();
                 },
               ),
             ],

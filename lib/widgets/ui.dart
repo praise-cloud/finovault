@@ -262,7 +262,7 @@ class ProgressRing extends StatelessWidget {
             size: Size(size, size),
             painter: _RingPainter(progress: p, stroke: stroke, track: context.fvBorder),
           ),
-          if (child != null) child!,
+          ?child,
         ],
       ),
     );
@@ -270,12 +270,11 @@ class ProgressRing extends StatelessWidget {
 }
 
 class _RingPainter extends CustomPainter {
-  _RingPainter({required this.progress, required this.stroke, required Color track})
-      : _track = track;
+  _RingPainter({required this.progress, required this.stroke, required this.track});
 
   final double progress;
   final double stroke;
-  final Color _track;
+  final Color track;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -287,7 +286,7 @@ class _RingPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round
-      ..color = _track;
+      ..color = track;
     canvas.drawArc(arcRect, 0, 3.14159 * 2, false, paint);
     if (progress > 0) {
       paint.color = FvColors.primary;
@@ -297,7 +296,7 @@ class _RingPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_RingPainter oldDelegate) =>
-      oldDelegate.progress != progress || oldDelegate.stroke != stroke || oldDelegate._track != _track;
+       oldDelegate.progress != progress || oldDelegate.stroke != stroke || oldDelegate.track != track;
 }
 
 class SectionHeader extends StatelessWidget {

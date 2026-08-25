@@ -86,7 +86,7 @@ class RootGate extends ConsumerWidget {
       return Scaffold(
         body: Container(
           decoration: context.fvPageDecoration,
-          child: const Center(child: const VaultMark(size: 64)),
+          child: const Center(child: VaultMark(size: 64)),
         ),
       );
     }
