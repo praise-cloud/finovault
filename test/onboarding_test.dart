@@ -4,8 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:finovault_flutter/core/mock/db.dart';
 import 'package:finovault_flutter/core/providers.dart';
-import 'package:finovault_flutter/core/state/preferences.dart';
+import 'package:finovault_flutter/core/state/notifications.dart';
 import 'package:finovault_flutter/core/state/onboarding.dart';
+import 'package:finovault_flutter/core/state/preferences.dart';
 import 'package:finovault_flutter/main.dart';
 import 'package:finovault_flutter/screens/welcome_screen.dart';
 
@@ -17,6 +18,7 @@ ProviderScope withProviders(Widget child) {
       kvStoreProvider.overrideWithValue(store),
       mockDbProvider.overrideWithValue(db),
       apiLatencyProvider.overrideWith((ref) => Duration.zero),
+      notificationServiceProvider.overrideWithValue(DebugNotificationService()),
       initialPreferencesProvider.overrideWithValue(loadInitialPreferences(store)),
       initialOnboardingProvider.overrideWithValue(loadInitialOnboarding(store)),
     ],

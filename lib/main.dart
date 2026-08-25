@@ -8,6 +8,7 @@ import 'l10n/app_localizations.dart';
 import 'core/providers.dart';
 import 'core/state/auth.dart';
 import 'core/state/onboarding.dart';
+import 'core/state/notifications.dart';
 import 'core/state/preferences.dart';
 import 'core/mock/db.dart';
 import 'core/state/biometric.dart';
@@ -62,6 +63,7 @@ class _FinovaultAppState extends ConsumerState<FinovaultApp> {
   @override
   void initState() {
     super.initState();
+    ref.read(notificationServiceProvider).initialize();
     Future.microtask(() => ref.read(authProvider.notifier).restore());
   }
 

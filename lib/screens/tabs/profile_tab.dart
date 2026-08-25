@@ -159,7 +159,15 @@ class ProfileTab extends ConsumerWidget {
                           Switch(
                             value: n.enabled,
                             activeColor: FvColors.primary,
-                            onChanged: (v) => notif.setEnabled(v),
+                            onChanged: (v) async {
+                              await notif.setEnabled(v);
+                              if (v) {
+                                await ref.read(notificationServiceProvider).notifyBillDue(
+                                      'Finovault alerts are on',
+                                      DateTime.now().add(const Duration(days: 2)),
+                                    );
+                              }
+                            },
                           ),
                         ],
                       ),
