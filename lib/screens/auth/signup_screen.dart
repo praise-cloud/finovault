@@ -45,7 +45,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
     return Scaffold(
       body: Container(
-        decoration: context.fvPageDecoration,
+        decoration: context.fvOnboardingDecoration,
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(

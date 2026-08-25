@@ -42,7 +42,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     return Scaffold(
       body: Container(
-        decoration: context.fvPageDecoration,
+        decoration: context.fvOnboardingDecoration,
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(

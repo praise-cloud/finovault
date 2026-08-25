@@ -144,6 +144,14 @@ class OnboardingController extends Notifier<OnboardingState> {
     state = const OnboardingState();
     await _persist();
   }
+
+  /// Mark onboarding complete for a returning user who already has a role
+  /// (i.e. logged in, not signing up). No API call — the role/preferences
+  /// already exist server-side, we just stop showing the onboarding flow.
+  Future<void> completeFromAuth() async {
+    state = state.copyWith(step: OnboardingStep.complete);
+    await _persist();
+  }
 }
 
 final onboardingProvider =

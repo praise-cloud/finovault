@@ -75,7 +75,7 @@ class _LinkAccountsScreenState extends ConsumerState<LinkAccountsScreen> {
 
     return Scaffold(
       body: Container(
-        decoration: context.fvPageDecoration,
+        decoration: context.fvOnboardingDecoration,
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(FvSpacing.x6),

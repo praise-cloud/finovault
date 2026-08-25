@@ -86,15 +86,23 @@ void main() {
     });
   });
 
-  group('RoleScreen background is theme-aware', () {
-    testWidgets('uses dark gradient in dark mode', (tester) async {
+  group('RoleScreen background', () {
+    testWidgets('is plain (no brand gradient) in dark mode', (tester) async {
       await pumpScreen(tester, const RoleScreen(), theme: FvTheme.dark(), loggedIn: false);
       final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
       final body = scaffold.body as Container;
       final decoration = body.decoration as BoxDecoration;
-      final gradient = decoration.gradient as RadialGradient;
-      // fvPageDecoration's dark variant starts with the deep navy radial stop.
-      expect(gradient.colors.first, const Color(0xFF16306B));
+      expect(decoration.gradient, isNull);
+      expect(decoration.color, FvColors.bgDark);
+    });
+
+    testWidgets('is white in light mode', (tester) async {
+      await pumpScreen(tester, const RoleScreen(), theme: FvTheme.light(), loggedIn: false);
+      final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
+      final body = scaffold.body as Container;
+      final decoration = body.decoration as BoxDecoration;
+      expect(decoration.gradient, isNull);
+      expect(decoration.color, Colors.white);
     });
   });
 }

@@ -69,7 +69,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
 
     return Scaffold(
       body: Container(
-        decoration: context.fvPageDecoration,
+        decoration: context.fvOnboardingDecoration,
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
