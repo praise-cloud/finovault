@@ -17,10 +17,33 @@ final mockDbProvider = Provider<MockDb>(
 
 final apiLatencyProvider = StateProvider<Duration>((ref) => const Duration(milliseconds: 250));
 
-/// When set (e.g. `--dart-define=API_BASE_URL=http://localhost:8787`), the app
-/// talks to the BFF via `HttpFinovaultApi` instead of the in-memory mock.
-final apiBaseUrlProvider = StateProvider<String?>((ref) =>
-    const bool.hasEnvironment('API_BASE_URL') ? const String.fromEnvironment('API_BASE_URL') : null);
+/// When set, the app talks to the BFF via `HttpFinovaultApi` instead of the
+/// in-memory mock. The URL is persisted in `KvStore` (so it survives restarts
+/// and can be changed from Settings without a rebuild) and is seeded from the
+/// `API_BASE_URL` compile-time variable when nothing has been stored yet.
+final apiBaseUrlProvider = NotifierProvider<ApiBaseUrlController, String?>(ApiBaseUrlController.new);
+
+class ApiBaseUrlController extends Notifier<String?> {
+  static const _key = 'finovault.apiBaseUrl';
+
+  @override
+  String? build() {
+    final stored = ref.read(kvStoreProvider).getString(_key);
+    if (stored != null && stored.trim().isNotEmpty) return stored.trim();
+    final env = const bool.hasEnvironment('API_BASE_URL') ? const String.fromEnvironment('API_BASE_URL') : '';
+    return env.trim().isNotEmpty ? env.trim() : null;
+  }
+
+  Future<void> set(String? url) async {
+    final trimmed = (url ?? '').trim();
+    state = trimmed.isEmpty ? null : trimmed;
+    if (state == null) {
+      await ref.read(kvStoreProvider).remove(_key);
+    } else {
+      await ref.read(kvStoreProvider).setString(_key, state!);
+    }
+  }
+}
 
 final apiProvider = Provider<FinovaultApi>((ref) {
   final baseUrl = ref.watch(apiBaseUrlProvider);

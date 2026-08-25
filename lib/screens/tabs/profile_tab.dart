@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/mock/api.dart';
+import '../../core/mock/http_api.dart';
+import '../../core/providers.dart';
 import '../../core/state/auth.dart';
 import '../../core/state/biometric.dart';
 import '../../core/state/notifications.dart';
@@ -195,6 +198,9 @@ class ProfileTab extends ConsumerWidget {
                 );
               },
             ),
+            Text(s.backendUrl, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+            const SizedBox(height: FvSpacing.x2),
+            const _BackendUrlTile(),
             const SizedBox(height: FvSpacing.x4),
           ],
         ),
@@ -277,6 +283,96 @@ class _ChoiceChip extends ConsumerWidget {
             child: Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: selected ? FvColors.primary : context.fvText)),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _BackendUrlTile extends ConsumerStatefulWidget {
+  const _BackendUrlTile();
+
+  @override
+  ConsumerState<_BackendUrlTile> createState() => _BackendUrlTileState();
+}
+
+class _BackendUrlTileState extends ConsumerState<_BackendUrlTile> {
+  final _controller = TextEditingController();
+  bool _testing = false;
+  String? _status;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.text = ref.read(apiBaseUrlProvider) ?? '';
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _test() async {
+    setState(() => _testing = true);
+    final s = AppLocalizations.of(context)!;
+    final url = _controller.text.trim();
+    try {
+      final api = HttpFinovaultApi(baseUrl: url.isEmpty ? 'http://invalid.invalid' : url);
+      await api.getSession(null);
+      if (mounted) setState(() => _status = s.connectionOk);
+    } on FvApiException {
+      if (mounted) setState(() => _status = s.connectionFailed);
+    } catch (_) {
+      if (mounted) setState(() => _status = s.connectionFailed);
+    } finally {
+      if (mounted) setState(() => _testing = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = AppLocalizations.of(context)!;
+    return FvCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              hintText: s.backendUrlHint,
+              isDense: true,
+              border: InputBorder.none,
+            ),
+            style: const TextStyle(fontSize: 14),
+          ),
+          const SizedBox(height: FvSpacing.x2),
+          Row(
+            children: [
+              FilledButton(
+                onPressed: _testing
+                    ? null
+                    : () async {
+                        await ref.read(apiBaseUrlProvider.notifier).set(_controller.text);
+                        ref.invalidate(apiProvider);
+                        if (mounted) setState(() => _status = null);
+                      },
+                child: Text(s.save),
+              ),
+              const SizedBox(width: FvSpacing.x3),
+              OutlinedButton(
+                onPressed: _testing ? null : _test,
+                child: _testing
+                    ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+                    : Text(s.testConnection),
+              ),
+              if (_status != null) ...[
+                const SizedBox(width: FvSpacing.x3),
+                Text(_status!,
+                    style: TextStyle(fontSize: 13, color: _status == s.connectionOk ? FvColors.success : FvColors.error)),
+              ],
+            ],
+          ),
+        ],
       ),
     );
   }

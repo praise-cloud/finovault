@@ -37,9 +37,16 @@ class AuthController extends Notifier<AuthState> {
       state = state.copyWith(restoring: false);
       return;
     }
-    final user = await _api.getSession(token);
-    state = AuthState(user: user, restoring: false);
-    if (user == null) await ref.read(kvStoreProvider).remove(sessionKey);
+    try {
+      final user = await _api.getSession(token);
+      state = AuthState(user: user, restoring: false);
+      if (user == null) await ref.read(kvStoreProvider).remove(sessionKey);
+    } on FvApiException {
+      // Token expired/invalid or backend unreachable — drop the session and
+      // start fresh instead of hanging on the splash.
+      await ref.read(kvStoreProvider).remove(sessionKey);
+      state = const AuthState(restoring: false);
+    }
   }
 
   void setUser(UserProfile user) {

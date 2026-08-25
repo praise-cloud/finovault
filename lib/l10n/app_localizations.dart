@@ -1297,6 +1297,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} overdue invoice needs attention'**
   String smeOverdue(Object count);
+
+  /// No description provided for @backendUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Backend URL'**
+  String get backendUrl;
+
+  /// No description provided for @backendUrlHint.
+  ///
+  /// In en, this message translates to:
+  /// **'https://your-bff.example.com'**
+  String get backendUrlHint;
+
+  /// No description provided for @testConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Test connection'**
+  String get testConnection;
+
+  /// No description provided for @connectionOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get connectionOk;
+
+  /// No description provided for @connectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect'**
+  String get connectionFailed;
 }
 
 class _AppLocalizationsDelegate

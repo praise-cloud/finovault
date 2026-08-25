@@ -627,4 +627,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String smeOverdue(Object count) {
     return '$count overdue invoice needs attention';
   }
+
+  @override
+  String get backendUrl => 'Backend URL';
+
+  @override
+  String get backendUrlHint => 'https://your-bff.example.com';
+
+  @override
+  String get testConnection => 'Test connection';
+
+  @override
+  String get connectionOk => 'Connected';
+
+  @override
+  String get connectionFailed => 'Could not connect';
 }

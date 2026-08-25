@@ -192,5 +192,10 @@
   "csvMerchant": "Commerçant",
   "smeNoVendors": "Aucun fournisseur lié pour l'instant",
   "smeRunwayLow": "La réserve est faible — {months} mois restants",
-  "smeOverdue": "{count} facture en retard nécessite attention"
+  "smeOverdue": "{count} facture en retard nécessite attention",
+  "backendUrl": "URL du backend",
+  "backendUrlHint": "https://votre-bff.exemple.com",
+  "testConnection": "Tester la connexion",
+  "connectionOk": "Connecté",
+  "connectionFailed": "Connexion impossible"
 }

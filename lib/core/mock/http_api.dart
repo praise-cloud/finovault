@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../models.dart';
 import 'api.dart';
@@ -10,11 +12,13 @@ import 'api.dart';
 /// their `.name` and `DateTime` as ISO-8601; the BFF stores them as strings and
 /// the model `fromJson` factories reconstruct the typed values on the way back.
 class HttpFinovaultApi extends FinovaultApi {
-  HttpFinovaultApi({required this.baseUrl, http.Client? client})
-      : _client = client ?? http.Client();
+  HttpFinovaultApi({required this.baseUrl, http.Client? client, Duration? timeout})
+      : _client = client ?? http.Client(),
+        _timeout = timeout ?? const Duration(seconds: 15);
 
   final String baseUrl;
   final http.Client _client;
+  final Duration _timeout;
 
   void close() => _client.close();
 
@@ -42,14 +46,30 @@ class HttpFinovaultApi extends FinovaultApi {
       if (token != null) 'Authorization': 'Bearer $token',
     };
     final body = jsonEncode({'method': method, 'args': _encArgs(args)});
-    final res = verb == 'GET'
-        ? await _client.get(uri, headers: headers)
-        : await _client.post(uri, headers: headers, body: body);
+    late final http.Response res;
+    try {
+      res = verb == 'GET'
+          ? await _client.get(uri, headers: headers).timeout(_timeout)
+          : await _client.post(uri, headers: headers, body: body).timeout(_timeout);
+    }     on TimeoutException {
+      throw FvApiException('network', 'Request timed out. Check your connection.');
+    } on SocketException catch (e) {
+      throw FvApiException('network', 'Network error: ${e.message}');
+    } on Exception {
+      throw FvApiException('network', 'Unexpected response from server.');
+    }
 
     final env = jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>;
     if (env['error'] != null) {
       final e = env['error'] as Map<String, dynamic>;
-      throw FvApiException(e['code']?.toString() ?? 'error', e['message']?.toString() ?? 'Request failed');
+      final code = e['code']?.toString() ?? 'error';
+      final message = e['message']?.toString() ?? 'Request failed';
+      // 401/403 mean the session is no longer valid — surface it so the app
+      // can clear the stored token and return to the welcome gate.
+      if (res.statusCode == 401 || res.statusCode == 403 || code == 'unauthorized') {
+        throw FvApiException('unauthorized', message);
+      }
+      throw FvApiException(code, message);
     }
     return env['data'];
   }

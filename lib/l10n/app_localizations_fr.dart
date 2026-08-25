@@ -632,4 +632,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String smeOverdue(Object count) {
     return '$count facture en retard nécessite attention';
   }
+
+  @override
+  String get backendUrl => 'URL du backend';
+
+  @override
+  String get backendUrlHint => 'https://votre-bff.exemple.com';
+
+  @override
+  String get testConnection => 'Tester la connexion';
+
+  @override
+  String get connectionOk => 'Connecté';
+
+  @override
+  String get connectionFailed => 'Connexion impossible';
 }

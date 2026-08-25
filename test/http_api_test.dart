@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -68,5 +70,38 @@ void main() {
     expect(accounts.length, 1);
     expect(accounts.first.name, 'Main');
     expect(accounts.first.balance, 100.0);
+  });
+
+  test('401 envelope surfaces an unauthorized error', () async {
+    final client = MockClient((request) async => http.Response(
+          jsonEncode({
+            'data': null,
+            'error': {'code': 'unauthorized', 'message': 'Session expired'},
+          }),
+          401,
+        ));
+    final api = HttpFinovaultApi(baseUrl: 'http://test', client: client);
+    expect(
+      () => api.accounts('tok'),
+      throwsA(isA<FvApiException>().having((e) => e.code, 'code', 'unauthorized')),
+    );
+  });
+
+  test('request timeout is mapped to a network error', () async {
+    final client = MockClient((request) async => throw TimeoutException('timeout'));
+    final api = HttpFinovaultApi(baseUrl: 'http://test', client: client);
+    expect(
+      () => api.login(email: 'a@b.com', password: 'pw'),
+      throwsA(isA<FvApiException>().having((e) => e.code, 'code', 'network')),
+    );
+  });
+
+  test('socket failure is mapped to a network error', () async {
+    final client = MockClient((request) async => throw const SocketException('no route'));
+    final api = HttpFinovaultApi(baseUrl: 'http://test', client: client);
+    expect(
+      () => api.login(email: 'a@b.com', password: 'pw'),
+      throwsA(isA<FvApiException>().having((e) => e.code, 'code', 'network')),
+    );
   });
 }

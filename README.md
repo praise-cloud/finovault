@@ -30,9 +30,17 @@ brand-primary theming, no layout-overflow, and full en/fr internationalization.
   Settings. Delivery goes through a `NotificationService` interface
   (`DebugNotificationService` for now) so the UI is decoupled from the transport
   (swap in `firebase_messaging` / `flutter_local_notifications` later).
-- **BFF smoke test**: `test/bff_smoke_test.dart` verifies `apiProvider` swaps to
-  `HttpFinovaultApi` only when `API_BASE_URL` is set. Run against a real backend
-  with `flutter test --dart-define=API_BASE_URL=https://your-bff.example.com`.
+- **BFF-ready**: `HttpFinovaultApi` implements the full RPC contract in
+  `18-API-CONTRACTS.md` (`POST {baseUrl}/rpc`, `{method,args}` / `{data,error}`
+  envelope, Bearer auth). The backend URL is configurable at runtime from
+  Profile → Settings → Backend URL (persisted), and seeded from
+  `--dart-define=API_BASE_URL=...`. A reference mock BFF in `tool/mock_bff`
+  (`dart run tool/mock_bff/server.dart`) serves the same contract so the app can
+  be verified end-to-end without a real backend:
+  `flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8080`
+  (use `10.0.2.2` from the Android emulator, `localhost` from desktop).
+  `test/bff_smoke_test.dart` covers the provider swap and (when `API_BASE_URL` is
+  set) a live `login` → `accounts` round-trip.
 
 ## Develop
 ```
