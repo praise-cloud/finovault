@@ -226,7 +226,7 @@ class Account {
         id: j['id'] as String,
         name: j['name'] as String,
         type: enumFromString(AccountType.values, j['type'] as String?, AccountType.bank),
-        balance: (j['balance'] as num).toDouble(),
+        balance: (j['balance'] as num?)?.toDouble() ?? 0,
         currency: (j['currency'] as String?) ?? 'MUR',
         institution: j['institution'] as String?,
         isActive: (j['isActive'] as bool?) ?? true,
@@ -277,7 +277,7 @@ class Transaction {
   static Transaction fromJson(Map<String, dynamic> j) => Transaction(
         id: j['id'] as String,
         accountId: j['accountId'] as String,
-        amount: (j['amount'] as num).toDouble(),
+        amount: (j['amount'] as num?)?.toDouble() ?? 0,
         currency: (j['currency'] as String?) ?? 'MUR',
         direction: enumFromString(TransactionDirection.values, j['direction'] as String?, TransactionDirection.out),
         category: j['category'] as String,
@@ -307,7 +307,7 @@ class Budget {
   static Budget fromJson(Map<String, dynamic> j) => Budget(
         id: j['id'] as String,
         category: j['category'] as String,
-        amount: (j['amount'] as num).toDouble(),
+        amount: (j['amount'] as num?)?.toDouble() ?? 0,
         period: (j['period'] as String?) ?? 'monthly',
       );
 }
@@ -338,7 +338,7 @@ class GoalContribution {
   static GoalContribution fromJson(Map<String, dynamic> j) => GoalContribution(
         id: j['id'] as String,
         goalId: j['goalId'] as String,
-        amount: (j['amount'] as num).toDouble(),
+        amount: (j['amount'] as num?)?.toDouble() ?? 0,
         date: DateTime.tryParse((j['date'] as String?) ?? '') ?? DateTime.now(),
         sourceAccountId: j['sourceAccountId'] as String?,
       );
@@ -442,8 +442,8 @@ class PensionPlan {
 
   static PensionPlan fromJson(Map<String, dynamic> j) => PensionPlan(
         id: j['id'] as String,
-        shortPotTarget: (j['shortPotTarget'] as num).toDouble(),
-        longPotTarget: (j['longPotTarget'] as num).toDouble(),
+        shortPotTarget: (j['shortPotTarget'] as num?)?.toDouble() ?? 0,
+        longPotTarget: (j['longPotTarget'] as num?)?.toDouble() ?? 0,
         frequency: enumFromString(PensionFrequency.values, j['frequency'] as String?, PensionFrequency.monthly),
         contributionAmount: (j['contributionAmount'] as num?)?.toDouble() ?? 0,
         currentShortPot: (j['currentShortPot'] as num?)?.toDouble() ?? 0,
@@ -515,7 +515,7 @@ class PensionContribution {
         id: j['id'] as String,
         planId: j['planId'] as String,
         pot: (j['pot'] as String?) ?? 'short',
-        amount: (j['amount'] as num).toDouble(),
+        amount: (j['amount'] as num?)?.toDouble() ?? 0,
         date: DateTime.tryParse((j['date'] as String?) ?? '') ?? DateTime.now(),
         sourceAccountId: j['sourceAccountId'] as String?,
       );
@@ -542,9 +542,9 @@ class PensionProjection {
       };
 
   factory PensionProjection.fromJson(Map<String, dynamic> j) => PensionProjection(
-        shortPotProjected: (j['shortPotProjected'] as num).toDouble(),
-        longPotProjected: (j['longPotProjected'] as num).toDouble(),
-        totalProjected: (j['totalProjected'] as num).toDouble(),
+        shortPotProjected: (j['shortPotProjected'] as num?)?.toDouble() ?? 0,
+        longPotProjected: (j['longPotProjected'] as num?)?.toDouble() ?? 0,
+        totalProjected: (j['totalProjected'] as num?)?.toDouble() ?? 0,
         yearsToRetirement: j['yearsToRetirement'] as int,
       );
 }
@@ -601,7 +601,7 @@ class SavingsGoal {
         id: j['id'] as String,
         name: j['name'] as String,
         type: enumFromString(GoalType.values, j['type'] as String?, GoalType.general),
-        targetAmount: (j['targetAmount'] as num).toDouble(),
+        targetAmount: (j['targetAmount'] as num?)?.toDouble() ?? 0,
         currentAmount: (j['currentAmount'] as num?)?.toDouble() ?? 0,
         targetDate: j['targetDate'] == null ? null : DateTime.tryParse(j['targetDate'] as String),
         completed: (j['completed'] as bool?) ?? false,
@@ -737,7 +737,7 @@ class Invoice {
   static Invoice fromJson(Map<String, dynamic> j) => Invoice(
         id: j['id'] as String,
         clientName: j['clientName'] as String,
-        amount: (j['amount'] as num).toDouble(),
+        amount: (j['amount'] as num?)?.toDouble() ?? 0,
         currency: (j['currency'] as String?) ?? 'MUR',
         dueDate: DateTime.tryParse((j['dueDate'] as String?) ?? '') ?? DateTime.now(),
         status: enumFromString(InvoiceStatus.values, j['status'] as String?, InvoiceStatus.sent),
@@ -837,9 +837,9 @@ class Transfer {
         sourceAccountId: j['sourceAccountId'] as String,
         payeeName: j['payeeName'] as String,
         destination: j['destination'] as String,
-        amount: (j['amount'] as num).toDouble(),
-        fee: (j['fee'] as num).toDouble(),
-        total: (j['total'] as num).toDouble(),
+        amount: (j['amount'] as num?)?.toDouble() ?? 0,
+        fee: (j['fee'] as num?)?.toDouble() ?? 0,
+        total: (j['total'] as num?)?.toDouble() ?? 0,
         status: enumFromString(TransferStatus.values, j['status'] as String?, TransferStatus.completed),
         createdAt: DateTime.tryParse((j['createdAt'] as String?) ?? '') ?? DateTime.now(),
         externalRef: (j['externalRef'] as String?) ?? '',
@@ -883,7 +883,7 @@ class BillPayment {
         id: j['id'] as String,
         category: enumFromString(BillCategory.values, j['category'] as String?, BillCategory.electricity),
         billerName: (j['billerName'] as String?) ?? '',
-        amount: (j['amount'] as num).toDouble(),
+        amount: (j['amount'] as num?)?.toDouble() ?? 0,
         status: enumFromString(BillPaymentStatus.values, j['status'] as String?, BillPaymentStatus.paid),
         date: DateTime.tryParse((j['date'] as String?) ?? '') ?? DateTime.now(),
         customerRef: j['customerRef'] as String?,
