@@ -83,7 +83,7 @@ class _PensionSetupScreenState extends ConsumerState<PensionSetupScreen> {
           const Text('Frequency', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           DropdownButtonFormField<PensionFrequency>(
-            value: _frequency,
+            initialValue: _frequency,
             items: PensionFrequency.values
                 .map((f) => DropdownMenuItem(value: f, child: Text(f.name[0].toUpperCase() + f.name.substring(1))))
                 .toList(),
@@ -114,7 +114,7 @@ class _PensionSetupScreenState extends ConsumerState<PensionSetupScreen> {
             contentPadding: EdgeInsets.zero,
             title: const Text('Auto-debit contributions'),
             value: _autoDebit,
-            activeColor: FvColors.primary,
+            activeThumbColor: FvColors.primary,
             onChanged: (v) => setState(() => _autoDebit = v),
           ),
           const SizedBox(height: FvSpacing.x5),

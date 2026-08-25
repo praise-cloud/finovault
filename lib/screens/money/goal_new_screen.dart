@@ -40,7 +40,7 @@ class _GoalNewScreenState extends ConsumerState<GoalNewScreen> {
           const Text('Type', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           DropdownButtonFormField<GoalType>(
-            value: _type,
+            initialValue: _type,
             items: GoalType.values.map((t) => DropdownMenuItem(value: t, child: Text(t.name))).toList(),
             onChanged: (v) => setState(() => _type = v!),
             decoration: InputDecoration(

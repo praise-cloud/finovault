@@ -90,7 +90,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                   children: [
                     Text('What are you working towards?',
                         style: TextStyle(
-                            fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -0.4, color: context.fvText)),
+                            fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -0.4, color: FvColors.primary)),
                     const SizedBox(height: 8),
                     Text('Pick a few goals so your vault can be shaped around them.',
                         style: TextStyle(fontSize: 15, height: 1.5, color: context.fvTextSecondary)),
@@ -110,7 +110,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                     ),
                     const SizedBox(height: FvSpacing.x6),
                     Text('How do you feel about risk?',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: context.fvText)),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: FvColors.primary)),
                     const SizedBox(height: FvSpacing.x3),
                     for (final risk in RiskTolerance.values)
                       Padding(
@@ -170,7 +170,7 @@ class _GoalChip extends StatelessWidget {
                   style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: selected ? FvColors.primary : context.fvText)),
+                      color: FvColors.primary)),
             ],
           ),
         ),
@@ -213,7 +213,7 @@ class _RiskRow extends StatelessWidget {
                 child: selected ? const Icon(Icons.check, size: 12, color: Colors.white) : null,
               ),
               const SizedBox(width: FvSpacing.x3),
-              Expanded(child: Text(label, style: TextStyle(fontSize: 14, color: context.fvText))),
+              Expanded(child: Text(label, style: TextStyle(fontSize: 14, color: FvColors.primary))),
             ],
           ),
         ),

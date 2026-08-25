@@ -114,7 +114,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
               FvTextField(label: 'Merchant (optional)', controller: merchant),
               const SizedBox(height: FvSpacing.x4),
               DropdownButtonFormField<String>(
-                value: accountId,
+                initialValue: accountId,
                 items: accounts.map((a) => DropdownMenuItem(value: a.id, child: Text(a.name))).toList(),
                 onChanged: (v) => accountId = v!,
                 decoration: InputDecoration(

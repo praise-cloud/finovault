@@ -9,19 +9,27 @@ import 'vault_mark.dart';
 /// Brightness-aware token shortcuts.
 extension FvContext on BuildContext {
   bool get fvIsDark => Theme.of(this).brightness == Brightness.dark;
-  Color get fvText => fvIsDark ? FvColors.textDark : FvColors.text;
-  Color get fvTextSecondary => fvIsDark ? FvColors.textSecondaryDark : FvColors.textSecondary;
+  Color get fvText => fvIsDark ? FvColors.textDark : FvColors.primary;
+  Color get fvTextSecondary => fvIsDark ? FvColors.textSecondaryDark : FvColors.primary;
   Color get fvSurface => fvIsDark ? FvColors.surfaceGlassDark : FvColors.surface;
   Color get fvBorder => fvIsDark ? FvColors.borderDark : FvColors.border;
   Color get fvCardBorder => fvIsDark ? FvColors.primaryBorderDark : FvColors.primaryBorder;
 
-  BoxDecoration get fvPageDecoration => const BoxDecoration(
-        gradient: RadialGradient(
-          radius: 1.2,
-          colors: [FvColors.wash, FvColors.bg],
-          stops: [0, 0.55],
-        ),
-      );
+  BoxDecoration get fvPageDecoration => fvIsDark
+      ? const BoxDecoration(
+          gradient: RadialGradient(
+            radius: 1.2,
+            colors: [Color(0xFF16306B), FvColors.bgDark],
+            stops: [0, 0.55],
+          ),
+        )
+      : const BoxDecoration(
+          gradient: RadialGradient(
+            radius: 1.2,
+            colors: [FvColors.wash, FvColors.bg],
+            stops: [0, 0.55],
+          ),
+        );
 }
 
 class FvButton extends StatelessWidget {
@@ -65,7 +73,13 @@ class FvButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (icon != null) ...[Icon(icon, size: 16, color: fg), const SizedBox(width: 8)],
-              Text(label, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: fg)),
+              Flexible(
+                child: Text(label,
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: fg),
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                    maxLines: 1),
+              ),
             ],
           );
 
@@ -157,7 +171,7 @@ class FvTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: context.fvText)),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FvColors.primary)),
         const SizedBox(height: 6),
         TextField(
           controller: controller,
@@ -166,9 +180,10 @@ class FvTextField extends StatelessWidget {
           enabled: enabled,
           maxLines: maxLines,
           onChanged: onChanged,
-          style: TextStyle(fontSize: 15, color: context.fvText),
+          style: const TextStyle(fontSize: 15, color: FvColors.primary),
           decoration: InputDecoration(
             hintText: hint,
+            hintStyle: const TextStyle(color: FvColors.primary),
             errorText: errorText,
             suffixIcon: suffix,
             filled: true,
@@ -176,11 +191,11 @@ class FvTextField extends StatelessWidget {
             contentPadding: const EdgeInsets.symmetric(horizontal: FvSpacing.x4, vertical: FvSpacing.x3),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(FvRadius.input),
-              borderSide: BorderSide(color: context.fvBorder),
+              borderSide: const BorderSide(color: FvColors.primary),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(FvRadius.input),
-              borderSide: BorderSide(color: context.fvBorder),
+              borderSide: const BorderSide(color: FvColors.primary),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(FvRadius.input),
@@ -200,13 +215,15 @@ class FvTextField extends StatelessWidget {
 enum MoneySize { xl, lg, md, sm }
 
 class MoneyText extends ConsumerWidget {
-  const MoneyText(this.amount, {super.key, this.size = MoneySize.md, this.color, this.signed = false, this.currency = 'MUR'});
+  const MoneyText(this.amount, {super.key, this.size = MoneySize.md, this.color, this.signed = false, this.currency = 'MUR', this.overflow, this.maxLines});
 
   final num amount;
   final MoneySize size;
   final Color? color;
   final bool signed;
   final String currency;
+  final TextOverflow? overflow;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -220,7 +237,7 @@ class MoneyText extends ConsumerWidget {
       MoneySize.md => TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: color ?? context.fvText),
       MoneySize.sm => TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: color ?? context.fvTextSecondary),
     };
-    return Text(text, style: style);
+    return Text(text, style: style, overflow: overflow, maxLines: maxLines);
   }
 }
 

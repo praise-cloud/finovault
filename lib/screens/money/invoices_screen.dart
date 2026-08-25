@@ -74,27 +74,38 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
               ],
             ),
           ),
-          MoneyText(invoice.amount, size: MoneySize.md, currency: 'MUR'),
-          const SizedBox(width: FvSpacing.x2),
-          StatusBadge(
-            label: invoice.status == InvoiceStatus.paid
-                ? 'Paid'
-                : (invoice.status == InvoiceStatus.overdue ? 'Overdue' : 'Sent'),
-            foreground: color,
-            background: color == FvColors.success
-                ? FvColors.successBg
-                : (color == FvColors.error ? FvColors.errorBg : FvColors.warningBg),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              MoneyText(invoice.amount, size: MoneySize.md, currency: 'MUR'),
+              const SizedBox(height: 4),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  StatusBadge(
+                    label: invoice.status == InvoiceStatus.paid
+                        ? 'Paid'
+                        : (invoice.status == InvoiceStatus.overdue ? 'Overdue' : 'Sent'),
+                    foreground: color,
+                    background: color == FvColors.success
+                        ? FvColors.successBg
+                        : (color == FvColors.error ? FvColors.errorBg : FvColors.warningBg),
+                  ),
+                  if (invoice.status != InvoiceStatus.paid)
+                    IconButton(
+                      icon: const Icon(Icons.check, color: FvColors.success, size: 18),
+                      onPressed: () async {
+                        final api = ref.read(apiProvider);
+                        final token = ref.read(kvStoreProvider).getString(sessionKey);
+                        await api.updateInvoiceStatus(token, invoiceId: invoice.id, status: InvoiceStatus.paid);
+                        ref.invalidate(invoicesProvider);
+                      },
+                    ),
+                ],
+              ),
+            ],
           ),
-          if (invoice.status != InvoiceStatus.paid)
-            IconButton(
-              icon: const Icon(Icons.check, color: FvColors.success, size: 18),
-              onPressed: () async {
-                final api = ref.read(apiProvider);
-                final token = ref.read(kvStoreProvider).getString(sessionKey);
-                await api.updateInvoiceStatus(token, invoiceId: invoice.id, status: InvoiceStatus.paid);
-                ref.invalidate(invoicesProvider);
-              },
-            ),
         ],
       ),
     );

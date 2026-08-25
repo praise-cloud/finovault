@@ -64,8 +64,19 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                     const Text('From', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
                     const SizedBox(height: 6),
                     DropdownButtonFormField<String>(
-                      value: _sourceId,
-                      items: list.map((a) => DropdownMenuItem(value: a.id, child: Text('${a.name} (${FvFormat.formatMoney(a.balance, language: language)})'))).toList(),
+                      initialValue: _sourceId,
+                      isExpanded: true,
+                      selectedItemBuilder: (_) => list
+                          .map((a) => Text('${a.name} (${FvFormat.formatMoney(a.balance, language: language)})',
+                              overflow: TextOverflow.ellipsis, softWrap: false))
+                          .toList(),
+                      items: list
+                          .map((a) => DropdownMenuItem(
+                                value: a.id,
+                                child: Text('${a.name} (${FvFormat.formatMoney(a.balance, language: language)})',
+                                    overflow: TextOverflow.ellipsis),
+                              ))
+                          .toList(),
                       onChanged: (v) => setState(() => _sourceId = v),
                       decoration: InputDecoration(
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(FvRadius.input)),

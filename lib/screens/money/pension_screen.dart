@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/models.dart';
 import '../../core/providers.dart';
 import '../../core/format.dart';
 import '../../core/state/money.dart';
@@ -65,7 +64,7 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
                 ),
                 const SizedBox(height: FvSpacing.x4),
                 DropdownButtonFormField<String>(
-                  value: source,
+                  initialValue: source,
                   items: accounts
                       .map((a) => DropdownMenuItem(value: a.id, child: Text('${a.name} (${FvFormat.formatMoney(a.balance)})')))
                       .toList(),
@@ -198,8 +197,14 @@ class _Row extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: const TextStyle(color: FvColors.textSecondary)),
-            Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),
+            Flexible(child: Text(label, style: const TextStyle(color: FvColors.textSecondary))),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(value,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  textAlign: TextAlign.end,
+                  overflow: TextOverflow.ellipsis),
+            ),
           ],
         ),
       );

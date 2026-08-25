@@ -29,23 +29,20 @@ class VaultTab extends ConsumerWidget {
               const SizedBox(height: 4),
               MoneyText(summary.savedInGoals, size: MoneySize.lg, currency: 'MUR'),
               const SizedBox(height: FvSpacing.x4),
-              Row(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(
-                    child: FvButton(
-                      label: 'Create Goal',
-                      onPressed: () => openNewGoal(context),
-                      expanded: false,
-                    ),
+                  FvButton(
+                    label: 'Create Goal',
+                    onPressed: () => openNewGoal(context),
+                    expanded: true,
                   ),
-                  const SizedBox(width: FvSpacing.x3),
-                  Expanded(
-                    child: FvButton(
-                      label: 'Start Pension',
-                      variant: FvButtonVariant.secondary,
-                      onPressed: () => openPension(context),
-                      expanded: false,
-                    ),
+                  const SizedBox(height: FvSpacing.x3),
+                  FvButton(
+                    label: 'Start Pension',
+                    variant: FvButtonVariant.secondary,
+                    onPressed: () => openPension(context),
+                    expanded: true,
                   ),
                 ],
               ),

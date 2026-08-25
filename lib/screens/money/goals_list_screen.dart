@@ -170,7 +170,7 @@ class GoalDetailScreen extends ConsumerWidget {
               FvTextField(label: 'Amount', controller: amount, keyboardType: const TextInputType.numberWithOptions(decimal: true)),
               const SizedBox(height: FvSpacing.x4),
               DropdownButtonFormField<String>(
-                value: source,
+                initialValue: source,
                 items: accounts.map((a) => DropdownMenuItem(value: a.id, child: Text('${a.name} (${FvFormat.formatMoney(a.balance)})'))).toList(),
                 onChanged: (v) => source = v!,
                 decoration: InputDecoration(

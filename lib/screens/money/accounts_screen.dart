@@ -164,7 +164,7 @@ class _LinkSheetState extends ConsumerState<_LinkSheet> {
         const Text('Type', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
         const SizedBox(height: 6),
         DropdownButtonFormField<AccountType>(
-          value: _type,
+          initialValue: _type,
           items: AccountType.values
               .map((t) => DropdownMenuItem(value: t, child: Text(t.name)))
               .toList(),

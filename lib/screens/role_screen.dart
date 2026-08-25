@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/models.dart';
 import '../core/state/onboarding.dart';
 import '../theme/tokens.dart';
+import '../widgets/ui.dart';
 import '../widgets/vault_mark.dart';
 
 /// Onboarding step 2 — the Individual vs SME (vs Freelancer/Entrepreneur)
@@ -37,18 +38,9 @@ class _RoleScreenState extends ConsumerState<RoleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final secondaryText = isDark ? FvColors.textSecondaryDark : FvColors.textSecondary;
-
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            radius: 1.2,
-            colors: [FvColors.wash, FvColors.bg],
-            stops: [0, 0.55],
-          ),
-        ),
+        decoration: context.fvPageDecoration,
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,17 +68,17 @@ class _RoleScreenState extends ConsumerState<RoleScreen> {
                   children: [
                     Text(
                       'How will you use Finovault?',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.4,
-                        color: isDark ? FvColors.textDark : FvColors.text,
+                        color: FvColors.primary,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Pick the way you want to manage your money. You can add more later.',
-                      style: TextStyle(fontSize: 15, height: 1.5, color: secondaryText),
+                      style: const TextStyle(fontSize: 15, height: 1.5, color: FvColors.primary),
                     ),
                     const SizedBox(height: 24),
                     for (final role in PrimaryRole.values) ...[
@@ -131,7 +123,6 @@ class _RoleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final secondaryText = isDark ? FvColors.textSecondaryDark : FvColors.textSecondary;
 
     return Material(
       color: selected ? FvColors.wash : (isDark ? FvColors.surfaceDark : FvColors.surface),
@@ -170,16 +161,16 @@ class _RoleCard extends StatelessWidget {
                   children: [
                     Text(
                       role.label,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? FvColors.textDark : FvColors.text,
+                        color: FvColors.primary,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       role.description,
-                      style: TextStyle(fontSize: 13, color: secondaryText),
+                      style: const TextStyle(fontSize: 13, color: FvColors.primary),
                     ),
                   ],
                 ),
@@ -239,7 +230,7 @@ class _FemaleFounderCard extends StatelessWidget {
               const Expanded(
                 child: Text(
                   'Women-led / Female founder path',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: FvColors.primary),
                 ),
               ),
             ],

@@ -92,7 +92,7 @@ class _LinkAccountsScreenState extends ConsumerState<LinkAccountsScreen> {
                     padding: const EdgeInsets.only(top: FvSpacing.x8),
                     children: <Widget>[
                       Text('Link your accounts',
-                          style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -0.4, color: context.fvText)),
+                          style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -0.4, color: FvColors.primary)),
                       const SizedBox(height: 8),
                       Text(
                         'Connect an account to see your full picture in one place. You can skip this and add accounts later.',
@@ -167,7 +167,7 @@ class _LinkCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(row.title, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: context.fvText)),
+                Text(row.title, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: FvColors.primary)),
                 const SizedBox(height: 2),
                 Text(row.subtitle, style: TextStyle(fontSize: 12.5, color: context.fvTextSecondary)),
               ],

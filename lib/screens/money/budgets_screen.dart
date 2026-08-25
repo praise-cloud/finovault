@@ -54,9 +54,15 @@ class _BudgetsScreenState extends ConsumerState<BudgetsScreen> {
                           Row(
                             children: [
                               Expanded(child: Text(b.category, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: context.fvText))),
-                              MoneyText(spent, size: MoneySize.sm, currency: 'MUR'),
-                              Text(' / ', style: TextStyle(fontSize: 13, color: context.fvTextSecondary)),
-                              MoneyText(b.amount, size: MoneySize.sm, currency: 'MUR', color: context.fvTextSecondary),
+                              const SizedBox(width: 8),
+                              Flexible(
+                                child: Text(
+                                  '${FvFormat.formatMoney(spent, language: language)} / ${FvFormat.formatMoney(b.amount, language: language)}',
+                                  style: TextStyle(fontSize: 13, color: context.fvTextSecondary),
+                                  textAlign: TextAlign.end,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(height: FvSpacing.x3),

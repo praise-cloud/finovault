@@ -45,7 +45,7 @@ class SecurityScreen extends ConsumerWidget {
                             Text('Two-factor', style: TextStyle(fontSize: 13, color: context.fvTextSecondary)),
                             Switch(
                               value: o.twoFactorEnabled,
-                              activeColor: FvColors.primary,
+                              activeThumbColor: FvColors.primary,
                               onChanged: (v) async {
                                 final api = ref.read(apiProvider);
                                 final token = ref.read(kvStoreProvider).getString(sessionKey);
