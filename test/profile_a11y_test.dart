@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:finovault_flutter/core/state/notifications.dart';
 import 'package:finovault_flutter/screens/tabs/profile_tab.dart';
 import 'helpers.dart';
 
@@ -28,6 +26,7 @@ void main() {
     ]) {
       final node = tester.getSemantics(finder);
       expect(node.getSemanticsData().label, isNotEmpty, reason: 'switch row must announce its label');
+      // ignore: deprecated_member_use
       expect(node.hasFlag(SemanticsFlag.hasToggledState), isTrue,
           reason: 'switch row must expose a toggle state');
     }
@@ -37,6 +36,7 @@ void main() {
     final c = await makeLoggedInContainer();
     await pumpScreen(tester, const ProfileTab(), container: c);
 
+    // ignore: deprecated_member_use
     expect(
       tester.getSemantics(find.byIcon(Icons.security_outlined)).hasFlag(SemanticsFlag.isButton),
       isTrue,
