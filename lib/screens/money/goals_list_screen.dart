@@ -21,7 +21,7 @@ class GoalsListScreen extends ConsumerWidget {
     final language = ref.watch(preferencesProvider).language;
 
     return ScreenPage(
-      title: AppLocalizations.of(context)!.goals,
+      title: AppLocalizations.of(context).goals,
       actions: [IconButton(icon: const Icon(Icons.add, color: FvColors.primary), onPressed: () => openNewGoal(context))],
       child: goals.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -31,7 +31,7 @@ class GoalsListScreen extends ConsumerWidget {
             : ListView.separated(
                 padding: const EdgeInsets.all(FvSpacing.x5),
                 itemCount: list.length,
-                separatorBuilder: (_, __) => const SizedBox(height: FvSpacing.x3),
+                separatorBuilder: (_, _) => const SizedBox(height: FvSpacing.x3),
                 itemBuilder: (_, i) {
                   final g = list[i];
                   final pct = g.targetAmount > 0 ? (g.currentAmount / g.targetAmount).clamp(0.0, 1.0) : 0.0;

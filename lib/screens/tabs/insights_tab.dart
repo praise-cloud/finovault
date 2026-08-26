@@ -28,7 +28,7 @@ class InsightsTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     final summary = ref.watch(moneySummaryProvider);
     final language = ref.watch(preferencesProvider).language;
     final txs = ref.watch(transactionsProvider).value ?? const <Transaction>[];
@@ -167,7 +167,7 @@ class InsightsTab extends ConsumerWidget {
   }
 
   Future<void> _exportCsv(BuildContext context, List<Transaction> txs) async {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     final List<List<String>> rows = [
       [s.csvDate, s.csvType, s.csvAmount, s.csvCategory, s.csvMerchant],
       for (final t in txs)
@@ -179,7 +179,7 @@ class InsightsTab extends ConsumerWidget {
           t.merchantName ?? '',
         ],
     ];
-    final csv = rows.map((r) => r.map((c) => '"${(c ?? '').replaceAll('"', '""')}"').join(',')).join('\n');
+    final csv = rows.map((r) => r.map((c) => '"${c.replaceAll('"', '""')}"').join(',')).join('\n');
     await downloadCsv('finovault-transactions.csv', csv);
     if (!kIsWeb && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(s.csvCopied)));

@@ -40,7 +40,7 @@ class AuthController extends Notifier<AuthState> {
     }
     try {
       final user = await _api.getSession(token);
-      if (user != null && user.primaryRole != null) {
+      if (user != null) {
         await ref.read(onboardingProvider.notifier).completeFromAuth();
       }
       state = AuthState(user: user, restoring: false);
@@ -63,9 +63,7 @@ class AuthController extends Notifier<AuthState> {
     try {
       final result = await _api.login(email: email, password: password);
       await ref.read(kvStoreProvider).setString(sessionKey, result.token);
-      if (result.user.primaryRole != null) {
-        await ref.read(onboardingProvider.notifier).completeFromAuth();
-      }
+      await ref.read(onboardingProvider.notifier).completeFromAuth();
       state = AuthState(user: result.user, restoring: false);
       return true;
     } on FvApiException catch (e) {

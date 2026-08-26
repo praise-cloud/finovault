@@ -51,7 +51,7 @@ class _LinkAccountsScreenState extends ConsumerState<LinkAccountsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     final bank = _InstitutionRow(
       icon: Icons.account_balance_outlined,
       title: s.bankAccount,
@@ -177,9 +177,9 @@ class _LinkCard extends StatelessWidget {
           ),
           const SizedBox(width: FvSpacing.x2),
           if (row.linked)
-            StatusBadge(label: AppLocalizations.of(context)!.linked, foreground: FvColors.success, background: FvColors.successBg)
+            StatusBadge(label: AppLocalizations.of(context).linked, foreground: FvColors.success, background: FvColors.successBg)
           else
-            FvButton(label: AppLocalizations.of(context)!.linkAccount, onPressed: onLink, variant: FvButtonVariant.secondary, expanded: false),
+            FvButton(label: AppLocalizations.of(context).linkAccount, onPressed: onLink, variant: FvButtonVariant.secondary, expanded: false),
         ],
       ),
     );

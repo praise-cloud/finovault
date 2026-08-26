@@ -101,7 +101,7 @@ class RootGate extends ConsumerWidget {
       return Scaffold(
         body: Container(
           decoration: context.fvPageDecoration,
-          child: const Center(child: const VaultMark(size: 64)),
+          child: const Center(child: VaultMark(size: 64)),
         ),
       );
     }
@@ -157,7 +157,7 @@ class _BiometricGateState extends ConsumerState<BiometricGate> {
 
   @override
   Widget build(BuildContext context) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     return Scaffold(
       body: Container(
         decoration: context.fvPageDecoration,

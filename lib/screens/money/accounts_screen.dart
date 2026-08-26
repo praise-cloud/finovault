@@ -46,7 +46,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
         onLink: (name, type, institution, balance) async {
           await api.linkAccount(token, name: name, type: type, institution: institution, balance: balance);
           ref.invalidate(accountsProvider);
-          if (mounted) Navigator.of(sheet).pop();
+          if (sheet.mounted) Navigator.of(sheet).pop();
         },
       ),
     );
@@ -56,7 +56,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
   Widget build(BuildContext context) {
     final accounts = ref.watch(accountsProvider);
     return ScreenPage(
-      title: AppLocalizations.of(context)!.accounts,
+      title: AppLocalizations.of(context).accounts,
       child: accounts.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Could not load accounts: $e')),

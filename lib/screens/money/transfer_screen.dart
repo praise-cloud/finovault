@@ -165,11 +165,11 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                 ref.invalidate(accountsProvider);
                 ref.invalidate(transfersProvider);
                 ref.invalidate(transactionsProvider);
-                if (mounted) {
+                if (context.mounted) {
                   await pushScreen(context, TransferReceiptScreen(transfer: transfer));
                 }
               } on FvApiException catch (e) {
-                if (mounted) {
+                if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
                 }
               }

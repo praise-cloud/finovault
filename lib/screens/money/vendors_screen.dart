@@ -21,7 +21,7 @@ class _VendorsScreenState extends ConsumerState<VendorsScreen> {
     final vendors = ref.watch(vendorsProvider);
 
     return ScreenPage(
-      title: AppLocalizations.of(context)!.vendors,
+      title: AppLocalizations.of(context).vendors,
       actions: [IconButton(icon: const Icon(Icons.add, color: FvColors.primary), onPressed: _add)],
       child: vendors.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -33,7 +33,7 @@ class _VendorsScreenState extends ConsumerState<VendorsScreen> {
             : ListView.separated(
                 padding: const EdgeInsets.all(FvSpacing.x5),
                 itemCount: list.length,
-                separatorBuilder: (_, __) => const SizedBox(height: FvSpacing.x3),
+                separatorBuilder: (_, _) => const SizedBox(height: FvSpacing.x3),
                 itemBuilder: (_, i) {
                   final v = list[i];
                   return FvCard(
@@ -91,7 +91,7 @@ class _VendorsScreenState extends ConsumerState<VendorsScreen> {
                   if (name.text.isEmpty) return;
                   await api.createVendor(token, name: name.text);
                   ref.invalidate(vendorsProvider);
-                  if (mounted) Navigator.of(sheet).pop();
+                  if (sheet.mounted) Navigator.of(sheet).pop();
                 },
               ),
             ],

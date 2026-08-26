@@ -36,7 +36,7 @@ class HomeShell extends ConsumerWidget {
     final index = ref.watch(homeTabIndexProvider);
     final scheme = ref.watch(onboardingProvider).scheme;
     final user = ref.watch(currentUserProvider);
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
 
     return Scaffold(
       body: Container(
@@ -106,7 +106,7 @@ class GreetingHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     final firstName = name.split(' ').first;
     final hour = DateTime.now().hour;
     final greeting = hour < 12 ? s.goodMorning : (hour < 18 ? s.goodAfternoon : s.goodEvening);

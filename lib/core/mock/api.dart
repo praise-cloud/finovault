@@ -131,8 +131,7 @@ abstract class FinovaultApi {
 /// envelope semantics as finovault-web/lib/api + the Expo app's handlers.
 /// Swap the internals for HTTP when the real backend lands.
 class MockFinovaultApi extends FinovaultApi {
-  MockFinovaultApi({required MockDb db, this.latency = const Duration(milliseconds: 250)})
-      : _db = db;
+  MockFinovaultApi({required this._db, this.latency = const Duration(milliseconds: 250)});
 
   final MockDb _db;
   Duration latency;
@@ -157,6 +156,7 @@ class MockFinovaultApi extends FinovaultApi {
 
   // ---- auth ----------------------------------------------------------------
 
+  @override
   Future<AuthResult> signup({
     required String fullName,
     required String email,
@@ -185,6 +185,7 @@ class MockFinovaultApi extends FinovaultApi {
     return AuthResult(user: user, token: _createSession(uid));
   }
 
+  @override
   Future<AuthResult> login({required String email, required String password}) async {
     await _tick();
     final normalized = email.trim().toLowerCase();
@@ -206,6 +207,7 @@ class MockFinovaultApi extends FinovaultApi {
   }
 
   /// Re-validates a stored token on cold start; returns null when stale.
+  @override
   Future<UserProfile?> getSession(String? token) async {
     try {
       return await _requireUser(token);
@@ -214,6 +216,7 @@ class MockFinovaultApi extends FinovaultApi {
     }
   }
 
+  @override
   Future<void> logout(String? token) async {
     await _tick();
     _db.sessions.remove(token);
@@ -221,6 +224,7 @@ class MockFinovaultApi extends FinovaultApi {
 
   // ---- users ----------------------------------------------------------------
 
+  @override
   Future<UserProfile> updateMe(
     String? token, {
     String? fullName,
@@ -240,11 +244,13 @@ class MockFinovaultApi extends FinovaultApi {
     return updated;
   }
 
+  @override
   Future<UserPreferences> getPreferences(String? token) async {
     final user = await _requireUser(token);
     return _db.prefsByUser[user.id] ?? const UserPreferences();
   }
 
+  @override
   Future<UserPreferences> savePreferences(String? token, UserPreferences patch) async {
     final user = await _requireUser(token);
     final merged = (_db.prefsByUser[user.id] ?? const UserPreferences()).copyWith(
@@ -258,6 +264,7 @@ class MockFinovaultApi extends FinovaultApi {
     return merged;
   }
 
+  @override
   Future<UserProfile> setRole(String? token, {required PrimaryRole primaryRole, required RoleScheme scheme}) async {
     final user = await _requireUser(token);
     final updated = user.copyWith(primaryRole: primaryRole, scheme: scheme);
@@ -268,11 +275,13 @@ class MockFinovaultApi extends FinovaultApi {
 
   // ---- money: accounts & transactions ---------------------------------------
 
+  @override
   Future<List<Account>> accounts(String? token) async {
     final user = await _requireUser(token);
     return List.of(_db.accounts[user.id] ?? const <Account>[]);
   }
 
+  @override
   Future<Account> linkAccount(String? token,
       {required String name, required AccountType type, double balance = 0, String? institution}) async {
     final user = await _requireUser(token);
@@ -288,12 +297,14 @@ class MockFinovaultApi extends FinovaultApi {
     return account;
   }
 
+  @override
   Future<void> unlinkAccount(String? token, String accountId) async {
     final user = await _requireUser(token);
     _db.accounts[user.id]?.removeWhere((a) => a.id == accountId);
     await _db.persist();
   }
 
+  @override
   Future<List<Transaction>> transactions(String? token, {int limit = 20}) async {
     final user = await _requireUser(token);
     final list = List.of(_db.transactions[user.id] ?? const <Transaction>[]);
@@ -301,6 +312,7 @@ class MockFinovaultApi extends FinovaultApi {
     return list.take(limit).toList();
   }
 
+  @override
   Future<Transaction> createTransaction(
     String? token, {
     required String accountId,
@@ -328,11 +340,13 @@ class MockFinovaultApi extends FinovaultApi {
 
   // ---- budgets ---------------------------------------------------------------
 
+  @override
   Future<List<Budget>> budgets(String? token) async {
     final user = await _requireUser(token);
     return List.of(_db.budgets[user.id] ?? const <Budget>[]);
   }
 
+  @override
   Future<Budget> createBudget(String? token, {required String category, required double amount}) async {
     final user = await _requireUser(token);
     final existing = _db.budgets[user.id] ?? <Budget>[];
@@ -352,11 +366,13 @@ class MockFinovaultApi extends FinovaultApi {
 
   // ---- goals -----------------------------------------------------------------
 
+  @override
   Future<List<SavingsGoal>> goals(String? token) async {
     final user = await _requireUser(token);
     return List.of(_db.goals[user.id] ?? const <SavingsGoal>[]);
   }
 
+  @override
   Future<SavingsGoal> goal(String? token, String goalId) async {
     final user = await _requireUser(token);
     final match = (_db.goals[user.id] ?? []).where((g) => g.id == goalId).toList();
@@ -364,6 +380,7 @@ class MockFinovaultApi extends FinovaultApi {
     return match.first;
   }
 
+  @override
   Future<SavingsGoal> createGoal(String? token,
       {required String name, required GoalType type, required double targetAmount, DateTime? targetDate}) async {
     _requireUserSync(token);
@@ -382,6 +399,7 @@ class MockFinovaultApi extends FinovaultApi {
     return g;
   }
 
+  @override
   Future<SavingsGoal> contribute(String? token,
       {required String goalId, required double amount, String? sourceAccountId}) async {
     final user = await _requireUser(token);
@@ -428,12 +446,14 @@ class MockFinovaultApi extends FinovaultApi {
 
   // ---- pension (Phase 4) -------------------------------------------------------
 
+  @override
   Future<PensionPlan?> getPensionPlan(String? token) async {
     final uid = tokenUserId(token);
     if (uid == null) return null;
     return _db.pensions[uid];
   }
 
+  @override
   Future<PensionProjection> pensionProjection(String? token) async {
     final plan = await getPensionPlan(token);
     if (plan == null) {
@@ -442,6 +462,7 @@ class MockFinovaultApi extends FinovaultApi {
     return plan.computeProjection();
   }
 
+  @override
   Future<PensionPlan> upsertPensionPlan(
     String? token, {
     required double shortPotTarget,
@@ -482,6 +503,7 @@ class MockFinovaultApi extends FinovaultApi {
     return plan;
   }
 
+  @override
   Future<PensionContribution> contributePension(
     String? token, {
     required String pot,
@@ -529,6 +551,7 @@ class MockFinovaultApi extends FinovaultApi {
     return contribution;
   }
 
+  @override
   Future<List<PensionContribution>> pensionContributions(String? token) async {
     final user = await _requireUser(token);
     final list = _db.pensionContributions[user.id] ?? const <PensionContribution>[];
@@ -547,12 +570,14 @@ class MockFinovaultApi extends FinovaultApi {
     return score.clamp(5, 99);
   }
 
+  @override
   Future<SecurityOverview> securityOverview(String? token) async {
     final user = await _requireUser(token);
     final stored = _db.securityOverviews[user.id] ?? const SecurityOverview(score: 72);
     return stored.copyWith(score: securityScoreFor(user.id));
   }
 
+  @override
   Future<SecurityOverview> setTwoFactor(String? token, {required bool enabled}) async {
     final user = await _requireUser(token);
     final updated = (_db.securityOverviews[user.id] ?? const SecurityOverview(score: 72)).copyWith(twoFactorEnabled: enabled);
@@ -561,16 +586,19 @@ class MockFinovaultApi extends FinovaultApi {
     return securityOverview(token);
   }
 
+  @override
   Future<List<SecurityDevice>> devices(String? token) async {
     final user = await _requireUser(token);
     return List.of(_db.devices[user.id] ?? const <SecurityDevice>[]);
   }
 
+  @override
   Future<List<SecurityEvent>> securityEvents(String? token) async {
     final user = await _requireUser(token);
     return List.of(_db.securityEvents[user.id] ?? const <SecurityEvent>[]);
   }
 
+  @override
   Future<SecurityEvent> resolveSecurityEvent(String? token, String eventId) async {
     final user = await _requireUser(token);
     final list = _db.securityEvents[user.id] ?? [];
@@ -583,6 +611,7 @@ class MockFinovaultApi extends FinovaultApi {
 
   // ---- invoices & vendors ---------------------------------------------------------
 
+  @override
   Future<List<Invoice>> invoices(String? token) async {
     final user = await _requireUser(token);
     final list = List.of(_db.invoices[user.id] ?? const <Invoice>[]);
@@ -590,6 +619,7 @@ class MockFinovaultApi extends FinovaultApi {
     return list;
   }
 
+  @override
   Future<Invoice> createInvoice(String? token,
       {required String clientName, required double amount, required DateTime dueDate}) async {
     _requireUserSync(token);
@@ -608,6 +638,7 @@ class MockFinovaultApi extends FinovaultApi {
     return invoice;
   }
 
+  @override
   Future<Invoice> updateInvoiceStatus(String? token,
       {required String invoiceId, required InvoiceStatus status}) async {
     final user = await _requireUser(token);
@@ -619,11 +650,13 @@ class MockFinovaultApi extends FinovaultApi {
     return list[index];
   }
 
+  @override
   Future<List<Vendor>> vendors(String? token) async {
     final user = await _requireUser(token);
     return List.of(_db.vendors[user.id] ?? const <Vendor>[]);
   }
 
+  @override
   Future<Vendor> createVendor(String? token, {required String name}) async {
     final user = await _requireUser(token);
     if (name.trim().isEmpty) throw FvApiException('validation', 'Vendor name is required.');
@@ -635,6 +668,7 @@ class MockFinovaultApi extends FinovaultApi {
 
   // ---- transfers -----------------------------------------------------------------
 
+  @override
   Future<List<Transfer>> transfers(String? token) async {
     final user = await _requireUser(token);
     final list = List.of(_db.transfers[user.id] ?? const <Transfer>[]);
@@ -642,6 +676,7 @@ class MockFinovaultApi extends FinovaultApi {
     return list;
   }
 
+  @override
   Future<Transfer> transferById(String? token, String id) async {
     final user = await _requireUser(token);
     final match = (_db.transfers[user.id] ?? []).where((t) => t.id == id).toList();
@@ -649,6 +684,7 @@ class MockFinovaultApi extends FinovaultApi {
     return match.first;
   }
 
+  @override
   Future<Transfer> createTransfer(String? token,
       {required String sourceAccountId,
       required String payeeName,
@@ -699,11 +735,13 @@ class MockFinovaultApi extends FinovaultApi {
 
   // ---- bills & payees -------------------------------------------------------------
 
+  @override
   Future<List<Payee>> payees(String? token) async {
     final user = await _requireUser(token);
     return List.of(_db.payees[user.id] ?? const <Payee>[]);
   }
 
+  @override
   Future<Payee> createPayee(String? token, {required String name, String? destination}) async {
     final user = await _requireUser(token);
     if (name.trim().isEmpty) throw FvApiException('validation', 'Payee name is required.');
@@ -715,6 +753,7 @@ class MockFinovaultApi extends FinovaultApi {
 
   static const billCategories = BillCategory.values;
 
+  @override
   Future<List<BillPayment>> billPayments(String? token) async {
     final user = await _requireUser(token);
     final list = List.of(_db.billPayments[user.id] ?? const <BillPayment>[]);
@@ -722,6 +761,7 @@ class MockFinovaultApi extends FinovaultApi {
     return list;
   }
 
+  @override
   Future<BillPayment> payBill(String? token,
       {required BillCategory category,
       required String billerName,
@@ -760,6 +800,7 @@ class MockFinovaultApi extends FinovaultApi {
     return payment;
   }
 
+  @override
   Future<BillPayment> scheduleBill(String? token,
       {required BillCategory category,
       required String billerName,

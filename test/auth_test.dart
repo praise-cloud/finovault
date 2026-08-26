@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:finovault_flutter/core/mock/api.dart';
 import 'package:finovault_flutter/core/mock/db.dart';
 import 'package:finovault_flutter/core/providers.dart';
 import 'package:finovault_flutter/core/state/auth.dart';

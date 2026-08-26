@@ -62,7 +62,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     final onboarding = ref.watch(onboardingProvider);
     final role = onboarding.role ?? PrimaryRole.individual;
     final options = _roleGoals[role] ?? _roleGoals[PrimaryRole.individual]!;

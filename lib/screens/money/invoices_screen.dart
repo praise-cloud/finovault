@@ -24,7 +24,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     final language = ref.watch(preferencesProvider).language;
 
     return ScreenPage(
-      title: AppLocalizations.of(context)!.invoices,
+      title: AppLocalizations.of(context).invoices,
       actions: [IconButton(icon: const Icon(Icons.add, color: FvColors.primary), onPressed: _add)],
       child: invoices.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -142,7 +142,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                   if (client.text.isEmpty || value <= 0) return;
                   await api.createInvoice(token, clientName: client.text, amount: value, dueDate: DateTime.now().add(const Duration(days: 14)));
                   ref.invalidate(invoicesProvider);
-                  if (mounted) Navigator.of(sheet).pop();
+                  if (sheet.mounted) Navigator.of(sheet).pop();
                 },
               ),
             ],

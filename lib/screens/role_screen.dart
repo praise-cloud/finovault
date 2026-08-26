@@ -39,7 +39,7 @@ class _RoleScreenState extends ConsumerState<RoleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     return Scaffold(
       body: Container(
         decoration: context.fvOnboardingDecoration,
@@ -247,7 +247,7 @@ class _FemaleFounderCard extends StatelessWidget {
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
-                  AppLocalizations.of(context)!.femaleFounderPath,
+                  AppLocalizations.of(context).femaleFounderPath,
                   style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: FvColors.primary),
                 ),
               ),

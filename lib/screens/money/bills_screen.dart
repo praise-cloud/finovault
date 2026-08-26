@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../l10n/app_localizations.dart';
 import '../../core/format.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -132,9 +131,9 @@ class _BillsScreenState extends ConsumerState<BillsScreen> {
                     ref.invalidate(billPaymentsProvider);
                     ref.invalidate(accountsProvider);
                     ref.invalidate(transactionsProvider);
-                    if (mounted) Navigator.of(sheet).pop();
+                    if (sheet.mounted) Navigator.of(sheet).pop();
                   } on FvApiException catch (e) {
-                    if (mounted) {
+                    if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
                     }
                   }

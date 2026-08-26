@@ -38,7 +38,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final auth = ref.watch(authProvider);
     final error = auth.error;
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
 
     return Scaffold(
       body: Container(
