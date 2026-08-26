@@ -139,7 +139,7 @@ class _PensionSetupScreenState extends ConsumerState<PensionSetupScreen> {
               );
               ref.invalidate(pensionPlanProvider);
               ref.invalidate(pensionProjectionProvider);
-              if (mounted) {
+              if (context.mounted) {
                 Navigator.of(context).pop(plan);
               }
             },

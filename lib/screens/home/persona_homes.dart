@@ -122,7 +122,7 @@ class _PensionTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     final plan = ref.watch(pensionPlanProvider);
     final projection = ref.watch(pensionProjectionProvider);
     final language = ref.watch(preferencesProvider).language;
@@ -189,7 +189,7 @@ class IndividualHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     final summary = ref.watch(moneySummaryProvider);
     final goals = ref.watch(goalsProvider);
     final security = ref.watch(securityOverviewProvider);
@@ -276,7 +276,7 @@ class FreelancerHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     final summary = ref.watch(moneySummaryProvider);
     final goals = ref.watch(goalsProvider);
 
@@ -326,7 +326,7 @@ class EntrepreneurHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     final summary = ref.watch(moneySummaryProvider);
 
     final runway = summary.monthExpense > 0
@@ -398,7 +398,7 @@ class SMEHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     final summary = ref.watch(moneySummaryProvider);
     final vendors = ref.watch(vendorsProvider);
     final overdue = summary.overdueInvoiceCount;
@@ -506,7 +506,7 @@ class _LinkAccountCta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     return FvCard(
       onTap: () => openAccounts(context),
       margin: const EdgeInsets.only(bottom: FvSpacing.x4),

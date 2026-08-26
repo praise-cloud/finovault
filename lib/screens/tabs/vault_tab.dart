@@ -15,7 +15,7 @@ class VaultTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     final goals = ref.watch(goalsProvider);
     final summary = ref.watch(moneySummaryProvider);
 
@@ -83,7 +83,7 @@ class _GoalRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     final language = ref.watch(preferencesProvider).language;
     final pct = goal.targetAmount > 0 ? (goal.currentAmount / goal.targetAmount).clamp(0.0, 1.0) : 0.0;
 

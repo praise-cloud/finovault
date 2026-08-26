@@ -106,7 +106,7 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
     final contributions = ref.watch(pensionContributionsProvider);
 
     return ScreenPage(
-      title: AppLocalizations.of(context)!.pension,
+      title: AppLocalizations.of(context).pension,
       actions: [
         if (plan.value != null)
           IconButton(icon: const Icon(Icons.edit_outlined, color: FvColors.primary), onPressed: () => pushScreen(context, const PensionSetupScreen()))

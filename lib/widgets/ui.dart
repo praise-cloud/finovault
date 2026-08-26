@@ -268,7 +268,7 @@ class ProgressRing extends StatelessWidget {
             size: Size(size, size),
             painter: _RingPainter(progress: p, stroke: stroke, track: context.fvBorder),
           ),
-          if (child != null) child!,
+          ?child,
         ],
       ),
     );
@@ -276,8 +276,7 @@ class ProgressRing extends StatelessWidget {
 }
 
 class _RingPainter extends CustomPainter {
-  _RingPainter({required this.progress, required this.stroke, required Color track})
-      : _track = track;
+  _RingPainter({required this.progress, required this.stroke, required this._track});
 
   final double progress;
   final double stroke;

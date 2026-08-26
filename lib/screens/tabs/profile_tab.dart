@@ -19,7 +19,7 @@ class ProfileTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
 
     return ListView(
       padding: const EdgeInsets.all(FvSpacing.x5),
@@ -67,7 +67,7 @@ class ProfileTab extends ConsumerWidget {
 
   void _openSettings(BuildContext context, WidgetRef ref) {
     final prefs = ref.read(preferencesProvider);
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -187,7 +187,7 @@ class ProfileTab extends ConsumerWidget {
   }
 
   void _confirmLogout(BuildContext context, WidgetRef ref) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (dialog) => AlertDialog(
@@ -261,7 +261,7 @@ class _SwitchRow extends StatelessWidget {
             Icon(icon, size: 20, color: FvColors.primary),
             const SizedBox(width: FvSpacing.x3),
             Expanded(child: Text(label, style: const TextStyle(fontSize: 14))),
-            Switch(value: value, activeColor: FvColors.primary, onChanged: onChanged),
+            Switch(value: value, activeThumbColor: FvColors.primary, onChanged: onChanged),
           ],
         ),
       ),
@@ -326,7 +326,7 @@ class _BackendUrlTileState extends ConsumerState<_BackendUrlTile> {
 
   Future<void> _test() async {
     setState(() => _testing = true);
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     final url = _controller.text.trim();
     try {
       final api = HttpFinovaultApi(baseUrl: url.isEmpty ? 'http://invalid.invalid' : url);
@@ -343,7 +343,7 @@ class _BackendUrlTileState extends ConsumerState<_BackendUrlTile> {
 
   @override
   Widget build(BuildContext context) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     return FvCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -20,13 +20,13 @@ class SecurityScreen extends ConsumerWidget {
     final events = ref.watch(securityEventsProvider);
 
     return ScreenPage(
-      title: AppLocalizations.of(context)!.security,
+      title: AppLocalizations.of(context).security,
       child: ListView(
         padding: const EdgeInsets.all(FvSpacing.x5),
         children: [
           overview.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
             data: (o) => FvCard(
               margin: const EdgeInsets.only(bottom: FvSpacing.x4),
               child: Row(
@@ -66,7 +66,7 @@ class SecurityScreen extends ConsumerWidget {
           const SectionHeader(title: 'Devices'),
           devices.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
             data: (list) => Column(
               children: [
                 for (final d in list)
@@ -97,7 +97,7 @@ class SecurityScreen extends ConsumerWidget {
           const SectionHeader(title: 'Events'),
           events.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
             data: (list) => list.isEmpty
                 ? const EmptyState(title: 'No security events', body: 'We will flag anything unusual here.')
                 : Column(

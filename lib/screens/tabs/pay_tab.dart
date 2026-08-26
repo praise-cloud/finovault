@@ -13,7 +13,7 @@ class PayTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final s = AppLocalizations.of(context)!;
+    final s = AppLocalizations.of(context);
     final payments = ref.watch(billPaymentsProvider);
     final recent = (payments.value ?? []).take(3).toList();
 
