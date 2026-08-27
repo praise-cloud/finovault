@@ -12,14 +12,13 @@ class FvTheme {
   static ThemeData dark() => _base(Brightness.dark);
 
   static ThemeData _base(Brightness brightness) {
-    final isDark = brightness == Brightness.dark;
     final scheme = ColorScheme.fromSeed(
       seedColor: FvColors.primary,
       brightness: brightness,
       primary: FvColors.primary,
       onPrimary: Colors.white,
-      surface: isDark ? FvColors.surfaceDark : FvColors.surface,
-      onSurface: isDark ? FvColors.textDark : FvColors.text,
+      surface: FvColors.surface,
+      onSurface: FvColors.primary,
       error: FvColors.error,
     );
 
@@ -27,18 +26,18 @@ class FvTheme {
       useMaterial3: true,
       brightness: brightness,
       colorScheme: scheme,
-      scaffoldBackgroundColor: isDark ? FvColors.bgDark : FvColors.bg,
+      scaffoldBackgroundColor: FvColors.surface,
       fontFamily: 'Montserrat',
     );
 
     return base.copyWith(
       textTheme: base.textTheme.apply(
-        bodyColor: isDark ? FvColors.textDark : FvColors.text,
-        displayColor: isDark ? FvColors.textDark : FvColors.text,
+        bodyColor: FvColors.primary,
+        displayColor: FvColors.primary,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: isDark ? FvColors.bgDark : FvColors.bg,
-        foregroundColor: isDark ? FvColors.textDark : FvColors.text,
+        backgroundColor: FvColors.surface,
+        foregroundColor: FvColors.primary,
         elevation: 0,
         centerTitle: false,
       ),
@@ -65,15 +64,15 @@ class FvTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: isDark ? FvColors.surfaceDark : FvColors.surface,
+        fillColor: FvColors.surface,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(FvRadius.input),
-          borderSide: BorderSide(color: isDark ? FvColors.borderDark : FvColors.border),
+          borderSide: const BorderSide(color: FvColors.border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(FvRadius.input),
-          borderSide: BorderSide(color: isDark ? FvColors.borderDark : FvColors.border),
+          borderSide: const BorderSide(color: FvColors.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(FvRadius.input),
@@ -85,18 +84,18 @@ class FvTheme {
         ),
       ),
       dividerTheme: DividerThemeData(
-        color: isDark ? FvColors.borderDark : FvColors.border,
+        color: FvColors.border,
       ),
       cardTheme: CardThemeData(
-        color: isDark ? FvColors.surfaceDark : FvColors.surface,
+        color: FvColors.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(FvRadius.card),
-          side: BorderSide(color: isDark ? FvColors.primaryBorderDark : FvColors.primaryBorder),
+          side: const BorderSide(color: FvColors.primaryBorder),
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: isDark ? FvColors.bgDark : FvColors.surface,
+        backgroundColor: FvColors.surface,
         indicatorColor: FvColors.wash,
         indicatorShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),

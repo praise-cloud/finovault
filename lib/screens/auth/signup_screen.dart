@@ -5,7 +5,7 @@ import '../../core/format.dart';
 import '../../core/state/auth.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/ui.dart';
-import '../../widgets/vault_mark.dart';
+import 'login_screen.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
@@ -55,13 +55,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const VaultMark(size: 44),
+                    OnboardingHeader(onBack: () => Navigator.of(context).maybePop()),
                     const SizedBox(height: FvSpacing.x3),
                     Center(
                       child: Text('Create your account',
                           style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
+                              fontSize: 38,
+                              fontWeight: FontWeight.w800,
                               letterSpacing: -0.4,
                               color: context.fvText)),
                     ),
@@ -126,7 +126,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           ),
                           const SizedBox(height: FvSpacing.x3),
                           TextButton(
-                            onPressed: () => Navigator.of(context).maybePop(),
+                            onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (_) => const LoginScreen()),
+                              (r) => r.isFirst,
+                            ),
                             child: Text.rich(
                               TextSpan(
                                 text: 'Already have an account? ',

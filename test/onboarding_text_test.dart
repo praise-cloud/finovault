@@ -47,6 +47,7 @@ List<String> findNonBrandText(WidgetTester tester) {
     if (color == null) continue;
     if (_insideButton(tester, t)) continue;
     if (color == FvColors.primary) continue;
+    if (color == FvColors.primaryLight) continue;
     if (_semantic.contains(color)) continue;
     out.add(t.data ?? '<no-data>');
   }
@@ -87,13 +88,13 @@ void main() {
   });
 
   group('RoleScreen background', () {
-    testWidgets('is plain (no brand gradient) in dark mode', (tester) async {
+    testWidgets('is white (no brand gradient) in dark mode too', (tester) async {
       await pumpScreen(tester, const RoleScreen(), theme: FvTheme.dark(), loggedIn: false);
       final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
       final body = scaffold.body as Container;
       final decoration = body.decoration as BoxDecoration;
       expect(decoration.gradient, isNull);
-      expect(decoration.color, FvColors.bgDark);
+      expect(decoration.color, Colors.white);
     });
 
     testWidgets('is white in light mode', (tester) async {

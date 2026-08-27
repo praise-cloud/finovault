@@ -107,20 +107,26 @@ class LocalNotificationService implements NotificationService {
 
   @override
   Future<void> initialize() async {
-    const settings = InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-      iOS: DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
-      ),
-    );
-    await _plugin.initialize(settings: settings);
-    // Android 13+ runtime permission.
-    await _plugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission();
-    _ready = true;
+    try {
+      const settings = InitializationSettings(
+        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        iOS: DarwinInitializationSettings(
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        ),
+      );
+      await _plugin.initialize(settings: settings);
+      // Android 13+ runtime permission.
+      await _plugin
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          ?.requestNotificationsPermission();
+      _ready = true;
+    } catch (_) {
+      // Notifications aren't critical for the app to run (e.g. on desktop/web
+      // where the plugin has no implementation) — degrade silently.
+      _ready = false;
+    }
   }
 
   Future<void> _show(String title, String body) async {

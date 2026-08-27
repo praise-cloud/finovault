@@ -41,7 +41,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: context.fvIsDark ? FvColors.bgDark : FvColors.surface,
+      backgroundColor: FvColors.surface,
       builder: (sheet) => _LinkSheet(
         onLink: (name, type, institution, balance) async {
           await api.linkAccount(token, name: name, type: type, institution: institution, balance: balance);

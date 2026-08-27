@@ -22,6 +22,11 @@ import 'theme/tokens.dart';
 import 'widgets/ui.dart';
 import 'widgets/vault_mark.dart';
 
+/// Renders a subtree with the light theme so the pre-auth entry screens stay
+/// white with brand-blue accents even when the device is in dark mode. The
+/// rest of the app (home, money) keeps following the system theme.
+Widget _light(Widget child) => Theme(data: FvTheme.light(), child: child);
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
@@ -98,38 +103,40 @@ class RootGate extends ConsumerWidget {
     final onboarding = ref.watch(onboardingProvider);
 
     if (auth.restoring) {
-      return Scaffold(
-        body: Container(
-          decoration: context.fvPageDecoration,
-          child: const Center(child: VaultMark(size: 64)),
+      return _light(
+        Scaffold(
+          body: Container(
+            decoration: context.fvOnboardingDecoration,
+            child: const Center(child: VaultMark(size: 64)),
+          ),
         ),
       );
     }
 
     if (!auth.isAuthenticated) {
       if (onboarding.step == OnboardingStep.welcome || onboarding.step == OnboardingStep.complete) {
-        return const WelcomeScreen();
+        return _light(const WelcomeScreen());
       }
       return switch (onboarding.step) {
-        OnboardingStep.role => const RoleScreen(),
-        OnboardingStep.goals => const GoalsScreen(),
-        OnboardingStep.linkAccounts => const LinkAccountsScreen(),
-        _ => const WelcomeScreen(),
+        OnboardingStep.role => _light(const RoleScreen()),
+        OnboardingStep.goals => _light(const GoalsScreen()),
+        OnboardingStep.linkAccounts => _light(const LinkAccountsScreen()),
+        _ => _light(const WelcomeScreen()),
       };
     }
 
     if (!onboarding.isComplete) {
       return switch (onboarding.step) {
-        OnboardingStep.role => const RoleScreen(),
-        OnboardingStep.goals => const GoalsScreen(),
-        OnboardingStep.linkAccounts => const LinkAccountsScreen(),
+        OnboardingStep.role => _light(const RoleScreen()),
+        OnboardingStep.goals => _light(const GoalsScreen()),
+        OnboardingStep.linkAccounts => _light(const LinkAccountsScreen()),
         _ => const HomeShell(),
       };
     }
 
     final biometricEnabled = ref.watch(preferencesProvider).biometricEnabled;
     if (biometricEnabled && !ref.watch(biometricSessionUnlockedProvider)) {
-      return const BiometricGate();
+      return _light(const BiometricGate());
     }
 
     return const HomeShell();
@@ -160,7 +167,7 @@ class _BiometricGateState extends ConsumerState<BiometricGate> {
     final s = AppLocalizations.of(context);
     return Scaffold(
       body: Container(
-        decoration: context.fvPageDecoration,
+        decoration: context.fvOnboardingDecoration,
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(FvSpacing.x5),

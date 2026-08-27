@@ -87,7 +87,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: context.fvIsDark ? FvColors.bgDark : FvColors.surface,
+      backgroundColor: FvColors.surface,
       builder: (sheet) => Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(sheet).viewInsets.bottom),
         child: SingleChildScrollView(

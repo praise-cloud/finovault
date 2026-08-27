@@ -71,7 +71,7 @@ class ProfileTab extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: context.fvIsDark ? FvColors.bgDark : FvColors.surface,
+      backgroundColor: FvColors.surface,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (sheet) => Padding(
         padding: const EdgeInsets.all(FvSpacing.x5),

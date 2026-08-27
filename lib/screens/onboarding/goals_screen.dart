@@ -7,7 +7,6 @@ import '../../core/state/onboarding.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/ui.dart';
-import '../../widgets/vault_mark.dart';
 import '../auth/signup_screen.dart';
 
 const _roleGoals = <PrimaryRole, List<String>>{
@@ -76,14 +75,8 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(FvSpacing.x6, FvSpacing.x4, FvSpacing.x6, 0),
-                child: Row(
-                  children: [
-                    const VaultMark(size: 28),
-                    const SizedBox(width: 10),
-                    Text('Finovault',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w700, color: FvColors.primary)),
-                  ],
+                child: OnboardingHeader(
+                  onBack: () => ref.read(onboardingProvider.notifier).back(),
                 ),
               ),
               Expanded(
@@ -92,7 +85,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                   children: [
                     Text(s.whatWorkingTowards,
                         style: TextStyle(
-                            fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -0.4, color: FvColors.primary)),
+                            fontSize: 32, fontWeight: FontWeight.w800, letterSpacing: -0.4, color: FvColors.primary)),
                     const SizedBox(height: 8),
                     Text(s.goalsSubtitle,
                         style: TextStyle(fontSize: 15, height: 1.5, color: context.fvTextSecondary)),

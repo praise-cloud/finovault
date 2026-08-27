@@ -9,33 +9,45 @@ import 'vault_mark.dart';
 /// Brightness-aware token shortcuts.
 extension FvContext on BuildContext {
   bool get fvIsDark => Theme.of(this).brightness == Brightness.dark;
-  Color get fvText => fvIsDark ? FvColors.textDark : FvColors.primary;
-  Color get fvTextSecondary => fvIsDark ? FvColors.textSecondaryDark : FvColors.primary;
-  Color get fvSurface => fvIsDark ? FvColors.surfaceGlassDark : FvColors.surface;
-  Color get fvBorder => fvIsDark ? FvColors.borderDark : FvColors.border;
-  Color get fvCardBorder => fvIsDark ? FvColors.primaryBorderDark : FvColors.primaryBorder;
+  Color get fvText => FvColors.primary;
+  Color get fvTextSecondary => FvColors.primaryLight;
+  Color get fvSurface => FvColors.surface;
+  Color get fvBorder => FvColors.border;
+  Color get fvCardBorder => FvColors.primaryBorder;
 
-  BoxDecoration get fvPageDecoration => fvIsDark
-      ? const BoxDecoration(
-          gradient: RadialGradient(
-            radius: 1.2,
-            colors: [Color(0xFF16306B), FvColors.bgDark],
-            stops: [0, 0.55],
-          ),
-        )
-      : const BoxDecoration(
-          gradient: RadialGradient(
-            radius: 1.2,
-            colors: [FvColors.wash, FvColors.bg],
-            stops: [0, 0.55],
-          ),
-        );
+  /// Plain white background for every screen (onboarding, auth, home, money).
+  BoxDecoration get fvPageDecoration => const BoxDecoration(color: Colors.white);
 
-  /// Plain background for onboarding & auth screens — white in light mode, a dark
-  /// neutral in dark mode so text keeps its contrast.
-  BoxDecoration get fvOnboardingDecoration => fvIsDark
-      ? const BoxDecoration(color: FvColors.bgDark)
-      : const BoxDecoration(color: Colors.white);
+  /// Plain background for onboarding & auth screens — always white so the entry
+  /// flow reads as a clean, light screen regardless of the system dark mode
+  /// (the rest of the app keeps following the device theme).
+  BoxDecoration get fvOnboardingDecoration => const BoxDecoration(color: Colors.white);
+}
+
+/// Shared top bar for pre-auth screens: brand wordmark plus an optional back
+/// button. Keeps navigation consistent across onboarding + auth screens.
+class OnboardingHeader extends StatelessWidget {
+  const OnboardingHeader({super.key, this.onBack});
+  final VoidCallback? onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        if (onBack != null)
+          IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+            color: FvColors.primary,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            onPressed: onBack,
+          ),
+        if (onBack != null) const SizedBox(width: 4),
+        Text('Finovault',
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: FvColors.primary)),
+      ],
+    );
+  }
 }
 
 class FvButton extends StatelessWidget {
@@ -62,7 +74,7 @@ class FvButton extends StatelessWidget {
     final (Color bg, Color fg) = switch (variant) {
       FvButtonVariant.primary => (FvColors.primary, Colors.white),
       FvButtonVariant.secondary => (
-          context.fvIsDark ? FvColors.surfaceGlassDark : FvColors.wash,
+          FvColors.wash,
           FvColors.primary,
         ),
       FvButtonVariant.danger => (FvColors.errorBg, FvColors.error),
@@ -192,8 +204,8 @@ class FvTextField extends StatelessWidget {
             hintStyle: const TextStyle(color: FvColors.primary),
             errorText: errorText,
             suffixIcon: suffix,
-            filled: true,
-            fillColor: context.fvIsDark ? FvColors.surfaceDark : FvColors.surface,
+        filled: true,
+        fillColor: FvColors.surface,
             contentPadding: const EdgeInsets.symmetric(horizontal: FvSpacing.x4, vertical: FvSpacing.x3),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(FvRadius.input),
@@ -403,7 +415,6 @@ class ScreenPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: context.fvPageDecoration,
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

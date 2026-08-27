@@ -5,7 +5,6 @@ import '../../core/state/auth.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/ui.dart';
-import '../../widgets/vault_mark.dart';
 import 'signup_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -52,13 +51,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const VaultMark(size: 44),
+                    OnboardingHeader(onBack: () => Navigator.of(context).maybePop()),
                     const SizedBox(height: FvSpacing.x3),
                     Center(
                       child: Text(s.welcomeBack,
                           style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
+                              fontSize: 32,
+                              fontWeight: FontWeight.w800,
                               letterSpacing: -0.4,
                               color: context.fvText)),
                     ),

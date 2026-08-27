@@ -57,7 +57,7 @@ class HomeShell extends ConsumerWidget {
       bottomNavigationBar: NavigationBar(
         selectedIndex: index,
         onDestinationSelected: (i) => ref.read(homeTabIndexProvider.notifier).state = i,
-        backgroundColor: context.fvIsDark ? FvColors.bgDark : FvColors.surface,
+        backgroundColor: FvColors.surface,
         indicatorColor: FvColors.wash,
         destinations: [
           NavigationDestination(icon: const Icon(Icons.home_outlined), selectedIcon: const Icon(Icons.home), label: s.navHome),

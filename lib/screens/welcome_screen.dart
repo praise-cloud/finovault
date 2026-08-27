@@ -5,7 +5,6 @@ import '../core/state/onboarding.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/tokens.dart';
 import '../widgets/ui.dart';
-import '../widgets/vault_mark.dart';
 import 'auth/login_screen.dart';
 
 /// Welcome entry screen — branded hero over a light-blue gradient.
@@ -24,13 +23,12 @@ class WelcomeScreen extends ConsumerWidget {
             child: Column(
               children: [
                 const Spacer(flex: 2),
-                const VaultMark(size: 88),
-                const SizedBox(height: 20),
+                const SizedBox(height: FvSpacing.x3),
                 Text(
                   'Finovault',
                   style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 42,
+                    fontWeight: FontWeight.w800,
                     letterSpacing: -0.5,
                     color: FvColors.primary,
                   ),

@@ -6,7 +6,6 @@ import '../core/state/onboarding.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/tokens.dart';
 import '../widgets/ui.dart';
-import '../widgets/vault_mark.dart';
 
 /// Onboarding step 2 — the Individual vs SME (vs Freelancer/Entrepreneur)
 /// choice that drives every downstream screen (goals, dashboard, modules).
@@ -49,19 +48,8 @@ class _RoleScreenState extends ConsumerState<RoleScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(FvSpacing.x6, FvSpacing.x4, FvSpacing.x6, 0),
-                child: Row(
-                  children: [
-                    const VaultMark(size: 28),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Finovault',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: FvColors.primary,
-                      ),
-                    ),
-                  ],
+                child: OnboardingHeader(
+                  onBack: () => ref.read(onboardingProvider.notifier).back(),
                 ),
               ),
               Expanded(
@@ -71,8 +59,8 @@ class _RoleScreenState extends ConsumerState<RoleScreen> {
                     Text(
                       s.howWillYouUse,
                       style: const TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 32,
+                        fontWeight: FontWeight.w800,
                         letterSpacing: -0.4,
                         color: FvColors.primary,
                       ),

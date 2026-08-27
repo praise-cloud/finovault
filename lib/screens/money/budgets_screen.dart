@@ -96,7 +96,7 @@ class _BudgetsScreenState extends ConsumerState<BudgetsScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: context.fvIsDark ? FvColors.bgDark : FvColors.surface,
+      backgroundColor: FvColors.surface,
       builder: (sheet) => Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(sheet).viewInsets.bottom),
         child: SingleChildScrollView(

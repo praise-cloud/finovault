@@ -95,6 +95,20 @@ class OnboardingController extends Notifier<OnboardingState> {
     }
   }
 
+  /// Step backwards through the linear onboarding flow:
+  /// linkAccounts → goals → role → welcome.
+  Future<void> back() async {
+    state = state.copyWith(
+      step: switch (state.step) {
+        OnboardingStep.linkAccounts => OnboardingStep.goals,
+        OnboardingStep.goals => OnboardingStep.role,
+        OnboardingStep.role => OnboardingStep.welcome,
+        _ => state.step,
+      },
+    );
+    await _persist();
+  }
+
   Future<void> selectRole(PrimaryRole role, {required bool femaleFounder}) async {
     state = state.copyWith(
       step: OnboardingStep.goals,

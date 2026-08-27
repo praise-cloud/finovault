@@ -9,7 +9,6 @@ import '../../core/state/onboarding.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/ui.dart';
-import '../../widgets/vault_mark.dart';
 
 /// Simulated institution linking — mirrors the Expo onboarding step.
 class LinkAccountsScreen extends ConsumerStatefulWidget {
@@ -82,19 +81,15 @@ class _LinkAccountsScreenState extends ConsumerState<LinkAccountsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Row(
-                  children: [
-                    VaultMark(size: 28),
-                    SizedBox(width: 10),
-                    Text('Finovault', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: FvColors.primary)),
-                  ],
+                OnboardingHeader(
+                  onBack: () => ref.read(onboardingProvider.notifier).back(),
                 ),
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.only(top: FvSpacing.x8),
                     children: <Widget>[
                       Text(s.linkAccounts,
-                          style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -0.4, color: FvColors.primary)),
+                          style: TextStyle(fontSize: 32, fontWeight: FontWeight.w800, letterSpacing: -0.4, color: FvColors.primary)),
                       const SizedBox(height: 8),
                       Text(
                         s.linkSubtitle,

@@ -25,19 +25,20 @@ class HeroCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: FvSpacing.x4),
       padding: const EdgeInsets.all(FvSpacing.x5),
       decoration: BoxDecoration(
-        gradient: FvColors.heroGradient,
+        color: FvColors.wash,
         borderRadius: BorderRadius.circular(FvRadius.card),
+        border: Border.all(color: FvColors.primaryBorder),
         boxShadow: const [FvShadows.card],
       ),
       child: Stack(
         children: [
-          Positioned(right: -24, top: -24, child: Opacity(opacity: 0.22, child: const VaultMark(size: 130, subdued: true))),
+          Positioned(right: -24, top: -24, child: Opacity(opacity: 0.18, child: const VaultMark(size: 130, subdued: true))),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.white70)),
+              Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FvColors.primary)),
               const SizedBox(height: 6),
-              MoneyText(amount, size: MoneySize.lg, color: Colors.white, currency: currency),
+              MoneyText(amount, size: MoneySize.lg, color: FvColors.primary, currency: currency),
             ],
           ),
         ],

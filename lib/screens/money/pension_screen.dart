@@ -33,7 +33,7 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: context.fvIsDark ? FvColors.bgDark : FvColors.surface,
+      backgroundColor: FvColors.surface,
       builder: (sheet) => StatefulBuilder(
         builder: (ctx, set) => Padding(
           padding: EdgeInsets.only(bottom: MediaQuery.of(sheet).viewInsets.bottom),
