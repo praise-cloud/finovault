@@ -419,6 +419,62 @@ class BankLinkResult {
   );
 }
 
+/// Result from the `uploadStatement` RPC: parsed rows + categories detected.
+class StatementUploadResult {
+  const StatementUploadResult({
+    required this.statementId,
+    required this.accountId,
+    required this.count,
+    this.categories = const [],
+  });
+
+  final String statementId;
+  final String accountId;
+  final int count;
+  final List<String> categories;
+
+  Map<String, dynamic> toJson() => {
+    'statementId': statementId,
+    'accountId': accountId,
+    'count': count,
+    'categories': categories,
+  };
+
+  static StatementUploadResult fromJson(Map<String, dynamic> j) =>
+      StatementUploadResult(
+        statementId: j['statementId'] as String? ?? '',
+        accountId: j['accountId'] as String? ?? '',
+        count: (j['count'] as num?)?.toInt() ?? 0,
+        categories: (j['categories'] as List<dynamic>? ?? const [])
+            .map((e) => e as String)
+            .toList(),
+      );
+}
+
+/// Result from the `generatePaymentLink` RPC: a `mcbjuice://` deep link.
+class PaymentLinkResult {
+  const PaymentLinkResult({required this.deepLink});
+
+  final String deepLink;
+
+  Map<String, dynamic> toJson() => {'deepLink': deepLink};
+
+  static PaymentLinkResult fromJson(Map<String, dynamic> j) =>
+      PaymentLinkResult(deepLink: j['deepLink'] as String? ?? '');
+}
+
+/// Result from the `generateMauCasQr` RPC: the QR payload to render.
+class MauCasQrResult {
+  const MauCasQrResult({required this.qrData});
+
+  final String qrData;
+
+  Map<String, dynamic> toJson() => {'qrData': qrData};
+
+  static MauCasQrResult fromJson(Map<String, dynamic> j) =>
+      MauCasQrResult(qrData: j['qrData'] as String? ?? '');
+}
+
 class Transaction {
   const Transaction({
     required this.id,

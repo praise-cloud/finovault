@@ -9,6 +9,7 @@ import 'package:finovault_flutter/core/mock/db.dart';
 import 'package:finovault_flutter/core/mock/http_api.dart';
 import 'package:finovault_flutter/core/providers.dart';
 import 'package:finovault_flutter/core/state/auth.dart';
+
 import '../tool/mock_bff/server.dart';
 
 /// Verifies the BFF wiring: `apiProvider` yields `HttpFinovaultApi` only when a
@@ -16,27 +17,43 @@ import '../tool/mock_bff/server.dart';
 /// client actually talks to a running BFF server (the reference mock BFF is
 /// started in-process so this runs without any external dependency).
 void main() {
-  test('apiProvider exposes HttpFinovaultApi when a base URL is configured', () {
-    final container = ProviderContainer(
-      overrides: [apiProvider.overrideWithValue(HttpFinovaultApi(baseUrl: 'https://bff.example.com'))],
-    );
-    expect(container.read(apiProvider), isA<HttpFinovaultApi>());
-  });
+  test(
+    'apiProvider exposes HttpFinovaultApi when a base URL is configured',
+    () {
+      final container = ProviderContainer(
+        overrides: [
+          apiProvider.overrideWithValue(
+            HttpFinovaultApi(baseUrl: 'https://bff.example.com'),
+          ),
+        ],
+      );
+      expect(container.read(apiProvider), isA<HttpFinovaultApi>());
+    },
+  );
 
   test('apiProvider falls back to MockFinovaultApi without a base URL', () {
     final container = ProviderContainer(
-      overrides: [apiProvider.overrideWithValue(MockFinovaultApi(db: MockDb()))],
+      overrides: [
+        apiProvider.overrideWithValue(MockFinovaultApi(db: MockDb())),
+      ],
     );
     expect(container.read(apiProvider), isA<MockFinovaultApi>());
   });
 
   test('app BFF client talks to a running mock BFF server', () async {
-    final server = await io.serve(mockBffHandler(), InternetAddress.loopbackIPv4, 0);
+    final server = await io.serve(
+      mockBffHandler(),
+      InternetAddress.loopbackIPv4,
+      0,
+    );
     try {
       final baseUrl = 'http://${server.address.host}:${server.port}';
       final api = HttpFinovaultApi(baseUrl: baseUrl);
 
-      final auth = await api.login(email: 'demo@finovault.app', password: 'Vault123!');
+      final auth = await api.login(
+        email: 'demo@finovault.app',
+        password: 'Vault123!',
+      );
       expect(auth.token, isNotEmpty);
       expect(auth.user.primaryRole, isNotNull);
 
@@ -52,7 +69,11 @@ void main() {
 
   test('auth.login succeeds against the configured backend URL', () async {
     final kv = _MemoryKv();
-    final server = await io.serve(mockBffHandler(), InternetAddress.loopbackIPv4, 0);
+    final server = await io.serve(
+      mockBffHandler(),
+      InternetAddress.loopbackIPv4,
+      0,
+    );
     final baseUrl = 'http://${server.address.host}:${server.port}';
     try {
       final container = ProviderContainer(
@@ -62,7 +83,9 @@ void main() {
         ],
       );
       await container.read(apiBaseUrlProvider.notifier).set(baseUrl);
-      final ok = await container.read(authProvider.notifier).login('demo@finovault.app', 'Vault123!');
+      final ok = await container
+          .read(authProvider.notifier)
+          .login('demo@finovault.app', 'Vault123!');
       expect(ok, isTrue);
       expect(container.read(authProvider).user, isNotNull);
     } finally {
@@ -71,23 +94,41 @@ void main() {
   });
 
   test('BFF supports avatar upload and password change', () async {
-    final server = await io.serve(mockBffHandler(), InternetAddress.loopbackIPv4, 0);
+    final server = await io.serve(
+      mockBffHandler(),
+      InternetAddress.loopbackIPv4,
+      0,
+    );
     try {
       final baseUrl = 'http://${server.address.host}:${server.port}';
       final api = HttpFinovaultApi(baseUrl: baseUrl);
 
       final auth = await api.signup(
-          fullName: 'Lena', email: 'lena@example.com', password: 'Password123!');
-      final url = await api.uploadAvatar(auth.token, mimeType: 'image/png', data: 'aGVsbG8=');
+        fullName: 'Lena',
+        email: 'lena@example.com',
+        password: 'Password123!',
+        phone: '51234567',
+      );
+      final url = await api.uploadAvatar(
+        auth.token,
+        mimeType: 'image/png',
+        data: 'aGVsbG8=',
+      );
       expect(url, startsWith('data:image/png;base64,'));
       expect((await api.getSession(auth.token))?.avatarUrl, url);
 
-      final overview = await api.changePassword(auth.token,
-          currentPassword: 'Password123!', newPassword: 'NewPassword789!');
+      final overview = await api.changePassword(
+        auth.token,
+        currentPassword: 'Password123!',
+        newPassword: 'NewPassword789!',
+      );
       expect(overview.lastPasswordChange, isNotNull);
       try {
-        await api.changePassword(auth.token,
-            currentPassword: 'wrong', newPassword: 'Whatever123!');
+        await api.changePassword(
+          auth.token,
+          currentPassword: 'wrong',
+          newPassword: 'Whatever123!',
+        );
         fail('expected incorrect_password error');
       } on FvApiException catch (e) {
         expect(e.code, 'incorrect_password');
@@ -97,19 +138,26 @@ void main() {
     }
   });
 
-  test('apiBaseUrlProvider persists the configured URL across containers', () async {
-    final kv = _MemoryKv();
-    final container = ProviderContainer(overrides: [kvStoreProvider.overrideWithValue(kv)]);
-    final controller = container.read(apiBaseUrlProvider.notifier);
-    await controller.set('https://live.example.com');
-    expect(container.read(apiBaseUrlProvider), 'https://live.example.com');
+  test(
+    'apiBaseUrlProvider persists the configured URL across containers',
+    () async {
+      final kv = _MemoryKv();
+      final container = ProviderContainer(
+        overrides: [kvStoreProvider.overrideWithValue(kv)],
+      );
+      final controller = container.read(apiBaseUrlProvider.notifier);
+      await controller.set('https://live.example.com');
+      expect(container.read(apiBaseUrlProvider), 'https://live.example.com');
 
-    final container2 = ProviderContainer(overrides: [kvStoreProvider.overrideWithValue(kv)]);
-    expect(container2.read(apiBaseUrlProvider), 'https://live.example.com');
+      final container2 = ProviderContainer(
+        overrides: [kvStoreProvider.overrideWithValue(kv)],
+      );
+      expect(container2.read(apiBaseUrlProvider), 'https://live.example.com');
 
-    await container2.read(apiBaseUrlProvider.notifier).set('');
-    expect(container2.read(apiBaseUrlProvider), isNull);
-  });
+      await container2.read(apiBaseUrlProvider.notifier).set('');
+      expect(container2.read(apiBaseUrlProvider), isNull);
+    },
+  );
 }
 
 class _MemoryKv implements KvStore {

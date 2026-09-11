@@ -94,11 +94,13 @@ class HttpFinovaultApi extends FinovaultApi {
     required String fullName,
     required String email,
     required String password,
+    required String phone,
   }) async => AuthResult.fromJson(
     await _rpc('signup', {
       'fullName': fullName,
       'email': email,
       'password': password,
+      'phone': phone,
     }),
   );
 
@@ -637,4 +639,46 @@ class HttpFinovaultApi extends FinovaultApi {
     }, token: token) as Map<String, dynamic>;
     return BankLinkResult.fromJson(data);
   }
+
+  @override
+  Future<StatementUploadResult> uploadStatement(
+    String? token, {
+    required String accountId,
+    required String fileName,
+    required String fileType,
+    required String data,
+  }) async => StatementUploadResult.fromJson(
+    await _rpc('uploadStatement', {
+      'accountId': accountId,
+      'fileName': fileName,
+      'fileType': fileType,
+      'data': data,
+    }, token: token) as Map<String, dynamic>,
+  );
+
+  @override
+  Future<PaymentLinkResult> generatePaymentLink(
+    String? token, {
+    required String accountId,
+    required double amount,
+    required String recipient,
+  }) async => PaymentLinkResult.fromJson(
+    await _rpc('generatePaymentLink', {
+      'accountId': accountId,
+      'amount': amount,
+      'recipient': recipient,
+    }, token: token) as Map<String, dynamic>,
+  );
+
+  @override
+  Future<MauCasQrResult> generateMauCasQr(
+    String? token, {
+    required double amount,
+    required String recipient,
+  }) async => MauCasQrResult.fromJson(
+    await _rpc('generateMauCasQr', {
+      'amount': amount,
+      'recipient': recipient,
+    }, token: token) as Map<String, dynamic>,
+  );
 }

@@ -1,3 +1,77 @@
+# FE-001 — Banking Features Implementation Summary
+
+## Component / Scope
+Four banking-phase features across auth + money screens:
+1. **Phone field on signup** — new `FvTextField` (keyboardType `phone`), pattern
+   validation, client + API error surfacing.
+2. **Statement upload screen** — file picker (CSV/PDF), base64 payload, result
+   screen with per-category rows, re-upload path.
+3. **Payment handoff UI** — transfer screen "Pay via bank app" (deep link
+   `mcbjuice://pay?...`) and "MauCAS QR" (bottom sheet with QR from
+   `qr_flutter`) buttons.
+4. **FSC regulatory copy** — footnote on signup: "financial coaching and
+   budgeting insights — not regulated investment advice or asset portfolio
+   management."
+
+## Key Decisions
+- Phone pattern `RegExp(r'^[5-7]\d{4,7}$')` (5–8 digits starting 5–7); client
+  errors `'Phone must be 5–8 digits starting with 5–7.'`. Phone is **validated
+  but not stored** — `UserProfile` has no `phone` field.
+- `AuthController.signup` is now positional 4-arg
+  `signup(fullName, email, password, phone)` and forward `phone:` to
+  `_api.signup`. Signup screen has no `setError` on controller — uses local
+  `_localError` joined with `auth.error` (email_taken).
+- Statement upload validates file type (`'csv'|'pdf'`, mime from extension),
+  non-empty file, account existence; `UploadStatementResult` invalides
+  `accountsProvider` + `transactionsProvider` after success.
+- Deep link `mcbjuice://pay?amount=<2dp>&recipient=<encoded>&account=<id>`,
+  launched via `url_launcher` with `canLaunch` guard → SnackBar fallback.
+- MauCAS QR data `MAUCAS:PAY:<2dp>:<encoded recipient>` rendered in bottom
+  sheet (no `dataModuleStyle`; rely on white QR canvas from FL-005).
+- Hardcoded strings (matches existing app convention, no l10n); existing
+  `FvButton`/`FvTextField`/`EmptyState`/`ScreenPage` from `widgets/ui.dart`.
+
+## State / API Handling
+- Core/domain layer extended: `FinovaultApi` (abstract) + mock +
+  `HttpFinovaultApi` all implement `signup(..., phone)` plus three new RPC
+  methods `uploadStatement`, `generatePaymentLink`, `generateMauCasQr` — same
+  `POST /rpc` transport, `Result.fromJson` envelope parsing.
+- New models in `lib/core/models.dart`: `StatementUploadResult`,
+  `PaymentLinkResult`, `MauCasQrResult`.
+- BFF contract files unchanged
+  (`finovault-bff/specs/api-contract.md`, `banking-contract.md`).
+
+## Files Modified / Created
+- Created: `lib/screens/money/statement_upload_screen.dart`
+- Modified: `lib/screens/auth/signup_screen.dart` (phone + FSC footnote),
+  `lib/screens/money/transfer_screen.dart` (handoff buttons + handlers),
+  `lib/screens/money/accounts_screen.dart` ("Upload statement" entry),
+  `lib/core/state/auth.dart`, `lib/core/mock/api.dart`,
+  `lib/core/mock/http_api.dart`, `lib/core/models.dart`, `pubspec.yaml`
+  (deps pre-added: `qr_flutter`, `url_launcher`, `file_picker`)
+- Tests updated for phone param: `test/auth_test.dart`,
+  `test/two_factor_test.dart`, `test/bff_smoke_test.dart`,
+  `test/account_security_test.dart`
+
+## Verification
+- `flutter analyze`: **0 errors, 0 warnings**; info-level only — 22 pre-existing
+  `curly_braces_in_flow_control_structures`, 3 `unnecessary_string_interpolations`
+  in `test/two_factor_test.dart` (out of scope).
+- `flutter test`: **84 passed** (incl. updated auth/two_factor/account_security/
+  bff_smoke tests).
+- No `print()`/`debugPrint` introduced.
+
+## QA Notes
+- Signup: phone field appears between email and password; error text shows
+  under fields via `_localError`.
+- Transfer: "Pay via bank app" + "MauCAS QR" are the last two actions in the
+  action list; QR sheet shows amount + recipient + QR canvas; no asset images —
+  pure QR rendering.
+- Statement upload: picker errors surface as SnackBar; success screen offers
+  "Upload another".
+
+---
+
 # FL-005 — Dark Theme Implementation Summary
 
 ## Component / Scope

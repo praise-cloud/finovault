@@ -14,6 +14,7 @@ void main() {
         fullName: 'Amina',
         email: 'a@x.com',
         password: 'Password123!',
+        phone: '51234567',
       );
       final url = await sdk.uploadAvatar(
         auth.token,
@@ -32,6 +33,7 @@ void main() {
         fullName: 'Amina',
         email: 'a@x.com',
         password: 'Password123!',
+        phone: '51234567',
       );
       expect(
         () => sdk.uploadAvatar(auth.token, mimeType: 'text/plain', data: 'x'),
@@ -49,6 +51,7 @@ void main() {
         fullName: 'Amina',
         email: 'a@x.com',
         password: 'Password123!',
+        phone: '51234567',
       );
       expect(
         () => sdk.changePassword(
@@ -74,6 +77,7 @@ void main() {
           fullName: 'Amina',
           email: 'a@x.com',
           password: 'Password123!',
+          phone: '51234567',
         );
         final overview = await sdk.changePassword(
           auth.token,
@@ -102,6 +106,7 @@ void main() {
           fullName: 'Amina',
           email: 'a@x.com',
           password: 'Password123!',
+          phone: '51234567',
         );
         await sdk.requestPasswordReset('a@x.com');
         final token = sdk.db.passwordResetTokens.keys.last;
@@ -123,6 +128,7 @@ void main() {
         fullName: 'Amina',
         email: 'a@x.com',
         password: 'Password123!',
+        phone: '51234567',
       );
       await sdk.requestPasswordReset('a@x.com');
       await sdk.resetPassword(
@@ -146,6 +152,7 @@ void main() {
         fullName: 'Amina',
         email: 'a@x.com',
         password: 'Password123!',
+        phone: '51234567',
       );
       await sdk.requestPasswordReset('a@x.com');
 

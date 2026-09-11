@@ -52,6 +52,7 @@ abstract class FinovaultApi {
     required String fullName,
     required String email,
     required String password,
+    required String phone,
   });
   Future<AuthResult> login({required String email, required String password});
   Future<UserProfile?> getSession(String? token);
@@ -231,6 +232,25 @@ abstract class FinovaultApi {
     required String idempotencyKey,
     String? holderName,
   });
+
+  Future<StatementUploadResult> uploadStatement(
+    String? token, {
+    required String accountId,
+    required String fileName,
+    required String fileType,
+    required String data,
+  });
+  Future<PaymentLinkResult> generatePaymentLink(
+    String? token, {
+    required String accountId,
+    required double amount,
+    required String recipient,
+  });
+  Future<MauCasQrResult> generateMauCasQr(
+    String? token, {
+    required double amount,
+    required String recipient,
+  });
 }
 
 /// Mock API standing in for the future Finovault backend — same endpoints and
@@ -278,11 +298,22 @@ class MockFinovaultApi extends FinovaultApi {
     required String fullName,
     required String email,
     required String password,
+    required String phone,
   }) async {
     await _tick();
     final normalized = email.trim().toLowerCase();
-    if (fullName.trim().isEmpty || normalized.isEmpty || password.isEmpty) {
+    final phoneClean = phone.trim();
+    if (fullName.trim().isEmpty ||
+        normalized.isEmpty ||
+        password.isEmpty ||
+        phoneClean.isEmpty) {
       throw FvApiException('validation', 'Please fill in every field.');
+    }
+    if (_mobilePattern.hasMatch(phoneClean) == false) {
+      throw FvApiException(
+        'validation',
+        'Phone must be 5–8 digits starting with 5–7.',
+      );
     }
     if (_db.credentials.containsKey(normalized)) {
       throw FvApiException(
@@ -1678,6 +1709,109 @@ class MockFinovaultApi extends FinovaultApi {
 
   static final _bankPattern = RegExp(r'^\d{8,16}$');
   static final _mobilePattern = RegExp(r'^[5-7]\d{4,7}$');
+
+  // ---- statement upload ---------------------------------------------------------
+
+  @override
+  Future<StatementUploadResult> uploadStatement(
+    String? token, {
+    required String accountId,
+    required String fileName,
+    required String fileType,
+    required String data,
+  }) async {
+    await _tick();
+    _requireUserSync(token);
+    final uid = tokenUserId(token)!;
+    final match = (_db.accounts[uid] ?? const <Account>[])
+        .where((a) => a.id == accountId)
+        .toList();
+    if (match.isEmpty) {
+      throw FvApiException('not_found', 'Account not found.');
+    }
+    final cleanType = fileType.toLowerCase();
+    if (cleanType != 'csv' && cleanType != 'pdf') {
+      throw FvApiException(
+        'validation',
+        'Only CSV or PDF statements are supported.',
+      );
+    }
+    if (fileName.trim().isEmpty) {
+      throw FvApiException('validation', 'Please choose a statement file.');
+    }
+    if (data.isEmpty) {
+      throw FvApiException('validation', 'The file is empty.');
+    }
+    // ponytail: mock synthesises rows instead of parsing the upload; the BFF
+    // does real CSV/PDF parsing. Upgrade path: decode `data` and parse for real.
+    const cats = <String>['groceries', 'dining', 'transport'];
+    final txList = _db.transactions[uid] ??= <Transaction>[];
+    final now = DateTime.now();
+    var count = 0;
+    for (final cat in cats) {
+      txList.add(
+        Transaction(
+          id: _db.nextId('tx'),
+          accountId: accountId,
+          amount: 320 + count * 145,
+          direction: TransactionDirection.out,
+          category: cat,
+          merchantName: 'Statement import',
+          date: now.subtract(Duration(days: count + 1)),
+          isExpense: true,
+        ),
+      );
+      count++;
+    }
+    await _db.persist();
+    return StatementUploadResult(
+      statementId: _db.nextId('stmt'),
+      accountId: accountId,
+      count: count,
+      categories: cats,
+    );
+  }
+
+  @override
+  Future<PaymentLinkResult> generatePaymentLink(
+    String? token, {
+    required String accountId,
+    required double amount,
+    required String recipient,
+  }) async {
+    await _tick();
+    _requireUserSync(token);
+    if (amount <= 0) {
+      throw FvApiException('validation', 'Amount must be greater than zero.');
+    }
+    if (recipient.trim().isEmpty) {
+      throw FvApiException('validation', 'Please fill in every field.');
+    }
+    return PaymentLinkResult(
+      deepLink:
+          'mcbjuice://pay?amount=${amount.toStringAsFixed(2)}&recipient=${Uri.encodeComponent(recipient.trim())}&account=$accountId',
+    );
+  }
+
+  @override
+  Future<MauCasQrResult> generateMauCasQr(
+    String? token, {
+    required double amount,
+    required String recipient,
+  }) async {
+    await _tick();
+    _requireUserSync(token);
+    if (amount <= 0) {
+      throw FvApiException('validation', 'Amount must be greater than zero.');
+    }
+    if (recipient.trim().isEmpty) {
+      throw FvApiException('validation', 'Please fill in every field.');
+    }
+    return MauCasQrResult(
+      qrData:
+          'MAUCAS:PAY:${amount.toStringAsFixed(2)}:${Uri.encodeComponent(recipient.trim())}',
+    );
+  }
 
   // ---- helpers ----------------------------------------------------------------------
 

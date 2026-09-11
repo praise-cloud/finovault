@@ -17,7 +17,15 @@ void main() {
     );
 
     final auth = container.read(authProvider.notifier);
-    expect(await auth.signup('Demo User', 'demo@finovault.app', 'Vault123!'), isTrue);
+    expect(
+      await auth.signup(
+        'Demo User',
+        'demo@finovault.app',
+        'Vault123!',
+        '51234567',
+      ),
+      isTrue,
+    );
     final ok = await auth.login('demo@finovault.app', 'Vault123!');
     expect(ok, isTrue);
     expect(container.read(onboardingProvider).isComplete, isTrue);

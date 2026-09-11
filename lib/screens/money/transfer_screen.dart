@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/format.dart';
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../core/models.dart';
-import '../../core/providers.dart';
 import '../../core/mock/api.dart';
+import '../../core/providers.dart';
 import '../../core/state/money.dart';
 import '../../core/state/preferences.dart';
 import '../../l10n/app_localizations.dart';
@@ -205,11 +205,105 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                     ? null
                     : () => _continue(context, ref, source.id, raw, fee),
               ),
+              const SizedBox(height: FvSpacing.x3),
+              FvButton(
+                label: 'Pay via bank app',
+                variant: FvButtonVariant.secondary,
+                onPressed: raw <= 0 || _payeeNameController.text.isEmpty
+                    ? null
+                    : () => _openBankApp(context, ref, source.id, raw),
+              ),
+              const SizedBox(height: FvSpacing.x3),
+              FvButton(
+                label: 'MauCAS QR',
+                variant: FvButtonVariant.secondary,
+                onPressed: raw <= 0 || _payeeNameController.text.isEmpty
+                    ? null
+                    : () => _showMauCasQr(context, ref, raw),
+              ),
             ],
           );
         },
       ),
     );
+  }
+
+  /// Opens the linked bank app to complete the payment externally.
+  Future<void> _openBankApp(
+    BuildContext context,
+    WidgetRef ref,
+    String sourceId,
+    double amount,
+  ) async {
+    final api = ref.read(apiProvider);
+    final token = ref.read(kvStoreProvider).getString(sessionKey);
+    try {
+      final link = await api.generatePaymentLink(
+        token,
+        accountId: sourceId,
+        amount: amount,
+        recipient: _payeeNameController.text.trim(),
+      );
+      if (!context.mounted) return;
+      final ok = await launchUrl(Uri.parse(link.deepLink));
+      if (!ok && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open the bank app.')),
+        );
+      }
+    } on FvApiException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    }
+  }
+
+  /// Shows a QR code the other party can scan to pull the amount.
+  Future<void> _showMauCasQr(
+    BuildContext context,
+    WidgetRef ref,
+    double amount,
+  ) async {
+    final api = ref.read(apiProvider);
+    final token = ref.read(kvStoreProvider).getString(sessionKey);
+    try {
+      final result = await api.generateMauCasQr(
+        token,
+        amount: amount,
+        recipient: _payeeNameController.text.trim(),
+      );
+      if (!context.mounted) return;
+      showDialog(
+        context: context,
+        builder: (dialog) => AlertDialog(
+          title: const Text('MauCAS QR'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              QrImageView(data: result.qrData, size: 220),
+              const SizedBox(height: FvSpacing.x3),
+              Text(
+                result.qrData,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12, color: context.fvTextSecondary),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialog).pop(),
+              child: const Text('Close'),
+            ),
+          ],
+        ),
+      );
+    } on FvApiException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    }
   }
 
   /// Phone destinations are verified against the registered holder name

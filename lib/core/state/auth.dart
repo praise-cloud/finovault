@@ -6,7 +6,14 @@ import '../providers.dart';
 import 'onboarding.dart';
 
 class AuthState {
-  const AuthState({this.user, this.restoring = true, this.busy = false, this.error, this.mfaChallengeId, this.mfaMethods});
+  const AuthState({
+    this.user,
+    this.restoring = true,
+    this.busy = false,
+    this.error,
+    this.mfaChallengeId,
+    this.mfaMethods,
+  });
 
   final UserProfile? user;
   final bool restoring;
@@ -18,15 +25,24 @@ class AuthState {
   bool get isAuthenticated => user != null;
   bool get isMfaPending => mfaChallengeId != null;
 
-  AuthState copyWith({UserProfile? user, bool clearUser = false, bool? restoring, bool? busy, String? error, bool clearError = false, String? mfaChallengeId, List<String>? mfaMethods, bool clearMfa = false}) =>
-      AuthState(
-        user: clearUser ? null : (user ?? this.user),
-        restoring: restoring ?? this.restoring,
-        busy: busy ?? this.busy,
-        error: clearError ? null : (error ?? this.error),
-        mfaChallengeId: clearMfa ? null : (mfaChallengeId ?? this.mfaChallengeId),
-        mfaMethods: clearMfa ? null : (mfaMethods ?? this.mfaMethods),
-      );
+  AuthState copyWith({
+    UserProfile? user,
+    bool clearUser = false,
+    bool? restoring,
+    bool? busy,
+    String? error,
+    bool clearError = false,
+    String? mfaChallengeId,
+    List<String>? mfaMethods,
+    bool clearMfa = false,
+  }) => AuthState(
+    user: clearUser ? null : (user ?? this.user),
+    restoring: restoring ?? this.restoring,
+    busy: busy ?? this.busy,
+    error: clearError ? null : (error ?? this.error),
+    mfaChallengeId: clearMfa ? null : (mfaChallengeId ?? this.mfaChallengeId),
+    mfaMethods: clearMfa ? null : (mfaMethods ?? this.mfaMethods),
+  );
 }
 
 class AuthController extends Notifier<AuthState> {
@@ -68,7 +84,11 @@ class AuthController extends Notifier<AuthState> {
     try {
       final result = await _api.login(email: email, password: password);
       if (result.mfaRequired) {
-        state = state.copyWith(busy: false, mfaChallengeId: result.challengeId, mfaMethods: result.methods);
+        state = state.copyWith(
+          busy: false,
+          mfaChallengeId: result.challengeId,
+          mfaMethods: result.methods,
+        );
         return false; // not fully authenticated yet
       }
       await ref.read(kvStoreProvider).setString(sessionKey, result.token);
@@ -81,10 +101,20 @@ class AuthController extends Notifier<AuthState> {
     }
   }
 
-  Future<bool> signup(String fullName, String email, String password) async {
+  Future<bool> signup(
+    String fullName,
+    String email,
+    String password,
+    String phone,
+  ) async {
     state = state.copyWith(busy: true, error: null, clearError: true);
     try {
-      final result = await _api.signup(fullName: fullName, email: email, password: password);
+      final result = await _api.signup(
+        fullName: fullName,
+        email: email,
+        password: password,
+        phone: phone,
+      );
       await ref.read(kvStoreProvider).setString(sessionKey, result.token);
       state = AuthState(user: result.user, restoring: false);
       return true;
@@ -124,6 +154,10 @@ class AuthController extends Notifier<AuthState> {
   }
 }
 
-final authProvider = NotifierProvider<AuthController, AuthState>(AuthController.new);
+final authProvider = NotifierProvider<AuthController, AuthState>(
+  AuthController.new,
+);
 
-final currentUserProvider = Provider<UserProfile?>((ref) => ref.watch(authProvider).user);
+final currentUserProvider = Provider<UserProfile?>(
+  (ref) => ref.watch(authProvider).user,
+);

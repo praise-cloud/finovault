@@ -12,6 +12,7 @@ import '../../theme/tokens.dart';
 import '../../widgets/components.dart';
 import '../../widgets/ui.dart';
 import 'account_detail_screen.dart';
+import 'statement_upload_screen.dart';
 
 class AccountsScreen extends ConsumerStatefulWidget {
   const AccountsScreen({super.key});
@@ -269,6 +270,14 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
                 icon: Icons.add,
                 variant: FvButtonVariant.success,
                 onPressed: _connecting ? null : _openConnectSheet,
+              ),
+              const SizedBox(height: FvSpacing.x3),
+              FvButton(
+                label: 'Upload statement',
+                icon: Icons.upload_file,
+                variant: FvButtonVariant.secondary,
+                onPressed: () =>
+                    pushScreen(context, const StatementUploadScreen()),
               ),
             ],
           );

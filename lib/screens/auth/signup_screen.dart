@@ -15,26 +15,40 @@ class SignupScreen extends ConsumerStatefulWidget {
 }
 
 class _SignupScreenState extends ConsumerState<SignupScreen> {
+  static final _phonePattern = RegExp(r'^[5-7]\d{4,7}$');
   final _name = TextEditingController();
   final _email = TextEditingController();
+  final _phone = TextEditingController();
   final _password = TextEditingController();
+  String? _localError;
 
   @override
   void dispose() {
     _name.dispose();
     _email.dispose();
+    _phone.dispose();
     _password.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
+    setState(() => _localError = null);
     if (_name.text.trim().isEmpty ||
         _email.text.trim().isEmpty ||
-        _password.text.isEmpty)
+        _phone.text.trim().isEmpty ||
+        _password.text.isEmpty) {
+      setState(() => _localError = 'Please fill in every field.');
       return;
+    }
+    if (!_phonePattern.hasMatch(_phone.text.trim())) {
+      setState(
+        () => _localError = 'Phone must be 5–8 digits starting with 5–7.',
+      );
+      return;
+    }
     final ok = await ref
         .read(authProvider.notifier)
-        .signup(_name.text, _email.text, _password.text);
+        .signup(_name.text, _email.text, _phone.text.trim(), _password.text);
     if (!mounted) return;
     if (ok) Navigator.of(context).popUntil((r) => r.isFirst);
   }
@@ -42,7 +56,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     final auth = ref.watch(authProvider);
-    final error = auth.error;
+    final error = auth.error ?? _localError;
     final strength = FvFormat.passwordStrength(_password.text);
     const strengthLabels = ['Too weak', 'Weak', 'Fair', 'Good', 'Strong'];
 
@@ -122,6 +136,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           ),
                           const SizedBox(height: FvSpacing.x4),
                           FvTextField(
+                            label: 'Mobile number',
+                            controller: _phone,
+                            keyboardType: TextInputType.phone,
+                            hint: '5xxxxxxx · used for transfers',
+                          ),
+                          const SizedBox(height: FvSpacing.x4),
+                          FvTextField(
                             label: 'Password',
                             controller: _password,
                             obscure: true,
@@ -194,6 +215,18 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                    const SizedBox(height: FvSpacing.x4),
+                    Text(
+                      'Finovault provides financial coaching and budgeting '
+                      'insights — not regulated investment advice or asset '
+                      'portfolio management.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        height: 1.5,
+                        color: context.fvTextSecondary,
                       ),
                     ),
                   ],
