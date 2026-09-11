@@ -28,7 +28,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   }
 
   Future<void> _submit() async {
-    if (_name.text.trim().isEmpty || _email.text.trim().isEmpty || _password.text.isEmpty) return;
+    if (_name.text.trim().isEmpty ||
+        _email.text.trim().isEmpty ||
+        _password.text.isEmpty)
+      return;
     final ok = await ref
         .read(authProvider.notifier)
         .signup(_name.text, _email.text, _password.text);
@@ -55,20 +58,31 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    OnboardingHeader(onBack: () => Navigator.of(context).maybePop()),
+                    OnboardingHeader(
+                      onBack: () => Navigator.of(context).maybePop(),
+                    ),
                     const SizedBox(height: FvSpacing.x3),
                     Center(
-                      child: Text('Create your account',
-                          style: TextStyle(
-                              fontSize: 38,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: -0.4,
-                              color: context.fvText)),
+                      child: Text(
+                        'Create your account',
+                        style: TextStyle(
+                          fontSize: 38,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.4,
+                          color: context.fvText,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 6),
-                    Text('Step 1 of your journey — next you will pick how you use Finovault.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 14, height: 1.5, color: context.fvTextSecondary)),
+                    Text(
+                      'Step 1 of your journey — next you will pick how you use Finovault.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        height: 1.5,
+                        color: context.fvTextSecondary,
+                      ),
+                    ),
                     const SizedBox(height: FvSpacing.x6),
                     FvCard(
                       padding: const EdgeInsets.all(FvSpacing.x5),
@@ -80,14 +94,25 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                               padding: const EdgeInsets.all(FvSpacing.x3),
                               decoration: BoxDecoration(
                                 color: FvColors.errorBg,
-                                borderRadius: BorderRadius.circular(FvRadius.input),
+                                borderRadius: BorderRadius.circular(
+                                  FvRadius.input,
+                                ),
                               ),
-                              child:
-                                  Text(error, style: const TextStyle(fontSize: 13, color: FvColors.error)),
+                              child: Text(
+                                error,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: context.fvError,
+                                ),
+                              ),
                             ),
                             const SizedBox(height: FvSpacing.x4),
                           ],
-                          FvTextField(label: 'Full name', controller: _name, hint: 'Amina Diallo'),
+                          FvTextField(
+                            label: 'Full name',
+                            controller: _name,
+                            hint: 'Amina Diallo',
+                          ),
                           const SizedBox(height: FvSpacing.x4),
                           FvTextField(
                             label: 'Email',
@@ -96,7 +121,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             hint: 'you@example.com',
                           ),
                           const SizedBox(height: FvSpacing.x4),
-                          FvTextField(label: 'Password', controller: _password, obscure: true),
+                          FvTextField(
+                            label: 'Password',
+                            controller: _password,
+                            obscure: true,
+                          ),
                           if (_password.text.isNotEmpty) ...[
                             const SizedBox(height: FvSpacing.x2),
                             Row(
@@ -108,13 +137,23 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                                       value: strength / 4,
                                       minHeight: 4,
                                       backgroundColor: context.fvBorder,
-                                      color: strength >= 3 ? FvColors.success : (strength == 2 ? FvColors.warning : FvColors.error),
+                                      color: strength >= 3
+                                          ? context.fvSuccess
+                                          : (strength == 2
+                                                ? context.fvWarning
+                                                : context.fvError),
                                     ),
                                   ),
                                 ),
                                 const SizedBox(width: FvSpacing.x2),
-                                Text(strengthLabels[strength],
-                                    style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: context.fvTextSecondary)),
+                                Text(
+                                  strengthLabels[strength],
+                                  style: TextStyle(
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: context.fvTextSecondary,
+                                  ),
+                                ),
                               ],
                             ),
                           ],
@@ -126,16 +165,30 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           ),
                           const SizedBox(height: FvSpacing.x3),
                           TextButton(
-                            onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (_) => const LoginScreen()),
-                              (r) => r.isFirst,
-                            ),
+                            onPressed: () => Navigator.of(context)
+                                .pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                    builder: (_) => const FvLightTheme(
+                                      child: LoginScreen(),
+                                    ),
+                                  ),
+                                  (r) => r.isFirst,
+                                ),
                             child: Text.rich(
                               TextSpan(
                                 text: 'Already have an account? ',
-                                style: TextStyle(color: context.fvTextSecondary, fontSize: 13),
-                                children: const [
-                                  TextSpan(text: 'Log in', style: TextStyle(color: FvColors.primary, fontWeight: FontWeight.w700)),
+                                style: TextStyle(
+                                  color: context.fvTextSecondary,
+                                  fontSize: 13,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: 'Log in',
+                                    style: TextStyle(
+                                      color: context.fvPrimary,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),

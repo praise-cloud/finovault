@@ -7,7 +7,7 @@ import '../mock/api.dart';
 import '../mock/db.dart';
 import '../providers.dart';
 
-enum OnboardingStep { welcome, role, goals, linkAccounts, complete }
+enum OnboardingStep { welcome, role, businessDetails, goals, linkAccounts, complete }
 
 class OnboardingState {
   const OnboardingState({
@@ -16,6 +16,7 @@ class OnboardingState {
     this.scheme = RoleScheme.standard,
     this.financialGoals = const [],
     this.riskTolerance,
+    this.businessProfile,
   });
 
   final OnboardingStep step;
@@ -23,8 +24,11 @@ class OnboardingState {
   final RoleScheme scheme;
   final List<String> financialGoals;
   final RiskTolerance? riskTolerance;
+  final BusinessProfile? businessProfile;
 
   bool get isComplete => step == OnboardingStep.complete;
+
+  bool get needsBusinessDetails => role == PrimaryRole.entrepreneur || role == PrimaryRole.sme;
 
   OnboardingState copyWith({
     OnboardingStep? step,
@@ -32,6 +36,7 @@ class OnboardingState {
     RoleScheme? scheme,
     List<String>? financialGoals,
     RiskTolerance? riskTolerance,
+    BusinessProfile? businessProfile,
   }) =>
       OnboardingState(
         step: step ?? this.step,
@@ -39,6 +44,7 @@ class OnboardingState {
         scheme: scheme ?? this.scheme,
         financialGoals: financialGoals ?? this.financialGoals,
         riskTolerance: riskTolerance ?? this.riskTolerance,
+        businessProfile: businessProfile ?? this.businessProfile,
       );
 
   Map<String, dynamic> toJson() => {
@@ -47,11 +53,13 @@ class OnboardingState {
         'scheme': scheme.name,
         'financialGoals': financialGoals,
         'riskTolerance': riskTolerance?.name,
+        'businessProfile': businessProfile?.toJson(),
       };
 
   static OnboardingState fromJson(Map<String, dynamic>? j) => OnboardingState(
         step: switch (j?['step'] as String?) {
           'role' => OnboardingStep.role,
+          'businessDetails' => OnboardingStep.businessDetails,
           'goals' => OnboardingStep.goals,
           'linkAccounts' || 'link-accounts' => OnboardingStep.linkAccounts,
           'complete' => OnboardingStep.complete,
@@ -72,6 +80,9 @@ class OnboardingState {
           'moderate' => RiskTolerance.moderate,
           _ => null,
         },
+        businessProfile: j?['businessProfile'] == null
+            ? null
+            : BusinessProfile.fromJson(j?['businessProfile'] as Map<String, dynamic>),
       );
 }
 
@@ -101,7 +112,10 @@ class OnboardingController extends Notifier<OnboardingState> {
     state = state.copyWith(
       step: switch (state.step) {
         OnboardingStep.linkAccounts => OnboardingStep.goals,
-        OnboardingStep.goals => OnboardingStep.role,
+        OnboardingStep.goals => state.needsBusinessDetails
+            ? OnboardingStep.businessDetails
+            : OnboardingStep.role,
+        OnboardingStep.businessDetails => OnboardingStep.role,
         OnboardingStep.role => OnboardingStep.welcome,
         _ => state.step,
       },
@@ -110,12 +124,23 @@ class OnboardingController extends Notifier<OnboardingState> {
   }
 
   Future<void> selectRole(PrimaryRole role, {required bool femaleFounder}) async {
+    final nextStep = (role == PrimaryRole.entrepreneur || role == PrimaryRole.sme)
+        ? OnboardingStep.businessDetails
+        : OnboardingStep.goals;
     state = state.copyWith(
-      step: OnboardingStep.goals,
+      step: nextStep,
       role: role,
       scheme: role == PrimaryRole.entrepreneur && femaleFounder
           ? RoleScheme.femaleFounder
           : RoleScheme.standard,
+    );
+    await _persist();
+  }
+
+  Future<void> setBusinessDetails(BusinessProfile profile) async {
+    state = state.copyWith(
+      step: OnboardingStep.goals,
+      businessProfile: profile,
     );
     await _persist();
   }
@@ -146,6 +171,9 @@ class OnboardingController extends Notifier<OnboardingState> {
             onboardingCompleted: true,
           ),
         );
+        if (s.businessProfile != null) {
+          await api.saveBusinessProfile(token, s.businessProfile!);
+        }
       }
     } on FvApiException {
       // Best-effort — local completion still stands.

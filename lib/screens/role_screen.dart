@@ -33,7 +33,9 @@ class _RoleScreenState extends ConsumerState<RoleScreen> {
   void _continue() {
     final role = _selected;
     if (role == null) return;
-    ref.read(onboardingProvider.notifier).selectRole(role, femaleFounder: _femaleFounder);
+    ref
+        .read(onboardingProvider.notifier)
+        .selectRole(role, femaleFounder: _femaleFounder);
   }
 
   @override
@@ -47,28 +49,42 @@ class _RoleScreenState extends ConsumerState<RoleScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(FvSpacing.x6, FvSpacing.x4, FvSpacing.x6, 0),
+                padding: const EdgeInsets.fromLTRB(
+                  FvSpacing.x6,
+                  FvSpacing.x4,
+                  FvSpacing.x6,
+                  0,
+                ),
                 child: OnboardingHeader(
                   onBack: () => ref.read(onboardingProvider.notifier).back(),
                 ),
               ),
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.fromLTRB(FvSpacing.x6, FvSpacing.x8, FvSpacing.x6, FvSpacing.x6),
+                  padding: const EdgeInsets.fromLTRB(
+                    FvSpacing.x6,
+                    FvSpacing.x8,
+                    FvSpacing.x6,
+                    FvSpacing.x6,
+                  ),
                   children: [
                     Text(
                       s.howWillYouUse,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.w800,
                         letterSpacing: -0.4,
-                        color: FvColors.primary,
+                        color: context.fvText,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       s.pickManageMoney,
-                      style: const TextStyle(fontSize: 15, height: 1.5, color: FvColors.primary),
+                      style: TextStyle(
+                        fontSize: 15,
+                        height: 1.5,
+                        color: context.fvTextSecondary,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     for (final role in PrimaryRole.values) ...[
@@ -88,9 +104,9 @@ class _RoleScreenState extends ConsumerState<RoleScreen> {
                     const SizedBox(height: 24),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
+                      child: FvButton(
+                        label: s.continueCta,
                         onPressed: _selected == null ? null : _continue,
-                        child: Text(s.continueCta),
                       ),
                     ),
                   ],
@@ -105,7 +121,12 @@ class _RoleScreenState extends ConsumerState<RoleScreen> {
 }
 
 class _RoleCard extends StatelessWidget {
-  const _RoleCard({required this.s, required this.role, required this.selected, required this.onTap});
+  const _RoleCard({
+    required this.s,
+    required this.role,
+    required this.selected,
+    required this.onTap,
+  });
 
   final AppLocalizations s;
   final PrimaryRole role;
@@ -113,37 +134,36 @@ class _RoleCard extends StatelessWidget {
   final VoidCallback onTap;
 
   String get _label => switch (role) {
-        PrimaryRole.individual => s.roleIndividual,
-        PrimaryRole.freelancer => s.roleFreelancer,
-        PrimaryRole.entrepreneur => s.roleEntrepreneur,
-        PrimaryRole.sme => s.roleSme,
-      };
+    PrimaryRole.individual => s.roleIndividual,
+    PrimaryRole.freelancer => s.roleFreelancer,
+    PrimaryRole.entrepreneur => s.roleEntrepreneur,
+    PrimaryRole.sme => s.roleSme,
+  };
 
   String get _description => switch (role) {
-        PrimaryRole.individual => s.roleIndividualDesc,
-        PrimaryRole.freelancer => s.roleFreelancerDesc,
-        PrimaryRole.entrepreneur => s.roleEntrepreneurDesc,
-        PrimaryRole.sme => s.roleSmeDesc,
-      };
+    PrimaryRole.individual => s.roleIndividualDesc,
+    PrimaryRole.freelancer => s.roleFreelancerDesc,
+    PrimaryRole.entrepreneur => s.roleEntrepreneurDesc,
+    PrimaryRole.sme => s.roleSmeDesc,
+  };
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Material(
-      color: selected ? FvColors.wash : (isDark ? FvColors.surfaceDark : FvColors.surface),
-      borderRadius: BorderRadius.circular(FvRadius.card),
+    final accent = FvColors.roleAccent(role);
+    return Container(
+      decoration: BoxDecoration(
+        color: context.fvSurface,
+        borderRadius: BorderRadius.circular(FvRadius.card),
+        border: Border.all(
+          color: selected ? accent : context.fvCardBorder,
+          width: selected ? FvBorders.width : 1.5,
+        ),
+        boxShadow: const [FvShadows.brutal],
+      ),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(FvRadius.card),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(FvRadius.card),
-            border: Border.all(
-              color: selected ? FvColors.primary : (isDark ? FvColors.primaryBorderDark : FvColors.primaryBorder),
-              width: selected ? 1.5 : 1,
-            ),
-          ),
+        child: Padding(
           padding: const EdgeInsets.all(FvSpacing.x4),
           child: Row(
             children: [
@@ -151,14 +171,10 @@ class _RoleCard extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: selected ? FvColors.primary : FvColors.wash,
+                  color: accent.withValues(alpha: 0.14),
                   borderRadius: BorderRadius.circular(FvRadius.iconContainer),
                 ),
-                child: Icon(
-                  role.icon,
-                  size: 20,
-                  color: selected ? Colors.white : FvColors.primary,
-                ),
+                child: Icon(role.icon, size: 20, color: accent),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -167,16 +183,19 @@ class _RoleCard extends StatelessWidget {
                   children: [
                     Text(
                       _label,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: FvColors.primary,
+                        color: context.fvText,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       _description,
-                      style: const TextStyle(fontSize: 13, color: FvColors.primary),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: context.fvTextSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -187,9 +206,9 @@ class _RoleCard extends StatelessWidget {
                 height: 24,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: selected ? FvColors.primary : Colors.transparent,
+                  color: selected ? accent : Colors.transparent,
                   border: Border.all(
-                    color: selected ? FvColors.primary : (isDark ? FvColors.borderDark : FvColors.border),
+                    color: selected ? accent : context.fvCardBorder,
                   ),
                 ),
                 child: selected
@@ -212,31 +231,40 @@ class _FemaleFounderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: FvColors.wash,
-      borderRadius: BorderRadius.circular(FvRadius.button),
+    return Container(
+      decoration: BoxDecoration(
+        color: context.fvWash,
+        borderRadius: BorderRadius.circular(FvRadius.card),
+        border: Border.all(color: context.fvCardBorder, width: FvBorders.width),
+        boxShadow: const [FvShadows.brutal],
+      ),
       child: InkWell(
         onTap: () => onChanged(!checked),
-        borderRadius: BorderRadius.circular(FvRadius.button),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(FvRadius.button),
-            border: Border.all(color: FvColors.primaryBorder),
+        borderRadius: BorderRadius.circular(FvRadius.card),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: FvSpacing.x4,
+            vertical: FvSpacing.x3,
           ),
-          padding: const EdgeInsets.symmetric(horizontal: FvSpacing.x4, vertical: FvSpacing.x3),
           child: Row(
             children: [
               Checkbox(
                 value: checked,
                 onChanged: (v) => onChanged(v ?? false),
                 activeColor: FvColors.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
                   AppLocalizations.of(context).femaleFounderPath,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: FvColors.primary),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: context.fvText,
+                  ),
                 ),
               ),
             ],

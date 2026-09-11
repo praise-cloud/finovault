@@ -85,3 +85,6 @@ app.*.map.json
 # flutter run logs
 run.log
 run.err
+
+# Release artifacts
+Finovault-release.apk

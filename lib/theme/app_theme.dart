@@ -12,32 +12,33 @@ class FvTheme {
   static ThemeData dark() => _base(Brightness.dark);
 
   static ThemeData _base(Brightness brightness) {
+    final dark = brightness == Brightness.dark;
     final scheme = ColorScheme.fromSeed(
       seedColor: FvColors.primary,
       brightness: brightness,
       primary: FvColors.primary,
       onPrimary: Colors.white,
-      surface: FvColors.surface,
-      onSurface: FvColors.primary,
-      error: FvColors.error,
+      surface: dark ? FvColors.bgDark : FvColors.surface,
+      onSurface: dark ? FvColors.textDark : FvColors.ink,
+      error: dark ? FvColors.errorDark : FvColors.error,
     );
 
     final base = ThemeData(
       useMaterial3: true,
       brightness: brightness,
       colorScheme: scheme,
-      scaffoldBackgroundColor: FvColors.surface,
+      scaffoldBackgroundColor: dark ? FvColors.bgDark : FvColors.bg,
       fontFamily: 'Montserrat',
     );
 
     return base.copyWith(
       textTheme: base.textTheme.apply(
-        bodyColor: FvColors.primary,
-        displayColor: FvColors.primary,
+        bodyColor: dark ? FvColors.textDark : FvColors.ink,
+        displayColor: dark ? FvColors.textDark : FvColors.ink,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: FvColors.surface,
-        foregroundColor: FvColors.primary,
+        backgroundColor: dark ? FvColors.surfaceDark : FvColors.surface,
+        foregroundColor: dark ? FvColors.textDark : FvColors.ink,
         elevation: 0,
         centerTitle: false,
       ),
@@ -46,58 +47,87 @@ class FvTheme {
           backgroundColor: FvColors.primary,
           foregroundColor: Colors.white,
           minimumSize: const Size.fromHeight(52),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(FvRadius.button)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(FvRadius.button),
+          ),
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: FvColors.primary,
-          side: const BorderSide(color: FvColors.primary, width: 2),
+          foregroundColor: dark ? FvColors.accentStrong : FvColors.primary,
+          side: BorderSide(
+            color: dark ? FvColors.accentStrong : FvColors.primary,
+            width: 2,
+          ),
           minimumSize: const Size.fromHeight(52),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(FvRadius.button)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(FvRadius.button),
+          ),
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(foregroundColor: FvColors.primary),
+        style: TextButton.styleFrom(
+          foregroundColor: dark ? FvColors.accentStrong : FvColors.primary,
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: FvColors.surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        fillColor: dark ? FvColors.surfaceDark : FvColors.surface,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(FvRadius.input),
-          borderSide: const BorderSide(color: FvColors.border),
+          borderSide: BorderSide(
+            color: dark ? FvColors.borderDark : FvColors.ink,
+            width: FvBorders.width,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(FvRadius.input),
-          borderSide: const BorderSide(color: FvColors.border),
+          borderSide: BorderSide(
+            color: dark ? FvColors.borderDark : FvColors.ink,
+            width: FvBorders.width,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(FvRadius.input),
-          borderSide: const BorderSide(color: FvColors.primary, width: 2),
+          borderSide: BorderSide(
+            color: dark ? FvColors.accentStrong : FvColors.primary,
+            width: FvBorders.width,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(FvRadius.input),
-          borderSide: const BorderSide(color: FvColors.error),
+          borderSide: BorderSide(
+            color: dark ? FvColors.errorDark : FvColors.error,
+            width: FvBorders.width,
+          ),
         ),
       ),
       dividerTheme: DividerThemeData(
-        color: FvColors.border,
+        color: dark ? FvColors.borderDark : FvColors.border,
       ),
       cardTheme: CardThemeData(
-        color: FvColors.surface,
+        color: dark ? FvColors.surfaceDark : FvColors.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(FvRadius.card),
-          side: const BorderSide(color: FvColors.primaryBorder),
+          side: BorderSide(
+            color: dark ? FvColors.textDark : FvColors.ink,
+            width: FvBorders.width,
+          ),
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: FvColors.surface,
-        indicatorColor: FvColors.wash,
-        indicatorShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: dark ? FvColors.surfaceDark : FvColors.surface,
+        indicatorColor: dark ? FvColors.washDark : FvColors.wash,
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(FvRadius.card),
+        ),
       ),
     );
   }

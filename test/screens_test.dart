@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:finovault_flutter/core/models.dart';
@@ -60,8 +61,11 @@ void main() {
 
   group('shell + tabs', () {
     testWidgets('HomeShell', (tester) async {
-      await pumpScreen(tester, const HomeShell());
+      final container = await makeLoggedInContainer();
+      await pumpScreen(tester, const HomeShell(), container: container);
       expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+      container.dispose();
     });
     testWidgets('InsightsTab', (tester) async {
       await pumpScreen(tester, const InsightsTab());
@@ -70,10 +74,23 @@ void main() {
     testWidgets('VaultTab', (tester) async {
       await pumpScreen(tester, const VaultTab());
       expect(tester.takeException(), isNull);
+      // docs 5.1: total wealth hero, savings goals section, pension status card
+      expect(find.text('TOTAL WEALTH'), findsOneWidget);
+      expect(find.text('SAVINGS GOALS'), findsWidgets);
+      expect(find.textContaining('Emergency Fund'), findsOneWidget);
+      expect(find.textContaining('Retirement Pension'), findsOneWidget);
+      expect(find.text('Manage pension'), findsOneWidget);
     });
     testWidgets('PayTab', (tester) async {
       await pumpScreen(tester, const PayTab());
       expect(tester.takeException(), isNull);
+      // docs 6.1: transfer/pay-bill CTAs, recent payees, history preview
+      expect(find.text('Transfer'), findsWidgets);
+      expect(find.text('Pay a bill'), findsWidgets);
+      expect(find.text('RECENT PAYEES'), findsOneWidget);
+      expect(find.text('Jean-Paul R.'), findsOneWidget);
+      expect(find.text('PAYMENT HISTORY'), findsOneWidget);
+      expect(find.textContaining('CEB'), findsWidgets);
     });
     testWidgets('ProfileTab', (tester) async {
       await pumpScreen(tester, const ProfileTab());
@@ -129,7 +146,11 @@ void main() {
         externalRef: 'FV1',
         idempotencyKey: 'k1',
       );
-      await pumpScreen(tester, TransferReceiptScreen(transfer: transfer), container: c);
+      await pumpScreen(
+        tester,
+        TransferReceiptScreen(transfer: transfer),
+        container: c,
+      );
       expect(tester.takeException(), isNull);
     });
     testWidgets('GoalDetailScreen', (tester) async {

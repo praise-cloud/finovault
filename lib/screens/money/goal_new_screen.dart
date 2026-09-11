@@ -51,6 +51,7 @@ class _GoalNewScreenState extends ConsumerState<GoalNewScreen> {
           const SizedBox(height: FvSpacing.x6),
           FvButton(
             label: 'Create goal',
+            variant: FvButtonVariant.success,
             onPressed: () async {
               final api = ref.read(apiProvider);
               final token = ref.read(kvStoreProvider).getString(sessionKey);

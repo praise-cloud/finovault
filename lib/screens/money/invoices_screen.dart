@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../../core/format.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/models.dart';
@@ -25,15 +27,27 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
 
     return ScreenPage(
       title: AppLocalizations.of(context).invoices,
-      actions: [IconButton(icon: const Icon(Icons.add, color: FvColors.primary), onPressed: _add)],
+      actions: [
+        IconButton(
+          icon: Icon(Icons.add, color: context.fvPrimary),
+          onPressed: _add,
+        ),
+      ],
       child: invoices.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Could not load: $e')),
         data: (list) {
-          final unpaid = list.where((i) => i.status != InvoiceStatus.paid).toList();
+          final unpaid = list
+              .where((i) => i.status != InvoiceStatus.paid)
+              .toList();
           final total = unpaid.fold(0.0, (s, i) => s + i.amount);
           return list.isEmpty
-              ? const Center(child: EmptyState(title: 'No invoices yet', body: 'Track what clients owe you here.'))
+              ? const Center(
+                  child: EmptyState(
+                    title: 'No invoices yet',
+                    body: 'Track what clients owe you here.',
+                  ),
+                )
               : ListView(
                   padding: const EdgeInsets.all(FvSpacing.x5),
                   children: [
@@ -43,13 +57,24 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Unpaid total', style: TextStyle(fontSize: 13, color: context.fvTextSecondary)),
+                            Text(
+                              'Unpaid total',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: context.fvTextSecondary,
+                              ),
+                            ),
                             const SizedBox(height: 4),
-                            MoneyText(total, size: MoneySize.lg, currency: 'MUR'),
+                            MoneyText(
+                              total,
+                              size: MoneySize.lg,
+                              currency: 'MUR',
+                            ),
                           ],
                         ),
                       ),
-                    for (final inv in list) _invoiceRow(invoice: inv, language: language),
+                    for (final inv in list)
+                      _invoiceRow(invoice: inv, language: language),
                   ],
                 );
         },
@@ -58,9 +83,11 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
   }
 
   Widget _invoiceRow({required Invoice invoice, required String language}) {
-    final color = invoice.status == InvoiceStatus.overdue
-        ? FvColors.error
-        : (invoice.status == InvoiceStatus.paid ? FvColors.success : FvColors.warning);
+    final color = switch (invoice.status) {
+      InvoiceStatus.overdue => context.fvError,
+      InvoiceStatus.paid => context.fvSuccess,
+      InvoiceStatus.sent || InvoiceStatus.draft => context.fvWarning,
+    };
     return FvCard(
       margin: const EdgeInsets.only(bottom: FvSpacing.x3),
       child: Row(
@@ -69,9 +96,22 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(invoice.clientName, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: context.fvText)),
+                Text(
+                  invoice.clientName,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: context.fvText,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text('Due ${FvFormat.formatDate(invoice.dueDate, language: language)}', style: TextStyle(fontSize: 12.5, color: context.fvTextSecondary)),
+                Text(
+                  'Due ${FvFormat.formatDate(invoice.dueDate, language: language)}',
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    color: context.fvTextSecondary,
+                  ),
+                ),
               ],
             ),
           ),
@@ -87,19 +127,29 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                   StatusBadge(
                     label: invoice.status == InvoiceStatus.paid
                         ? 'Paid'
-                        : (invoice.status == InvoiceStatus.overdue ? 'Overdue' : 'Sent'),
+                        : (invoice.status == InvoiceStatus.overdue
+                              ? 'Overdue'
+                              : 'Sent'),
                     foreground: color,
-                    background: color == FvColors.success
-                        ? FvColors.successBg
-                        : (color == FvColors.error ? FvColors.errorBg : FvColors.warningBg),
+                    background: context.fvWash,
                   ),
                   if (invoice.status != InvoiceStatus.paid)
                     IconButton(
-                      icon: const Icon(Icons.check, color: FvColors.success, size: 18),
+                      icon: Icon(
+                        Icons.check,
+                        color: context.fvSuccess,
+                        size: 18,
+                      ),
                       onPressed: () async {
                         final api = ref.read(apiProvider);
-                        final token = ref.read(kvStoreProvider).getString(sessionKey);
-                        await api.updateInvoiceStatus(token, invoiceId: invoice.id, status: InvoiceStatus.paid);
+                        final token = ref
+                            .read(kvStoreProvider)
+                            .getString(sessionKey);
+                        await api.updateInvoiceStatus(
+                          token,
+                          invoiceId: invoice.id,
+                          status: InvoiceStatus.paid,
+                        );
                         ref.invalidate(invoicesProvider);
                       },
                     ),
@@ -118,29 +168,53 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: FvColors.surface,
+      backgroundColor: context.fvSurface,
       builder: (sheet) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(sheet).viewInsets.bottom),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(sheet).viewInsets.bottom,
+        ),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(FvSpacing.x5),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Center(child: Text('New invoice', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700))),
+              const Center(
+                child: Text(
+                  'New invoice',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                ),
+              ),
               const SizedBox(height: FvSpacing.x4),
-              FvTextField(label: 'Client name', controller: client, hint: 'Nova Studio'),
+              FvTextField(
+                label: 'Client name',
+                controller: client,
+                hint: 'Nova Studio',
+              ),
               const SizedBox(height: FvSpacing.x4),
-              FvTextField(label: 'Amount', controller: amount, keyboardType: const TextInputType.numberWithOptions(decimal: true)),
+              FvTextField(
+                label: 'Amount',
+                controller: amount,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+              ),
               const SizedBox(height: FvSpacing.x5),
               FvButton(
                 label: 'Add invoice',
+                variant: FvButtonVariant.success,
                 onPressed: () async {
                   final api = ref.read(apiProvider);
                   final token = ref.read(kvStoreProvider).getString(sessionKey);
-                  final value = double.tryParse(amount.text.replaceAll(',', '')) ?? 0;
+                  final value =
+                      double.tryParse(amount.text.replaceAll(',', '')) ?? 0;
                   if (client.text.isEmpty || value <= 0) return;
-                  await api.createInvoice(token, clientName: client.text, amount: value, dueDate: DateTime.now().add(const Duration(days: 14)));
+                  await api.createInvoice(
+                    token,
+                    clientName: client.text,
+                    amount: value,
+                    dueDate: DateTime.now().add(const Duration(days: 14)),
+                  );
                   ref.invalidate(invoicesProvider);
                   if (sheet.mounted) Navigator.of(sheet).pop();
                 },
@@ -152,6 +226,3 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     );
   }
 }
-
-
-

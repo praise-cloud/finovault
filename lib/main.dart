@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'l10n/app_localizations.dart';
+import 'theme/app_theme.dart';
 
 import 'core/providers.dart';
 import 'core/state/auth.dart';
@@ -13,19 +14,14 @@ import 'core/state/preferences.dart';
 import 'core/mock/db.dart';
 import 'core/state/biometric.dart';
 import 'screens/home_shell.dart';
+import 'screens/onboarding/business_details_screen.dart';
 import 'screens/onboarding/goals_screen.dart';
 import 'screens/onboarding/link_accounts_screen.dart';
 import 'screens/role_screen.dart';
 import 'screens/welcome_screen.dart';
-import 'theme/app_theme.dart';
 import 'theme/tokens.dart';
 import 'widgets/ui.dart';
 import 'widgets/vault_mark.dart';
-
-/// Renders a subtree with the light theme so the pre-auth entry screens stay
-/// white with brand-blue accents even when the device is in dark mode. The
-/// rest of the app (home, money) keeps following the system theme.
-Widget _light(Widget child) => Theme(data: FvTheme.light(), child: child);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,15 +30,21 @@ Future<void> main() async {
   final db = MockDb(store: store);
   await db.hydrate();
 
-  runApp(ProviderScope(
-    overrides: [
-      kvStoreProvider.overrideWithValue(store),
-      mockDbProvider.overrideWithValue(db),
-      initialPreferencesProvider.overrideWithValue(loadInitialPreferences(store)),
-      initialOnboardingProvider.overrideWithValue(loadInitialOnboarding(store)),
-    ],
-    child: const FinovaultApp(),
-  ));
+  runApp(
+    ProviderScope(
+      overrides: [
+        kvStoreProvider.overrideWithValue(store),
+        mockDbProvider.overrideWithValue(db),
+        initialPreferencesProvider.overrideWithValue(
+          loadInitialPreferences(store),
+        ),
+        initialOnboardingProvider.overrideWithValue(
+          loadInitialOnboarding(store),
+        ),
+      ],
+      child: const FinovaultApp(),
+    ),
+  );
 }
 
 class SharedPrefsStore extends KvStore {
@@ -52,7 +54,8 @@ class SharedPrefsStore extends KvStore {
   @override
   String? getString(String key) => _prefs.getString(key);
   @override
-  Future<void> setString(String key, String value) => _prefs.setString(key, value);
+  Future<void> setString(String key, String value) =>
+      _prefs.setString(key, value);
   @override
   Future<void> remove(String key) => _prefs.remove(key);
 }
@@ -103,40 +106,49 @@ class RootGate extends ConsumerWidget {
     final onboarding = ref.watch(onboardingProvider);
 
     if (auth.restoring) {
-      return _light(
-        Scaffold(
-          body: Container(
-            decoration: context.fvOnboardingDecoration,
-            child: const Center(child: VaultMark(size: 64)),
-          ),
+      return Scaffold(
+        body: Container(
+          decoration: context.fvOnboardingDecoration,
+          child: const Center(child: VaultMark(size: 64)),
         ),
       );
     }
 
     if (!auth.isAuthenticated) {
-      if (onboarding.step == OnboardingStep.welcome || onboarding.step == OnboardingStep.complete) {
-        return _light(const WelcomeScreen());
+      if (onboarding.step == OnboardingStep.welcome ||
+          onboarding.step == OnboardingStep.complete) {
+        return const FvLightTheme(child: WelcomeScreen());
       }
       return switch (onboarding.step) {
-        OnboardingStep.role => _light(const RoleScreen()),
-        OnboardingStep.goals => _light(const GoalsScreen()),
-        OnboardingStep.linkAccounts => _light(const LinkAccountsScreen()),
-        _ => _light(const WelcomeScreen()),
+        OnboardingStep.role => const FvLightTheme(child: RoleScreen()),
+        OnboardingStep.businessDetails => const FvLightTheme(
+          child: BusinessDetailsScreen(),
+        ),
+        OnboardingStep.goals => const FvLightTheme(child: GoalsScreen()),
+        OnboardingStep.linkAccounts => const FvLightTheme(
+          child: LinkAccountsScreen(),
+        ),
+        _ => const FvLightTheme(child: WelcomeScreen()),
       };
     }
 
     if (!onboarding.isComplete) {
       return switch (onboarding.step) {
-        OnboardingStep.role => _light(const RoleScreen()),
-        OnboardingStep.goals => _light(const GoalsScreen()),
-        OnboardingStep.linkAccounts => _light(const LinkAccountsScreen()),
+        OnboardingStep.role => const FvLightTheme(child: RoleScreen()),
+        OnboardingStep.businessDetails => const FvLightTheme(
+          child: BusinessDetailsScreen(),
+        ),
+        OnboardingStep.goals => const FvLightTheme(child: GoalsScreen()),
+        OnboardingStep.linkAccounts => const FvLightTheme(
+          child: LinkAccountsScreen(),
+        ),
         _ => const HomeShell(),
       };
     }
 
     final biometricEnabled = ref.watch(preferencesProvider).biometricEnabled;
     if (biometricEnabled && !ref.watch(biometricSessionUnlockedProvider)) {
-      return _light(const BiometricGate());
+      return const FvLightTheme(child: BiometricGate());
     }
 
     return const HomeShell();
@@ -176,9 +188,22 @@ class _BiometricGateState extends ConsumerState<BiometricGate> {
               children: [
                 const VaultMark(size: 72),
                 const SizedBox(height: FvSpacing.x5),
-                Text(s.biometricUnlock, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+                Text(
+                  s.biometricUnlock,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: FvSpacing.x2),
-                Text(s.biometricPrompt, style: const TextStyle(fontSize: 13, color: FvColors.textSecondary), textAlign: TextAlign.center),
+                Text(
+                  s.biometricPrompt,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: context.fvTextSecondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: FvSpacing.x5),
                 FilledButton.icon(
                   onPressed: _busy ? null : _unlock,

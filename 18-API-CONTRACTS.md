@@ -57,6 +57,10 @@ to verify the app end-to-end without a real backend.
 | `validation`   | invalid args                                         |
 | `not_found`    | referenced entity (account/goal/invoice) missing     |
 | `network`      | client-side: timeout / unreachable (not from BFF)    |
+| `incorrect_password` | `changePassword` current password mismatch     |
+| `invalid_reset_token` | `resetPassword` token unknown or expired       |
+| `invalid_code` | 2FA TOTP/backup/OTP code was wrong                    |
+| `invalid_challenge` | 2FA challenge unknown or expired                 |
 | `error`        | generic server failure                              |
 
 ## RPC method catalog
@@ -75,6 +79,62 @@ to verify the app end-to-end without a real backend.
 | `getPreferences`| —                                                                | `UserPreferences`  |
 | `savePreferences`| `patch: UserPreferences`                                        | `UserPreferences`  |
 | `setRole`       | `primaryRole: PrimaryRole`, `scheme: RoleScheme`                | `UserProfile`      |
+| `uploadAvatar`  | `mimeType` (must start with `image/`), `data` (base64)          | `avatarUrl` (string) |
+| `changePassword`| `currentPassword`, `newPassword`                                | `SecurityOverview` |
+| `requestPasswordReset` | `email`                                                   | `void`             |
+| `resetPassword` | `resetToken`, `newPassword`                                     | `void`             |
+
+### Two-factor authentication (2FA)
+
+| method                      | args                        | returns              |
+| --------------------------- | --------------------------- | -------------------- |
+| `login`*                    | `email`, `password`         | `AuthResult`         |
+| `beginTwoFactorSetup`       | —                           | `TwoFactorSetup`     |
+| `verifyTwoFactorSetup`      | `code`                      | `SecurityOverview`   |
+| `disableTwoFactor`          | `code`                      | `SecurityOverview`   |
+| `resendOtp`                 | `challengeId`, `method`     | `void`               |
+| `verifyTwoFactorChallenge`  | `challengeId`, `code`       | `AuthResult`         |
+
+> `*` **`login` breaking change (Phase 2):** when 2FA is enabled, `login` does
+> **not** return a token. Instead it returns `{ mfaRequired: true, challengeId,
+> methods, user }` with an empty `token`. The client then calls
+> `verifyTwoFactorChallenge` with the 6-digit code (TOTP, backup code, or email
+> OTP) to obtain the real session token.
+
+- **`TwoFactorSetup`** shape: `{ secret, qrUrl, backupCodes }` — `qrUrl` is an
+  `otpauth://` URI the app renders as a QR code; `backupCodes` is an array of 8
+  single-use codes.
+- **`beginTwoFactorSetup`** — starts setup for an authenticated user: generates
+  a TOTP secret + QR URL and 8 backup codes, but does **not** enable 2FA yet.
+- **`verifyTwoFactorSetup`** — verifies the user entered a valid TOTP code
+  (accepts a ±30s window), then enables 2FA and bumps the security score.
+- **`disableTwoFactor`** — requires a valid code (TOTP or unused backup code);
+  on success removes the secret + backup codes and marks 2FA off.
+- **`resendOtp`** — for `method: 'email'`, re-issues a one-time code. TOTP needs
+  no resend. Email OTP is the launch fallback; SMS arrives post-launch via Twilio.
+- **Methods** offered in a login challenge are listed in `methods` (e.g.
+  `["totp","email"]`).
+- Error codes: `invalid_code` (bad code), `invalid_challenge` (expired/unknown
+  challenge).
+
+### Profile & password notes
+
+- **`uploadAvatar`** — the app resizes images to ≤ 512px, JPEG, quality 85 and
+  sends the base64 payload over RPC. The BFF responds with a URL: the in-memory
+  mock returns an inline `data:` URI; the real backend uploads to Supabase
+  Storage and returns its public URL.
+- **`changePassword`** — requires the *current* password; on mismatch the BFF
+  returns `incorrect_password`. On success it bumps the security score (cap 99),
+  records a `Password changed` security event, sets `lastPasswordChange`, and
+  invalidates all other sessions. When 2FA is enabled the app first re-authenticates
+  via the 2FA challenge (see Phase 2).
+- **`requestPasswordReset`** — never reveals whether an email exists (identical
+  response for unknown accounts). The mock stores the issued token in
+  `MockDb.lastResetToken` (demo only, printed in the forgot-password screen).
+- **`resetPassword`** — accepts a token valid for 30 minutes, then invalidates
+  all sessions for the account. Unknown or expired tokens return
+  `invalid_reset_token`. Email stays immutable; the reset flow only changes the
+  password.
 
 ### Accounts & transactions
 | method             | args                                                            | returns         |

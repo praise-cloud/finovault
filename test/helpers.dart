@@ -13,18 +13,24 @@ import 'package:finovault_flutter/l10n/app_localizations.dart';
 
 /// Logged-out container mirroring the app's provider wiring against the
 /// in-memory mock backend.
-Future<ProviderContainer> makeContainer({Duration latency = Duration.zero}) async {
+Future<ProviderContainer> makeContainer({
+  Duration latency = Duration.zero,
+}) async {
   final store = MemoryStore();
   final db = MockDb(store: store, latency: 0);
   await db.hydrate();
-  return ProviderContainer(overrides: [
-    kvStoreProvider.overrideWithValue(store),
-    mockDbProvider.overrideWithValue(db),
-    apiLatencyProvider.overrideWith((ref) => latency),
-    notificationServiceProvider.overrideWithValue(DebugNotificationService()),
-    initialPreferencesProvider.overrideWithValue(loadInitialPreferences(store)),
-    initialOnboardingProvider.overrideWithValue(loadInitialOnboarding(store)),
-  ]);
+  return ProviderContainer(
+    overrides: [
+      kvStoreProvider.overrideWithValue(store),
+      mockDbProvider.overrideWithValue(db),
+      apiLatencyProvider.overrideWith((ref) => latency),
+      notificationServiceProvider.overrideWithValue(DebugNotificationService()),
+      initialPreferencesProvider.overrideWithValue(
+        loadInitialPreferences(store),
+      ),
+      initialOnboardingProvider.overrideWithValue(loadInitialOnboarding(store)),
+    ],
+  );
 }
 
 /// Container with the demo user authenticated (drives money/persona screens).
@@ -43,7 +49,11 @@ Future<void> pumpScreen(
   bool loggedIn = true,
   ThemeData? theme,
 }) async {
-  container ??= loggedIn ? await makeLoggedInContainer() : await makeContainer();
+  final ownsContainer = container == null;
+  container ??= loggedIn
+      ? await makeLoggedInContainer()
+      : await makeContainer();
+  if (ownsContainer) addTearDown(container.dispose);
   tester.view.physicalSize = const Size(393, 852);
   tester.view.devicePixelRatio = 1;
   await tester.pumpWidget(

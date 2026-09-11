@@ -70,43 +70,102 @@ class _PensionSetupScreenState extends ConsumerState<PensionSetupScreen> {
       child: ListView(
         padding: const EdgeInsets.all(FvSpacing.x5),
         children: [
-          const Text('Short-term pot', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+          const Text(
+            'Short-term pot',
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 6),
-          FvTextField(label: 'Target (MUR)', controller: _shortTarget, keyboardType: const TextInputType.numberWithOptions(decimal: true)),
+          FvTextField(
+            label: 'Target (MUR)',
+            controller: _shortTarget,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          ),
           const SizedBox(height: FvSpacing.x4),
-          const Text('Long-term pot', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+          const Text(
+            'Long-term pot',
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 6),
-          FvTextField(label: 'Target (MUR)', controller: _longTarget, keyboardType: const TextInputType.numberWithOptions(decimal: true)),
+          FvTextField(
+            label: 'Target (MUR)',
+            controller: _longTarget,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          ),
           const SizedBox(height: FvSpacing.x4),
-          FvTextField(label: 'Contribution per period (MUR)', controller: _amount, keyboardType: const TextInputType.numberWithOptions(decimal: true)),
+          FvTextField(
+            label: 'Contribution per period (MUR)',
+            controller: _amount,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          ),
           const SizedBox(height: FvSpacing.x4),
-          const Text('Frequency', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+          const Text(
+            'Frequency',
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 6),
           DropdownButtonFormField<PensionFrequency>(
             initialValue: _frequency,
             items: PensionFrequency.values
-                .map((f) => DropdownMenuItem(value: f, child: Text(f.name[0].toUpperCase() + f.name.substring(1))))
+                .map(
+                  (f) => DropdownMenuItem(
+                    value: f,
+                    child: Text(f.name[0].toUpperCase() + f.name.substring(1)),
+                  ),
+                )
                 .toList(),
             onChanged: (v) => setState(() => _frequency = v!),
             decoration: InputDecoration(
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(FvRadius.input)),
-              contentPadding: const EdgeInsets.symmetric(horizontal: FvSpacing.x4, vertical: FvSpacing.x3),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(FvRadius.input),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: FvSpacing.x4,
+                vertical: FvSpacing.x3,
+              ),
             ),
           ),
           const SizedBox(height: FvSpacing.x4),
           Row(
             children: [
-              Expanded(child: FvTextField(label: 'Return %', controller: _return, keyboardType: const TextInputType.numberWithOptions(decimal: true))),
+              Expanded(
+                child: FvTextField(
+                  label: 'Return %',
+                  controller: _return,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                ),
+              ),
               const SizedBox(width: FvSpacing.x3),
-              Expanded(child: FvTextField(label: 'Inflation %', controller: _inflation, keyboardType: const TextInputType.numberWithOptions(decimal: true))),
+              Expanded(
+                child: FvTextField(
+                  label: 'Inflation %',
+                  controller: _inflation,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: FvSpacing.x4),
           Row(
             children: [
-              Expanded(child: FvTextField(label: 'Current age', controller: _age, keyboardType: TextInputType.number)),
+              Expanded(
+                child: FvTextField(
+                  label: 'Current age',
+                  controller: _age,
+                  keyboardType: TextInputType.number,
+                ),
+              ),
               const SizedBox(width: FvSpacing.x3),
-              Expanded(child: FvTextField(label: 'Retirement age', controller: _retire, keyboardType: TextInputType.number)),
+              Expanded(
+                child: FvTextField(
+                  label: 'Retirement age',
+                  controller: _retire,
+                  keyboardType: TextInputType.number,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: FvSpacing.x4),
@@ -114,12 +173,13 @@ class _PensionSetupScreenState extends ConsumerState<PensionSetupScreen> {
             contentPadding: EdgeInsets.zero,
             title: const Text('Auto-debit contributions'),
             value: _autoDebit,
-            activeThumbColor: FvColors.primary,
+            activeThumbColor: context.fvPrimary,
             onChanged: (v) => setState(() => _autoDebit = v),
           ),
           const SizedBox(height: FvSpacing.x5),
           FvButton(
             label: isEdit ? 'Save changes' : 'Create plan',
+            variant: FvButtonVariant.success,
             onPressed: () async {
               final api = ref.read(apiProvider);
               final token = ref.read(kvStoreProvider).getString(sessionKey);
@@ -129,8 +189,10 @@ class _PensionSetupScreenState extends ConsumerState<PensionSetupScreen> {
                 longPotTarget: _num(_longTarget),
                 frequency: _frequency,
                 contributionAmount: _num(_amount),
-                currentShortPot: ref.read(pensionPlanProvider).value?.currentShortPot ?? 0,
-                currentLongPot: ref.read(pensionPlanProvider).value?.currentLongPot ?? 0,
+                currentShortPot:
+                    ref.read(pensionPlanProvider).value?.currentShortPot ?? 0,
+                currentLongPot:
+                    ref.read(pensionPlanProvider).value?.currentLongPot ?? 0,
                 assumedReturnPct: _num(_return, 7),
                 inflationPct: _num(_inflation, 4),
                 currentAge: _num(_age, 30).round(),

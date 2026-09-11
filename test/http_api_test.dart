@@ -104,4 +104,68 @@ void main() {
       throwsA(isA<FvApiException>().having((e) => e.code, 'code', 'network')),
     );
   });
+
+  test('uploadAvatar posts mimeType + base64 data and returns the URL', () async {
+    final client = MockClient((request) async {
+      final body = jsonDecode(request.body) as Map<String, dynamic>;
+      expect(body['method'], 'uploadAvatar');
+      expect(body['args']['mimeType'], 'image/png');
+      expect(body['args']['data'], 'aGVsbG8=');
+      return http.Response(
+        jsonEncode({'data': 'data:image/png;base64,aGVsbG8=', 'error': null}),
+        200,
+      );
+    });
+    final api = HttpFinovaultApi(baseUrl: 'http://test', client: client);
+    final url = await api.uploadAvatar('tok', mimeType: 'image/png', data: 'aGVsbG8=');
+    expect(url, startsWith('data:image/png;base64,'));
+  });
+
+  test('changePassword parses the returned security overview', () async {
+    final client = MockClient((request) async => http.Response(
+          jsonEncode({
+            'data': {'score': 80, 'twoFactorEnabled': false, 'lastPasswordChange': '2026-09-01T00:00:00.000'},
+            'error': null,
+          }),
+          200,
+        ));
+    final api = HttpFinovaultApi(baseUrl: 'http://test', client: client);
+    final overview = await api.changePassword('tok',
+        currentPassword: 'old', newPassword: 'NewPassword123!');
+    expect(overview.score, 80);
+    expect(overview.lastPasswordChange, isNotNull);
+  });
+
+  test('requestPasswordReset posts the email', () async {
+    final client = MockClient((request) async {
+      final body = jsonDecode(request.body) as Map<String, dynamic>;
+      expect(body['args']['email'], 'a@b.com');
+      return http.Response(jsonEncode({'data': null, 'error': null}), 200);
+    });
+    final api = HttpFinovaultApi(baseUrl: 'http://test', client: client);
+    await api.requestPasswordReset('a@b.com');
+  });
+
+  test('resetPassword posts token + new password and maps errors', () async {
+    final okClient = MockClient((request) async {
+      final body = jsonDecode(request.body) as Map<String, dynamic>;
+      expect(body['args']['resetToken'], 'tok1');
+      return http.Response(jsonEncode({'data': null, 'error': null}), 200);
+    });
+    final okApi = HttpFinovaultApi(baseUrl: 'http://test', client: okClient);
+    await okApi.resetPassword('tok1', 'NewPassword123!');
+
+    final errClient = MockClient((request) async => http.Response(
+          jsonEncode({
+            'data': null,
+            'error': {'code': 'invalid_reset_token', 'message': 'expired'},
+          }),
+          200,
+        ));
+    final errApi = HttpFinovaultApi(baseUrl: 'http://test', client: errClient);
+    expect(
+      () => errApi.resetPassword('tok1', 'NewPassword123!'),
+      throwsA(isA<FvApiException>().having((e) => e.code, 'code', 'invalid_reset_token')),
+    );
+  });
 }

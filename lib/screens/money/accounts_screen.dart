@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+
 import '../../l10n/app_localizations.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/banking/connector.dart';
 import '../../core/models.dart';
 import '../../core/providers.dart';
 import '../../core/state/money.dart';
 import '../../theme/tokens.dart';
+import '../../widgets/components.dart';
 import '../../widgets/ui.dart';
+import 'account_detail_screen.dart';
 
 class AccountsScreen extends ConsumerStatefulWidget {
   const AccountsScreen({super.key});
@@ -16,38 +21,152 @@ class AccountsScreen extends ConsumerStatefulWidget {
 }
 
 class _AccountsScreenState extends ConsumerState<AccountsScreen> {
-  final _name = TextEditingController();
-  final _institution = TextEditingController();
-  final _balance = TextEditingController();
+  bool _connecting = false;
 
-  @override
-  void dispose() {
-    _name.dispose();
-    _institution.dispose();
-    _balance.dispose();
-    super.dispose();
-  }
-
-  IconData _icon(AccountType t) => switch (t) {
-        AccountType.bank => Icons.account_balance_outlined,
-        AccountType.mobileMoney => Icons.smartphone_outlined,
-        AccountType.cash => Icons.wallet_outlined,
-        _ => Icons.account_balance_wallet_outlined,
-      };
-
-  Future<void> _add() async {
+  Future<void> _connect(Institution inst, BuildContext sheet) async {
+    final navigator = Navigator.of(sheet);
+    final s = AppLocalizations.of(context);
     final api = ref.read(apiProvider);
     final token = ref.read(kvStoreProvider).getString(sessionKey);
-    await showModalBottomSheet(
+    final connector = ref.read(bankConnectorProvider);
+    if (navigator.canPop()) navigator.pop();
+    setState(() => _connecting = true);
+    try {
+      final plan = await connector.planFor(inst.id, inst.type);
+      final acc = await api.linkAccount(
+        token,
+        name: inst.name,
+        type: inst.type,
+        balance: plan.startingBalance,
+        institution: inst.name,
+      );
+      for (final seed in plan.history) {
+        await api.createTransaction(
+          token,
+          accountId: acc.id,
+          amount: seed.amount,
+          direction: seed.direction,
+          category: seed.category,
+          merchantName: seed.merchantName,
+        );
+      }
+      ref.invalidate(accountsProvider);
+      ref.invalidate(transactionsProvider);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              s.importedTransactions(plan.history.length, inst.name),
+            ),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _connecting = false);
+    }
+  }
+
+  void _openConnectSheet() {
+    final s = AppLocalizations.of(context);
+    final connector = ref.read(bankConnectorProvider);
+    showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: FvColors.surface,
-      builder: (sheet) => _LinkSheet(
-        onLink: (name, type, institution, balance) async {
-          await api.linkAccount(token, name: name, type: type, institution: institution, balance: balance);
-          ref.invalidate(accountsProvider);
-          if (sheet.mounted) Navigator.of(sheet).pop();
-        },
+      backgroundColor: context.fvSurface,
+      builder: (sheet) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(FvSpacing.x5),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                s.connectBankTitle.toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.6,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                s.connectBankBody,
+                style: TextStyle(fontSize: 13, color: context.fvTextSecondary),
+              ),
+              const SizedBox(height: FvSpacing.x4),
+              FutureBuilder<List<Institution>>(
+                future: connector.institutions(),
+                builder: (context, snap) {
+                  if (!snap.hasData)
+                    return const FvShimmer(height: 240, radius: FvRadius.card);
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: snap.data!.length,
+                    separatorBuilder: (_, _) =>
+                        const SizedBox(height: FvSpacing.x2),
+                    itemBuilder: (_, i) {
+                      final inst = snap.data![i];
+                      return FvCard(
+                        onTap: _connecting ? null : () => _connect(inst, sheet),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: FvColors.primary.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(
+                                  FvRadius.iconContainer,
+                                ),
+                              ),
+                              child: Icon(
+                                inst.type == AccountType.mobileMoney
+                                    ? Icons.smartphone
+                                    : Icons.account_balance,
+                                size: 20,
+                                color: context.fvPrimary,
+                              ),
+                            ),
+                            const SizedBox(width: FvSpacing.x3),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    inst.name,
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700,
+                                      color: context.fvText,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    inst.blurb ?? inst.type.name,
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      color: context.fvTextSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Icon(
+                              Icons.chevron_right,
+                              size: 18,
+                              color: context.fvPrimary,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+              const SizedBox(height: FvSpacing.x4),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -55,69 +174,102 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
   @override
   Widget build(BuildContext context) {
     final accounts = ref.watch(accountsProvider);
+    final s = AppLocalizations.of(context);
     return ScreenPage(
-      title: AppLocalizations.of(context).accounts,
+      title: s.accounts,
       child: accounts.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => ListView(
+          padding: const EdgeInsets.all(FvSpacing.x5),
+          children: const [
+            FvShimmer(height: 96, radius: FvRadius.card),
+            SizedBox(height: FvSpacing.x3),
+            FvShimmer(height: 64, radius: FvRadius.card),
+            SizedBox(height: FvSpacing.x3),
+            FvShimmer(height: 64, radius: FvRadius.card),
+            SizedBox(height: FvSpacing.x3),
+            FvShimmer(height: 64, radius: FvRadius.card),
+          ],
+        ),
         error: (e, _) => Center(child: Text('Could not load accounts: $e')),
         data: (list) {
-          final total = list.fold<double>(0, (s, a) => s + a.balance);
+          final total = list.fold<double>(0, (sum, a) => sum + a.balance);
           return ListView(
             padding: const EdgeInsets.all(FvSpacing.x5),
             children: [
               if (list.isEmpty)
-                const EmptyState(title: 'No accounts linked', body: 'Link a bank or mobile-money account to see your balance here.')
+                const EmptyState(
+                  title: 'No accounts linked',
+                  body: 'Link a bank or mobile-money account to see your balance here.',
+                )
               else ...[
-                FvCard(
+                Container(
                   margin: const EdgeInsets.only(bottom: FvSpacing.x4),
+                  padding: const EdgeInsets.all(FvSpacing.x5),
+                  decoration: BoxDecoration(
+                    gradient: FvColors.heroGradient,
+                    borderRadius: BorderRadius.circular(FvRadius.card),
+                    border: Border.all(
+                      color: context.fvCardBorder,
+                      width: FvBorders.width,
+                    ),
+                    boxShadow: context.fvBrutal,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Total balance', style: TextStyle(fontSize: 13)),
+                      Text(
+                        s.totalCash.toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.6,
+                          color: Colors.white70,
+                        ),
+                      ),
                       const SizedBox(height: 4),
-                      MoneyText(total, size: MoneySize.lg, currency: 'MUR'),
+                      MoneyText(
+                        total,
+                        size: MoneySize.xl,
+                        color: Colors.white,
+                        currency: 'MUR',
+                      ),
                     ],
                   ),
                 ),
                 for (final a in list)
-                  FvCard(
-                    margin: const EdgeInsets.only(bottom: FvSpacing.x3),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 44,
-                          height: 44,
-                          decoration: BoxDecoration(color: FvColors.wash, borderRadius: BorderRadius.circular(FvRadius.iconContainer)),
-                          child: Icon(_icon(a.type), size: 20, color: FvColors.primary),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: FvSpacing.x3),
+                    child: FvAccountTile(
+                      account: a,
+                      onTap: () => pushScreen(
+                        context,
+                        AccountDetailScreen(accountId: a.id),
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(
+                          Icons.delete_outline,
+                          color: context.fvError,
+                          size: 18,
                         ),
-                        const SizedBox(width: FvSpacing.x3),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(a.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: context.fvText)),
-                              const SizedBox(height: 2),
-                              Text(a.institution ?? a.type.name, style: TextStyle(fontSize: 12.5, color: context.fvTextSecondary)),
-                            ],
-                          ),
-                        ),
-                        MoneyText(a.balance, size: MoneySize.md, currency: 'MUR'),
-                        const SizedBox(width: FvSpacing.x2),
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline, color: FvColors.error, size: 18),
-                          onPressed: () async {
-                            final api = ref.read(apiProvider);
-                            final token = ref.read(kvStoreProvider).getString(sessionKey);
-                            await api.unlinkAccount(token, a.id);
-                            ref.invalidate(accountsProvider);
-                          },
-                        ),
-                      ],
+                        onPressed: () async {
+                          final api = ref.read(apiProvider);
+                          final token = ref
+                              .read(kvStoreProvider)
+                              .getString(sessionKey);
+                          await api.unlinkAccount(token, a.id);
+                          ref.invalidate(accountsProvider);
+                        },
+                      ),
                     ),
                   ),
               ],
               const SizedBox(height: FvSpacing.x3),
-              FvButton(label: 'Link an account', icon: Icons.add, onPressed: _add),
+              FvButton(
+                label: 'Link an account',
+                icon: Icons.add,
+                variant: FvButtonVariant.success,
+                onPressed: _connecting ? null : _openConnectSheet,
+              ),
             ],
           );
         },
@@ -125,62 +277,3 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
     );
   }
 }
-
-class _LinkSheet extends ConsumerStatefulWidget {
-  const _LinkSheet({required this.onLink});
-
-  final Future<void> Function(String name, AccountType type, String institution, double balance) onLink;
-
-  @override
-  ConsumerState<_LinkSheet> createState() => _LinkSheetState();
-}
-
-class _LinkSheetState extends ConsumerState<_LinkSheet> {
-  final _name = TextEditingController();
-  final _inst = TextEditingController();
-  final _bal = TextEditingController();
-  AccountType _type = AccountType.bank;
-
-  @override
-  void dispose() {
-    _name.dispose();
-    _inst.dispose();
-    _bal.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return showFormSheet(
-      context: context,
-      title: 'Link an account',
-      submitLabel: 'Link account',
-      children: [
-        FvTextField(label: 'Name', controller: _name, hint: 'My Bank Account'),
-        const SizedBox(height: FvSpacing.x4),
-        FvTextField(label: 'Institution', controller: _inst, hint: 'MCB'),
-        const SizedBox(height: FvSpacing.x4),
-        FvTextField(label: 'Starting balance', controller: _bal, keyboardType: const TextInputType.numberWithOptions(decimal: true), hint: '0'),
-        const SizedBox(height: FvSpacing.x4),
-        const Text('Type', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 6),
-        DropdownButtonFormField<AccountType>(
-          initialValue: _type,
-          items: AccountType.values
-              .map((t) => DropdownMenuItem(value: t, child: Text(t.name)))
-              .toList(),
-          onChanged: (v) => setState(() => _type = v!),
-          decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(FvRadius.input)),
-            contentPadding: const EdgeInsets.symmetric(horizontal: FvSpacing.x4, vertical: FvSpacing.x3),
-          ),
-        ),
-      ],
-      onSubmit: () async {
-        final balance = double.tryParse(_bal.text.replaceAll(',', '')) ?? 0;
-        await widget.onLink(_name.text, _type, _inst.text, balance);
-      },
-    );
-  }
-}
-

@@ -10,24 +10,42 @@ import '../../widgets/ui.dart';
 import '../auth/signup_screen.dart';
 
 const _roleGoals = <PrimaryRole, List<String>>{
-  PrimaryRole.individual: ['emergency', 'retirement', 'debt', 'home', 'education'],
-  PrimaryRole.freelancer: ['emergency', 'tax_shield', 'retirement', 'equipment', 'home'],
-  PrimaryRole.entrepreneur: ['emergency', 'business', 'retirement', 'tax_shield', 'home'],
+  PrimaryRole.individual: [
+    'emergency',
+    'retirement',
+    'debt',
+    'home',
+    'education',
+  ],
+  PrimaryRole.freelancer: [
+    'emergency',
+    'tax_shield',
+    'retirement',
+    'equipment',
+    'home',
+  ],
+  PrimaryRole.entrepreneur: [
+    'emergency',
+    'business',
+    'retirement',
+    'tax_shield',
+    'home',
+  ],
   PrimaryRole.sme: ['business', 'cash_buffer', 'equipment', 'tax_shield'],
 };
 
 String goalLabel(AppLocalizations s, String key) => switch (key) {
-      'emergency' => s.goalEmergency,
-      'retirement' => s.goalRetirement,
-      'debt' => s.goalDebt,
-      'home' => s.goalHome,
-      'education' => s.goalEducation,
-      'tax_shield' => s.goalTaxShield,
-      'equipment' => s.goalEquipment,
-      'business' => s.goalBusiness,
-      'cash_buffer' => s.goalCashBuffer,
-      _ => key,
-    };
+  'emergency' => s.goalEmergency,
+  'retirement' => s.goalRetirement,
+  'debt' => s.goalDebt,
+  'home' => s.goalHome,
+  'education' => s.goalEducation,
+  'tax_shield' => s.goalTaxShield,
+  'equipment' => s.goalEquipment,
+  'business' => s.goalBusiness,
+  'cash_buffer' => s.goalCashBuffer,
+  _ => key,
+};
 
 class GoalsScreen extends ConsumerStatefulWidget {
   const GoalsScreen({super.key});
@@ -51,7 +69,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
   Future<void> _continue() async {
     final auth = ref.read(authProvider);
     if (!auth.isAuthenticated) {
-      await pushScreen(context, const SignupScreen());
+      await pushScreen(context, const FvLightTheme(child: SignupScreen()));
       return;
     }
     await ref
@@ -74,21 +92,43 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(FvSpacing.x6, FvSpacing.x4, FvSpacing.x6, 0),
+                padding: const EdgeInsets.fromLTRB(
+                  FvSpacing.x6,
+                  FvSpacing.x4,
+                  FvSpacing.x6,
+                  0,
+                ),
                 child: OnboardingHeader(
                   onBack: () => ref.read(onboardingProvider.notifier).back(),
                 ),
               ),
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.fromLTRB(FvSpacing.x6, FvSpacing.x8, FvSpacing.x6, FvSpacing.x6),
+                  padding: const EdgeInsets.fromLTRB(
+                    FvSpacing.x6,
+                    FvSpacing.x8,
+                    FvSpacing.x6,
+                    FvSpacing.x6,
+                  ),
                   children: [
-                    Text(s.whatWorkingTowards,
-                        style: TextStyle(
-                            fontSize: 32, fontWeight: FontWeight.w800, letterSpacing: -0.4, color: FvColors.primary)),
+                    Text(
+                      s.whatWorkingTowards,
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.4,
+                        color: context.fvText,
+                      ),
+                    ),
                     const SizedBox(height: 8),
-                    Text(s.goalsSubtitle,
-                        style: TextStyle(fontSize: 15, height: 1.5, color: context.fvTextSecondary)),
+                    Text(
+                      s.goalsSubtitle,
+                      style: TextStyle(
+                        fontSize: 15,
+                        height: 1.5,
+                        color: context.fvTextSecondary,
+                      ),
+                    ),
                     const SizedBox(height: FvSpacing.x5),
                     Wrap(
                       spacing: FvSpacing.x2,
@@ -98,14 +138,23 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                           _GoalChip(
                             label: goalLabel(s, key),
                             selected: _selected.contains(key),
-                            onTap: () => setState(() =>
-                                _selected.contains(key) ? _selected.remove(key) : _selected.add(key)),
+                            onTap: () => setState(
+                              () => _selected.contains(key)
+                                  ? _selected.remove(key)
+                                  : _selected.add(key),
+                            ),
                           ),
                       ],
                     ),
                     const SizedBox(height: FvSpacing.x6),
-                    Text(s.riskHeading,
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: FvColors.primary)),
+                    Text(
+                      s.riskHeading,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: context.fvText,
+                      ),
+                    ),
                     const SizedBox(height: FvSpacing.x3),
                     for (final risk in RiskTolerance.values)
                       Padding(
@@ -134,7 +183,11 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
 }
 
 class _GoalChip extends StatelessWidget {
-  const _GoalChip({required this.label, required this.selected, required this.onTap});
+  const _GoalChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
   final String label;
   final bool selected;
@@ -142,30 +195,36 @@ class _GoalChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: selected ? FvColors.wash : context.fvSurface,
-      borderRadius: BorderRadius.circular(999),
+    return Container(
+      decoration: BoxDecoration(
+        color: selected ? FvColors.primary : context.fvSurface,
+        borderRadius: BorderRadius.circular(FvRadius.badge),
+        border: Border.all(color: FvColors.ink, width: FvBorders.width),
+        boxShadow: const [FvShadows.brutalSm],
+      ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(999),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: FvSpacing.x4, vertical: 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: selected ? FvColors.primary : context.fvBorder, width: selected ? 1.5 : 1),
+        borderRadius: BorderRadius.circular(FvRadius.badge),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: FvSpacing.x4,
+            vertical: 10,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               if (selected) ...[
-                const Icon(Icons.check, size: 14, color: FvColors.primary),
+                const Icon(Icons.check, size: 14, color: Colors.white),
                 const SizedBox(width: 6),
               ],
-              Text(label,
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: FvColors.primary)),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: selected ? Colors.white : context.fvText,
+                ),
+              ),
             ],
           ),
         ),
@@ -175,7 +234,11 @@ class _GoalChip extends StatelessWidget {
 }
 
 class _RiskRow extends StatelessWidget {
-  const _RiskRow({required this.label, required this.selected, required this.onTap});
+  const _RiskRow({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
   final String label;
   final bool selected;
@@ -183,17 +246,23 @@ class _RiskRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.fvSurface,
-      borderRadius: BorderRadius.circular(FvRadius.button),
+    return Container(
+      decoration: BoxDecoration(
+        color: context.fvSurface,
+        borderRadius: BorderRadius.circular(FvRadius.card),
+        border: Border.all(
+          color: selected ? FvColors.primary : FvColors.ink,
+          width: selected ? FvBorders.width : 1.5,
+        ),
+        boxShadow: const [FvShadows.brutal],
+      ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(FvRadius.button),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: FvSpacing.x4, vertical: FvSpacing.x3),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(FvRadius.button),
-            border: Border.all(color: selected ? FvColors.primary : context.fvCardBorder, width: selected ? 1.5 : 1),
+        borderRadius: BorderRadius.circular(FvRadius.card),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: FvSpacing.x4,
+            vertical: FvSpacing.x3,
           ),
           child: Row(
             children: [
@@ -203,12 +272,21 @@ class _RiskRow extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: selected ? FvColors.primary : Colors.transparent,
-                  border: Border.all(color: selected ? FvColors.primary : context.fvBorder),
+                  border: Border.all(
+                    color: selected ? FvColors.primary : FvColors.ink,
+                  ),
                 ),
-                child: selected ? const Icon(Icons.check, size: 12, color: Colors.white) : null,
+                child: selected
+                    ? const Icon(Icons.check, size: 12, color: Colors.white)
+                    : null,
               ),
               const SizedBox(width: FvSpacing.x3),
-              Expanded(child: Text(label, style: TextStyle(fontSize: 14, color: FvColors.primary))),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(fontSize: 14, color: context.fvText),
+                ),
+              ),
             ],
           ),
         ),

@@ -70,6 +70,33 @@ void main() {
     }
   });
 
+  test('BFF supports avatar upload and password change', () async {
+    final server = await io.serve(mockBffHandler(), InternetAddress.loopbackIPv4, 0);
+    try {
+      final baseUrl = 'http://${server.address.host}:${server.port}';
+      final api = HttpFinovaultApi(baseUrl: baseUrl);
+
+      final auth = await api.signup(
+          fullName: 'Lena', email: 'lena@example.com', password: 'Password123!');
+      final url = await api.uploadAvatar(auth.token, mimeType: 'image/png', data: 'aGVsbG8=');
+      expect(url, startsWith('data:image/png;base64,'));
+      expect((await api.getSession(auth.token))?.avatarUrl, url);
+
+      final overview = await api.changePassword(auth.token,
+          currentPassword: 'Password123!', newPassword: 'NewPassword789!');
+      expect(overview.lastPasswordChange, isNotNull);
+      try {
+        await api.changePassword(auth.token,
+            currentPassword: 'wrong', newPassword: 'Whatever123!');
+        fail('expected incorrect_password error');
+      } on FvApiException catch (e) {
+        expect(e.code, 'incorrect_password');
+      }
+    } finally {
+      await server.close(force: true);
+    }
+  });
+
   test('apiBaseUrlProvider persists the configured URL across containers', () async {
     final kv = _MemoryKv();
     final container = ProviderContainer(overrides: [kvStoreProvider.overrideWithValue(kv)]);

@@ -6,21 +6,26 @@ import '../providers.dart';
 import 'onboarding.dart';
 
 class AuthState {
-  const AuthState({this.user, this.restoring = true, this.busy = false, this.error});
+  const AuthState({this.user, this.restoring = true, this.busy = false, this.error, this.mfaChallengeId, this.mfaMethods});
 
   final UserProfile? user;
   final bool restoring;
   final bool busy;
   final String? error;
+  final String? mfaChallengeId;
+  final List<String>? mfaMethods;
 
   bool get isAuthenticated => user != null;
+  bool get isMfaPending => mfaChallengeId != null;
 
-  AuthState copyWith({UserProfile? user, bool clearUser = false, bool? restoring, bool? busy, String? error, bool clearError = false}) =>
+  AuthState copyWith({UserProfile? user, bool clearUser = false, bool? restoring, bool? busy, String? error, bool clearError = false, String? mfaChallengeId, List<String>? mfaMethods, bool clearMfa = false}) =>
       AuthState(
         user: clearUser ? null : (user ?? this.user),
         restoring: restoring ?? this.restoring,
         busy: busy ?? this.busy,
         error: clearError ? null : (error ?? this.error),
+        mfaChallengeId: clearMfa ? null : (mfaChallengeId ?? this.mfaChallengeId),
+        mfaMethods: clearMfa ? null : (mfaMethods ?? this.mfaMethods),
       );
 }
 
@@ -62,6 +67,10 @@ class AuthController extends Notifier<AuthState> {
     state = state.copyWith(busy: true, error: null, clearError: true);
     try {
       final result = await _api.login(email: email, password: password);
+      if (result.mfaRequired) {
+        state = state.copyWith(busy: false, mfaChallengeId: result.challengeId, mfaMethods: result.methods);
+        return false; // not fully authenticated yet
+      }
       await ref.read(kvStoreProvider).setString(sessionKey, result.token);
       await ref.read(onboardingProvider.notifier).completeFromAuth();
       state = AuthState(user: result.user, restoring: false);
@@ -77,6 +86,24 @@ class AuthController extends Notifier<AuthState> {
     try {
       final result = await _api.signup(fullName: fullName, email: email, password: password);
       await ref.read(kvStoreProvider).setString(sessionKey, result.token);
+      state = AuthState(user: result.user, restoring: false);
+      return true;
+    } on FvApiException catch (e) {
+      state = state.copyWith(busy: false, error: e.message);
+      return false;
+    }
+  }
+
+  void clearMfa() {
+    state = state.copyWith(clearMfa: true, clearError: true);
+  }
+
+  Future<bool> completeMfaLogin(String challengeId, String code) async {
+    state = state.copyWith(busy: true, error: null);
+    try {
+      final result = await _api.verifyTwoFactorChallenge(challengeId, code);
+      await ref.read(kvStoreProvider).setString(sessionKey, result.token);
+      await ref.read(onboardingProvider.notifier).completeFromAuth();
       state = AuthState(user: result.user, restoring: false);
       return true;
     } on FvApiException catch (e) {

@@ -1,8 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'banking/connector.dart';
+import 'coach/coach_service.dart';
 import 'mock/api.dart';
 import 'mock/db.dart';
 import 'mock/http_api.dart';
+
+/// Bank-aggregation seam. Swap `MockBankConnector` for a real Open Banking /
+/// OFX implementation without touching the UI.
+final bankConnectorProvider = Provider<BankConnector>((ref) => MockBankConnector());
+
+/// Money Coach seam. Swap `MockCoachService` for an `LlmCoachService` later.
+final coachProvider = Provider<CoachService>((ref) => MockCoachService());
 
 /// Session token storage key (SharedPreferences-backed via KvStore).
 const sessionKey = 'finovault.session';

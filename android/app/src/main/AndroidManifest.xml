@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required for release builds (debug adds INTERNET automatically). -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="finovault_flutter"
+        android:label="Finovault"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

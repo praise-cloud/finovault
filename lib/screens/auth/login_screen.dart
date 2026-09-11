@@ -5,6 +5,8 @@ import '../../core/state/auth.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/ui.dart';
+import 'forgot_password_screen.dart';
+import 'otp_screen.dart';
 import 'signup_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -26,8 +28,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _submit() async {
-    final ok = await ref.read(authProvider.notifier).login(_email.text, _password.text);
+    final ok = await ref
+        .read(authProvider.notifier)
+        .login(_email.text, _password.text);
     if (!mounted) return;
+    final auth = ref.read(authProvider);
+    if (auth.isMfaPending) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          fullscreenDialog: true,
+          builder: (_) => OtpScreen(
+            mode: OtpMode.loginVerify,
+            challengeId: auth.mfaChallengeId,
+            mfaMethods: auth.mfaMethods,
+          ),
+        ),
+      );
+      return;
+    }
     if (ok) {
       Navigator.of(context).popUntil((r) => r.isFirst);
     }
@@ -51,20 +69,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    OnboardingHeader(onBack: () => Navigator.of(context).maybePop()),
+                    OnboardingHeader(
+                      onBack: () => Navigator.of(context).maybePop(),
+                    ),
                     const SizedBox(height: FvSpacing.x3),
                     Center(
-                      child: Text(s.welcomeBack,
-                          style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: -0.4,
-                              color: context.fvText)),
+                      child: Text(
+                        s.welcomeBack,
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.4,
+                          color: context.fvText,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 6),
-                    Text(s.loginSubtitle,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 14, height: 1.5, color: context.fvTextSecondary)),
+                    Text(
+                      s.loginSubtitle,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        height: 1.5,
+                        color: context.fvTextSecondary,
+                      ),
+                    ),
                     const SizedBox(height: FvSpacing.x6),
                     FvCard(
                       padding: const EdgeInsets.all(FvSpacing.x5),
@@ -76,10 +105,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               padding: const EdgeInsets.all(FvSpacing.x3),
                               decoration: BoxDecoration(
                                 color: FvColors.errorBg,
-                                borderRadius: BorderRadius.circular(FvRadius.input),
+                                borderRadius: BorderRadius.circular(
+                                  FvRadius.input,
+                                ),
                               ),
-                              child: Text(error,
-                                  style: const TextStyle(fontSize: 13, color: FvColors.error)),
+                              child: Text(
+                                error,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: context.fvError,
+                                ),
+                              ),
                             ),
                             const SizedBox(height: FvSpacing.x4),
                           ],
@@ -90,8 +126,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             hint: s.emailHint,
                           ),
                           const SizedBox(height: FvSpacing.x4),
-                          FvTextField(label: s.password, controller: _password, obscure: true),
-                          const SizedBox(height: FvSpacing.x5),
+                          FvTextField(
+                            label: s.password,
+                            controller: _password,
+                            obscure: true,
+                          ),
+                          const SizedBox(height: FvSpacing.x1),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () => pushScreen(
+                                context,
+                                const FvLightTheme(
+                                  child: ForgotPasswordScreen(),
+                                ),
+                              ),
+                              child: Text(
+                                s.forgotPassword,
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  color: context.fvPrimary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: FvSpacing.x3),
                           FvButton(
                             label: s.loginCta,
                             onPressed: auth.busy ? null : _submit,
@@ -99,13 +159,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           const SizedBox(height: FvSpacing.x3),
                           TextButton(
-                            onPressed: () => pushScreen(context, const SignupScreen()),
+                            onPressed: () => pushScreen(
+                              context,
+                              const FvLightTheme(child: SignupScreen()),
+                            ),
                             child: Text.rich(
                               TextSpan(
                                 text: s.signUpPrompt,
-                                style: TextStyle(color: context.fvTextSecondary, fontSize: 13),
+                                style: TextStyle(
+                                  color: context.fvTextSecondary,
+                                  fontSize: 13,
+                                ),
                                 children: [
-                                  TextSpan(text: s.signUp, style: const TextStyle(color: FvColors.primary, fontWeight: FontWeight.w700)),
+                                  TextSpan(
+                                    text: s.signUp,
+                                    style: TextStyle(
+                                      color: context.fvPrimary,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -113,21 +185,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: FvSpacing.x5),
-                    FvCard(
-                      child: Row(
-                        children: [
-                          const Icon(Icons.bolt, size: 18, color: FvColors.primary),
-                          const SizedBox(width: FvSpacing.x2),
-                          Expanded(
-                            child: Text(
-                              s.demoAccount,
-                              style: TextStyle(fontSize: 12.5, color: context.fvTextSecondary),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    const SizedBox(height: FvSpacing.x4),
                   ],
                 ),
               ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../../l10n/app_localizations.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/format.dart';
@@ -22,18 +24,27 @@ class _VendorsScreenState extends ConsumerState<VendorsScreen> {
 
     return ScreenPage(
       title: AppLocalizations.of(context).vendors,
-      actions: [IconButton(icon: const Icon(Icons.add, color: FvColors.primary), onPressed: _add)],
+      actions: [
+        IconButton(
+          icon: Icon(Icons.add, color: context.fvPrimary),
+          onPressed: _add,
+        ),
+      ],
       child: vendors.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Could not load: $e')),
         data: (list) => list.isEmpty
             ? const Center(
-                child: EmptyState(title: 'No vendors yet', body: 'Add the businesses you pay regularly to track reliability and spend.'),
+                child: EmptyState(
+                  title: 'No vendors yet',
+                  body: 'Add the businesses you pay regularly to track reliability and spend.',
+                ),
               )
             : ListView.separated(
                 padding: const EdgeInsets.all(FvSpacing.x5),
                 itemCount: list.length,
-                separatorBuilder: (_, _) => const SizedBox(height: FvSpacing.x3),
+                separatorBuilder: (_, _) =>
+                    const SizedBox(height: FvSpacing.x3),
                 itemBuilder: (_, i) {
                   final v = list[i];
                   return FvCard(
@@ -42,17 +53,39 @@ class _VendorsScreenState extends ConsumerState<VendorsScreen> {
                         Container(
                           width: 44,
                           height: 44,
-                          decoration: BoxDecoration(color: FvColors.wash, borderRadius: BorderRadius.circular(FvRadius.iconContainer)),
-                          child: const Icon(Icons.business_center_outlined, size: 20, color: FvColors.primary),
+                          decoration: BoxDecoration(
+                            color: context.fvWash,
+                            borderRadius: BorderRadius.circular(
+                              FvRadius.iconContainer,
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.business_center_outlined,
+                            size: 20,
+                            color: context.fvPrimary,
+                          ),
                         ),
                         const SizedBox(width: FvSpacing.x3),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(v.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: context.fvText)),
+                              Text(
+                                v.name,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: context.fvText,
+                                ),
+                              ),
                               const SizedBox(height: 2),
-                              Text('Reliability ${v.reliabilityScore}/100 · ${FvFormat.formatMoney(v.totalSpend)}', style: TextStyle(fontSize: 12.5, color: context.fvTextSecondary)),
+                              Text(
+                                'Reliability ${v.reliabilityScore}/100 · ${FvFormat.formatMoney(v.totalSpend)}',
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  color: context.fvTextSecondary,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -70,21 +103,33 @@ class _VendorsScreenState extends ConsumerState<VendorsScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: FvColors.surface,
+      backgroundColor: context.fvSurface,
       builder: (sheet) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(sheet).viewInsets.bottom),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(sheet).viewInsets.bottom,
+        ),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(FvSpacing.x5),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Center(child: Text('Add vendor', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700))),
+              const Center(
+                child: Text(
+                  'Add vendor',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                ),
+              ),
               const SizedBox(height: FvSpacing.x4),
-              FvTextField(label: 'Vendor name', controller: name, hint: 'Print Hub Ltd'),
+              FvTextField(
+                label: 'Vendor name',
+                controller: name,
+                hint: 'Print Hub Ltd',
+              ),
               const SizedBox(height: FvSpacing.x5),
               FvButton(
                 label: 'Add vendor',
+                variant: FvButtonVariant.success,
                 onPressed: () async {
                   final api = ref.read(apiProvider);
                   final token = ref.read(kvStoreProvider).getString(sessionKey);
@@ -101,4 +146,3 @@ class _VendorsScreenState extends ConsumerState<VendorsScreen> {
     );
   }
 }
-

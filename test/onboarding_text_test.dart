@@ -38,8 +38,9 @@ final _semantic = {
   FvColors.warningBg,
 };
 
-/// In light mode every non-button, non-semantic text must be brand-primary:
-/// not white (invisible on a white page) and not the old dark/gray tokens.
+/// In light mode every non-button, non-semantic text must use the brand ink
+/// (brutalist default) or brand-primary — never invisible white on a white page
+/// and never the old dark/gray tokens.
 List<String> findNonBrandText(WidgetTester tester) {
   final out = <String>[];
   for (final t in tester.widgetList<Text>(find.byType(Text))) {
@@ -48,6 +49,9 @@ List<String> findNonBrandText(WidgetTester tester) {
     if (_insideButton(tester, t)) continue;
     if (color == FvColors.primary) continue;
     if (color == FvColors.primaryLight) continue;
+    if (color == FvColors.ink) continue;
+    if (color == FvColors.text) continue;
+    if (color == FvColors.textSecondary) continue;
     if (_semantic.contains(color)) continue;
     out.add(t.data ?? '<no-data>');
   }

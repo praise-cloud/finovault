@@ -8,6 +8,7 @@ import '../core/state/onboarding.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/tokens.dart';
 import '../widgets/ui.dart';
+import '../widgets/notification_bell.dart';
 import 'home/persona_homes.dart';
 import 'money/accounts_screen.dart';
 import 'money/bills_screen.dart';
@@ -24,6 +25,7 @@ import 'tabs/insights_tab.dart';
 import 'tabs/pay_tab.dart';
 import 'tabs/profile_tab.dart';
 import 'tabs/vault_tab.dart';
+import 'coach/coach_screen.dart';
 
 /// Authenticated shell: bottom 5-tab bar (Home/Insights/Vault/Pay/Profile).
 /// The Home tab is role-aware — each persona sees its own hero metric and
@@ -45,7 +47,10 @@ class HomeShell extends ConsumerWidget {
           child: IndexedStack(
             index: index,
             children: [
-              _HomeTab(user: user, femaleFounder: scheme == RoleScheme.femaleFounder),
+              _HomeTab(
+                user: user,
+                femaleFounder: scheme == RoleScheme.femaleFounder,
+              ),
               const InsightsTab(),
               const VaultTab(),
               const PayTab(),
@@ -56,15 +61,60 @@ class HomeShell extends ConsumerWidget {
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: index,
-        onDestinationSelected: (i) => ref.read(homeTabIndexProvider.notifier).state = i,
-        backgroundColor: FvColors.surface,
-        indicatorColor: FvColors.wash,
+        onDestinationSelected: (i) =>
+            ref.read(homeTabIndexProvider.notifier).state = i,
+        backgroundColor: context.fvSurface,
+        indicatorColor: context.fvWash,
+        labelTextStyle: WidgetStateProperty.resolveWith(
+          (states) => TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: states.contains(WidgetState.selected)
+                ? context.fvPrimary
+                : context.fvTextSecondary,
+          ),
+        ),
         destinations: [
-          NavigationDestination(icon: const Icon(Icons.home_outlined), selectedIcon: const Icon(Icons.home), label: s.navHome),
-          NavigationDestination(icon: const Icon(Icons.psychology_outlined), selectedIcon: const Icon(Icons.psychology), label: s.navInsights),
-          NavigationDestination(icon: const Icon(Icons.lock_outline), selectedIcon: const Icon(Icons.lock), label: s.navVault),
-          NavigationDestination(icon: const Icon(Icons.send_outlined), selectedIcon: const Icon(Icons.send), label: s.navPay),
-          NavigationDestination(icon: const Icon(Icons.person_outline), selectedIcon: const Icon(Icons.person), label: s.navProfile),
+          NavigationDestination(
+            icon: Icon(
+              Icons.home_outlined,
+              color: index == 0 ? context.fvPrimary : context.fvTextSecondary,
+            ),
+            selectedIcon: Icon(Icons.home, color: context.fvPrimary),
+            label: s.navHome,
+          ),
+          NavigationDestination(
+            icon: Icon(
+              Icons.psychology_outlined,
+              color: index == 1 ? context.fvPrimary : context.fvTextSecondary,
+            ),
+            selectedIcon: Icon(Icons.psychology, color: context.fvPrimary),
+            label: s.navInsights,
+          ),
+          NavigationDestination(
+            icon: Icon(
+              Icons.lock_outline,
+              color: index == 2 ? context.fvPrimary : context.fvTextSecondary,
+            ),
+            selectedIcon: Icon(Icons.lock, color: context.fvPrimary),
+            label: s.navVault,
+          ),
+          NavigationDestination(
+            icon: Icon(
+              Icons.send_outlined,
+              color: index == 3 ? context.fvPrimary : context.fvTextSecondary,
+            ),
+            selectedIcon: Icon(Icons.send, color: context.fvPrimary),
+            label: s.navPay,
+          ),
+          NavigationDestination(
+            icon: Icon(
+              Icons.person_outline,
+              color: index == 4 ? context.fvPrimary : context.fvTextSecondary,
+            ),
+            selectedIcon: Icon(Icons.person, color: context.fvPrimary),
+            label: s.navProfile,
+          ),
         ],
       ),
     );
@@ -81,20 +131,49 @@ class _HomeTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final role = user?.primaryRole ?? ref.watch(onboardingProvider).role ?? PrimaryRole.individual;
+    final role =
+        user?.primaryRole ??
+        ref.watch(onboardingProvider).role ??
+        PrimaryRole.individual;
+    final accent = FvColors.roleAccent(role);
 
-    return ListView(
-      padding: const EdgeInsets.all(FvSpacing.x5),
-      children: [
-        GreetingHeader(name: user?.fullName ?? 'Welcome'),
-        const SizedBox(height: FvSpacing.x4),
-        switch (role) {
-          PrimaryRole.individual => const IndividualHome(),
-          PrimaryRole.freelancer => const FreelancerHome(),
-          PrimaryRole.entrepreneur => EntrepreneurHome(femaleFounder: femaleFounder),
-          PrimaryRole.sme => const SMEHome(),
-        },
-      ],
+    return Scaffold(
+      floatingActionButton: GestureDetector(
+        onTap: () => pushScreen(context, const CoachScreen()),
+        child: Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            color: accent,
+            borderRadius: BorderRadius.circular(FvRadius.card),
+            border: Border.all(
+              color: context.fvCardBorder,
+              width: FvBorders.width,
+            ),
+            boxShadow: context.fvBrutal,
+          ),
+          child: const Icon(
+            Icons.psychology_alt,
+            size: 28,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(FvSpacing.x5),
+        children: [
+          GreetingHeader(name: user?.fullName ?? 'Welcome'),
+          const SizedBox(height: FvSpacing.x4),
+          switch (role) {
+            PrimaryRole.individual => const IndividualHome(),
+            PrimaryRole.freelancer => const FreelancerHome(),
+            PrimaryRole.entrepreneur => EntrepreneurHome(
+              femaleFounder: femaleFounder,
+            ),
+            PrimaryRole.sme => const SMEHome(),
+          },
+        ],
+      ),
     );
   }
 }
@@ -109,7 +188,9 @@ class GreetingHeader extends ConsumerWidget {
     final s = AppLocalizations.of(context);
     final firstName = name.split(' ').first;
     final hour = DateTime.now().hour;
-    final greeting = hour < 12 ? s.goodMorning : (hour < 18 ? s.goodAfternoon : s.goodEvening);
+    final greeting = hour < 12
+        ? s.goodMorning
+        : (hour < 18 ? s.goodAfternoon : s.goodEvening);
 
     return Row(
       children: [
@@ -117,24 +198,24 @@ class GreetingHeader extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('$greeting, $firstName',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, letterSpacing: -0.3, color: context.fvText)),
+              Text(
+                '$greeting, $firstName',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.3,
+                  color: context.fvText,
+                ),
+              ),
               const SizedBox(height: 4),
-              Text(s.appTagline,
-                  style: TextStyle(fontSize: 13, color: context.fvTextSecondary)),
+              Text(
+                s.appTagline,
+                style: TextStyle(fontSize: 13, color: context.fvTextSecondary),
+              ),
             ],
           ),
         ),
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: context.fvSurface,
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: context.fvCardBorder),
-          ),
-          child: const Icon(Icons.notifications_outlined, size: 20, color: FvColors.primary),
-        ),
+        const NotificationBell(),
       ],
     );
   }
@@ -166,10 +247,17 @@ class QuickActionsRow extends StatelessWidget {
                     borderRadius: BorderRadius.circular(FvRadius.iconContainer),
                     border: Border.all(color: context.fvCardBorder),
                   ),
-                  child: Icon(action.icon, size: 20, color: FvColors.primary),
+                  child: Icon(action.icon, size: 20, color: context.fvPrimary),
                 ),
                 const SizedBox(height: 6),
-                Text(action.label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: context.fvTextSecondary)),
+                Text(
+                  action.label,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: context.fvTextSecondary,
+                  ),
+                ),
               ],
             ),
           ),
@@ -187,14 +275,25 @@ class QuickAction {
 }
 
 // Convenience navigation helpers used across tabs.
-void openAccounts(BuildContext context) => pushScreen(context, const AccountsScreen());
-void openTransactions(BuildContext context) => pushScreen(context, const TransactionsScreen());
-void openBudgets(BuildContext context) => pushScreen(context, const BudgetsScreen());
-void openGoals(BuildContext context) => pushScreen(context, const GoalsListScreen());
-void openNewGoal(BuildContext context) => pushScreen(context, const GoalNewScreen());
-void openSecurity(BuildContext context) => pushScreen(context, const SecurityScreen());
-void openInvoices(BuildContext context) => pushScreen(context, const InvoicesScreen());
-void openVendors(BuildContext context) => pushScreen(context, const VendorsScreen());
-void openTransfer(BuildContext context) => pushScreen(context, const TransferScreen());
-void openBills(BuildContext context) => pushScreen(context, const BillsScreen());
-void openPension(BuildContext context) => pushScreen(context, const PensionScreen());
+void openAccounts(BuildContext context) =>
+    pushScreen(context, const AccountsScreen());
+void openTransactions(BuildContext context) =>
+    pushScreen(context, const TransactionsScreen());
+void openBudgets(BuildContext context) =>
+    pushScreen(context, const BudgetsScreen());
+void openGoals(BuildContext context) =>
+    pushScreen(context, const GoalsListScreen());
+void openNewGoal(BuildContext context) =>
+    pushScreen(context, const GoalNewScreen());
+void openSecurity(BuildContext context) =>
+    pushScreen(context, const SecurityScreen());
+void openInvoices(BuildContext context) =>
+    pushScreen(context, const InvoicesScreen());
+void openVendors(BuildContext context) =>
+    pushScreen(context, const VendorsScreen());
+void openTransfer(BuildContext context) =>
+    pushScreen(context, const TransferScreen());
+void openBills(BuildContext context) =>
+    pushScreen(context, const BillsScreen());
+void openPension(BuildContext context) =>
+    pushScreen(context, const PensionScreen());

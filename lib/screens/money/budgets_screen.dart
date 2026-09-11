@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../../l10n/app_localizations.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/format.dart';
@@ -26,27 +28,49 @@ class _BudgetsScreenState extends ConsumerState<BudgetsScreen> {
 
     return ScreenPage(
       title: AppLocalizations.of(context).budgets,
-      actions: [IconButton(icon: const Icon(Icons.add, color: FvColors.primary), onPressed: _add)],
+      actions: [
+        IconButton(
+          icon: Icon(Icons.add, color: context.fvPrimary),
+          onPressed: _add,
+        ),
+      ],
       child: budgets.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Could not load: $e')),
         data: (list) {
           final now = DateTime.now();
-          final monthTx = (txs.value ?? []).where((t) => t.date.year == now.year && t.date.month == now.month).toList();
+          final monthTx = (txs.value ?? [])
+              .where(
+                (t) => t.date.year == now.year && t.date.month == now.month,
+              )
+              .toList();
           double spentFor(Budget b) => monthTx
-              .where((t) => t.direction == TransactionDirection.out && t.category.toLowerCase() == b.category.toLowerCase())
+              .where(
+                (t) =>
+                    t.direction == TransactionDirection.out &&
+                    t.category.toLowerCase() == b.category.toLowerCase(),
+              )
               .fold(0.0, (s, t) => s + t.amount);
 
           return list.isEmpty
-              ? const Center(child: EmptyState(title: 'No budgets yet', body: 'Set a monthly budget for a category to stay on track.'))
+              ? const Center(
+                  child: EmptyState(
+                    title: 'No budgets yet',
+                    body:
+                        'Set a monthly budget for a category to stay on track.',
+                  ),
+                )
               : ListView.separated(
                   padding: const EdgeInsets.all(FvSpacing.x5),
                   itemCount: list.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: FvSpacing.x3),
+                  separatorBuilder: (_, _) =>
+                      const SizedBox(height: FvSpacing.x3),
                   itemBuilder: (_, i) {
                     final b = list[i];
                     final spent = spentFor(b);
-                    final progress = b.amount <= 0 ? 0.0 : (spent / b.amount).clamp(0.0, 1.0);
+                    final progress = b.amount <= 0
+                        ? 0.0
+                        : (spent / b.amount).clamp(0.0, 1.0);
                     final over = spent > b.amount;
                     return FvCard(
                       child: Column(
@@ -54,12 +78,24 @@ class _BudgetsScreenState extends ConsumerState<BudgetsScreen> {
                         children: [
                           Row(
                             children: [
-                              Expanded(child: Text(b.category, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: context.fvText))),
+                              Expanded(
+                                child: Text(
+                                  b.category,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: context.fvText,
+                                  ),
+                                ),
+                              ),
                               const SizedBox(width: 8),
                               Flexible(
                                 child: Text(
                                   '${FvFormat.formatMoney(spent, language: language)} / ${FvFormat.formatMoney(b.amount, language: language)}',
-                                  style: TextStyle(fontSize: 13, color: context.fvTextSecondary),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: context.fvTextSecondary,
+                                  ),
                                   textAlign: TextAlign.end,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -70,15 +106,21 @@ class _BudgetsScreenState extends ConsumerState<BudgetsScreen> {
                           LinearProgressIndicator(
                             value: progress,
                             minHeight: 8,
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(FvRadius.card),
                             backgroundColor: context.fvBorder,
                             color: over ? FvColors.error : FvColors.primary,
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            over ? 'Over budget by ${FvFormat.formatMoney(spent - b.amount, language: language)}'
+                            over
+                                ? 'Over budget by ${FvFormat.formatMoney(spent - b.amount, language: language)}'
                                 : '${FvFormat.formatMoney(b.amount - spent, language: language)} remaining',
-                            style: TextStyle(fontSize: 12.5, color: over ? FvColors.error : context.fvTextSecondary),
+                            style: TextStyle(
+                              fontSize: 12.5,
+                              color: over
+                                  ? context.fvError
+                                  : context.fvTextSecondary,
+                            ),
                           ),
                         ],
                       ),
@@ -96,29 +138,52 @@ class _BudgetsScreenState extends ConsumerState<BudgetsScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: FvColors.surface,
+      backgroundColor: context.fvSurface,
       builder: (sheet) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(sheet).viewInsets.bottom),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(sheet).viewInsets.bottom,
+        ),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(FvSpacing.x5),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Center(child: Text('New budget', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700))),
+              const Center(
+                child: Text(
+                  'New budget',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                ),
+              ),
               const SizedBox(height: FvSpacing.x4),
-              FvTextField(label: 'Category', controller: category, hint: 'Groceries'),
+              FvTextField(
+                label: 'Category',
+                controller: category,
+                hint: 'Groceries',
+              ),
               const SizedBox(height: FvSpacing.x4),
-              FvTextField(label: 'Monthly amount', controller: amount, keyboardType: const TextInputType.numberWithOptions(decimal: true)),
+              FvTextField(
+                label: 'Monthly amount',
+                controller: amount,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+              ),
               const SizedBox(height: FvSpacing.x5),
               FvButton(
                 label: 'Save budget',
+                variant: FvButtonVariant.success,
                 onPressed: () async {
                   final api = ref.read(apiProvider);
                   final token = ref.read(kvStoreProvider).getString(sessionKey);
-                  final value = double.tryParse(amount.text.replaceAll(',', '')) ?? 0;
+                  final value =
+                      double.tryParse(amount.text.replaceAll(',', '')) ?? 0;
                   if (category.text.isEmpty || value <= 0) return;
-                  await api.createBudget(token, category: category.text, amount: value);
+                  await api.createBudget(
+                    token,
+                    category: category.text,
+                    amount: value,
+                  );
                   ref.invalidate(budgetsProvider);
                   if (sheet.mounted) Navigator.of(sheet).pop();
                 },
@@ -130,4 +195,3 @@ class _BudgetsScreenState extends ConsumerState<BudgetsScreen> {
     );
   }
 }
-

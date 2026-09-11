@@ -21,38 +21,137 @@ class MockBff {
 
   final Map<String, dynamic> _store = {};
   final Map<String, Map<String, dynamic>> _sessions = {};
+  final Map<String, String> _passwords = {};
+  final Map<String, String> _resetTokens = {};
   int _seq = 0;
 
   String _id(String prefix) => '${prefix}_${++_seq}';
 
+  static const _holderNames = [
+    'Jean Claude Riviere',
+    'Priya Ramgoolam',
+    'Marie Noelle',
+    'Kevin Appadoo',
+    'Aisha Bibi',
+    'Ravi Sookoo',
+  ];
+  static final _phoneRe = RegExp(r'^[5-7]\d{4,7}$');
+  static final _bankRe = RegExp(r'^\d{8,16}$');
+
+  Map<String, dynamic> _verify(Map<String, dynamic> a) {
+    final identifier = (a['identifier'] as String).replaceAll(
+      RegExp(r'\s'),
+      '',
+    );
+    final exists =
+        _phoneRe.hasMatch(identifier) || _bankRe.hasMatch(identifier);
+    final holderName = exists
+        ? _holderNames[identifier.hashCode.abs() % _holderNames.length]
+        : null;
+    final verified =
+        exists &&
+        holderName != null &&
+        (a['holderName'] as String? ?? '').trim().toLowerCase() ==
+            holderName.toLowerCase();
+    return {'exists': exists, 'holderName': holderName, 'verified': verified};
+  }
+
   void _seed() {
-    _store['accounts'] = [
-      {'id': 'acc_1', 'name': 'Main current', 'type': 'checking', 'balance': 128400.0, 'currency': 'MUR', 'institution': 'MCB'},
-      {'id': 'acc_2', 'name': 'Stack', 'type': 'savings', 'balance': 56200.0, 'currency': 'MUR', 'institution': 'Absa'},
-      {'id': 'acc_3', 'name': 'MyMo', 'type': 'mobileMoney', 'balance': 3200.0, 'currency': 'MUR', 'institution': 'Emtel'},
+    _store['accounts'] = <Map<String, dynamic>>[
+      {
+        'id': 'acc_1',
+        'name': 'Main current',
+        'type': 'checking',
+        'balance': 128400.0,
+        'currency': 'MUR',
+        'institution': 'MCB',
+      },
+      {
+        'id': 'acc_2',
+        'name': 'Stack',
+        'type': 'savings',
+        'balance': 56200.0,
+        'currency': 'MUR',
+        'institution': 'Absa',
+      },
+      {
+        'id': 'acc_3',
+        'name': 'MyMo',
+        'type': 'mobileMoney',
+        'balance': 3200.0,
+        'currency': 'MUR',
+        'institution': 'Emtel',
+      },
     ];
-    _store['transactions'] = [
-      {'id': _id('txn'), 'accountId': 'acc_1', 'amount': 4500.0, 'direction': 'out', 'category': 'Groceries', 'merchantName': 'Winners', 'date': DateTime.now().subtract(const Duration(days: 1)).toIso8601String()},
-      {'id': _id('txn'), 'accountId': 'acc_1', 'amount': 22000.0, 'direction': 'inn', 'category': 'Salary', 'merchantName': 'Acme Ltd', 'date': DateTime.now().subtract(const Duration(days: 3)).toIso8601String()},
+    _store['transactions'] = <Map<String, dynamic>>[
+      {
+        'id': _id('txn'),
+        'accountId': 'acc_1',
+        'amount': 4500.0,
+        'direction': 'out',
+        'category': 'Groceries',
+        'merchantName': 'Winners',
+        'date': DateTime.now()
+            .subtract(const Duration(days: 1))
+            .toIso8601String(),
+      },
+      {
+        'id': _id('txn'),
+        'accountId': 'acc_1',
+        'amount': 22000.0,
+        'direction': 'inn',
+        'category': 'Salary',
+        'merchantName': 'Acme Ltd',
+        'date': DateTime.now()
+            .subtract(const Duration(days: 3))
+            .toIso8601String(),
+      },
     ];
-    _store['budgets'] = [
+    _store['budgets'] = <Map<String, dynamic>>[
       {'id': _id('bud'), 'category': 'Groceries', 'amount': 12000.0},
       {'id': _id('bud'), 'category': 'Transport', 'amount': 6000.0},
     ];
-    _store['goals'] = [
-      {'id': 'goal_1', 'name': 'Emergency fund', 'type': 'emergency', 'targetAmount': 100000.0, 'currentAmount': 42000.0, 'targetDate': DateTime.now().add(const Duration(days: 365)).toIso8601String(), 'completed': false},
+    _store['goals'] = <Map<String, dynamic>>[
+      {
+        'id': 'goal_1',
+        'name': 'Emergency fund',
+        'type': 'emergency',
+        'targetAmount': 100000.0,
+        'currentAmount': 42000.0,
+        'targetDate': DateTime.now()
+            .add(const Duration(days: 365))
+            .toIso8601String(),
+        'completed': false,
+      },
     ];
-    _store['invoices'] = [
-      {'id': _id('inv'), 'clientName': 'Globex', 'amount': 35000.0, 'dueDate': DateTime.now().add(const Duration(days: 7)).toIso8601String(), 'status': 'sent', 'issuedDate': DateTime.now().toIso8601String()},
+    _store['invoices'] = <Map<String, dynamic>>[
+      {
+        'id': _id('inv'),
+        'clientName': 'Globex',
+        'amount': 35000.0,
+        'dueDate': DateTime.now()
+            .add(const Duration(days: 7))
+            .toIso8601String(),
+        'status': 'sent',
+        'issuedDate': DateTime.now().toIso8601String(),
+      },
     ];
-    _store['vendors'] = [
+    _store['vendors'] = <Map<String, dynamic>>[
       {'id': _id('ven'), 'name': 'Office Supplies Co', 'totalSpend': 18400.0},
     ];
     _store['transfers'] = <Map<String, dynamic>>[];
-    _store['billPayments'] = [
-      {'id': _id('bp'), 'category': 'electricity', 'billerName': 'CEB', 'amount': 1800.0, 'customerRef': 'CEB-9981', 'date': DateTime.now().toIso8601String(), 'status': 'paid'},
+    _store['billPayments'] = <Map<String, dynamic>>[
+      {
+        'id': _id('bp'),
+        'category': 'electricity',
+        'billerName': 'CEB',
+        'amount': 1800.0,
+        'customerRef': 'CEB-9981',
+        'date': DateTime.now().toIso8601String(),
+        'status': 'paid',
+      },
     ];
-    _store['payees'] = [
+    _store['payees'] = <Map<String, dynamic>>[
       {'id': _id('pay'), 'name': 'Priya', 'destination': '9899123456'},
     ];
     _store['pensionPlan'] = {
@@ -71,23 +170,40 @@ class MockBff {
     _store['securityOverview'] = {
       'score': 72,
       'twoFactor': false,
-      'lastPasswordChange': DateTime.now().subtract(const Duration(days: 40)).toIso8601String(),
+      'lastPasswordChange': DateTime.now()
+          .subtract(const Duration(days: 40))
+          .toIso8601String(),
     };
-    _store['devices'] = [
-      {'id': _id('dev'), 'name': 'iPhone 15', 'lastActive': DateTime.now().toIso8601String(), 'current': true},
+    _store['devices'] = <Map<String, dynamic>>[
+      {
+        'id': _id('dev'),
+        'name': 'iPhone 15',
+        'lastActive': DateTime.now().toIso8601String(),
+        'current': true,
+      },
     ];
-    _store['securityEvents'] = [
-      {'id': _id('evt'), 'type': 'login', 'description': 'New sign-in from Port Louis', 'date': DateTime.now().toIso8601String(), 'resolved': false},
+    _store['securityEvents'] = <Map<String, dynamic>>[
+      {
+        'id': _id('evt'),
+        'type': 'login',
+        'description': 'New sign-in from Port Louis',
+        'date': DateTime.now().toIso8601String(),
+        'resolved': false,
+      },
     ];
-    _store['prefs'] = {'preferredLanguage': 'en', 'preferredCurrency': 'MUR', 'theme': 'system'};
+    _store['prefs'] = {
+      'preferredLanguage': 'en',
+      'preferredCurrency': 'MUR',
+      'theme': 'system',
+    };
   }
 
   Map<String, dynamic> _ok(dynamic data) => {'data': data, 'error': null};
 
   Map<String, dynamic> _fail(String code, String message) => {
-        'data': null,
-        'error': {'code': code, 'message': message},
-      };
+    'data': null,
+    'error': {'code': code, 'message': message},
+  };
 
   Map<String, dynamic> _envelope(shelf.Request req, Map<String, dynamic> body) {
     final method = body['method'] as String? ?? '';
@@ -106,7 +222,9 @@ class MockBff {
       case 'signup':
         final email = (a['email'] as String? ?? '').trim();
         final password = a['password'] as String? ?? '';
-        if (method == 'login' && email == 'demo@finovault.app' && password != 'Vault123!') {
+        if (method == 'login' &&
+            email == 'demo@finovault.app' &&
+            password != 'Vault123!') {
           throw const _BffError('unauthorized', 'Invalid demo credentials');
         }
         final t = 'tok_$email';
@@ -119,6 +237,7 @@ class MockBff {
           'avatarUrl': null,
         };
         _sessions[t] = user;
+        _passwords[email] = password;
         return {'token': t, 'user': user};
       case 'getSession':
         if (token == null || !_sessions.containsKey(token)) return null;
@@ -130,9 +249,59 @@ class MockBff {
         final user = _sessions[token]!;
         if (a['fullName'] != null) user['fullName'] = a['fullName'];
         if (a['avatarUrl'] != null) user['avatarUrl'] = a['avatarUrl'];
-        if (a['preferredLanguage'] != null) _store['prefs']['preferredLanguage'] = a['preferredLanguage'];
-        if (a['preferredCurrency'] != null) _store['prefs']['preferredCurrency'] = a['preferredCurrency'];
+        if (a['preferredLanguage'] != null)
+          _store['prefs']['preferredLanguage'] = a['preferredLanguage'];
+        if (a['preferredCurrency'] != null)
+          _store['prefs']['preferredCurrency'] = a['preferredCurrency'];
         return user;
+      case 'uploadAvatar':
+        final user = _sessions[token]!;
+        final data = a['data'] as String? ?? '';
+        if (data.isEmpty)
+          throw const _BffError('validation', 'Please choose an image.');
+        user['avatarUrl'] = 'data:${a['mimeType'] ?? 'image/png'};base64,$data';
+        return user['avatarUrl'];
+      case 'changePassword':
+        final user = _sessions[token]!;
+        final email = user['email'] as String;
+        if (_passwords[email] != a['currentPassword']) {
+          throw const _BffError(
+            'incorrect_password',
+            'Your current password is incorrect.',
+          );
+        }
+        final np = a['newPassword'] as String? ?? '';
+        if (np.length < 8)
+          throw const _BffError(
+            'validation',
+            'Password must be at least 8 characters.',
+          );
+        _passwords[email] = np;
+        (_store['securityOverview'] as Map)['lastPasswordChange'] =
+            DateTime.now().toIso8601String();
+        (_store['securityOverview'] as Map)['score'] =
+            (((_store['securityOverview'] as Map)['score'] as num) + 5).clamp(
+              5,
+              99,
+            );
+        return Map<String, dynamic>.from(_store['securityOverview'] as Map);
+      case 'requestPasswordReset':
+        final email = (a['email'] as String? ?? '').trim();
+        if (_passwords.containsKey(email)) {
+          final t = 'reset_${DateTime.now().millisecondsSinceEpoch}';
+          _resetTokens[t] = email;
+        }
+        return null;
+      case 'resetPassword':
+        final email = _resetTokens[a['resetToken'] as String? ?? ''];
+        if (email == null)
+          throw const _BffError(
+            'invalid_reset_token',
+            'This reset link is invalid or expired.',
+          );
+        _passwords[email] = a['newPassword'] as String;
+        _resetTokens.remove(a['resetToken'] as String);
+        return null;
       case 'getPreferences':
         return Map<String, dynamic>.from(_store['prefs'] as Map);
       case 'savePreferences':
@@ -158,8 +327,36 @@ class MockBff {
         (_store['accounts'] as List).add(acc);
         return acc;
       case 'unlinkAccount':
-        _store['accounts'] = (_store['accounts'] as List).where((e) => e['id'] != a['accountId']).toList();
+        _store['accounts'] = (_store['accounts'] as List)
+            .where((e) => e['id'] != a['accountId'])
+            .toList();
         return null;
+      case 'verifyAccount':
+        return _verify(a);
+      case 'linkBankAccount':
+        final acct = a['accountNumber'] as String;
+        final v = _verify({'identifier': acct, 'holderName': a['holderName']});
+        if (a['holderName'] != null && !v['verified']) {
+          throw _BffError(
+            'verification_failed',
+            'The account holder name does not match. Please check the name and try again.',
+          );
+        }
+        final last4 = acct.length >= 4 ? acct.substring(acct.length - 4) : acct;
+        final verifiedName = v['verified'] ? v['holderName'] as String : null;
+        final acc = {
+          'id': _id('acc'),
+          'name': verifiedName != null
+              ? '${a['institution']} ••$last4 — $verifiedName'
+              : '${a['institution']} ••$last4',
+          'type': 'checking',
+          'balance': 0.0,
+          'currency': 'MUR',
+          'institution': a['institution'],
+          'accountNumber': acct,
+        };
+        (_store['accounts'] as List).add(acc);
+        return {'account': acc, 'imported': 0};
       case 'transactions':
         return List.from(_store['transactions'] as List);
       case 'createTransaction':
@@ -177,13 +374,20 @@ class MockBff {
       case 'budgets':
         return List.from(_store['budgets'] as List);
       case 'createBudget':
-        final b = {'id': _id('bud'), 'category': a['category'], 'amount': a['amount']};
+        final b = {
+          'id': _id('bud'),
+          'category': a['category'],
+          'amount': a['amount'],
+        };
         (_store['budgets'] as List).add(b);
         return b;
       case 'goals':
         return List.from(_store['goals'] as List);
       case 'goal':
-        return (_store['goals'] as List).firstWhere((e) => e['id'] == a['goalId'], orElse: () => null);
+        return (_store['goals'] as List).firstWhere(
+          (e) => e['id'] == a['goalId'],
+          orElse: () => null,
+        );
       case 'createGoal':
         final g = {
           'id': _id('goal'),
@@ -197,25 +401,45 @@ class MockBff {
         (_store['goals'] as List).add(g);
         return g;
       case 'contribute':
-        final g = (_store['goals'] as List).firstWhere((e) => e['id'] == a['goalId']) as Map;
+        final g = (_store['goals'] as List).firstWhere(
+          (e) => e['id'] == a['goalId'],
+        ) as Map;
         g['currentAmount'] = (g['currentAmount'] as num) + (a['amount'] as num);
-        if ((g['currentAmount'] as num) >= (g['targetAmount'] as num)) g['completed'] = true;
+        if ((g['currentAmount'] as num) >= (g['targetAmount'] as num))
+          g['completed'] = true;
         return g;
       case 'getPensionPlan':
         return Map<String, dynamic>.from(_store['pensionPlan'] as Map);
       case 'pensionProjection':
         final p = _store['pensionPlan'] as Map;
         final years = (p['retirementAge'] as int) - (p['currentAge'] as int);
-        final total = (p['currentShortPot'] as num) + (p['currentLongPot'] as num) + (p['contributionAmount'] as num) * 12 * years;
-        return {'shortPotProjected': total * 0.3, 'longPotProjected': total * 0.7, 'totalProjected': total, 'yearsToRetirement': years};
+        final total =
+            (p['currentShortPot'] as num) +
+            (p['currentLongPot'] as num) +
+            (p['contributionAmount'] as num) * 12 * years;
+        return {
+          'shortPotProjected': total * 0.3,
+          'longPotProjected': total * 0.7,
+          'totalProjected': total,
+          'yearsToRetirement': years,
+        };
       case 'upsertPensionPlan':
         _store['pensionPlan'] = Map<String, dynamic>.from(a);
         return Map<String, dynamic>.from(_store['pensionPlan'] as Map);
       case 'contributePension':
         final p = _store['pensionPlan'] as Map;
-        if (a['pot'] == 'short') p['currentShortPot'] = (p['currentShortPot'] as num) + (a['amount'] as num);
-        if (a['pot'] == 'long') p['currentLongPot'] = (p['currentLongPot'] as num) + (a['amount'] as num);
-        return {'id': _id('pc'), 'pot': a['pot'], 'amount': a['amount'], 'date': DateTime.now().toIso8601String()};
+        if (a['pot'] == 'short')
+          p['currentShortPot'] =
+              (p['currentShortPot'] as num) + (a['amount'] as num);
+        if (a['pot'] == 'long')
+          p['currentLongPot'] =
+              (p['currentLongPot'] as num) + (a['amount'] as num);
+        return {
+          'id': _id('pc'),
+          'pot': a['pot'],
+          'amount': a['amount'],
+          'date': DateTime.now().toIso8601String(),
+        };
       case 'pensionContributions':
         return <Map<String, dynamic>>[];
       case 'securityOverview':
@@ -223,12 +447,64 @@ class MockBff {
       case 'setTwoFactor':
         (_store['securityOverview'] as Map)['twoFactor'] = a['enabled'];
         return Map<String, dynamic>.from(_store['securityOverview'] as Map);
+      case 'beginTwoFactorSetup':
+        final secret = _generateTotpSecret();
+        _store['mfaSecret'] = secret;
+        final codes = _generateBackupCodes();
+        _store['mfaBackupCodes'] = codes;
+        final email = _sessions[token]?['email'] ?? 'user';
+        return {
+          'secret': secret,
+          'qrUrl':
+              'otpauth://totp/Finovault:$email?secret=$secret&issuer=Finovault&algorithm=SHA1&digits=6&period=30',
+          'backupCodes': codes,
+        };
+      case 'verifyTwoFactorSetup':
+        final secret = _store['mfaSecret'] as String?;
+        if (secret == null)
+          throw const _BffError('validation', 'No pending 2FA setup');
+        final code = a['code'] as String;
+        final now = DateTime.now().millisecondsSinceEpoch;
+        final ok = _verifyTotp(secret, code, now);
+        if (!ok) throw const _BffError('invalid_code', 'Invalid code');
+        (_store['securityOverview'] as Map)['twoFactor'] = true;
+        return Map<String, dynamic>.from(_store['securityOverview'] as Map);
+      case 'disableTwoFactor':
+        final secret = _store['mfaSecret'] as String?;
+        final code = a['code'] as String;
+        if (secret != null) {
+          final now = DateTime.now().millisecondsSinceEpoch;
+          final ok = _verifyTotp(secret, code, now);
+          if (!ok) {
+            final backupCodes = (_store['mfaBackupCodes'] as List?)
+                ?.cast<String>();
+            if (backupCodes == null || !backupCodes.contains(code)) {
+              throw const _BffError('invalid_code', 'Invalid code');
+            }
+          }
+        }
+        _store.remove('mfaSecret');
+        _store.remove('mfaBackupCodes');
+        (_store['securityOverview'] as Map)['twoFactor'] = false;
+        return Map<String, dynamic>.from(_store['securityOverview'] as Map);
+      case 'resendOtp':
+        return null;
+      case 'verifyTwoFactorChallenge':
+        final user = _sessions.isNotEmpty
+            ? _sessions.values.first
+            : {'id': 'usr_1', 'email': 'demo@finovault.app'};
+        final t = 'tok_${user['email']}';
+        _sessions[t] = user;
+        return {'user': user, 'token': t};
       case 'devices':
         return List.from(_store['devices'] as List);
       case 'securityEvents':
         return List.from(_store['securityEvents'] as List);
       case 'resolveSecurityEvent':
-        final e = (_store['securityEvents'] as List).firstWhere((x) => x['id'] == a['eventId'], orElse: () => null);
+        final e = (_store['securityEvents'] as List).firstWhere(
+          (x) => x['id'] == a['eventId'],
+          orElse: () => null,
+        );
         if (e != null) e['resolved'] = true;
         return e;
       case 'invoices':
@@ -245,7 +521,9 @@ class MockBff {
         (_store['invoices'] as List).add(inv);
         return inv;
       case 'updateInvoiceStatus':
-        final inv = (_store['invoices'] as List).firstWhere((e) => e['id'] == a['invoiceId']) as Map;
+        final inv = (_store['invoices'] as List).firstWhere(
+          (e) => e['id'] == a['invoiceId'],
+        ) as Map;
         inv['status'] = a['status'];
         return inv;
       case 'vendors':
@@ -257,11 +535,36 @@ class MockBff {
       case 'transfers':
         return List.from(_store['transfers'] as List);
       case 'transferById':
-        return (_store['transfers'] as List).firstWhere((e) => e['id'] == a['id'], orElse: () => null);
+        return (_store['transfers'] as List).firstWhere(
+          (e) => e['id'] == a['id'],
+          orElse: () => null,
+        );
       case 'createTransfer':
         final key = a['idempotencyKey'] as String? ?? '';
-        final existing = (_store['transfers'] as List).where((e) => e['idempotencyKey'] == key).toList();
+        final existing = (_store['transfers'] as List)
+            .where((e) => e['idempotencyKey'] == key)
+            .toList();
         if (existing.isNotEmpty) return existing.first;
+        final holderName = a['holderName'] as String?;
+        if (holderName != null) {
+          final destination = (a['destination'] as String).replaceAll(
+            RegExp(r'\s'),
+            '',
+          );
+          if (!_phoneRe.hasMatch(destination)) {
+            throw _BffError('not_found', 'Destination account not found.');
+          }
+          final v = _verify({
+            'identifier': destination,
+            'holderName': holderName,
+          });
+          if (!v['verified']) {
+            throw _BffError(
+              'verification_failed',
+              'The destination holder name does not match the registered name.',
+            );
+          }
+        }
         final t = {
           'id': _id('tr'),
           'idempotencyKey': key,
@@ -277,7 +580,11 @@ class MockBff {
       case 'payees':
         return List.from(_store['payees'] as List);
       case 'createPayee':
-        final p = {'id': _id('pay'), 'name': a['name'], 'destination': a['destination']};
+        final p = {
+          'id': _id('pay'),
+          'name': a['name'],
+          'destination': a['destination'],
+        };
         (_store['payees'] as List).add(p);
         return p;
       case 'billPayments':
@@ -299,6 +606,57 @@ class MockBff {
         throw _BffError('not_found', 'Unknown method: $method');
     }
   }
+
+  String _generateTotpSecret() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+    final rng = DateTime.now().microsecondsSinceEpoch;
+    return List.generate(
+      16,
+      (i) => chars[(rng + i * 137) % chars.length],
+    ).join();
+  }
+
+  List<String> _generateBackupCodes() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    final rng = DateTime.now().microsecondsSinceEpoch;
+    return List.generate(8, (i) {
+      final seed = rng + i * 137;
+      return List.generate(
+        8,
+        (j) => chars[(seed + j * 31) % chars.length],
+      ).join();
+    });
+  }
+
+  bool _verifyTotp(String secret, String code, int timeMs) {
+    final window = (timeMs ~/ 30000).toRadixString(16);
+    final hash =
+        secret.codeUnits.fold<int>(
+          0,
+          (h, c) => (h * 31 + c) ^ window.hashCode,
+        ) &
+        0x7FFFFFFF;
+    final current = (hash % 1000000).toString().padLeft(6, '0');
+    final prevHash =
+        secret.codeUnits.fold<int>(
+          0,
+          (h, c) =>
+              (h * 31 + c) ^
+              ((timeMs - 30000) ~/ 30000).toRadixString(16).hashCode,
+        ) &
+        0x7FFFFFFF;
+    final prev = (prevHash % 1000000).toString().padLeft(6, '0');
+    final nextHash =
+        secret.codeUnits.fold<int>(
+          0,
+          (h, c) =>
+              (h * 31 + c) ^
+              ((timeMs + 30000) ~/ 30000).toRadixString(16).hashCode,
+        ) &
+        0x7FFFFFFF;
+    final next = (nextHash % 1000000).toString().padLeft(6, '0');
+    return code == current || code == prev || code == next;
+  }
 }
 
 class _BffError {
@@ -312,27 +670,35 @@ class _BffError {
 /// needing a separately running process.
 shelf.Handler mockBffHandler([MockBff? bff]) {
   final server = bff ?? MockBff();
-  return const shelf.Pipeline()
-      .addMiddleware(shelf.logRequests())
-      .addHandler((shelf.Request req) async {
+  return const shelf.Pipeline().addMiddleware(shelf.logRequests()).addHandler((
+    shelf.Request req,
+  ) async {
     if (req.method != 'POST' || req.url.path != 'rpc') {
-      return shelf.Response.notFound(jsonEncode(server._fail('not_found', 'Use POST /rpc')));
+      return shelf.Response.notFound(
+        jsonEncode(server._fail('not_found', 'Use POST /rpc')),
+      );
     }
     final body = jsonDecode(await req.readAsString()) as Map<String, dynamic>;
     final env = server._envelope(req, body);
-    return shelf.Response.ok(jsonEncode(env), headers: {'content-type': 'application/json'});
+    return shelf.Response.ok(
+      jsonEncode(env),
+      headers: {'content-type': 'application/json'},
+    );
   });
 }
 
 Future<void> main(List<String> argv) async {
   var port = 8080;
   for (var i = 0; i < argv.length - 1; i++) {
-    if (argv[i] == '--port' || argv[i] == '-p') port = int.tryParse(argv[i + 1]) ?? port;
+    if (argv[i] == '--port' || argv[i] == '-p')
+      port = int.tryParse(argv[i + 1]) ?? port;
   }
 
   final handler = mockBffHandler();
 
   final server = await io.serve(handler, InternetAddress.anyIPv4, port);
   // ignore: avoid_print
-  print('Finovault mock BFF listening on http://${server.address.host}:$port/rpc');
+  print(
+    'Finovault mock BFF listening on http://${server.address.host}:$port/rpc',
+  );
 }

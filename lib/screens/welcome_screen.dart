@@ -30,29 +30,46 @@ class WelcomeScreen extends ConsumerWidget {
                     fontSize: 42,
                     fontWeight: FontWeight.w800,
                     letterSpacing: -0.5,
-                    color: FvColors.primary,
+                    color: context.fvPrimary,
                   ),
                 ),
                 const SizedBox(height: FvSpacing.x3),
                 Text(
                   s.appTagline,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 17, color: context.fvTextSecondary, height: 1.5),
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: context.fvTextSecondary,
+                    height: 1.5,
+                  ),
                 ),
                 const Spacer(flex: 3),
                 FvButton(
                   label: s.getStarted,
-                  onPressed: () => ref.read(onboardingProvider.notifier).start(),
+                  onPressed: () =>
+                      ref.read(onboardingProvider.notifier).start(),
                 ),
                 const SizedBox(height: FvSpacing.x3),
                 TextButton(
-                  onPressed: () => pushScreen(context, const LoginScreen()),
+                  onPressed: () => pushScreen(
+                    context,
+                    const FvLightTheme(child: LoginScreen()),
+                  ),
                   child: Text.rich(
                     TextSpan(
                       text: s.alreadyHaveAccount,
-                      style: TextStyle(color: context.fvTextSecondary, fontSize: 13.5),
+                      style: TextStyle(
+                        color: context.fvTextSecondary,
+                        fontSize: 13.5,
+                      ),
                       children: [
-                        TextSpan(text: s.login, style: const TextStyle(color: FvColors.primary, fontWeight: FontWeight.w700)),
+                        TextSpan(
+                          text: s.login,
+                          style: TextStyle(
+                            color: context.fvPrimary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -60,7 +77,11 @@ class WelcomeScreen extends ConsumerWidget {
                 const SizedBox(height: FvSpacing.x5),
                 Text(
                   s.securedEncrypted,
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: context.fvTextSecondary),
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: context.fvTextSecondary,
+                  ),
                 ),
                 const Spacer(flex: 2),
               ],
