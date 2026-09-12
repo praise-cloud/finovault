@@ -189,6 +189,8 @@ class UserProfile {
     required this.id,
     required this.email,
     required this.fullName,
+    this.phone,
+    this.country = 'MU',
     required this.primaryRole,
     required this.scheme,
     this.avatarUrl,
@@ -203,6 +205,8 @@ class UserProfile {
   final String id;
   final String email;
   final String fullName;
+  final String? phone;
+  final String country;
   final String? avatarUrl;
   final PrimaryRole primaryRole;
   final List<PrimaryRole> secondaryRoles;
@@ -217,6 +221,8 @@ class UserProfile {
 
   UserProfile copyWith({
     String? fullName,
+    String? phone,
+    String? country,
     String? avatarUrl,
     PrimaryRole? primaryRole,
     RoleScheme? scheme,
@@ -228,6 +234,8 @@ class UserProfile {
     id: id,
     email: email,
     fullName: fullName ?? this.fullName,
+    phone: phone ?? this.phone,
+    country: country ?? this.country,
     avatarUrl: avatarUrl ?? this.avatarUrl,
     primaryRole: primaryRole ?? this.primaryRole,
     secondaryRoles: secondaryRoles,
@@ -244,6 +252,8 @@ class UserProfile {
     'id': id,
     'email': email,
     'fullName': fullName,
+    'phone': phone,
+    'country': country,
     'avatarUrl': avatarUrl,
     'primaryRole': primaryRole.name,
     'secondaryRoles': secondaryRoles.map((r) => r.name).toList(),
@@ -259,6 +269,9 @@ class UserProfile {
     id: (j['id'] as String?) ?? '',
     email: (j['email'] as String?) ?? '',
     fullName: (j['fullName'] as String?) ?? '',
+    phone: j['phone'] as String?,
+    country: (j['country'] as String?) ??
+        ((j['preferredCurrency'] == 'NGN') ? 'NG' : 'MU'),
     avatarUrl: j['avatarUrl'] as String?,
     primaryRole: enumFromString(
       PrimaryRole.values,

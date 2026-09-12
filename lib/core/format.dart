@@ -16,6 +16,7 @@ class FvFormat {
   /// Maps a currency code to a display symbol; falls back to the code itself.
   static const _symbols = {
     'MUR': 'Rs',
+    'NGN': '₦',
     'USD': '\$',
     'EUR': '€',
     'GBP': '£',

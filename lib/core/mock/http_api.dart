@@ -95,12 +95,14 @@ class HttpFinovaultApi extends FinovaultApi {
     required String email,
     required String password,
     required String phone,
+    String country = 'MU',
   }) async => AuthResult.fromJson(
     await _rpc('signup', {
       'fullName': fullName,
       'email': email,
       'password': password,
       'phone': phone,
+      'country': country,
     }),
   );
 

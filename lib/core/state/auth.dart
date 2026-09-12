@@ -105,8 +105,9 @@ class AuthController extends Notifier<AuthState> {
     String fullName,
     String email,
     String password,
-    String phone,
-  ) async {
+    String phone, {
+    String country = 'MU',
+  }) async {
     state = state.copyWith(busy: true, error: null, clearError: true);
     try {
       final result = await _api.signup(
@@ -114,6 +115,7 @@ class AuthController extends Notifier<AuthState> {
         email: email,
         password: password,
         phone: phone,
+        country: country,
       );
       await ref.read(kvStoreProvider).setString(sessionKey, result.token);
       state = AuthState(user: result.user, restoring: false);

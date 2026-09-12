@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/banking/connector.dart';
 import '../../core/models.dart';
 import '../../core/providers.dart';
+import '../../core/state/auth.dart';
 import '../../core/state/money.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/components.dart';
@@ -70,6 +71,9 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
   void _openConnectSheet() {
     final s = AppLocalizations.of(context);
     final connector = ref.read(bankConnectorProvider);
+    final auth = ref.read(authProvider);
+    final userCountry = auth.user?.country ??
+        (auth.user?.preferredCurrency == 'NGN' ? 'NG' : 'MU');
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -96,7 +100,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
               ),
               const SizedBox(height: FvSpacing.x4),
               FutureBuilder<List<Institution>>(
-                future: connector.institutions(),
+                future: connector.institutions(country: userCountry),
                 builder: (context, snap) {
                   if (!snap.hasData)
                     return const FvShimmer(height: 240, radius: FvRadius.card);
@@ -232,7 +236,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
                         total,
                         size: MoneySize.xl,
                         color: Colors.white,
-                        currency: 'MUR',
+                        currency: list.isNotEmpty ? list.first.currency : 'MUR',
                       ),
                     ],
                   ),

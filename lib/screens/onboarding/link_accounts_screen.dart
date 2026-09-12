@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/mock/api.dart';
 import '../../core/providers.dart';
+import '../../core/state/auth.dart';
 import '../../core/state/money.dart';
 import '../../core/state/onboarding.dart';
 import '../../l10n/app_localizations.dart';
@@ -166,6 +167,11 @@ class _LinkAccountsScreenState extends ConsumerState<LinkAccountsScreen> {
   Widget build(BuildContext context) {
     final s = AppLocalizations.of(context);
 
+    final auth = ref.watch(authProvider);
+    final isNg =
+        (auth.user?.country == 'NG') ||
+        (auth.user?.preferredCurrency == 'NGN');
+
     return Scaffold(
       body: Container(
         decoration: context.fvOnboardingDecoration,
@@ -204,13 +210,15 @@ class _LinkAccountsScreenState extends ConsumerState<LinkAccountsScreen> {
                       _LinkCard(
                         icon: Icons.account_balance_outlined,
                         title: s.bankAccount,
-                        subtitle: 'MCB, SBM, Bank One, Maubank',
-                        institution: 'MCB',
+                        subtitle: isNg
+                            ? 'GTBank, Access, Zenith, First Bank, Kuda'
+                            : 'MCB, SBM, Bank One, Maubank',
+                        institution: isNg ? 'GTBank' : 'MCB',
                         typeLabel: s.linkAccountTypeBank,
                         linkedNotifier: _bankLinked,
                         importedNotifier: _bankImported,
                         onTap: () => _onLinkTap(
-                          institution: 'MCB',
+                          institution: isNg ? 'GTBank' : 'MCB',
                           displayName: s.bankAccount,
                           linkedNotifier: _bankLinked,
                           importedNotifier: _bankImported,
@@ -219,15 +227,18 @@ class _LinkAccountsScreenState extends ConsumerState<LinkAccountsScreen> {
                       const SizedBox(height: FvSpacing.x3),
                       _LinkCard(
                         icon: Icons.smartphone_outlined,
-                        title: s.mobileMoney,
-                        subtitle: 'Juice, my.t money, Emtel Money',
-                        institution: 'Juice',
+                        title: isNg ? 'Fintech & Mobile Wallet' : s.mobileMoney,
+                        subtitle: isNg
+                            ? 'OPay, PalmPay, Moniepoint'
+                            : 'Juice, my.t money, Emtel Money',
+                        institution: isNg ? 'OPay' : 'Juice',
                         typeLabel: s.linkAccountTypeMobile,
                         linkedNotifier: _momoLinked,
                         importedNotifier: _momoImported,
                         onTap: () => _onLinkTap(
-                          institution: 'Juice',
-                          displayName: s.mobileMoney,
+                          institution: isNg ? 'OPay' : 'Juice',
+                          displayName:
+                              isNg ? 'Fintech Wallet' : s.mobileMoney,
                           linkedNotifier: _momoLinked,
                           importedNotifier: _momoImported,
                         ),
@@ -407,9 +418,18 @@ class _AccountNumberSheetState extends State<_AccountNumberSheet> {
   bool _verifying = false;
   bool _isBank = false;
 
-  static final _bankInstitutions = ['MCB', 'SBM', 'Bank One', 'Maubank'];
+  static final _bankInstitutions = [
+    'MCB', 'SBM', 'Bank One', 'Maubank',
+    'GTBank', 'Access Bank', 'Zenith Bank', 'First Bank', 'UBA', 'Kuda Bank', 'Moniepoint',
+  ];
+  static final _nigerianInstitutions = [
+    'GTBank', 'Access Bank', 'Zenith Bank', 'First Bank', 'UBA', 'Kuda Bank', 'Moniepoint',
+    'OPay', 'PalmPay',
+  ];
   static final _bankPattern = RegExp(r'^\d{8,16}$');
   static final _mobilePattern = RegExp(r'^[5-7]\d{4,7}$');
+  static final _nigerianNubanPattern = RegExp(r'^\d{10}$');
+  static final _nigerianWalletPattern = RegExp(r'^(\+?234|0)?[789][01]\d{8}$|^\d{10,11}$');
 
   @override
   void initState() {
@@ -428,6 +448,16 @@ class _AccountNumberSheetState extends State<_AccountNumberSheet> {
     final s = widget.s;
     final trimmed = value.trim();
     if (trimmed.isEmpty) return s.linkAccountValidationEmpty;
+    final isNg = _nigerianInstitutions.contains(widget.institution);
+    if (isNg) {
+      if (_isBank && !_nigerianNubanPattern.hasMatch(trimmed)) {
+        return 'Nigerian bank account number (NUBAN) must be 10 digits.';
+      }
+      if (!_isBank && !_nigerianWalletPattern.hasMatch(trimmed)) {
+        return 'Nigerian wallet number must be 10–11 digits.';
+      }
+      return null;
+    }
     if (_isBank && !_bankPattern.hasMatch(trimmed)) {
       return s.linkAccountValidationBank;
     }

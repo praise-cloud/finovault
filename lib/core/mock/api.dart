@@ -53,6 +53,7 @@ abstract class FinovaultApi {
     required String email,
     required String password,
     required String phone,
+    String country = 'MU',
   });
   Future<AuthResult> login({required String email, required String password});
   Future<UserProfile?> getSession(String? token);
@@ -299,21 +300,33 @@ class MockFinovaultApi extends FinovaultApi {
     required String email,
     required String password,
     required String phone,
+    String country = 'MU',
   }) async {
     await _tick();
     final normalized = email.trim().toLowerCase();
     final phoneClean = phone.trim();
+    final ctry = country.trim().toUpperCase();
     if (fullName.trim().isEmpty ||
         normalized.isEmpty ||
         password.isEmpty ||
         phoneClean.isEmpty) {
       throw FvApiException('validation', 'Please fill in every field.');
     }
-    if (_mobilePattern.hasMatch(phoneClean) == false) {
-      throw FvApiException(
-        'validation',
-        'Phone must be 5–8 digits starting with 5–7.',
-      );
+    final isNg = ctry == 'NG';
+    if (isNg) {
+      if (!_nigerianPhonePattern.hasMatch(phoneClean)) {
+        throw FvApiException(
+          'validation',
+          'Please enter a valid Nigerian mobile number (e.g. 08012345678).',
+        );
+      }
+    } else {
+      if (_mobilePattern.hasMatch(phoneClean) == false) {
+        throw FvApiException(
+          'validation',
+          'Phone must be 5–8 digits starting with 5–7.',
+        );
+      }
     }
     if (_db.credentials.containsKey(normalized)) {
       throw FvApiException(
@@ -326,13 +339,63 @@ class MockFinovaultApi extends FinovaultApi {
       id: uid,
       email: normalized,
       fullName: fullName.trim(),
+      phone: phoneClean,
+      country: isNg ? 'NG' : 'MU',
       primaryRole: PrimaryRole.individual,
       scheme: RoleScheme.standard,
+      preferredCurrency: isNg ? 'NGN' : 'MUR',
       createdAt: DateTime.now(),
     );
     _db.users[uid] = user;
     _db.credentials[normalized] = password;
     _db.prefsByUser[uid] = const UserPreferences();
+
+    // Seed default accounts based on country
+    if (isNg) {
+      _db.accounts[uid] = [
+        Account(
+          id: _db.nextId('acc'),
+          name: 'GTBank Current',
+          type: AccountType.bank,
+          balance: 850000.0,
+          institution: 'GTBank',
+          currency: 'NGN',
+          accountNumber: '0123456789',
+        ),
+        Account(
+          id: _db.nextId('acc'),
+          name: 'OPay Wallet',
+          type: AccountType.mobileMoney,
+          balance: 45000.0,
+          institution: 'OPay',
+          currency: 'NGN',
+          accountNumber: phoneClean,
+        ),
+      ];
+    } else {
+      _db.accounts[uid] = [
+        Account(
+          id: _db.nextId('acc'),
+          name: 'SBM Current',
+          type: AccountType.bank,
+          balance: 124500.0,
+          institution: 'SBM',
+          currency: 'MUR',
+          accountNumber: '12345678',
+        ),
+        Account(
+          id: _db.nextId('acc'),
+          name: 'MCB Mobile',
+          type: AccountType.mobileMoney,
+          balance: 8600.0,
+          institution: 'MCB',
+          currency: 'MUR',
+          accountNumber: phoneClean,
+        ),
+      ];
+    }
+    await _db.persist();
+
     return AuthResult(user: user, token: _createSession(uid));
   }
 
@@ -1550,7 +1613,15 @@ class MockFinovaultApi extends FinovaultApi {
     return updated;
   }
 
-  static const _bankInstitutions = ['MCB', 'SBM', 'Bank One', 'Maubank'];
+  static const _bankInstitutions = [
+    'MCB', 'SBM', 'Bank One', 'Maubank',
+    'GTBank', 'Access Bank', 'Zenith Bank', 'First Bank', 'UBA', 'Kuda Bank', 'Moniepoint',
+  ];
+
+  static const _nigerianInstitutions = [
+    'GTBank', 'Access Bank', 'Zenith Bank', 'First Bank', 'UBA', 'Kuda Bank', 'Moniepoint',
+    'OPay', 'PalmPay',
+  ];
 
   static const _holderNames = [
     'Jean Claude Riviere',
@@ -1559,9 +1630,15 @@ class MockFinovaultApi extends FinovaultApi {
     'Kevin Appadoo',
     'Aisha Bibi',
     'Ravi Sookoo',
+    'Chioma Adeleke',
+    'Emeka Okafor',
+    'Babatunde Balogun',
+    'Fatima Danjuma',
+    'Ngozi Eze',
+    'Oluwaseun Adeyemi',
   ];
 
-  static final _phoneRe = RegExp(r'^[5-7]\d{4,7}$');
+  static final _phoneRe = RegExp(r'^(\+?234|0)[789][01]\d{8}$|^[5-7]\d{4,7}$|^\d{10,11}$');
   static final _bankRe = RegExp(r'^\d{8,16}$');
 
   @override
@@ -1599,18 +1676,35 @@ class MockFinovaultApi extends FinovaultApi {
     if (acctNum.isEmpty) {
       throw FvApiException('validation', 'Account number is required.');
     }
+    final isNigerian = _nigerianInstitutions.contains(institution) || user.country == 'NG';
     final isBank = _bankInstitutions.contains(institution);
-    if (isBank && !_bankPattern.hasMatch(acctNum)) {
-      throw FvApiException(
-        'validation',
-        'Bank account number must be 8–16 digits.',
-      );
-    }
-    if (!isBank && !_mobilePattern.hasMatch(acctNum)) {
-      throw FvApiException(
-        'validation',
-        'Mobile money number must be 5–8 digits starting with 5–7.',
-      );
+
+    if (isNigerian) {
+      if (isBank && !_nigerianNubanPattern.hasMatch(acctNum)) {
+        throw FvApiException(
+          'validation',
+          'Nigerian bank account number (NUBAN) must be 10 digits.',
+        );
+      }
+      if (!isBank && !_nigerianWalletPattern.hasMatch(acctNum)) {
+        throw FvApiException(
+          'validation',
+          'Nigerian wallet number must be 10–11 digits.',
+        );
+      }
+    } else {
+      if (isBank && !_bankPattern.hasMatch(acctNum)) {
+        throw FvApiException(
+          'validation',
+          'Bank account number must be 8–16 digits.',
+        );
+      }
+      if (!isBank && !_mobilePattern.hasMatch(acctNum)) {
+        throw FvApiException(
+          'validation',
+          'Mobile money number must be 5–8 digits starting with 5–7.',
+        );
+      }
     }
 
     if (holderName != null) {
@@ -1632,10 +1726,11 @@ class MockFinovaultApi extends FinovaultApi {
 
     final seed = (institution + acctNum).hashCode;
     final isWallet = !isBank;
-    final startingBalance = isWallet
-        ? 3200.0 + (seed % 900)
-        : 64000.0 + (seed % 40000);
-    final last4 = acctNum.substring(acctNum.length - 4);
+    final currency = isNigerian ? 'NGN' : 'MUR';
+    final startingBalance = isNigerian
+        ? (isWallet ? 25000.0 + (seed % 35000) : 350000.0 + (seed % 500000))
+        : (isWallet ? 3200.0 + (seed % 900) : 64000.0 + (seed % 40000));
+    final last4 = acctNum.length >= 4 ? acctNum.substring(acctNum.length - 4) : acctNum;
     final type = isWallet ? AccountType.mobileMoney : AccountType.bank;
     final account = Account(
       id: _db.nextId('acc'),
@@ -1643,60 +1738,57 @@ class MockFinovaultApi extends FinovaultApi {
       type: type,
       balance: startingBalance.toDouble(),
       institution: institution.trim(),
-      currency: 'MUR',
+      currency: currency,
       accountNumber: acctNum,
     );
     (_db.accounts[user.id] ??= []).add(account);
 
-    // Generate 45 days of transaction history (mirrors BFF behaviour).
+    // Generate 45 days of transaction history (automatic history fetch).
     final txList = _db.transactions[user.id] ??= <Transaction>[];
     var imported = 0;
-    const spendCats = [
-      'groceries',
-      'transport',
-      'utilities',
-      'dining',
-      'software',
-      'supplies',
-    ];
-    const merchants = [
-      'Shoprite',
-      'Bus ticket',
-      'CEB',
-      'Lambrooks',
-      'Flicks',
-      'Canva',
-      'Office Supplies',
-    ];
+    final spendCats = isNigerian
+        ? const ['groceries', 'transport', 'utilities', 'dining', 'airtime', 'shopping']
+        : const ['groceries', 'transport', 'utilities', 'dining', 'software', 'supplies'];
+    final merchants = isNigerian
+        ? const ['Jumia', 'Chicken Republic', 'MTN Airtime', 'Ikeja Electric', 'Fuel / NNPC', 'Spar Supermarket', 'Uber Lagos']
+        : const ['Shoprite', 'Bus ticket', 'CEB', 'Lambrooks', 'Flicks', 'Canva', 'Office Supplies'];
     final now = DateTime.now();
     for (var d = 1; d <= 45; d++) {
       final k = (seed + d * 7) % 10;
       final date = now.subtract(Duration(days: d));
       if (d % 3 == 0) {
+        final creditAmt = isNigerian
+            ? (isWallet ? 15000.0 + (k * 2500) : 120000.0 + (k * 25000))
+            : (isWallet ? 60.0 + (k * 17) : 1400.0 + (k * 320));
         txList.add(
           Transaction(
             id: _db.nextId('tx'),
             accountId: account.id,
-            amount: isWallet ? 60 + k * 17 : 1400 + k * 320,
+            amount: creditAmt,
             direction: TransactionDirection.inn,
             category: isWallet ? 'client payment' : 'salary',
-            merchantName: isWallet ? 'Transfer in' : 'Payroll',
+            merchantName: isWallet ? 'Transfer in' : 'Payroll / Salary',
             date: date,
+            currency: currency,
             isExpense: false,
           ),
         );
         imported++;
       }
       if (d % 2 == 0) {
+        final debitAmt = isNigerian
+            ? (isWallet ? 2500.0 + (k * 800) : 12000.0 + (k * 3500))
+            : (isWallet ? 40.0 + (k * 9) : 380.0 + (k * 70));
         txList.add(
           Transaction(
             id: _db.nextId('tx'),
             accountId: account.id,
-            amount: isWallet ? 40 + k * 9 : 380 + k * 70,
+            amount: debitAmt,
             direction: TransactionDirection.out,
             category: spendCats[k % spendCats.length],
             merchantName: merchants[k % merchants.length],
             date: date,
+            currency: currency,
             isExpense: true,
           ),
         );
@@ -1709,6 +1801,9 @@ class MockFinovaultApi extends FinovaultApi {
 
   static final _bankPattern = RegExp(r'^\d{8,16}$');
   static final _mobilePattern = RegExp(r'^[5-7]\d{4,7}$');
+  static final _nigerianPhonePattern = RegExp(r'^(\+?234|0)?[789][01]\d{8}$');
+  static final _nigerianNubanPattern = RegExp(r'^\d{10}$');
+  static final _nigerianWalletPattern = RegExp(r'^(\+?234|0)?[789][01]\d{8}$|^\d{10,11}$');
 
   // ---- statement upload ---------------------------------------------------------
 
