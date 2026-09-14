@@ -1,9 +1,10 @@
-name: CI
+name: CI & Builds
 
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 jobs:
   analyze-and-test:
@@ -27,3 +28,69 @@ jobs:
 
       - name: Test
         run: flutter test
+
+  build-android:
+    needs: analyze-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Android Release APK
+        run: flutter build apk --release --dart-define=API_BASE_URL=https://finovault-bff.onrender.com
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Finovault-Android-Release-APK
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 14
+
+  build-ios:
+    needs: analyze-and-test
+    runs-on: macos-latest
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build iOS Application (Release)
+        run: |
+          flutter build ios --release --no-codesign --dart-define=API_BASE_URL=https://finovault-bff.onrender.com
+
+      - name: Package Payload as IPA
+        run: |
+          mkdir -p build/ios/iphoneos/Payload
+          cp -R build/ios/iphoneos/Runner.app build/ios/iphoneos/Payload/
+          cd build/ios/iphoneos
+          zip -qr Finovault-iOS-Release.ipa Payload
+
+      - name: Upload iOS IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Finovault-iOS-Release
+          path: build/ios/iphoneos/Finovault-iOS-Release.ipa
+          retention-days: 14
