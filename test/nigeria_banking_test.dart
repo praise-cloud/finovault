@@ -160,5 +160,71 @@ void main() {
       expect(plan.startingBalance, greaterThan(300000));
       expect(plan.history.isNotEmpty, isTrue);
     });
+
+    test('institutions(country: "NG") includes official CBN bank codes', () async {
+      final nigerian = await connector.institutions(country: 'NG');
+      final gtbank = nigerian.firstWhere((i) => i.id == 'gtbank');
+      expect(gtbank.code, equals('058'));
+
+      final opay = nigerian.firstWhere((i) => i.id == 'opay');
+      expect(opay.code, equals('999992'));
+
+      final zenith = nigerian.firstWhere((i) => i.id == 'zenith');
+      expect(zenith.code, equals('057'));
+    });
+  });
+
+  group('NUBAN Verification & Live Resolution', () {
+    late MockDb db;
+    late MockFinovaultApi api;
+
+    setUp(() async {
+      db = MockDb();
+      api = MockFinovaultApi(db: db, latency: Duration.zero);
+    });
+
+    test('verifyAccount resolves 10-digit NUBAN with bankCode when holderName is empty', () async {
+      final signup = await api.signup(
+        fullName: 'Folake Adebayo',
+        email: 'folake@example.ng',
+        password: 'Password123!',
+        phone: '08023456789',
+        country: 'NG',
+      );
+
+      final check = await api.verifyAccount(
+        signup.token,
+        institution: 'GTBank',
+        identifier: '0123456789',
+        holderName: '',
+        bankCode: '058',
+      );
+
+      expect(check.exists, isTrue);
+      expect(check.verified, isTrue);
+      expect(check.holderName, isNotNull);
+      expect(check.holderName!.isNotEmpty, isTrue);
+    });
+
+    test('verifyAccount rejects short identifiers', () async {
+      final signup = await api.signup(
+        fullName: 'Folake Adebayo',
+        email: 'folake2@example.ng',
+        password: 'Password123!',
+        phone: '08023456789',
+        country: 'NG',
+      );
+
+      final check = await api.verifyAccount(
+        signup.token,
+        institution: 'GTBank',
+        identifier: '12345',
+        holderName: '',
+        bankCode: '058',
+      );
+
+      expect(check.exists, isFalse);
+      expect(check.verified, isFalse);
+    });
   });
 }

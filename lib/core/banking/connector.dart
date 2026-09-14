@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import '../models.dart';
 
 /// A bank / mobile-money provider the user can connect.
@@ -8,6 +10,7 @@ class Institution {
     required this.type,
     this.blurb,
     this.country = 'MU',
+    this.code,
   });
 
   final String id;
@@ -15,6 +18,7 @@ class Institution {
   final AccountType type;
   final String? blurb;
   final String country;
+  final String? code;
 }
 
 /// One imported transaction the connector wants the app to seed when an
@@ -53,6 +57,8 @@ abstract class BankConnector {
 }
 
 class MockBankConnector implements BankConnector {
+  static List<Institution>? _cachedRemoteNgBanks;
+
   static const List<Institution> _list = [
     Institution(
       id: 'mcb',
@@ -60,6 +66,7 @@ class MockBankConnector implements BankConnector {
       type: AccountType.bank,
       blurb: 'Mauritius Commercial Bank',
       country: 'MU',
+      code: 'MCB',
     ),
     Institution(
       id: 'sbm',
@@ -67,6 +74,7 @@ class MockBankConnector implements BankConnector {
       type: AccountType.bank,
       blurb: 'State Bank of Mauritius',
       country: 'MU',
+      code: 'SBM',
     ),
     Institution(
       id: 'bankone',
@@ -74,6 +82,7 @@ class MockBankConnector implements BankConnector {
       type: AccountType.bank,
       blurb: 'Digital-first bank',
       country: 'MU',
+      code: 'BANKONE',
     ),
     Institution(
       id: 'maubank',
@@ -81,6 +90,7 @@ class MockBankConnector implements BankConnector {
       type: AccountType.bank,
       blurb: 'Everyday banking',
       country: 'MU',
+      code: 'MAUBANK',
     ),
     Institution(
       id: 'myt',
@@ -88,6 +98,7 @@ class MockBankConnector implements BankConnector {
       type: AccountType.mobileMoney,
       blurb: 'Mobile wallet',
       country: 'MU',
+      code: 'MYT',
     ),
     Institution(
       id: 'emtel',
@@ -95,6 +106,7 @@ class MockBankConnector implements BankConnector {
       type: AccountType.mobileMoney,
       blurb: 'Mobile wallet',
       country: 'MU',
+      code: 'EMTEL',
     ),
     Institution(
       id: 'juice',
@@ -102,77 +114,189 @@ class MockBankConnector implements BankConnector {
       type: AccountType.mobileMoney,
       blurb: 'Mobile wallet',
       country: 'MU',
+      code: 'JUICE',
     ),
-    // Nigeria banks & fintech wallets
+    // Nigeria banks & fintech wallets with CBN codes
     Institution(
       id: 'gtbank',
       name: 'GTBank',
       type: AccountType.bank,
-      blurb: 'Guaranty Trust Bank',
+      blurb: 'Guaranty Trust Bank (Code 058)',
       country: 'NG',
+      code: '058',
     ),
     Institution(
       id: 'access',
       name: 'Access Bank',
       type: AccountType.bank,
-      blurb: 'Commercial bank',
+      blurb: 'Commercial bank (Code 044)',
       country: 'NG',
+      code: '044',
     ),
     Institution(
       id: 'zenith',
       name: 'Zenith Bank',
       type: AccountType.bank,
-      blurb: 'Corporate & retail bank',
+      blurb: 'Corporate & retail bank (Code 057)',
       country: 'NG',
+      code: '057',
     ),
     Institution(
       id: 'firstbank',
       name: 'First Bank',
       type: AccountType.bank,
-      blurb: 'First Bank of Nigeria',
+      blurb: 'First Bank of Nigeria (Code 011)',
       country: 'NG',
+      code: '011',
     ),
     Institution(
       id: 'uba',
       name: 'UBA',
       type: AccountType.bank,
-      blurb: 'United Bank for Africa',
+      blurb: 'United Bank for Africa (Code 033)',
       country: 'NG',
+      code: '033',
     ),
     Institution(
       id: 'kuda',
       name: 'Kuda Bank',
       type: AccountType.bank,
-      blurb: 'Digital bank for the free',
+      blurb: 'Digital bank for the free (Code 50211)',
       country: 'NG',
+      code: '50211',
     ),
     Institution(
       id: 'moniepoint',
       name: 'Moniepoint',
       type: AccountType.bank,
-      blurb: 'Business & personal banking',
+      blurb: 'Business & personal banking (Code 50515)',
       country: 'NG',
+      code: '50515',
     ),
     Institution(
       id: 'opay',
       name: 'OPay',
       type: AccountType.mobileMoney,
-      blurb: 'Mobile wallet & payments',
+      blurb: 'Mobile wallet & payments (Code 999992)',
       country: 'NG',
+      code: '999992',
     ),
     Institution(
       id: 'palmpay',
       name: 'PalmPay',
       type: AccountType.mobileMoney,
-      blurb: 'Rewards & money app',
+      blurb: 'Rewards & money app (Code 999991)',
       country: 'NG',
+      code: '999991',
+    ),
+    Institution(
+      id: 'stanbic',
+      name: 'Stanbic IBTC Bank',
+      type: AccountType.bank,
+      blurb: 'Commercial bank (Code 221)',
+      country: 'NG',
+      code: '221',
+    ),
+    Institution(
+      id: 'fidelity',
+      name: 'Fidelity Bank',
+      type: AccountType.bank,
+      blurb: 'Commercial bank (Code 070)',
+      country: 'NG',
+      code: '070',
+    ),
+    Institution(
+      id: 'sterling',
+      name: 'Sterling Bank',
+      type: AccountType.bank,
+      blurb: 'Commercial bank (Code 232)',
+      country: 'NG',
+      code: '232',
+    ),
+    Institution(
+      id: 'union',
+      name: 'Union Bank',
+      type: AccountType.bank,
+      blurb: 'Union Bank of Nigeria (Code 032)',
+      country: 'NG',
+      code: '032',
+    ),
+    Institution(
+      id: 'wema',
+      name: 'Wema Bank (ALAT)',
+      type: AccountType.bank,
+      blurb: 'Digital & retail bank (Code 035)',
+      country: 'NG',
+      code: '035',
+    ),
+    Institution(
+      id: 'fcmb',
+      name: 'FCMB',
+      type: AccountType.bank,
+      blurb: 'First City Monument Bank (Code 214)',
+      country: 'NG',
+      code: '214',
+    ),
+    Institution(
+      id: 'ecobank',
+      name: 'Ecobank',
+      type: AccountType.bank,
+      blurb: 'Ecobank Nigeria (Code 050)',
+      country: 'NG',
+      code: '050',
     ),
   ];
 
   @override
   Future<List<Institution>> institutions({String? country}) async {
-    if (country == null) return _list;
-    final c = country.toUpperCase();
+    final c = country?.toUpperCase();
+    if (c == 'NG') {
+      if (_cachedRemoteNgBanks != null && _cachedRemoteNgBanks!.isNotEmpty) {
+        return _cachedRemoteNgBanks!;
+      }
+      try {
+        final uri = Uri.parse('https://api.paystack.co/bank?country=nigeria');
+        final res = await http.get(uri).timeout(const Duration(seconds: 3));
+        if (res.statusCode == 200) {
+          final decoded = jsonDecode(res.body) as Map<String, dynamic>;
+          if (decoded['status'] == true && decoded['data'] is List) {
+            final rawList = decoded['data'] as List;
+            final localNg = _list.where((i) => i.country == 'NG').toList();
+            final seenCodes = localNg.map((i) => i.code).toSet();
+            final merged = <Institution>[...localNg];
+            for (final item in rawList) {
+              final m = item as Map<String, dynamic>;
+              final name = (m['name'] as String?) ?? '';
+              final code = (m['code'] as String?) ?? '';
+              final slug = (m['slug'] as String?) ?? code;
+              if (name.isEmpty || code.isEmpty) continue;
+              if (seenCodes.contains(code)) continue;
+              seenCodes.add(code);
+              final isWallet = name.toLowerCase().contains('opay') ||
+                  name.toLowerCase().contains('palmpay') ||
+                  name.toLowerCase().contains('wallet');
+              merged.add(
+                Institution(
+                  id: slug.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '').toLowerCase(),
+                  name: name,
+                  type: isWallet ? AccountType.mobileMoney : AccountType.bank,
+                  code: code,
+                  country: 'NG',
+                  blurb: 'Bank code $code',
+                ),
+              );
+            }
+            if (merged.isNotEmpty) {
+              _cachedRemoteNgBanks = merged;
+              return merged;
+            }
+          }
+        }
+      } catch (_) {
+        // Fallback gracefully on timeout or offline
+      }
+    }
+    if (c == null) return _list;
     return _list.where((i) => i.country == c).toList();
   }
 

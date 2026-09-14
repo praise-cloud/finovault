@@ -619,11 +619,13 @@ class HttpFinovaultApi extends FinovaultApi {
     required String institution,
     required String identifier,
     required String holderName,
+    String? bankCode,
   }) async => AccountVerification.fromJson(
     await _rpc('verifyAccount', {
       'institution': institution,
       'identifier': identifier,
       'holderName': holderName,
+      if (bankCode != null && bankCode.isNotEmpty) 'bankCode': bankCode,
     }, token: token),
   );
 

@@ -215,6 +215,7 @@ abstract class FinovaultApi {
     required String institution,
     required String identifier,
     required String holderName,
+    String? bankCode,
   });
 
   Future<BankLinkResult> linkBankAccount(
@@ -1647,19 +1648,20 @@ class MockFinovaultApi extends FinovaultApi {
     required String institution,
     required String identifier,
     required String holderName,
+    String? bankCode,
   }) async {
     await _requireUser(token);
     final cleaned = identifier.replaceAll(RegExp(r'\s'), '');
-    final isBank = _bankInstitutions.contains(institution);
+    final isBank = _bankInstitutions.contains(institution) || bankCode != null;
     final exists = isBank
         ? _bankRe.hasMatch(cleaned)
         : _phoneRe.hasMatch(cleaned);
     final expected = _holderNames[cleaned.hashCode.abs() % _holderNames.length];
-    final verified =
-        exists && holderName.trim().toLowerCase() == expected.toLowerCase();
+    final normHolder = holderName.trim().toLowerCase();
+    final verified = exists && (normHolder.isEmpty || normHolder == expected.toLowerCase());
     return AccountVerification(
       exists: exists,
-      holderName: verified ? expected : null,
+      holderName: exists ? expected : null,
       verified: verified,
     );
   }
