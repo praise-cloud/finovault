@@ -26,6 +26,9 @@ import 'package:finovault_flutter/screens/tabs/insights_tab.dart';
 import 'package:finovault_flutter/screens/tabs/pay_tab.dart';
 import 'package:finovault_flutter/screens/tabs/profile_tab.dart';
 import 'package:finovault_flutter/screens/tabs/vault_tab.dart';
+import 'package:finovault_flutter/screens/student_home_screen.dart';
+import 'package:finovault_flutter/widgets/student_vault/vault_fuel_gauge.dart';
+import 'package:finovault_flutter/widgets/student_vault/merchant_spots_bar.dart';
 
 import 'helpers.dart';
 
@@ -175,6 +178,13 @@ void main() {
     testWidgets('PensionSetupScreen', (tester) async {
       await pumpScreen(tester, const PensionSetupScreen());
       expect(tester.takeException(), isNull);
+    });
+    testWidgets('StudentHomeScreen renders gauge, spots, and quick log CTA', (tester) async {
+      await pumpScreen(tester, const StudentHomeScreen());
+      expect(tester.takeException(), isNull);
+      expect(find.byType(VaultFuelGauge), findsOneWidget);
+      expect(find.byType(MerchantSpotsBar), findsOneWidget);
+      expect(find.text('LOG EXPENSE'), findsOneWidget);
     });
   });
 }
