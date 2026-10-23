@@ -80,11 +80,7 @@ class ProfileTab extends ConsumerWidget {
           label: s.editProfile,
           onTap: () => pushScreen(context, const EditProfileScreen()),
         ),
-        _Row(
-          icon: Icons.account_balance_outlined,
-          label: s.linkedAccounts,
-          onTap: () => openAccounts(context),
-        ),
+
         _SectionTitle(s.profileSectionSecurity),
         _Row(
           icon: Icons.security_outlined,

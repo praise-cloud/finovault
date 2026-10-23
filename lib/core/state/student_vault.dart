@@ -151,6 +151,42 @@ class MerchantSpot {
   );
 }
 
+/// A category budget that students set and track (e.g. Food, Transport, Shopping).
+class CategoryBudget {
+  const CategoryBudget({
+    required this.category,
+    required this.amount,
+    this.emoji = "💳",
+  });
+
+  final String category;
+  final double amount;
+  final String emoji;
+
+  CategoryBudget copyWith({
+    String? category,
+    double? amount,
+    String? emoji,
+  }) {
+    return CategoryBudget(
+      category: category ?? this.category,
+      amount: amount ?? this.amount,
+      emoji: emoji ?? this.emoji,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    "category": category,
+    "amount": amount,
+    "emoji": emoji,
+  };
+
+  factory CategoryBudget.fromJson(Map<String, dynamic> json) => CategoryBudget(
+    category: json["category"] as String,
+    amount: (json["amount"] as num).toDouble(),
+    emoji: (json["emoji"] as String?) ?? "💳",
+  );
+}
 enum SpendMood {
   cruising, // < 50% spent -> green
   steady,   // 50% - 80% spent -> yellow
@@ -162,6 +198,7 @@ class StudentVaultState {
     required this.activePeriod,
     required this.transactions,
     required this.merchants,
+    this.categoryBudgets = const [],
     this.archivedPeriods = const [],
     this.filterMerchant,
   });
@@ -169,6 +206,7 @@ class StudentVaultState {
   final StudentPeriod activePeriod;
   final List<Transaction> transactions;
   final List<MerchantSpot> merchants;
+  final List<CategoryBudget> categoryBudgets;
   final List<StudentPeriod> archivedPeriods;
   final String? filterMerchant;
 
@@ -216,6 +254,24 @@ class StudentVaultState {
     SpendMood.ramenMode => 'Low fuel warning! Prioritize basics only.',
   };
 
+  /// Total spent in this active period for a specific category
+  double spentForCategory(String category) {
+    final cat = category.toLowerCase().trim();
+    return transactions
+        .where((t) => t.isExpense && t.category.toLowerCase().trim() == cat)
+        .fold(0.0, (acc, t) => acc + t.amount);
+  }
+
+  /// Remaining amount in a category budget
+  double remainingForCategory(CategoryBudget b) {
+    return b.amount - spentForCategory(b.category);
+  }
+
+  /// Progress ratio for a category budget (0.0 to 1.0)
+  double progressForCategory(CategoryBudget b) {
+    if (b.amount <= 0) return 0.0;
+    return (spentForCategory(b.category) / b.amount).clamp(0.0, 1.0);
+  }
   /// Transactions filtered by merchant (if filter active) and ordered latest first
   List<Transaction> get visibleTransactions {
     var list = transactions.toList()
@@ -237,14 +293,23 @@ class StudentVaultState {
     StudentPeriod? activePeriod,
     List<Transaction>? transactions,
     List<MerchantSpot>? merchants,
+    List<CategoryBudget>? categoryBudgets,
     List<StudentPeriod>? archivedPeriods,
     String? filterMerchant,
     bool clearFilter = false,
   }) {
+    final defaultBudgets = [
+      const CategoryBudget(category: "Food & Drinks", amount: 1800.0, emoji: "🍔"),
+      const CategoryBudget(category: "Shopping & Essentials", amount: 1000.0, emoji: "🛍️"),
+      const CategoryBudget(category: "Snacks & Study", amount: 600.0, emoji: "🥪"),
+      const CategoryBudget(category: "Transport", amount: 400.0, emoji: "🚌"),
+      const CategoryBudget(category: "Groceries", amount: 800.0, emoji: "🛒"),
+    ];
     return StudentVaultState(
       activePeriod: activePeriod ?? this.activePeriod,
       transactions: transactions ?? this.transactions,
       merchants: merchants ?? this.merchants,
+      categoryBudgets: categoryBudgets ?? this.categoryBudgets,
       archivedPeriods: archivedPeriods ?? this.archivedPeriods,
       filterMerchant: clearFilter ? null : (filterMerchant ?? this.filterMerchant),
     );
@@ -283,10 +348,19 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
       const MerchantSpot(name: 'Winners', category: 'Groceries', emoji: '🛒', isCampusHotspot: true),
     ];
 
+    final defaultBudgets = [
+      const CategoryBudget(category: 'Food & Drinks', amount: 1800.0, emoji: '🍔'),
+      const CategoryBudget(category: 'Shopping & Essentials', amount: 1000.0, emoji: '🛍️'),
+      const CategoryBudget(category: 'Snacks & Study', amount: 600.0, emoji: '🥪'),
+      const CategoryBudget(category: 'Transport', amount: 400.0, emoji: '🚌'),
+      const CategoryBudget(category: 'Groceries', amount: 800.0, emoji: '🛒'),
+    ];
+
     return StudentVaultState(
       activePeriod: defaultPeriod,
       transactions: [],
       merchants: defaultMerchants,
+      categoryBudgets: defaultBudgets,
       archivedPeriods: [],
     );
   }
@@ -305,6 +379,8 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
         final txs = rawTx.map((e) => _txFromJson(e as Map<String, dynamic>)).toList();
         final rawM = (data['merchants'] as List<dynamic>? ?? []);
         final merchants = rawM.map((e) => MerchantSpot.fromJson(e as Map<String, dynamic>)).toList();
+        final rawB = (data['categoryBudgets'] as List<dynamic>? ?? []);
+        final budgets = rawB.map((e) => CategoryBudget.fromJson(e as Map<String, dynamic>)).toList();
         final rawArch = (data['archivedPeriods'] as List<dynamic>? ?? []);
         final archived = rawArch.map((e) => StudentPeriod.fromJson(e as Map<String, dynamic>)).toList();
 
@@ -312,6 +388,7 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
           activePeriod: activePeriod,
           transactions: txs,
           merchants: merchants.isNotEmpty ? merchants : state.merchants,
+          categoryBudgets: budgets.isNotEmpty ? budgets : state.categoryBudgets,
           archivedPeriods: archived,
         );
       } else {
@@ -329,6 +406,7 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
         'activePeriod': state.activePeriod.toJson(),
         'transactions': state.transactions.map(_txToJson).toList(),
         'merchants': state.merchants.map((m) => m.toJson()).toList(),
+        'categoryBudgets': state.categoryBudgets.map((b) => b.toJson()).toList(),
         'archivedPeriods': state.archivedPeriods.map((p) => p.toJson()).toList(),
       };
       await _store.setString(_storageKey, jsonEncode(map));
@@ -515,6 +593,43 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
     return wrap;
   }
 
+  Future<void> setCategoryBudget({
+    required String category,
+    required double amount,
+    String? emoji,
+  }) async {
+    final cat = category.trim();
+    final cleanEmoji = emoji ?? _pickEmoji(cat, cat);
+    final existingIndex = state.categoryBudgets.indexWhere(
+      (b) => b.category.toLowerCase() == cat.toLowerCase(),
+    );
+
+    List<CategoryBudget> updated;
+    if (existingIndex >= 0) {
+      updated = List.of(state.categoryBudgets);
+      updated[existingIndex] = CategoryBudget(
+        category: cat,
+        amount: amount.abs(),
+        emoji: cleanEmoji,
+      );
+    } else {
+      updated = [
+        ...state.categoryBudgets,
+        CategoryBudget(category: cat, amount: amount.abs(), emoji: cleanEmoji),
+      ];
+    }
+
+    state = state.copyWith(categoryBudgets: updated);
+    await _persist();
+  }
+
+  Future<void> deleteCategoryBudget(String category) async {
+    final updated = state.categoryBudgets
+        .where((b) => b.category.toLowerCase() != category.toLowerCase().trim())
+        .toList();
+    state = state.copyWith(categoryBudgets: updated);
+    await _persist();
+  }
   void setMerchantFilter(String? merchant) {
     if (state.filterMerchant == merchant) {
       state = state.copyWith(clearFilter: true);

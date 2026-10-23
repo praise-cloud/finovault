@@ -27,6 +27,8 @@ import 'tabs/profile_tab.dart';
 import 'tabs/vault_tab.dart';
 import 'coach/coach_screen.dart';
 import 'student_home_screen.dart';
+import 'tabs/student_budget_tab.dart';
+import 'tabs/student_history_tab.dart';
 
 /// Authenticated shell: bottom 5-tab bar (Home/Insights/Vault/Pay/Profile).
 /// The Home tab is role-aware — each persona sees its own hero metric and
@@ -46,15 +48,14 @@ class HomeShell extends ConsumerWidget {
         decoration: context.fvPageDecoration,
         child: SafeArea(
           child: IndexedStack(
-            index: index,
+            index: index.clamp(0, 3),
             children: [
               _HomeTab(
                 user: user,
                 femaleFounder: scheme == RoleScheme.femaleFounder,
               ),
-              const InsightsTab(),
-              const VaultTab(),
-              const PayTab(),
+              const StudentBudgetTab(),
+              const StudentHistoryTab(),
               const ProfileTab(),
             ],
           ),
@@ -86,32 +87,24 @@ class HomeShell extends ConsumerWidget {
           ),
           NavigationDestination(
             icon: Icon(
-              Icons.psychology_outlined,
+              Icons.pie_chart_outline,
               color: index == 1 ? context.fvPrimary : context.fvTextSecondary,
             ),
-            selectedIcon: Icon(Icons.psychology, color: context.fvPrimary),
-            label: s.navInsights,
+            selectedIcon: Icon(Icons.pie_chart, color: context.fvPrimary),
+            label: s.budgets,
           ),
           NavigationDestination(
             icon: Icon(
-              Icons.lock_outline,
+              Icons.receipt_long_outlined,
               color: index == 2 ? context.fvPrimary : context.fvTextSecondary,
             ),
-            selectedIcon: Icon(Icons.lock, color: context.fvPrimary),
-            label: s.navVault,
-          ),
-          NavigationDestination(
-            icon: Icon(
-              Icons.send_outlined,
-              color: index == 3 ? context.fvPrimary : context.fvTextSecondary,
-            ),
-            selectedIcon: Icon(Icons.send, color: context.fvPrimary),
-            label: s.navPay,
+            selectedIcon: Icon(Icons.receipt_long, color: context.fvPrimary),
+            label: "History",
           ),
           NavigationDestination(
             icon: Icon(
               Icons.person_outline,
-              color: index == 4 ? context.fvPrimary : context.fvTextSecondary,
+              color: index == 3 ? context.fvPrimary : context.fvTextSecondary,
             ),
             selectedIcon: Icon(Icons.person, color: context.fvPrimary),
             label: s.navProfile,

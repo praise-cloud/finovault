@@ -127,5 +127,51 @@ void main() {
       notifier.setMerchantFilter('Timo');
       expect(notifier.state.filterMerchant, null);
     });
+
+    test('category budget tracking and progress calculations', () async {
+      final store = MemoryStore();
+      final notifier = StudentVaultNotifier(store: store);
+
+      // Pre-seeded has Food & Drinks
+      final foodBudget = notifier.state.categoryBudgets.firstWhere(
+        (b) => b.category == 'Food & Drinks',
+      );
+      expect(foodBudget.amount, 1800.0);
+
+      // Log food purchase
+      await notifier.logExpense(
+        description: 'Lunch at Timo',
+        merchantName: 'Timo',
+        amount: 300.0,
+        category: 'Food & Drinks',
+      );
+
+      final spent = notifier.state.spentForCategory('Food & Drinks');
+      expect(spent, greaterThanOrEqualTo(300.0));
+
+      final progress = notifier.state.progressForCategory(foodBudget);
+      expect(progress, greaterThan(0.0));
+      expect(progress, lessThanOrEqualTo(1.0));
+
+      // Add a custom student budget: e.g. "Gaming & Chill"
+      await notifier.setCategoryBudget(
+        category: 'Gaming & Chill',
+        amount: 500.0,
+        emoji: '🎮',
+      );
+
+      final gaming = notifier.state.categoryBudgets.firstWhere(
+        (b) => b.category == 'Gaming & Chill',
+      );
+      expect(gaming.amount, 500.0);
+      expect(gaming.emoji, '🎮');
+
+      // Delete budget
+      await notifier.deleteCategoryBudget('Gaming & Chill');
+      expect(
+        notifier.state.categoryBudgets.any((b) => b.category == 'Gaming & Chill'),
+        false,
+      );
+    });
   });
 }
