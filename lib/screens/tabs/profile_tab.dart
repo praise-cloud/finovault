@@ -82,10 +82,22 @@ class ProfileTab extends ConsumerWidget {
                   ),
                 ),
               ),
-              StatusBadge(
-                label: 'Free',
-                foreground: context.fvPrimary,
-                background: context.fvWash,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD1FAE5),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFF10B981), width: 1),
+                ),
+                child: const Text(
+                  'STUDENT',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.8,
+                    color: Color(0xFF047857),
+                  ),
+                ),
               ),
             ],
           ),
@@ -133,11 +145,17 @@ class ProfileTab extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: context.fvSurface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (sheet) => Padding(
+      backgroundColor: Colors.transparent,
+      builder: (sheet) => Container(
+        decoration: const BoxDecoration(
+          color: FvColors.surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          border: Border(
+            top: BorderSide(color: FvColors.ink, width: 2.5),
+            left: BorderSide(color: FvColors.ink, width: 2.5),
+            right: BorderSide(color: FvColors.ink, width: 2.5),
+          ),
+        ),
         padding: const EdgeInsets.all(FvSpacing.x5),
         child: SingleChildScrollView(
           child: Column(
@@ -421,7 +439,7 @@ class _Row extends StatelessWidget {
             Icon(
               icon,
               size: 20,
-              color: danger ? context.fvError : context.fvPrimary,
+              color: danger ? context.fvError : FvColors.ink,
             ),
             const SizedBox(width: FvSpacing.x3),
             Expanded(
@@ -461,12 +479,13 @@ class _SwitchRow extends StatelessWidget {
       child: MergeSemantics(
         child: Row(
           children: [
-            Icon(icon, size: 20, color: context.fvPrimary),
+            Icon(icon, size: 20, color: FvColors.ink),
             const SizedBox(width: FvSpacing.x3),
-            Expanded(child: Text(label, style: const TextStyle(fontSize: 14))),
+            Expanded(child: Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700))),
             Switch(
               value: value,
-              activeThumbColor: context.fvPrimary,
+              activeTrackColor: FvColors.ink,
+              activeThumbColor: Colors.white,
               onChanged: onChanged,
             ),
           ],
@@ -491,18 +510,18 @@ class _ChoiceChip extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Expanded(
       child: Material(
-        color: selected ? context.fvWash : context.fvSurface,
-        borderRadius: BorderRadius.circular(FvRadius.button),
+        color: selected ? FvColors.ink : FvColors.surface,
+        borderRadius: BorderRadius.circular(10),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(FvRadius.button),
+          borderRadius: BorderRadius.circular(10),
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 10),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(FvRadius.button),
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: selected ? context.fvPrimary : context.fvBorder,
+                color: selected ? FvColors.ink : FvColors.border,
                 width: selected ? 1.5 : 1,
               ),
             ),
@@ -510,8 +529,8 @@ class _ChoiceChip extends ConsumerWidget {
               label,
               style: TextStyle(
                 fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: selected ? context.fvPrimary : context.fvText,
+                fontWeight: FontWeight.w800,
+                color: selected ? Colors.white : FvColors.ink,
               ),
             ),
           ),

@@ -112,8 +112,8 @@ class FvButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final disabled = onPressed == null || loading;
     var (Color bg, Color fg) = switch (variant) {
-      FvButtonVariant.primary => (FvColors.primary, Colors.white),
-      FvButtonVariant.secondary => (Colors.transparent, context.fvText),
+      FvButtonVariant.primary => (FvColors.ink, Colors.white),
+      FvButtonVariant.secondary => (FvColors.surface, FvColors.ink),
       FvButtonVariant.danger => (FvColors.error, Colors.white),
       FvButtonVariant.ghost => (Colors.transparent, context.fvText),
       FvButtonVariant.success => (FvColors.success, Colors.white),
@@ -645,7 +645,7 @@ class StatusBadge extends StatelessWidget {
   }
 }
 
-/// Scaffold wrapper for pushed ("money") screens: gradient page, back header.
+/// Scaffold wrapper for pushed screens: cream background, brutalist back header.
 class ScreenPage extends StatelessWidget {
   const ScreenPage({
     super.key,
@@ -663,6 +663,7 @@ class ScreenPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: FvColors.bg,
       floatingActionButton: floatingActionButton,
       body: SafeArea(
         child: Column(
@@ -684,11 +685,11 @@ class ScreenPage extends StatelessWidget {
                       title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 19,
-                        fontWeight: FontWeight.w700,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
                         letterSpacing: -0.3,
-                        color: context.fvText,
+                        color: FvColors.ink,
                       ),
                     ),
                   ),
@@ -713,11 +714,18 @@ class _BackButton extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: context.fvSurface,
+          color: FvColors.surface,
           shape: BoxShape.circle,
-          border: Border.all(color: context.fvCardBorder),
+          border: Border.all(color: FvColors.ink, width: 1.5),
+          boxShadow: const [
+            BoxShadow(
+              color: FvColors.ink,
+              offset: Offset(1.5, 1.5),
+              blurRadius: 0,
+            ),
+          ],
         ),
-        child: Icon(Icons.arrow_back, size: 18, color: context.fvPrimary),
+        child: const Icon(Icons.arrow_back, size: 18, color: FvColors.ink),
       ),
     );
   }

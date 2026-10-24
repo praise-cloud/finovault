@@ -44,7 +44,7 @@ class SecurityScreen extends ConsumerWidget {
                         Icon(
                           Icons.devices_outlined,
                           size: 20,
-                          color: context.fvPrimary,
+                          color: FvColors.ink,
                         ),
                         const SizedBox(width: FvSpacing.x3),
                         Expanded(
@@ -71,10 +71,21 @@ class SecurityScreen extends ConsumerWidget {
                           ),
                         ),
                         if (d.trusted)
-                          StatusBadge(
-                            label: 'Trusted',
-                            foreground: context.fvPrimary,
-                            background: context.fvWash,
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFD1FAE5),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: const Color(0xFF10B981), width: 1),
+                            ),
+                            child: const Text(
+                              'Trusted',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF047857),
+                              ),
+                            ),
                           ),
                       ],
                     ),
@@ -148,7 +159,7 @@ class SecurityScreen extends ConsumerWidget {
                                   child: Text(
                                     'Resolve',
                                     style: TextStyle(
-                                      color: context.fvPrimary,
+                                      color: FvColors.ink,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
