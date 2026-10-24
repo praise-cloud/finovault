@@ -632,6 +632,39 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
     await _persist();
   }
 
+  /// Update an existing logged purchase (description, merchant, amount, category, date)
+  Future<void> updateExpense({
+    required String id,
+    String? description,
+    String? merchantName,
+    double? amount,
+    String? category,
+    DateTime? date,
+  }) async {
+    final updatedTxList = state.transactions.map((t) {
+      if (t.id == id) {
+        final newDesc = description?.trim();
+        final newMerchant = merchantName?.trim();
+        return t.copyWith(
+          description: (newDesc != null && newDesc.isNotEmpty) ? newDesc : t.description,
+          merchantName: (newMerchant != null && newMerchant.isNotEmpty) ? newMerchant : t.merchantName,
+          amount: (amount != null && amount > 0) ? amount.abs() : t.amount,
+          category: (category != null && category.isNotEmpty) ? category : t.category,
+          date: date ?? t.date,
+        );
+      }
+      return t;
+    }).toList();
+
+    final updatedMerchants = _recalculateMerchants(state.merchants, updatedTxList);
+
+    state = state.copyWith(
+      transactions: updatedTxList,
+      merchants: updatedMerchants,
+    );
+    await _persist();
+  }
+
   /// Update allowance budget amount
   Future<void> updateBudget(double newBudget) async {
     final updatedPeriod = state.activePeriod.copyWith(budgetAmount: newBudget.abs());

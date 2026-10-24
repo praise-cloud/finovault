@@ -11,10 +11,12 @@ class FeedItemCard extends StatelessWidget {
     super.key,
     required this.transaction,
     required this.onDelete,
+    this.onTap,
   });
 
   final Transaction transaction;
   final VoidCallback onDelete;
+  final VoidCallback? onTap;
 
   String _formatDate(DateTime dt) {
     final now = DateTime.now();
@@ -94,7 +96,6 @@ class FeedItemCard extends StatelessWidget {
       ),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: FvColors.surface,
           borderRadius: BorderRadius.circular(16),
@@ -107,75 +108,114 @@ class FeedItemCard extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
-          children: [
-            // Emoji Avatar
-            Container(
-              width: 44,
-              height: 44,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: FvColors.ink, width: 1.2),
-              ),
-              child: Text(
-                emoji,
-                style: const TextStyle(fontSize: 22),
-              ),
-            ),
-
-            const SizedBox(width: 14),
-
-            // Description, Spot, and Time
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(14),
+            onTap: onTap != null
+                ? () {
+                    HapticFeedback.lightImpact();
+                    onTap!();
+                  }
+                : null,
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Row(
                 children: [
-                  Text(
-                    (desc != null && desc.isNotEmpty) ? desc : merchant,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
-                      color: FvColors.ink,
+                  // Emoji Avatar
+                  Container(
+                    width: 44,
+                    height: 44,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F5F9),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: FvColors.ink, width: 1.2),
+                    ),
+                    child: Text(
+                      emoji,
+                      style: const TextStyle(fontSize: 22),
                     ),
                   ),
-                  const SizedBox(height: 2),
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFEFF6FF),
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: FvColors.primary.withValues(alpha: 0.3), width: 1),
-                          ),
-                          child: Text(
-                            merchant,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                              color: FvColors.primary,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Flexible(
-                        child: Text(
-                          _formatDate(transaction.date),
+
+                  const SizedBox(width: 14),
+
+                  // Description, Spot, and Time
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          (desc != null && desc.isNotEmpty) ? desc : merchant,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: FvColors.textSecondary,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: FvColors.ink,
                           ),
+                        ),
+                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF1F5F9),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(color: FvColors.ink.withValues(alpha: 0.2), width: 1),
+                                ),
+                                child: Text(
+                                  merchant,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w800,
+                                    color: FvColors.ink,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                _formatDate(transaction.date),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: FvColors.textSecondary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Price Amount
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        '- $currency ${amount.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                          color: FvColors.ink,
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                      Text(
+                        transaction.category,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: FvColors.textSecondary,
                         ),
                       ),
                     ],
@@ -183,31 +223,7 @@ class FeedItemCard extends StatelessWidget {
                 ],
               ),
             ),
-
-            // Price Amount
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  '- $currency ${amount.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w900,
-                    color: FvColors.ink,
-                    letterSpacing: -0.3,
-                  ),
-                ),
-                Text(
-                  transaction.category,
-                  style: const TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: FvColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
       ),
     );

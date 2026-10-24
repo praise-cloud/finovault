@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/models.dart';
 import '../../core/state/student_vault.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/student_vault/feed_item_card.dart';
+import '../../widgets/student_vault/edit_expense_modal.dart';
 
 /// The dedicated History section for students and daily users.
 /// Students can search all their past logged items, filter by merchant or category,
@@ -35,6 +37,53 @@ class _StudentHistoryTabState extends ConsumerState<StudentHistoryTab> {
         archivedPeriods: state.archivedPeriods,
         currency: state.currency,
       ),
+    );
+  }
+
+  void _openEditExpense(Transaction tx, String currency) {
+    HapticFeedback.lightImpact();
+    EditExpenseModal.show(
+      context,
+      transaction: tx,
+      currency: currency,
+      onSave: ({
+        required String id,
+        String? description,
+        String? merchantName,
+        double? amount,
+        String? category,
+        DateTime? date,
+      }) async {
+        await ref.read(studentVaultProvider.notifier).updateExpense(
+          id: id,
+          description: description,
+          merchantName: merchantName,
+          amount: amount,
+          category: category,
+          date: date,
+        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Updated "${description ?? tx.description}"'),
+              backgroundColor: FvColors.ink,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      },
+      onDelete: (id) async {
+        await ref.read(studentVaultProvider.notifier).deleteExpense(id);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Removed ${tx.description}'),
+              backgroundColor: FvColors.ink,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      },
     );
   }
 
@@ -228,6 +277,7 @@ class _StudentHistoryTabState extends ConsumerState<StudentHistoryTab> {
                       final tx = filtered[index];
                       return FeedItemCard(
                         transaction: tx,
+                        onTap: () => _openEditExpense(tx, currency),
                         onDelete: () {
                           ref.read(studentVaultProvider.notifier).deleteExpense(tx.id);
                           ScaffoldMessenger.of(context).showSnackBar(

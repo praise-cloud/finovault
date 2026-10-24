@@ -11,6 +11,7 @@ import '../widgets/student_vault/quick_log_pad.dart';
 import '../widgets/student_vault/merchant_spots_bar.dart';
 import '../widgets/student_vault/feed_item_card.dart';
 import '../widgets/student_vault/period_wrap_modal.dart';
+import '../widgets/student_vault/edit_expense_modal.dart';
 import '../widgets/vault_mark.dart';
 
 /// The new primary screen of Finovault — the simple, fun, tactile financial logging
@@ -36,6 +37,53 @@ class StudentHomeScreen extends ConsumerWidget {
           amount: amount,
           category: category,
         );
+      },
+    );
+  }
+
+  void _openEditExpense(BuildContext context, WidgetRef ref, Transaction tx, String currency) {
+    HapticFeedback.lightImpact();
+    EditExpenseModal.show(
+      context,
+      transaction: tx,
+      currency: currency,
+      onSave: ({
+        required String id,
+        String? description,
+        String? merchantName,
+        double? amount,
+        String? category,
+        DateTime? date,
+      }) async {
+        await ref.read(studentVaultProvider.notifier).updateExpense(
+          id: id,
+          description: description,
+          merchantName: merchantName,
+          amount: amount,
+          category: category,
+          date: date,
+        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Updated "${description ?? tx.description}"'),
+              backgroundColor: FvColors.ink,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      },
+      onDelete: (id) async {
+        await ref.read(studentVaultProvider.notifier).deleteExpense(id);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Removed ${tx.description}'),
+              backgroundColor: FvColors.ink,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
       },
     );
   }
@@ -224,6 +272,7 @@ class StudentHomeScreen extends ConsumerWidget {
                     final tx = transactions[index];
                     return FeedItemCard(
                       transaction: tx,
+                      onTap: () => _openEditExpense(context, ref, tx, state.currency),
                       onDelete: () {
                         ref.read(studentVaultProvider.notifier).deleteExpense(tx.id);
                         ScaffoldMessenger.of(context).showSnackBar(

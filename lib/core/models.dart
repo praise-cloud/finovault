@@ -517,6 +517,34 @@ class Transaction {
   final bool isRecurring;
   final TransactionStatus status;
 
+  Transaction copyWith({
+    String? id,
+    String? accountId,
+    double? amount,
+    String? currency,
+    TransactionDirection? direction,
+    String? category,
+    String? merchantName,
+    String? description,
+    DateTime? date,
+    bool? isExpense,
+    bool? isRecurring,
+    TransactionStatus? status,
+  }) => Transaction(
+    id: id ?? this.id,
+    accountId: accountId ?? this.accountId,
+    amount: amount ?? this.amount,
+    currency: currency ?? this.currency,
+    direction: direction ?? this.direction,
+    category: category ?? this.category,
+    merchantName: merchantName ?? this.merchantName,
+    description: description ?? this.description,
+    date: date ?? this.date,
+    isExpense: isExpense ?? this.isExpense,
+    isRecurring: isRecurring ?? this.isRecurring,
+    status: status ?? this.status,
+  );
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'accountId': accountId,

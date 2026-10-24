@@ -200,5 +200,42 @@ void main() {
       await notifier.deleteSavingsPot(sneaker.id);
       expect(notifier.state.savingsPots.any((p) => p.id == sneaker.id), false);
     });
+
+    test('updateExpense updates purchase details, remaining budget, and merchant stats', () async {
+      final store = MemoryStore();
+      final notifier = StudentVaultNotifier(store: store);
+
+      await notifier.logExpense(
+        description: 'Timo Fries',
+        merchantName: 'Timo',
+        amount: 80.0,
+        category: 'Food & Drinks',
+      );
+
+      final logged = notifier.state.transactions.firstWhere((t) => t.description == 'Timo Fries');
+      final beforeUpdateBudget = notifier.state.remainingBudget;
+
+      // Edit purchase: change description, merchant, amount, category
+      await notifier.updateExpense(
+        id: logged.id,
+        description: 'Timo Combo Meal',
+        merchantName: 'Cascavelle',
+        amount: 180.0,
+        category: 'Shopping & Essentials',
+      );
+
+      final updated = notifier.state.transactions.firstWhere((t) => t.id == logged.id);
+      expect(updated.description, 'Timo Combo Meal');
+      expect(updated.merchantName, 'Cascavelle');
+      expect(updated.amount, 180.0);
+      expect(updated.category, 'Shopping & Essentials');
+
+      // Remaining budget adjusted by the +100 difference
+      expect(notifier.state.remainingBudget, beforeUpdateBudget - 100.0);
+
+      // Cascavelle total spent increased
+      final cascavelle = notifier.state.merchants.firstWhere((m) => m.name.toLowerCase() == 'cascavelle');
+      expect(cascavelle.totalSpent, greaterThanOrEqualTo(180.0));
+    });
   });
 }
