@@ -26,6 +26,7 @@ import 'tabs/pay_tab.dart';
 import 'tabs/profile_tab.dart';
 import 'tabs/vault_tab.dart';
 import 'coach/coach_screen.dart';
+import 'student_home_screen.dart';
 
 /// Authenticated shell: bottom 5-tab bar (Home/Insights/Vault/Pay/Profile).
 /// The Home tab is role-aware — each persona sees its own hero metric and
@@ -135,6 +136,11 @@ class _HomeTab extends ConsumerWidget {
         user?.primaryRole ??
         ref.watch(onboardingProvider).role ??
         PrimaryRole.individual;
+
+    if (role == PrimaryRole.individual) {
+      return const StudentHomeScreen();
+    }
+
     final accent = FvColors.roleAccent(role);
 
     return Scaffold(
