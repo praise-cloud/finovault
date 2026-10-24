@@ -173,5 +173,32 @@ void main() {
         false,
       );
     });
+
+    test('savings pots tracking, deposits, and calculations', () async {
+      final store = MemoryStore();
+      final notifier = StudentVaultNotifier(store: store);
+
+      expect(notifier.state.savingsPots.isNotEmpty, true);
+      final initialTotalSaved = notifier.state.totalSaved;
+      expect(initialTotalSaved, greaterThan(0.0));
+
+      final laptopPot = notifier.state.savingsPots.firstWhere((p) => p.name == 'Campus Laptop');
+      final beforeDeposit = laptopPot.currentAmount;
+
+      await notifier.depositToSavingsPot(laptopPot.id, 500.0);
+
+      final updatedLaptop = notifier.state.savingsPots.firstWhere((p) => p.id == laptopPot.id);
+      expect(updatedLaptop.currentAmount, beforeDeposit + 500.0);
+      expect(notifier.state.totalSaved, initialTotalSaved + 500.0);
+
+      // Add a new pot
+      await notifier.addSavingsPot('Sneaker Fund', 4000.0, '👟');
+      expect(notifier.state.savingsPots.any((p) => p.name == 'Sneaker Fund'), true);
+
+      // Delete pot
+      final sneaker = notifier.state.savingsPots.firstWhere((p) => p.name == 'Sneaker Fund');
+      await notifier.deleteSavingsPot(sneaker.id);
+      expect(notifier.state.savingsPots.any((p) => p.id == sneaker.id), false);
+    });
   });
 }
