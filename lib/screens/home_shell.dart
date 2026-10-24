@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/models.dart';
@@ -27,207 +28,193 @@ import 'tabs/profile_tab.dart';
 import 'tabs/vault_tab.dart';
 import 'coach/coach_screen.dart';
 import 'student_home_screen.dart';
+import 'tabs/student_budget_tab.dart';
+import 'tabs/student_history_tab.dart';
 
-/// Authenticated shell: bottom 5-tab bar (Home/Insights/Vault/Pay/Profile).
-/// The Home tab is role-aware — each persona sees its own hero metric and
-/// modules (never a generic dashboard).
+/// Authenticated shell: 4-tab bar (Home, Budgets & Savings, History, Settings).
+/// Strictly follows the app's brutalist styling (ink borders, clean surfaces,
+/// black active badge pill with white text/icon, zero blue background).
 class HomeShell extends ConsumerWidget {
   const HomeShell({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final index = ref.watch(homeTabIndexProvider);
-    final scheme = ref.watch(onboardingProvider).scheme;
     final user = ref.watch(currentUserProvider);
-    final s = AppLocalizations.of(context);
 
     return Scaffold(
+      backgroundColor: FvColors.bg,
       body: Container(
-        decoration: context.fvPageDecoration,
+        color: FvColors.bg,
         child: SafeArea(
           child: IndexedStack(
-            index: index,
-            children: [
-              _HomeTab(
-                user: user,
-                femaleFounder: scheme == RoleScheme.femaleFounder,
-              ),
-              const InsightsTab(),
-              const VaultTab(),
-              const PayTab(),
-              const ProfileTab(),
+            index: index.clamp(0, 3),
+            children: const [
+              StudentHomeScreen(),
+              StudentBudgetTab(),
+              StudentHistoryTab(),
+              ProfileTab(),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: index,
-        onDestinationSelected: (i) =>
-            ref.read(homeTabIndexProvider.notifier).state = i,
-        backgroundColor: context.fvSurface,
-        indicatorColor: context.fvWash,
-        labelTextStyle: WidgetStateProperty.resolveWith(
-          (states) => TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            color: states.contains(WidgetState.selected)
-                ? context.fvPrimary
-                : context.fvTextSecondary,
-          ),
-        ),
-        destinations: [
-          NavigationDestination(
-            icon: Icon(
-              Icons.home_outlined,
-              color: index == 0 ? context.fvPrimary : context.fvTextSecondary,
-            ),
-            selectedIcon: Icon(Icons.home, color: context.fvPrimary),
-            label: s.navHome,
-          ),
-          NavigationDestination(
-            icon: Icon(
-              Icons.psychology_outlined,
-              color: index == 1 ? context.fvPrimary : context.fvTextSecondary,
-            ),
-            selectedIcon: Icon(Icons.psychology, color: context.fvPrimary),
-            label: s.navInsights,
-          ),
-          NavigationDestination(
-            icon: Icon(
-              Icons.lock_outline,
-              color: index == 2 ? context.fvPrimary : context.fvTextSecondary,
-            ),
-            selectedIcon: Icon(Icons.lock, color: context.fvPrimary),
-            label: s.navVault,
-          ),
-          NavigationDestination(
-            icon: Icon(
-              Icons.send_outlined,
-              color: index == 3 ? context.fvPrimary : context.fvTextSecondary,
-            ),
-            selectedIcon: Icon(Icons.send, color: context.fvPrimary),
-            label: s.navPay,
-          ),
-          NavigationDestination(
-            icon: Icon(
-              Icons.person_outline,
-              color: index == 4 ? context.fvPrimary : context.fvTextSecondary,
-            ),
-            selectedIcon: Icon(Icons.person, color: context.fvPrimary),
-            label: s.navProfile,
-          ),
-        ],
+      bottomNavigationBar: StudentBottomBar(
+        currentIndex: index.clamp(0, 3),
+        onTap: (i) => ref.read(homeTabIndexProvider.notifier).state = i,
       ),
     );
   }
 }
 
-// ---- Home tab ---------------------------------------------------------------
+/// Custom brutalist bottom navigation bar.
+/// Uses the app's signature high-contrast ink styling with solid borders,
+/// zero blue background, and tactile active indicators.
+class StudentBottomBar extends StatelessWidget {
+  const StudentBottomBar({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+  });
 
-class _HomeTab extends ConsumerWidget {
-  const _HomeTab({required this.user, required this.femaleFounder});
-
-  final UserProfile? user;
-  final bool femaleFounder;
+  final int currentIndex;
+  final ValueChanged<int> onTap;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final role =
-        user?.primaryRole ??
-        ref.watch(onboardingProvider).role ??
-        PrimaryRole.individual;
-
-    if (role == PrimaryRole.individual) {
-      return const StudentHomeScreen();
-    }
-
-    final accent = FvColors.roleAccent(role);
-
-    return Scaffold(
-      floatingActionButton: GestureDetector(
-        onTap: () => pushScreen(context, const CoachScreen()),
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: FvColors.surface,
+        border: Border(
+          top: BorderSide(color: FvColors.ink, width: 2),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x1A000000),
+            offset: Offset(0, -2),
+            blurRadius: 4,
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
         child: Container(
-          width: 60,
-          height: 60,
-          decoration: BoxDecoration(
-            color: accent,
-            borderRadius: BorderRadius.circular(FvRadius.card),
-            border: Border.all(
-              color: context.fvCardBorder,
-              width: FvBorders.width,
-            ),
-            boxShadow: context.fvBrutal,
-          ),
-          child: const Icon(
-            Icons.psychology_alt,
-            size: 28,
-            color: Colors.white,
+          height: 64,
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _StudentNavBtn(
+                index: 0,
+                currentIndex: currentIndex,
+                icon: Icons.bolt_rounded,
+                label: 'Home',
+                onTap: onTap,
+              ),
+              _StudentNavBtn(
+                index: 1,
+                currentIndex: currentIndex,
+                icon: Icons.pie_chart_rounded,
+                label: 'Budgets',
+                onTap: onTap,
+              ),
+              _StudentNavBtn(
+                index: 2,
+                currentIndex: currentIndex,
+                icon: Icons.receipt_long_rounded,
+                label: 'History',
+                onTap: onTap,
+              ),
+              _StudentNavBtn(
+                index: 3,
+                currentIndex: currentIndex,
+                icon: Icons.tune_rounded,
+                label: 'Settings',
+                onTap: onTap,
+              ),
+            ],
           ),
         ),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(FvSpacing.x5),
-        children: [
-          GreetingHeader(name: user?.fullName ?? 'Welcome'),
-          const SizedBox(height: FvSpacing.x4),
-          switch (role) {
-            PrimaryRole.individual => const IndividualHome(),
-            PrimaryRole.freelancer => const FreelancerHome(),
-            PrimaryRole.entrepreneur => EntrepreneurHome(
-              femaleFounder: femaleFounder,
-            ),
-            PrimaryRole.sme => const SMEHome(),
-          },
-        ],
       ),
     );
   }
 }
 
-class GreetingHeader extends ConsumerWidget {
-  const GreetingHeader({super.key, required this.name});
+class _StudentNavBtn extends StatelessWidget {
+  const _StudentNavBtn({
+    required this.index,
+    required this.currentIndex,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
-  final String name;
+  final int index;
+  final int currentIndex;
+  final IconData icon;
+  final String label;
+  final ValueChanged<int> onTap;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final s = AppLocalizations.of(context);
-    final firstName = name.split(' ').first;
-    final hour = DateTime.now().hour;
-    final greeting = hour < 12
-        ? s.goodMorning
-        : (hour < 18 ? s.goodAfternoon : s.goodEvening);
-
-    return Row(
-      children: [
-        Expanded(
+  Widget build(BuildContext context) {
+    final selected = currentIndex == index;
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap(index);
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          curve: Curves.easeInOut,
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          decoration: BoxDecoration(
+            color: selected ? FvColors.ink : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: selected ? FvColors.ink : Colors.transparent,
+              width: 1.5,
+            ),
+            boxShadow: selected
+                ? const [
+                    BoxShadow(
+                      color: Color(0x33000000),
+                      offset: Offset(1.5, 1.5),
+                      blurRadius: 0,
+                    ),
+                  ]
+                : null,
+          ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Icon(
+                icon,
+                size: 20,
+                color: selected ? Colors.white : FvColors.textSecondary,
+              ),
+              const SizedBox(height: 2),
               Text(
-                '$greeting, $firstName',
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -0.3,
-                  color: context.fvText,
+                  fontSize: 10,
+                  fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
+                  letterSpacing: 0.3,
+                  color: selected ? Colors.white : FvColors.textSecondary,
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                s.appTagline,
-                style: TextStyle(fontSize: 13, color: context.fvTextSecondary),
-              ),
             ],
           ),
         ),
-        const NotificationBell(),
-      ],
+      ),
     );
   }
 }
 
-// ---- shared quick-action helper used by persona homes ------------------------
+// ---- shared quick-action helper used by legacy persona screens ---------------
 
 class QuickActionsRow extends StatelessWidget {
   const QuickActionsRow({super.key, required this.actions});
@@ -280,7 +267,7 @@ class QuickAction {
   final VoidCallback onTap;
 }
 
-// Convenience navigation helpers used across tabs.
+// Convenience navigation helpers used across money screens.
 void openAccounts(BuildContext context) =>
     pushScreen(context, const AccountsScreen());
 void openTransactions(BuildContext context) =>

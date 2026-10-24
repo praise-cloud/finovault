@@ -25,9 +25,25 @@ class ProfileTab extends ConsumerWidget {
     final user = ref.watch(currentUserProvider);
     final s = AppLocalizations.of(context);
 
-    return ListView(
-      padding: const EdgeInsets.all(FvSpacing.x5),
-      children: [
+    return Scaffold(
+      backgroundColor: FvColors.bg,
+      appBar: AppBar(
+        backgroundColor: FvColors.bg,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        title: const Text(
+          'SETTINGS',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1.2,
+            color: FvColors.ink,
+          ),
+        ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(FvSpacing.x5),
+        children: [
         FvCard(
           margin: const EdgeInsets.only(bottom: FvSpacing.x4),
           child: Row(
@@ -80,11 +96,7 @@ class ProfileTab extends ConsumerWidget {
           label: s.editProfile,
           onTap: () => pushScreen(context, const EditProfileScreen()),
         ),
-        _Row(
-          icon: Icons.account_balance_outlined,
-          label: s.linkedAccounts,
-          onTap: () => openAccounts(context),
-        ),
+
         _SectionTitle(s.profileSectionSecurity),
         _Row(
           icon: Icons.security_outlined,
@@ -102,13 +114,7 @@ class ProfileTab extends ConsumerWidget {
           label: s.settingsAndPlan,
           onTap: () => _openSettings(context, ref),
         ),
-        if (user?.primaryRole == PrimaryRole.entrepreneur ||
-            user?.primaryRole == PrimaryRole.sme)
-          _Row(
-            icon: Icons.business_outlined,
-            label: s.businessProfile,
-            onTap: () => _openBusinessProfile(context, ref),
-          ),
+
         const SizedBox(height: FvSpacing.x3),
         _Row(
           icon: Icons.logout_outlined,
@@ -117,6 +123,7 @@ class ProfileTab extends ConsumerWidget {
           onTap: () => _confirmLogout(context, ref),
         ),
       ],
+      ),
     );
   }
 
