@@ -498,6 +498,7 @@ class Transaction {
     required this.date,
     this.currency = 'MUR',
     this.merchantName,
+    this.description,
     this.isExpense = true,
     this.isRecurring = false,
     this.status = TransactionStatus.posted,
@@ -510,6 +511,7 @@ class Transaction {
   final TransactionDirection direction;
   final String category;
   final String? merchantName;
+  final String? description;
   final DateTime date;
   final bool isExpense;
   final bool isRecurring;
@@ -523,6 +525,7 @@ class Transaction {
     'direction': direction == TransactionDirection.inn ? 'in' : 'out',
     'category': category,
     'merchantName': merchantName,
+    'description': description,
     'date': date.toIso8601String(),
     'isExpense': isExpense,
     'isRecurring': isRecurring,
@@ -541,6 +544,7 @@ class Transaction {
     ),
     category: (j['category'] as String?) ?? '',
     merchantName: j['merchantName'] as String?,
+    description: j['description'] as String?,
     date: DateTime.tryParse((j['date'] as String?) ?? '') ?? DateTime.now(),
     isExpense: (j['isExpense'] as bool?) ?? true,
     isRecurring: (j['isRecurring'] as bool?) ?? false,
