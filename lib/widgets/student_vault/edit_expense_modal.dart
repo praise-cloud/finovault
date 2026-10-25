@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 
 import '../../core/models.dart';
 import '../../theme/tokens.dart';
+import '../fv_alert_dialog.dart';
+import '../fv_notification.dart';
 
 /// Interactive Neo-Brutalist bottom sheet for editing an existing logged expense.
 /// Allows changing the amount, description, merchant/spot, category, and date.
@@ -169,11 +171,10 @@ class _EditExpenseModalState extends State<EditExpenseModal> {
   Future<void> _handleSave() async {
     final amountParsed = double.tryParse(_amountCtrl.text.trim()) ?? 0.0;
     if (amountParsed <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a valid amount greater than 0'),
-          backgroundColor: FvColors.error,
-        ),
+      FvNotification.show(
+        context,
+        message: 'Please enter a valid amount greater than 0',
+        type: FvNotificationType.error,
       );
       return;
     }
@@ -200,42 +201,13 @@ class _EditExpenseModalState extends State<EditExpenseModal> {
 
   Future<void> _handleDelete() async {
     HapticFeedback.mediumImpact();
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: FvColors.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: FvColors.ink, width: 2),
-        ),
-        title: const Text(
-          'Delete Purchase?',
-          style: TextStyle(fontWeight: FontWeight.w900, color: FvColors.ink),
-        ),
-        content: const Text(
-          'Are you sure you want to remove this purchase from your vault?',
-          style: TextStyle(color: FvColors.textSecondary, fontSize: 13),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('CANCEL', style: TextStyle(color: FvColors.textSecondary, fontWeight: FontWeight.w700)),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFEF4444),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: const BorderSide(color: FvColors.ink, width: 1.5),
-              ),
-              elevation: 0,
-            ),
-            child: const Text('DELETE', style: TextStyle(fontWeight: FontWeight.w900)),
-          ),
-        ],
-      ),
+    final confirm = await FvAlertDialog.showConfirm(
+      context,
+      title: 'Delete Purchase?',
+      message: 'Are you sure you want to remove this purchase from your vault?',
+      confirmLabel: 'DELETE',
+      cancelLabel: 'CANCEL',
+      severity: FvAlertSeverity.danger,
     );
 
     if (confirm == true && widget.onDelete != null) {

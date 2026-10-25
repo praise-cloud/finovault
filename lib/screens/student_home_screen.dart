@@ -12,6 +12,8 @@ import '../widgets/student_vault/merchant_spots_bar.dart';
 import '../widgets/student_vault/feed_item_card.dart';
 import '../widgets/student_vault/period_wrap_modal.dart';
 import '../widgets/student_vault/edit_expense_modal.dart';
+import '../widgets/fv_alert_dialog.dart';
+import '../widgets/fv_notification.dart';
 import '../widgets/vault_mark.dart';
 
 /// The new primary screen of Finovault — the simple, fun, tactile financial logging
@@ -37,6 +39,13 @@ class StudentHomeScreen extends ConsumerWidget {
           amount: amount,
           category: category,
         );
+        if (context.mounted) {
+          FvNotification.show(
+            context,
+            message: 'Logged "$description" (${state.currency} ${amount.toStringAsFixed(0)})',
+            type: FvNotificationType.success,
+          );
+        }
       },
     );
   }
@@ -64,24 +73,20 @@ class StudentHomeScreen extends ConsumerWidget {
           date: date,
         );
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Updated "${description ?? tx.description}"'),
-              backgroundColor: FvColors.ink,
-              duration: const Duration(seconds: 2),
-            ),
+          FvNotification.show(
+            context,
+            message: 'Updated "${description ?? tx.description}"',
+            type: FvNotificationType.success,
           );
         }
       },
       onDelete: (id) async {
         await ref.read(studentVaultProvider.notifier).deleteExpense(id);
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Removed ${tx.description}'),
-              backgroundColor: FvColors.ink,
-              duration: const Duration(seconds: 2),
-            ),
+          FvNotification.show(
+            context,
+            message: 'Removed ${tx.description}',
+            type: FvNotificationType.info,
           );
         }
       },

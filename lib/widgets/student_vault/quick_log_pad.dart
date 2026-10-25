@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../core/state/student_vault.dart';
 import '../../theme/tokens.dart';
+import '../fv_notification.dart';
 
 /// Interactive tactile bottom sheet for logging expenses in < 3 seconds.
 /// Supports both manual keypad entry and 1-tap quick chips for common student spots
@@ -107,11 +108,10 @@ class _QuickLogPadState extends State<QuickLogPad> {
   Future<void> _handleSave() async {
     final amt = double.tryParse(_amountStr) ?? 0.0;
     if (amt <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter an amount greater than 0'),
-          backgroundColor: FvColors.error,
-        ),
+      FvNotification.show(
+        context,
+        message: 'Please enter an amount greater than 0',
+        type: FvNotificationType.error,
       );
       return;
     }

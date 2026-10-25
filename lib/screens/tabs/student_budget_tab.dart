@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/state/student_vault.dart';
 import '../../theme/tokens.dart';
+import '../../widgets/fv_alert_dialog.dart';
+import '../../widgets/fv_notification.dart';
 
 /// The dedicated Budget section for students and normal users.
 /// Students can see their overall allowance limit and create specific category
@@ -165,11 +167,10 @@ class _StudentBudgetTabState extends ConsumerState<StudentBudgetTab> {
                           emoji: selectedEmoji,
                         );
                     Navigator.of(sheet).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Budget set for $cat (${state.currency} ${amt.toStringAsFixed(0)})'),
-                        backgroundColor: FvColors.ink,
-                      ),
+                    FvNotification.show(
+                      context,
+                      message: 'Budget set for $cat (${state.currency} ${amt.toStringAsFixed(0)})',
+                      type: FvNotificationType.success,
                     );
                   }
                 },
@@ -527,13 +528,22 @@ class _StudentBudgetTabState extends ConsumerState<StudentBudgetTab> {
               return Dismissible(
                 key: Key('budget_${b.category}'),
                 direction: DismissDirection.endToStart,
+                confirmDismiss: (_) async {
+                  return await FvAlertDialog.showConfirm(
+                    context,
+                    title: 'Delete Budget?',
+                    message: 'Are you sure you want to delete your budget target for ${b.category}?',
+                    confirmLabel: 'DELETE',
+                    cancelLabel: 'CANCEL',
+                    severity: FvAlertSeverity.danger,
+                  );
+                },
                 onDismissed: (_) {
                   ref.read(studentVaultProvider.notifier).deleteCategoryBudget(b.category);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Deleted budget for ${b.category}'),
-                      backgroundColor: FvColors.ink,
-                    ),
+                  FvNotification.show(
+                    context,
+                    message: 'Deleted budget for ${b.category}',
+                    type: FvNotificationType.info,
                   );
                 },
                 background: Container(

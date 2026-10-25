@@ -253,6 +253,66 @@ abstract class FinovaultApi {
     required double amount,
     required String recipient,
   });
+
+  // Student Vault backend methods
+  Future<Map<String, dynamic>> getStudentVault(String? token);
+  Future<Map<String, dynamic>> logStudentExpense(
+    String? token, {
+    required String description,
+    required String merchantName,
+    required double amount,
+    String category = 'Food & Drinks',
+    DateTime? date,
+  });
+  Future<Map<String, dynamic>> updateStudentExpense(
+    String? token, {
+    required String id,
+    String? description,
+    String? merchantName,
+    double? amount,
+    String? category,
+    DateTime? date,
+  });
+  Future<Map<String, dynamic>> deleteStudentExpense(
+    String? token, {
+    required String id,
+  });
+  Future<Map<String, dynamic>> updateStudentBudget(
+    String? token, {
+    required double budgetAmount,
+    String? name,
+  });
+  Future<Map<String, dynamic>> setStudentCategoryBudget(
+    String? token, {
+    required String category,
+    required double amount,
+    String? emoji,
+  });
+  Future<Map<String, dynamic>> deleteStudentCategoryBudget(
+    String? token, {
+    required String category,
+  });
+  Future<Map<String, dynamic>> resetStudentPeriod(
+    String? token, {
+    required String newPeriodName,
+    required double newBudgetAmount,
+    int durationDays = 30,
+  });
+  Future<Map<String, dynamic>> addStudentSavingsPot(
+    String? token, {
+    required String name,
+    required double targetAmount,
+    String emoji = '🐷',
+  });
+  Future<Map<String, dynamic>> depositStudentSavingsPot(
+    String? token, {
+    required String potId,
+    required double amount,
+  });
+  Future<Map<String, dynamic>> deleteStudentSavingsPot(
+    String? token, {
+    required String potId,
+  });
 }
 
 /// Mock API standing in for the future Finovault backend — same endpoints and
@@ -1908,6 +1968,135 @@ class MockFinovaultApi extends FinovaultApi {
       qrData:
           'MAUCAS:PAY:${amount.toStringAsFixed(2)}:${Uri.encodeComponent(recipient.trim())}',
     );
+  }
+
+  // ---- Student Vault mock implementation ----
+  @override
+  Future<Map<String, dynamic>> getStudentVault(String? token) async {
+    await _tick();
+    return {};
+  }
+
+  @override
+  Future<Map<String, dynamic>> logStudentExpense(
+    String? token, {
+    required String description,
+    required String merchantName,
+    required double amount,
+    String category = 'Food & Drinks',
+    DateTime? date,
+  }) async {
+    await _tick();
+    return {
+      'transaction': {
+        'id': 'stx_${DateTime.now().millisecondsSinceEpoch}',
+        'description': description,
+        'merchantName': merchantName,
+        'amount': amount,
+        'category': category,
+        'date': (date ?? DateTime.now()).toIso8601String(),
+      }
+    };
+  }
+
+  @override
+  Future<Map<String, dynamic>> updateStudentExpense(
+    String? token, {
+    required String id,
+    String? description,
+    String? merchantName,
+    double? amount,
+    String? category,
+    DateTime? date,
+  }) async {
+    await _tick();
+    return {'id': id, 'updated': true};
+  }
+
+  @override
+  Future<Map<String, dynamic>> deleteStudentExpense(
+    String? token, {
+    required String id,
+  }) async {
+    await _tick();
+    return {'id': id, 'deleted': true};
+  }
+
+  @override
+  Future<Map<String, dynamic>> updateStudentBudget(
+    String? token, {
+    required double budgetAmount,
+    String? name,
+  }) async {
+    await _tick();
+    return {'budgetAmount': budgetAmount, 'name': name};
+  }
+
+  @override
+  Future<Map<String, dynamic>> setStudentCategoryBudget(
+    String? token, {
+    required String category,
+    required double amount,
+    String? emoji,
+  }) async {
+    await _tick();
+    return {'category': category, 'amount': amount, 'emoji': emoji};
+  }
+
+  @override
+  Future<Map<String, dynamic>> deleteStudentCategoryBudget(
+    String? token, {
+    required String category,
+  }) async {
+    await _tick();
+    return {'category': category, 'deleted': true};
+  }
+
+  @override
+  Future<Map<String, dynamic>> resetStudentPeriod(
+    String? token, {
+    required String newPeriodName,
+    required double newBudgetAmount,
+    int durationDays = 30,
+  }) async {
+    await _tick();
+    return {
+      'wrapSummary': {
+        'periodName': newPeriodName,
+        'budgetAmount': newBudgetAmount,
+        'completedAt': DateTime.now().toIso8601String(),
+      }
+    };
+  }
+
+  @override
+  Future<Map<String, dynamic>> addStudentSavingsPot(
+    String? token, {
+    required String name,
+    required double targetAmount,
+    String emoji = '🐷',
+  }) async {
+    await _tick();
+    return {'name': name, 'targetAmount': targetAmount, 'emoji': emoji};
+  }
+
+  @override
+  Future<Map<String, dynamic>> depositStudentSavingsPot(
+    String? token, {
+    required String potId,
+    required double amount,
+  }) async {
+    await _tick();
+    return {'potId': potId, 'amount': amount};
+  }
+
+  @override
+  Future<Map<String, dynamic>> deleteStudentSavingsPot(
+    String? token, {
+    required String potId,
+  }) async {
+    await _tick();
+    return {'potId': potId, 'deleted': true};
   }
 
   // ---- helpers ----------------------------------------------------------------------

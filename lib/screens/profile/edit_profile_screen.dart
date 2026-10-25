@@ -14,6 +14,7 @@ import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/fv_avatar.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/fv_notification.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -138,8 +139,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       ref.read(authProvider.notifier).setUser(updated);
       if (mounted) {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(s.profileUpdated)));
+        FvNotification.show(
+          context,
+          message: s.profileUpdated,
+          type: FvNotificationType.success,
+        );
       }
     } on FvApiException catch (e) {
       if (mounted) setState(() => _error = e.message);
@@ -161,8 +165,16 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       child: ListView(
         padding: const EdgeInsets.all(FvSpacing.x5),
         children: [
-          FvCard(
+          Container(
             padding: const EdgeInsets.all(FvSpacing.x6),
+            decoration: BoxDecoration(
+              color: FvColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: FvColors.ink, width: 2),
+              boxShadow: const [
+                BoxShadow(color: FvColors.ink, offset: Offset(3, 3), blurRadius: 0),
+              ],
+            ),
             child: Column(
               children: [
                 FvAvatar(
@@ -209,16 +221,25 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             ),
           ),
           const SizedBox(height: FvSpacing.x4),
-          FvCard(
+          Container(
+            padding: const EdgeInsets.all(FvSpacing.x4),
+            decoration: BoxDecoration(
+              color: FvColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: FvColors.ink, width: 2),
+              boxShadow: const [
+                BoxShadow(color: FvColors.ink, offset: Offset(3, 3), blurRadius: 0),
+              ],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   s.personalInfo,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: context.fvText,
+                    fontWeight: FontWeight.w800,
+                    color: FvColors.ink,
                   ),
                 ),
                 const SizedBox(height: FvSpacing.x4),

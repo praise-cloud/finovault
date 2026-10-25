@@ -7,6 +7,7 @@ import '../../core/state/student_vault.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/student_vault/feed_item_card.dart';
 import '../../widgets/student_vault/edit_expense_modal.dart';
+import '../../widgets/fv_notification.dart';
 
 /// The dedicated History section for students and daily users.
 /// Students can search all their past logged items, filter by merchant or category,
@@ -63,24 +64,20 @@ class _StudentHistoryTabState extends ConsumerState<StudentHistoryTab> {
           date: date,
         );
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Updated "${description ?? tx.description}"'),
-              backgroundColor: FvColors.ink,
-              duration: const Duration(seconds: 2),
-            ),
+          FvNotification.show(
+            context,
+            message: 'Updated "${description ?? tx.description}"',
+            type: FvNotificationType.success,
           );
         }
       },
       onDelete: (id) async {
         await ref.read(studentVaultProvider.notifier).deleteExpense(id);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Removed ${tx.description}'),
-              backgroundColor: FvColors.ink,
-              duration: const Duration(seconds: 2),
-            ),
+          FvNotification.show(
+            context,
+            message: 'Removed ${tx.description}',
+            type: FvNotificationType.info,
           );
         }
       },
@@ -280,11 +277,10 @@ class _StudentHistoryTabState extends ConsumerState<StudentHistoryTab> {
                         onTap: () => _openEditExpense(tx, currency),
                         onDelete: () {
                           ref.read(studentVaultProvider.notifier).deleteExpense(tx.id);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Removed ${tx.description}'),
-                              backgroundColor: FvColors.ink,
-                            ),
+                          FvNotification.show(
+                            context,
+                            message: 'Removed ${tx.description}',
+                            type: FvNotificationType.info,
                           );
                         },
                       );

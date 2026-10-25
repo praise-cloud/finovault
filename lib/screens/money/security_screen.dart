@@ -37,8 +37,17 @@ class SecurityScreen extends ConsumerWidget {
             data: (list) => Column(
               children: [
                 for (final d in list)
-                  FvCard(
+                  Container(
                     margin: const EdgeInsets.only(bottom: FvSpacing.x3),
+                    padding: const EdgeInsets.all(FvSpacing.x4),
+                    decoration: BoxDecoration(
+                      color: FvColors.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: FvColors.ink, width: 2),
+                      boxShadow: const [
+                        BoxShadow(color: FvColors.ink, offset: Offset(2.5, 2.5), blurRadius: 0),
+                      ],
+                    ),
                     child: Row(
                       children: [
                         Icon(
@@ -53,18 +62,19 @@ class SecurityScreen extends ConsumerWidget {
                             children: [
                               Text(
                                 d.name,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: context.fvText,
+                                  fontWeight: FontWeight.w800,
+                                  color: FvColors.ink,
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 'Last seen ${FvFormat.formatRelativeTime(d.lastSeen)}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 12.5,
-                                  color: context.fvTextSecondary,
+                                  fontWeight: FontWeight.w600,
+                                  color: FvColors.textSecondary,
                                 ),
                               ),
                             ],
@@ -76,7 +86,7 @@ class SecurityScreen extends ConsumerWidget {
                             decoration: BoxDecoration(
                               color: const Color(0xFFD1FAE5),
                               borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: const Color(0xFF10B981), width: 1),
+                              border: Border.all(color: FvColors.ink, width: 1.2),
                             ),
                             child: const Text(
                               'Trusted',
@@ -106,8 +116,17 @@ class SecurityScreen extends ConsumerWidget {
                 : Column(
                     children: [
                       for (final e in list)
-                        FvCard(
+                        Container(
                           margin: const EdgeInsets.only(bottom: FvSpacing.x3),
+                          padding: const EdgeInsets.all(FvSpacing.x4),
+                          decoration: BoxDecoration(
+                            color: FvColors.surface,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: FvColors.ink, width: 2),
+                            boxShadow: const [
+                              BoxShadow(color: FvColors.ink, offset: Offset(2.5, 2.5), blurRadius: 0),
+                            ],
+                          ),
                           child: Row(
                             children: [
                               Container(
@@ -115,8 +134,8 @@ class SecurityScreen extends ConsumerWidget {
                                 height: 8,
                                 decoration: BoxDecoration(
                                   color: e.severity == EventSeverity.high
-                                      ? context.fvError
-                                      : context.fvWarning,
+                                      ? const Color(0xFFEF4444)
+                                      : const Color(0xFFF59E0B),
                                   shape: BoxShape.circle,
                                 ),
                               ),
@@ -127,19 +146,20 @@ class SecurityScreen extends ConsumerWidget {
                                   children: [
                                     Text(
                                       e.title,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: context.fvText,
+                                        fontWeight: FontWeight.w800,
+                                        color: FvColors.ink,
                                       ),
                                     ),
                                     if (e.description != null) ...[
                                       const SizedBox(height: 2),
                                       Text(
                                         e.description!,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 12.5,
-                                          color: context.fvTextSecondary,
+                                          fontWeight: FontWeight.w600,
+                                          color: FvColors.textSecondary,
                                         ),
                                       ),
                                     ],
@@ -156,11 +176,11 @@ class SecurityScreen extends ConsumerWidget {
                                     await api.resolveSecurityEvent(token, e.id);
                                     ref.invalidate(securityEventsProvider);
                                   },
-                                  child: Text(
+                                  child: const Text(
                                     'Resolve',
                                     style: TextStyle(
                                       color: FvColors.ink,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w800,
                                     ),
                                   ),
                                 ),
@@ -181,8 +201,17 @@ class SecurityScreen extends ConsumerWidget {
     SecurityOverview o,
   ) {
     final s = AppLocalizations.of(context);
-    return FvCard(
+    return Container(
       margin: const EdgeInsets.only(bottom: FvSpacing.x4),
+      padding: const EdgeInsets.all(FvSpacing.x5),
+      decoration: BoxDecoration(
+        color: FvColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: FvColors.ink, width: 2),
+        boxShadow: const [
+          BoxShadow(color: FvColors.ink, offset: Offset(3, 3), blurRadius: 0),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -200,10 +229,10 @@ class SecurityScreen extends ConsumerWidget {
                   children: [
                     Text(
                       s.securityScore,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: context.fvText,
+                        fontWeight: FontWeight.w800,
+                        color: FvColors.ink,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -240,10 +269,10 @@ class SecurityScreen extends ConsumerWidget {
                   children: [
                     Text(
                       'Two-factor authentication',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: context.fvText,
+                        fontWeight: FontWeight.w800,
+                        color: FvColors.ink,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -251,9 +280,10 @@ class SecurityScreen extends ConsumerWidget {
                       o.twoFactorEnabled
                           ? s.twoFactorStatusEnabled
                           : s.twoFactorStatusDisabled,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12.5,
-                        color: context.fvTextSecondary,
+                        fontWeight: FontWeight.w600,
+                        color: FvColors.textSecondary,
                       ),
                     ),
                   ],

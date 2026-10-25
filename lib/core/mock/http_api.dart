@@ -685,4 +685,149 @@ class HttpFinovaultApi extends FinovaultApi {
       'recipient': recipient,
     }, token: token) as Map<String, dynamic>,
   );
+
+  // ---- Student Vault HTTP RPC methods ----
+  @override
+  Future<Map<String, dynamic>> getStudentVault(String? token) async {
+    final res = await _rpc('getStudentVault', {}, token: token);
+    return res is Map<String, dynamic> ? res : <String, dynamic>{};
+  }
+
+  @override
+  Future<Map<String, dynamic>> logStudentExpense(
+    String? token, {
+    required String description,
+    required String merchantName,
+    required double amount,
+    String category = 'Food & Drinks',
+    DateTime? date,
+  }) async {
+    final res = await _rpc('logStudentExpense', {
+      'description': description,
+      'merchantName': merchantName,
+      'amount': amount,
+      'category': category,
+      if (date != null) 'date': date.toIso8601String(),
+    }, token: token);
+    return res is Map<String, dynamic> ? res : <String, dynamic>{};
+  }
+
+  @override
+  Future<Map<String, dynamic>> updateStudentExpense(
+    String? token, {
+    required String id,
+    String? description,
+    String? merchantName,
+    double? amount,
+    String? category,
+    DateTime? date,
+  }) async {
+    final res = await _rpc('updateStudentExpense', {
+      'id': id,
+      if (description != null) 'description': description,
+      if (merchantName != null) 'merchantName': merchantName,
+      if (amount != null) 'amount': amount,
+      if (category != null) 'category': category,
+      if (date != null) 'date': date.toIso8601String(),
+    }, token: token);
+    return res is Map<String, dynamic> ? res : <String, dynamic>{};
+  }
+
+  @override
+  Future<Map<String, dynamic>> deleteStudentExpense(
+    String? token, {
+    required String id,
+  }) async {
+    final res = await _rpc('deleteStudentExpense', {'id': id}, token: token);
+    return res is Map<String, dynamic> ? res : <String, dynamic>{};
+  }
+
+  @override
+  Future<Map<String, dynamic>> updateStudentBudget(
+    String? token, {
+    required double budgetAmount,
+    String? name,
+  }) async {
+    final res = await _rpc('updateStudentBudget', {
+      'budgetAmount': budgetAmount,
+      if (name != null) 'name': name,
+    }, token: token);
+    return res is Map<String, dynamic> ? res : <String, dynamic>{};
+  }
+
+  @override
+  Future<Map<String, dynamic>> setStudentCategoryBudget(
+    String? token, {
+    required String category,
+    required double amount,
+    String? emoji,
+  }) async {
+    final res = await _rpc('setStudentCategoryBudget', {
+      'category': category,
+      'amount': amount,
+      if (emoji != null) 'emoji': emoji,
+    }, token: token);
+    return res is Map<String, dynamic> ? res : <String, dynamic>{};
+  }
+
+  @override
+  Future<Map<String, dynamic>> deleteStudentCategoryBudget(
+    String? token, {
+    required String category,
+  }) async {
+    final res = await _rpc('deleteStudentCategoryBudget', {'category': category}, token: token);
+    return res is Map<String, dynamic> ? res : <String, dynamic>{};
+  }
+
+  @override
+  Future<Map<String, dynamic>> resetStudentPeriod(
+    String? token, {
+    required String newPeriodName,
+    required double newBudgetAmount,
+    int durationDays = 30,
+  }) async {
+    final res = await _rpc('resetStudentPeriod', {
+      'newPeriodName': newPeriodName,
+      'newBudgetAmount': newBudgetAmount,
+      'durationDays': durationDays,
+    }, token: token);
+    return res is Map<String, dynamic> ? res : <String, dynamic>{};
+  }
+
+  @override
+  Future<Map<String, dynamic>> addStudentSavingsPot(
+    String? token, {
+    required String name,
+    required double targetAmount,
+    String emoji = '🐷',
+  }) async {
+    final res = await _rpc('addStudentSavingsPot', {
+      'name': name,
+      'targetAmount': targetAmount,
+      'emoji': emoji,
+    }, token: token);
+    return res is Map<String, dynamic> ? res : <String, dynamic>{};
+  }
+
+  @override
+  Future<Map<String, dynamic>> depositStudentSavingsPot(
+    String? token, {
+    required String potId,
+    required double amount,
+  }) async {
+    final res = await _rpc('depositStudentSavingsPot', {
+      'potId': potId,
+      'amount': amount,
+    }, token: token);
+    return res is Map<String, dynamic> ? res : <String, dynamic>{};
+  }
+
+  @override
+  Future<Map<String, dynamic>> deleteStudentSavingsPot(
+    String? token, {
+    required String potId,
+  }) async {
+    final res = await _rpc('deleteStudentSavingsPot', {'potId': potId}, token: token);
+    return res is Map<String, dynamic> ? res : <String, dynamic>{};
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/mock/api.dart';
@@ -12,6 +13,8 @@ import '../../core/state/preferences.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/fv_avatar.dart';
+import '../../widgets/fv_alert_dialog.dart';
+import '../../widgets/fv_notification.dart';
 import '../../widgets/ui.dart';
 import '../home_shell.dart';
 import '../profile/change_password_screen.dart';
@@ -44,8 +47,21 @@ class ProfileTab extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(FvSpacing.x5),
         children: [
-        FvCard(
-          margin: const EdgeInsets.only(bottom: FvSpacing.x4),
+        Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: FvColors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: FvColors.ink, width: 2),
+            boxShadow: const [
+              BoxShadow(
+                color: FvColors.ink,
+                offset: Offset(3, 3),
+                blurRadius: 0,
+              ),
+            ],
+          ),
           child: Row(
             children: [
               FvAvatar(
@@ -64,18 +80,19 @@ class ProfileTab extends ConsumerWidget {
                     children: [
                       Text(
                         user?.fullName ?? 'Welcome',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: context.fvText,
+                          fontWeight: FontWeight.w800,
+                          color: FvColors.ink,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         user?.email ?? '',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 13,
-                          color: context.fvTextSecondary,
+                          fontWeight: FontWeight.w600,
+                          color: FvColors.textSecondary,
                         ),
                       ),
                     ],
@@ -87,7 +104,7 @@ class ProfileTab extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xFFD1FAE5),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFF10B981), width: 1),
+                  border: Border.all(color: FvColors.ink, width: 1.2),
                 ),
                 child: const Text(
                   'STUDENT',
@@ -167,7 +184,7 @@ class ProfileTab extends ConsumerWidget {
                   width: 36,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: context.fvBorder,
+                    color: FvColors.border,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -175,10 +192,10 @@ class ProfileTab extends ConsumerWidget {
               const SizedBox(height: FvSpacing.x4),
               Text(
                 s.settings,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: context.fvText,
+                  fontWeight: FontWeight.w900,
+                  color: FvColors.ink,
                 ),
               ),
               const SizedBox(height: FvSpacing.x4),
@@ -186,7 +203,8 @@ class ProfileTab extends ConsumerWidget {
                 s.language,
                 style: const TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w800,
+                  color: FvColors.ink,
                 ),
               ),
               const SizedBox(height: FvSpacing.x2),
@@ -214,7 +232,8 @@ class ProfileTab extends ConsumerWidget {
                 s.appearance,
                 style: const TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w800,
+                  color: FvColors.ink,
                 ),
               ),
               const SizedBox(height: FvSpacing.x2),
@@ -286,7 +305,8 @@ class ProfileTab extends ConsumerWidget {
                 s.notifications,
                 style: const TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w800,
+                  color: FvColors.ink,
                 ),
               ),
               const SizedBox(height: FvSpacing.x2),
@@ -330,11 +350,13 @@ class ProfileTab extends ConsumerWidget {
                   );
                 },
               ),
+              const SizedBox(height: FvSpacing.x4),
               Text(
                 s.backendUrl,
                 style: const TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w800,
+                  color: FvColors.ink,
                 ),
               ),
               const SizedBox(height: FvSpacing.x2),
@@ -359,29 +381,20 @@ class ProfileTab extends ConsumerWidget {
     );
   }
 
-  void _confirmLogout(BuildContext context, WidgetRef ref) {
+  Future<void> _confirmLogout(BuildContext context, WidgetRef ref) async {
     final s = AppLocalizations.of(context);
-    showDialog(
-      context: context,
-      builder: (dialog) => AlertDialog(
-        title: Text(s.logoutConfirmTitle),
-        content: Text(s.logoutConfirmBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialog).pop(),
-            child: Text(s.cancel),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(dialog).pop();
-              ref.read(biometricSessionUnlockedProvider.notifier).state = false;
-              ref.read(authProvider.notifier).logout();
-            },
-            child: Text(s.logout, style: TextStyle(color: context.fvError)),
-          ),
-        ],
-      ),
+    final confirmed = await FvAlertDialog.showConfirm(
+      context,
+      title: s.logoutConfirmTitle,
+      message: s.logoutConfirmBody,
+      confirmLabel: s.logout.toUpperCase(),
+      cancelLabel: s.cancel.toUpperCase(),
+      severity: FvAlertSeverity.danger,
     );
+    if (confirmed) {
+      ref.read(biometricSessionUnlockedProvider.notifier).state = false;
+      await ref.read(authProvider.notifier).logout();
+    }
   }
 }
 
@@ -393,19 +406,14 @@ class _SectionTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        FvSpacing.x1,
-        FvSpacing.x1,
-        FvSpacing.x1,
-        FvSpacing.x2,
-      ),
+      padding: const EdgeInsets.fromLTRB(4, 18, 4, 8),
       child: Text(
         title.toUpperCase(),
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 11,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 1,
-          color: context.fvTextSecondary,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 1.2,
+          color: FvColors.ink,
         ),
       ),
     );
@@ -427,33 +435,72 @@ class _Row extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = danger ? context.fvError : context.fvText;
-    return FvCard(
-      onTap: onTap,
-      margin: const EdgeInsets.only(bottom: FvSpacing.x3),
-      child: Semantics(
-        button: true,
-        label: label,
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 20,
-              color: danger ? context.fvError : FvColors.ink,
-            ),
-            const SizedBox(width: FvSpacing.x3),
-            Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: color,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        color: FvColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: danger ? const Color(0xFFEF4444) : FvColors.ink,
+          width: 1.5,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: FvColors.ink,
+            offset: Offset(2.5, 2.5),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                Container(
+                  width: 38,
+                  height: 38,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: danger ? const Color(0xFFFEE2E2) : const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: danger ? const Color(0xFFEF4444) : FvColors.ink,
+                      width: 1.2,
+                    ),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 20,
+                    color: danger ? const Color(0xFFEF4444) : FvColors.ink,
+                  ),
                 ),
-              ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: danger ? const Color(0xFFEF4444) : FvColors.ink,
+                    ),
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  size: 20,
+                  color: danger ? const Color(0xFFEF4444) : FvColors.ink,
+                ),
+              ],
             ),
-            const ExcludeSemantics(child: Icon(Icons.chevron_right, size: 18)),
-          ],
+          ),
         ),
       ),
     );
@@ -475,21 +522,48 @@ class _SwitchRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FvCard(
-      child: MergeSemantics(
-        child: Row(
-          children: [
-            Icon(icon, size: 20, color: FvColors.ink),
-            const SizedBox(width: FvSpacing.x3),
-            Expanded(child: Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700))),
-            Switch(
-              value: value,
-              activeTrackColor: FvColors.ink,
-              activeThumbColor: Colors.white,
-              onChanged: onChanged,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: FvColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: FvColors.ink, width: 1.5),
+        boxShadow: const [
+          BoxShadow(color: FvColors.ink, offset: Offset(2, 2), blurRadius: 0),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: FvColors.ink, width: 1.2),
             ),
-          ],
-        ),
+            child: Icon(icon, size: 18, color: FvColors.ink),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: FvColors.ink,
+              ),
+            ),
+          ),
+          Switch(
+            value: value,
+            activeTrackColor: FvColors.ink,
+            activeThumbColor: Colors.white,
+            onChanged: onChanged,
+          ),
+        ],
       ),
     );
   }
@@ -513,7 +587,10 @@ class _ChoiceChip extends ConsumerWidget {
         color: selected ? FvColors.ink : FvColors.surface,
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
-          onTap: onTap,
+          onTap: () {
+            HapticFeedback.selectionClick();
+            onTap();
+          },
           borderRadius: BorderRadius.circular(10),
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -521,8 +598,8 @@ class _ChoiceChip extends ConsumerWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: selected ? FvColors.ink : FvColors.border,
-                width: selected ? 1.5 : 1,
+                color: FvColors.ink,
+                width: selected ? 2 : 1.5,
               ),
             ),
             child: Text(
@@ -586,7 +663,16 @@ class _BackendUrlTileState extends ConsumerState<_BackendUrlTile> {
   @override
   Widget build(BuildContext context) {
     final s = AppLocalizations.of(context);
-    return FvCard(
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: FvColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: FvColors.ink, width: 2),
+        boxShadow: const [
+          BoxShadow(color: FvColors.ink, offset: Offset(3, 3), blurRadius: 0),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -594,13 +680,28 @@ class _BackendUrlTileState extends ConsumerState<_BackendUrlTile> {
             controller: _controller,
             decoration: InputDecoration(
               labelText: s.backendUrl,
+              labelStyle: const TextStyle(color: FvColors.ink, fontWeight: FontWeight.w700),
               hintText: s.backendUrlHint,
+              hintStyle: const TextStyle(color: FvColors.textSecondary),
               isDense: true,
-              border: InputBorder.none,
+              filled: true,
+              fillColor: const Color(0xFFF8FAFC),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: FvColors.ink, width: 1.5),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: FvColors.ink, width: 1.5),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: FvColors.ink, width: 2),
+              ),
             ),
-            style: const TextStyle(fontSize: 14),
+            style: const TextStyle(fontSize: 14, color: FvColors.ink, fontWeight: FontWeight.w600),
           ),
-          const SizedBox(height: FvSpacing.x2),
+          const SizedBox(height: FvSpacing.x3),
           Wrap(
             spacing: FvSpacing.x3,
             runSpacing: FvSpacing.x2,
@@ -615,7 +716,14 @@ class _BackendUrlTileState extends ConsumerState<_BackendUrlTile> {
                             .read(apiBaseUrlProvider.notifier)
                             .set(_controller.text);
                         ref.invalidate(apiProvider);
-                        if (mounted) setState(() => _status = null);
+                        if (mounted) {
+                          setState(() => _status = null);
+                          FvNotification.show(
+                            context,
+                            message: 'Backend URL updated',
+                            type: FvNotificationType.success,
+                          );
+                        }
                       },
               ),
               FvButton(
@@ -630,9 +738,10 @@ class _BackendUrlTileState extends ConsumerState<_BackendUrlTile> {
                   _status!,
                   style: TextStyle(
                     fontSize: 13,
+                    fontWeight: FontWeight.w700,
                     color: _status == s.connectionOk
-                        ? context.fvSuccess
-                        : context.fvError,
+                        ? const Color(0xFF047857)
+                        : const Color(0xFFEF4444),
                   ),
                 ),
               ],

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models.dart';
+import '../mock/api.dart';
 import '../mock/db.dart';
 import '../providers.dart';
 
@@ -382,13 +383,20 @@ class StudentVaultState {
 }
 
 class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
-  StudentVaultNotifier({required KvStore? store})
-      : _store = store,
+  StudentVaultNotifier({
+    required KvStore? store,
+    FinovaultApi? api,
+    String? Function()? tokenGetter,
+  })  : _store = store,
+        _api = api,
+        _tokenGetter = tokenGetter,
         super(_initialState()) {
     _hydrate();
   }
 
   final KvStore? _store;
+  final FinovaultApi? _api;
+  final String? Function()? _tokenGetter;
   static const _storageKey = 'finovault.student_vault.v1';
 
   static StudentVaultState _initialState() {
@@ -489,6 +497,50 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
       }
     } catch (_) {
       _seedSampleDataIfEmpty();
+    }
+    _fetchFromBackend();
+  }
+
+  void _syncToBackend(Future<void> Function(FinovaultApi api, String? token) action) {
+    final api = _api;
+    if (api == null) return;
+    final token = _tokenGetter?.call();
+    action(api, token).catchError((err) {
+      debugPrint('StudentVault backend sync note: $err');
+    });
+  }
+
+  Future<void> _fetchFromBackend() async {
+    final api = _api;
+    if (api == null) return;
+    try {
+      final token = _tokenGetter?.call();
+      final data = await api.getStudentVault(token);
+      if (data.isNotEmpty && data['activePeriod'] != null) {
+        final activePeriod = StudentPeriod.fromJson(data['activePeriod'] as Map<String, dynamic>);
+        final rawTx = (data['transactions'] as List<dynamic>? ?? []);
+        final txs = rawTx.map((e) => _txFromJson(e as Map<String, dynamic>)).toList();
+        final rawM = (data['merchants'] as List<dynamic>? ?? []);
+        final merchants = rawM.map((e) => MerchantSpot.fromJson(e as Map<String, dynamic>)).toList();
+        final rawB = (data['categoryBudgets'] as List<dynamic>? ?? []);
+        final budgets = rawB.map((e) => CategoryBudget.fromJson(e as Map<String, dynamic>)).toList();
+        final rawP = (data['savingsPots'] as List<dynamic>? ?? []);
+        final pots = rawP.map((e) => StudentSavingsPot.fromJson(e as Map<String, dynamic>)).toList();
+        final rawArch = (data['archivedPeriods'] as List<dynamic>? ?? []);
+        final archived = rawArch.map((e) => StudentPeriod.fromJson(e as Map<String, dynamic>)).toList();
+
+        state = StudentVaultState(
+          activePeriod: activePeriod,
+          transactions: txs,
+          merchants: merchants.isNotEmpty ? merchants : state.merchants,
+          categoryBudgets: budgets.isNotEmpty ? budgets : state.categoryBudgets,
+          savingsPots: pots.isNotEmpty ? pots : state.savingsPots,
+          archivedPeriods: archived,
+        );
+        await _persist();
+      }
+    } catch (_) {
+      // Offline fallback: keep local hydrated state
     }
   }
 
@@ -618,6 +670,16 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
       merchants: updatedMerchants,
     );
     await _persist();
+    _syncToBackend((api, token) async {
+      await api.logStudentExpense(
+        token,
+        description: cleanDesc,
+        merchantName: cleanMerchant,
+        amount: amount.abs(),
+        category: category,
+        date: now,
+      );
+    });
   }
 
   /// Delete an incorrectly logged item
@@ -630,6 +692,9 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
       merchants: updatedMerchants,
     );
     await _persist();
+    _syncToBackend((api, token) async {
+      await api.deleteStudentExpense(token, id: transactionId);
+    });
   }
 
   /// Update an existing logged purchase (description, merchant, amount, category, date)
@@ -663,6 +728,17 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
       merchants: updatedMerchants,
     );
     await _persist();
+    _syncToBackend((api, token) async {
+      await api.updateStudentExpense(
+        token,
+        id: id,
+        description: description,
+        merchantName: merchantName,
+        amount: amount,
+        category: category,
+        date: date,
+      );
+    });
   }
 
   /// Update allowance budget amount
@@ -670,6 +746,9 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
     final updatedPeriod = state.activePeriod.copyWith(budgetAmount: newBudget.abs());
     state = state.copyWith(activePeriod: updatedPeriod);
     await _persist();
+    _syncToBackend((api, token) async {
+      await api.updateStudentBudget(token, budgetAmount: newBudget.abs());
+    });
   }
 
   /// Update allowance budget amount and optional period name
@@ -683,6 +762,9 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
     );
     state = state.copyWith(activePeriod: updatedPeriod);
     await _persist();
+    _syncToBackend((api, token) async {
+      await api.updateStudentBudget(token, budgetAmount: newBudgetAmount.abs(), name: newName);
+    });
   }
 
   /// End current period, generate "Period Wrap", and start fresh
@@ -730,6 +812,14 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
     );
 
     await _persist();
+    _syncToBackend((api, token) async {
+      await api.resetStudentPeriod(
+        token,
+        newPeriodName: newPeriodName,
+        newBudgetAmount: newBudgetAmount,
+        durationDays: durationDays,
+      );
+    });
     return wrap;
   }
 
@@ -761,6 +851,14 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
 
     state = state.copyWith(categoryBudgets: updated);
     await _persist();
+    _syncToBackend((api, token) async {
+      await api.setStudentCategoryBudget(
+        token,
+        category: cat,
+        amount: amount.abs(),
+        emoji: cleanEmoji,
+      );
+    });
   }
 
   Future<void> deleteCategoryBudget(String category) async {
@@ -769,6 +867,9 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
         .toList();
     state = state.copyWith(categoryBudgets: updated);
     await _persist();
+    _syncToBackend((api, token) async {
+      await api.deleteStudentCategoryBudget(token, category: category);
+    });
   }
   void setMerchantFilter(String? merchant) {
     if (state.filterMerchant == merchant) {
@@ -791,6 +892,14 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
     );
     state = state.copyWith(savingsPots: [...state.savingsPots, pot]);
     await _persist();
+    _syncToBackend((api, token) async {
+      await api.addStudentSavingsPot(
+        token,
+        name: name.trim(),
+        targetAmount: targetAmount,
+        emoji: emoji.trim().isEmpty ? '🐷' : emoji.trim(),
+      );
+    });
   }
 
   Future<void> depositToSavingsPot(String potId, double amount) async {
@@ -807,6 +916,9 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
     }).toList();
     state = state.copyWith(savingsPots: updated);
     await _persist();
+    _syncToBackend((api, token) async {
+      await api.depositStudentSavingsPot(token, potId: potId, amount: amount);
+    });
   }
 
   Future<void> deleteSavingsPot(String potId) async {
@@ -814,6 +926,9 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
       savingsPots: state.savingsPots.where((p) => p.id != potId).toList(),
     );
     await _persist();
+    _syncToBackend((api, token) async {
+      await api.deleteStudentSavingsPot(token, potId: potId);
+    });
   }
 
   List<MerchantSpot> _recalculateMerchants(List<MerchantSpot> existing, List<Transaction> txs) {
@@ -882,5 +997,10 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
 
 final studentVaultProvider = StateNotifierProvider<StudentVaultNotifier, StudentVaultState>((ref) {
   final store = ref.watch(kvStoreProvider);
-  return StudentVaultNotifier(store: store);
+  final api = ref.watch(apiProvider);
+  return StudentVaultNotifier(
+    store: store,
+    api: api,
+    tokenGetter: () => currentToken(ref),
+  );
 });

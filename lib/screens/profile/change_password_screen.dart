@@ -7,6 +7,7 @@ import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/fv_notification.dart';
 
 class ChangePasswordScreen extends ConsumerStatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -54,8 +55,11 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
           .changePassword(token, currentPassword: current, newPassword: next);
       if (mounted) {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(s.passwordChanged)));
+        FvNotification.show(
+          context,
+          message: s.passwordChanged,
+          type: FvNotificationType.success,
+        );
       }
     } on FvApiException catch (e) {
       if (mounted) setState(() => _error = e.message);
@@ -77,7 +81,16 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
       child: ListView(
         padding: const EdgeInsets.all(FvSpacing.x5),
         children: [
-          FvCard(
+          Container(
+            padding: const EdgeInsets.all(FvSpacing.x4),
+            decoration: BoxDecoration(
+              color: FvColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: FvColors.ink, width: 2),
+              boxShadow: const [
+                BoxShadow(color: FvColors.ink, offset: Offset(3, 3), blurRadius: 0),
+              ],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
