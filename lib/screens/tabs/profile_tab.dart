@@ -460,9 +460,12 @@ class _Row extends StatelessWidget {
             HapticFeedback.lightImpact();
             onTap();
           },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: Row(
+          child: Semantics(
+            button: true,
+            label: label,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Row(
               children: [
                 Container(
                   width: 38,
@@ -501,6 +504,7 @@ class _Row extends StatelessWidget {
               ],
             ),
           ),
+          ),
         ),
       ),
     );
@@ -533,8 +537,9 @@ class _SwitchRow extends StatelessWidget {
           BoxShadow(color: FvColors.ink, offset: Offset(2, 2), blurRadius: 0),
         ],
       ),
-      child: Row(
-        children: [
+      child: MergeSemantics(
+        child: Row(
+          children: [
           Container(
             width: 34,
             height: 34,
@@ -564,6 +569,7 @@ class _SwitchRow extends StatelessWidget {
             onChanged: onChanged,
           ),
         ],
+        ),
       ),
     );
   }
