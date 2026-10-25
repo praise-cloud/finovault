@@ -235,16 +235,32 @@ class _StudentBudgetTabState extends ConsumerState<StudentBudgetTab> {
                 color: FvColors.ink,
               ),
             ),
+            const SizedBox(height: 4),
+            const Text(
+              'Adjust your total spending allowance for this budget period.',
+              style: TextStyle(fontSize: 12, color: FvColors.textSecondary),
+            ),
             const SizedBox(height: 14),
             TextField(
               controller: nameCtrl,
+              style: const TextStyle(fontWeight: FontWeight.w700, color: FvColors.ink),
               decoration: InputDecoration(
                 labelText: 'Period Name',
                 hintText: 'e.g. October Pocket Money',
-                labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: FvColors.ink),
+                filled: true,
+                fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: FvColors.ink, width: 1.5),
+                  borderSide: const BorderSide(color: FvColors.ink, width: 2),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: FvColors.ink, width: 2),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: FvColors.ink, width: 2.5),
                 ),
               ),
             ),
@@ -253,12 +269,23 @@ class _StudentBudgetTabState extends ConsumerState<StudentBudgetTab> {
               controller: ctrl,
               autofocus: true,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              style: const TextStyle(fontWeight: FontWeight.w700, color: FvColors.ink),
               decoration: InputDecoration(
-                labelText: 'Allowance Limit (${state.currency})',
-                labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                labelText: 'Allowance Limit ()',
+                labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: FvColors.ink),
+                filled: true,
+                fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: FvColors.ink, width: 1.5),
+                  borderSide: const BorderSide(color: FvColors.ink, width: 2),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: FvColors.ink, width: 2),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: FvColors.ink, width: 2.5),
                 ),
               ),
             ),
@@ -280,11 +307,244 @@ class _StudentBudgetTabState extends ConsumerState<StudentBudgetTab> {
                         newName: nameCtrl.text.trim().isNotEmpty ? nameCtrl.text.trim() : null,
                       );
                   Navigator.of(sheet).pop();
+                  FvNotification.show(
+                    context,
+                    message: 'Allowance updated to  ',
+                    type: FvNotificationType.success,
+                  );
+                } else {
+                  FvNotification.show(
+                    context,
+                    message: 'Please enter a valid allowance amount',
+                    type: FvNotificationType.error,
+                  );
                 }
               },
               child: const Text('SAVE ALLOWANCE', style: TextStyle(fontWeight: FontWeight.w900)),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _openEditBudgetModal(
+    BuildContext context,
+    StudentVaultState state,
+    CategoryBudget budget,
+  ) {
+    HapticFeedback.lightImpact();
+    final catCtrl = TextEditingController(text: budget.category);
+    final amtCtrl = TextEditingController(text: budget.amount.toStringAsFixed(0));
+    String selectedEmoji = budget.emoji;
+
+    final emojis = ['🍔', '🛍️', '🥪', '🚌', '🛒', '☕', '🎮', '📚', '🎬', '💳', '🍿', '⛽'];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheet) => StatefulBuilder(
+        builder: (ctx, setModalState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(sheet).viewInsets.bottom + 20,
+            left: 20,
+            right: 20,
+            top: 16,
+          ),
+          decoration: const BoxDecoration(
+            color: FvColors.surface,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            border: Border(
+              top: BorderSide(color: FvColors.ink, width: 2.5),
+              left: BorderSide(color: FvColors.ink, width: 2.5),
+              right: BorderSide(color: FvColors.ink, width: 2.5),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: FvColors.border,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'EDIT BUDGET TARGET',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.0,
+                      color: FvColors.ink,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline, color: Color(0xFFEF4444)),
+                    tooltip: 'Delete Budget',
+                    onPressed: () async {
+                      final confirmed = await FvAlertDialog.showConfirm(
+                        context,
+                        title: 'Delete Budget?',
+                        message: 'Are you sure you want to delete your budget target for ?',
+                        confirmLabel: 'DELETE',
+                        cancelLabel: 'CANCEL',
+                        severity: FvAlertSeverity.danger,
+                      );
+                      if (confirmed) {
+                        ref.read(studentVaultProvider.notifier).deleteCategoryBudget(budget.category);
+                        if (context.mounted) {
+                          Navigator.of(sheet).pop();
+                          FvNotification.show(
+                            context,
+                            message: 'Deleted budget for ',
+                            type: FvNotificationType.info,
+                          );
+                        }
+                      }
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'Make adjustments to your category budget limit or emoji.',
+                style: TextStyle(fontSize: 12, color: FvColors.textSecondary),
+              ),
+              const SizedBox(height: 16),
+
+              // Emoji Selector
+              SizedBox(
+                height: 44,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: emojis.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 8),
+                  itemBuilder: (_, i) {
+                    final em = emojis[i];
+                    final isSel = em == selectedEmoji;
+                    return InkWell(
+                      onTap: () => setModalState(() => selectedEmoji = em),
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        width: 44,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isSel ? const Color(0xFFFEF3C7) : const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: isSel ? FvColors.ink : Colors.transparent,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Text(em, style: const TextStyle(fontSize: 20)),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              TextField(
+                controller: catCtrl,
+                style: const TextStyle(fontWeight: FontWeight.w700, color: FvColors.ink),
+                decoration: InputDecoration(
+                  labelText: 'Category Name',
+                  hintText: 'e.g. Food & Drinks',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: FvColors.ink),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: FvColors.ink, width: 2),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: FvColors.ink, width: 2),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: FvColors.ink, width: 2.5),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              TextField(
+                controller: amtCtrl,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                style: const TextStyle(fontWeight: FontWeight.w700, color: FvColors.ink),
+                decoration: InputDecoration(
+                  labelText: 'Budget Limit ()',
+                  hintText: 'e.g. 500',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: FvColors.ink),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: FvColors.ink, width: 2),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: FvColors.ink, width: 2),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: FvColors.ink, width: 2.5),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 18),
+
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: FvColors.ink,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  final cat = catCtrl.text.trim();
+                  final amt = double.tryParse(amtCtrl.text.trim()) ?? 0.0;
+                  if (cat.isNotEmpty && amt > 0) {
+                    ref.read(studentVaultProvider.notifier).setCategoryBudget(
+                          category: cat,
+                          amount: amt,
+                          emoji: selectedEmoji,
+                          oldCategory: budget.category,
+                        );
+                    Navigator.of(sheet).pop();
+                    FvNotification.show(
+                      context,
+                      message: 'Updated budget for  ( )',
+                      type: FvNotificationType.success,
+                    );
+                  } else {
+                    FvNotification.show(
+                      context,
+                      message: 'Please enter a valid category name and amount',
+                      type: FvNotificationType.error,
+                    );
+                  }
+                },
+                child: const Text(
+                  'SAVE ADJUSTMENTS',
+                  style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.8),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -558,7 +818,6 @@ class _StudentBudgetTabState extends ConsumerState<StudentBudgetTab> {
                 ),
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     color: FvColors.surface,
                     borderRadius: BorderRadius.circular(16),
@@ -567,75 +826,104 @@ class _StudentBudgetTabState extends ConsumerState<StudentBudgetTab> {
                       BoxShadow(color: FvColors.ink, offset: Offset(2, 2)),
                     ],
                   ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 38,
-                            height: 38,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF1F5F9),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: FvColors.ink, width: 1),
-                            ),
-                            child: Text(b.emoji, style: const TextStyle(fontSize: 18)),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () => _openEditBudgetModal(context, state, b),
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Column(
+                          children: [
+                            Row(
                               children: [
-                                Text(
-                                  b.category,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 13,
-                                    color: FvColors.ink,
+                                Container(
+                                  width: 38,
+                                  height: 38,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFF1F5F9),
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color: FvColors.ink, width: 1),
+                                  ),
+                                  child: Text(b.emoji, style: const TextStyle(fontSize: 18)),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        b.category,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 13,
+                                          color: FvColors.ink,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        isOver
+                                            ? 'Over by \ '
+                                            : '\ \ left of \ ',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w700,
+                                          color: isOver ? const Color(0xFFEF4444) : FvColors.textSecondary,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  isOver
-                                      ? 'Over by $currency ${(spent - b.amount).toStringAsFixed(0)}'
-                                      : '$currency ${remaining.toStringAsFixed(0)} left of $currency ${b.amount.toStringAsFixed(0)}',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                    color: isOver ? const Color(0xFFEF4444) : FvColors.textSecondary,
-                                  ),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      '\ ',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w900,
+                                        color: isOver ? const Color(0xFFEF4444) : FvColors.ink,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFF1F5F9),
+                                        borderRadius: BorderRadius.circular(6),
+                                        border: Border.all(color: FvColors.ink, width: 1),
+                                      ),
+                                      child: const Icon(
+                                        Icons.edit_outlined,
+                                        size: 14,
+                                        color: FvColors.ink,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ),
-                          Text(
-                            '$currency ${spent.toStringAsFixed(0)}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w900,
-                              color: isOver ? const Color(0xFFEF4444) : FvColors.ink,
+                            const SizedBox(height: 10),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: LinearProgressIndicator(
+                                value: progress,
+                                minHeight: 6,
+                                backgroundColor: const Color(0xFFE2E8F0),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  progress > 0.9
+                                      ? const Color(0xFFEF4444)
+                                      : progress > 0.6
+                                          ? const Color(0xFFF59E0B)
+                                          : const Color(0xFF10B981),
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: LinearProgressIndicator(
-                          value: progress,
-                          minHeight: 6,
-                          backgroundColor: const Color(0xFFE2E8F0),
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            progress > 0.9
-                                ? const Color(0xFFEF4444)
-                                : progress > 0.6
-                                    ? const Color(0xFFF59E0B)
-                                    : const Color(0xFF10B981),
-                          ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               );

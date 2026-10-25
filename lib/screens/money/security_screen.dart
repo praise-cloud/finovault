@@ -93,7 +93,7 @@ class SecurityScreen extends ConsumerWidget {
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w800,
-                                color: Color(0xFF047857),
+                                color: Color(0xFF000000),
                               ),
                             ),
                           ),

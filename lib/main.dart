@@ -14,10 +14,6 @@ import 'core/state/preferences.dart';
 import 'core/mock/db.dart';
 import 'core/state/biometric.dart';
 import 'screens/home_shell.dart';
-import 'screens/onboarding/business_details_screen.dart';
-import 'screens/onboarding/goals_screen.dart';
-import 'screens/onboarding/link_accounts_screen.dart';
-import 'screens/role_screen.dart';
 import 'screens/welcome_screen.dart';
 import 'theme/tokens.dart';
 import 'widgets/ui.dart';
@@ -103,7 +99,6 @@ class RootGate extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(authProvider);
-    final onboarding = ref.watch(onboardingProvider);
 
     if (auth.restoring) {
       return Scaffold(
@@ -115,35 +110,7 @@ class RootGate extends ConsumerWidget {
     }
 
     if (!auth.isAuthenticated) {
-      if (onboarding.step == OnboardingStep.welcome ||
-          onboarding.step == OnboardingStep.complete) {
-        return const FvLightTheme(child: WelcomeScreen());
-      }
-      return switch (onboarding.step) {
-        OnboardingStep.role => const FvLightTheme(child: RoleScreen()),
-        OnboardingStep.businessDetails => const FvLightTheme(
-          child: BusinessDetailsScreen(),
-        ),
-        OnboardingStep.goals => const FvLightTheme(child: GoalsScreen()),
-        OnboardingStep.linkAccounts => const FvLightTheme(
-          child: LinkAccountsScreen(),
-        ),
-        _ => const FvLightTheme(child: WelcomeScreen()),
-      };
-    }
-
-    if (!onboarding.isComplete) {
-      return switch (onboarding.step) {
-        OnboardingStep.role => const FvLightTheme(child: RoleScreen()),
-        OnboardingStep.businessDetails => const FvLightTheme(
-          child: BusinessDetailsScreen(),
-        ),
-        OnboardingStep.goals => const FvLightTheme(child: GoalsScreen()),
-        OnboardingStep.linkAccounts => const FvLightTheme(
-          child: LinkAccountsScreen(),
-        ),
-        _ => const HomeShell(),
-      };
+      return const FvLightTheme(child: WelcomeScreen());
     }
 
     final biometricEnabled = ref.watch(preferencesProvider).biometricEnabled;

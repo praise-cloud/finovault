@@ -88,7 +88,11 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: FvColors.ink, width: 2),
               boxShadow: const [
-                BoxShadow(color: FvColors.ink, offset: Offset(3, 3), blurRadius: 0),
+                BoxShadow(
+                  color: FvColors.ink,
+                  offset: Offset(3, 3),
+                  blurRadius: 0,
+                ),
               ],
             ),
             child: Column(
@@ -98,12 +102,14 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                   label: s.currentPassword,
                   controller: _currentController,
                   obscure: true,
+                  inkLabelAndBorder: true,
                 ),
                 const SizedBox(height: FvSpacing.x4),
                 FvTextField(
                   label: s.newPassword,
                   controller: _newController,
                   obscure: true,
+                  inkLabelAndBorder: true,
                 ),
                 if (_newController.text.isNotEmpty) ...[
                   const SizedBox(height: FvSpacing.x2),
@@ -141,6 +147,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                   label: s.confirmNewPassword,
                   controller: _confirmController,
                   obscure: true,
+                  inkLabelAndBorder: true,
                 ),
                 if (_error != null) ...[
                   const SizedBox(height: FvSpacing.x3),

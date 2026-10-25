@@ -15,9 +15,6 @@ class SignupScreen extends ConsumerStatefulWidget {
 }
 
 class _SignupScreenState extends ConsumerState<SignupScreen> {
-  static final _mauritiusPhonePattern = RegExp(r'^(\+?230)?[5-7]\d{4,7}$');
-  static final _nigerianPhonePattern = RegExp(r'^(\+?234|0)?[789][01]\d{8}$');
-  String _country = 'MU';
   final _name = TextEditingController();
   final _email = TextEditingController();
   final _phone = TextEditingController();
@@ -43,21 +40,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       return;
     }
     final phoneClean = _phone.text.trim();
-    if (_country == 'NG') {
-      if (!_nigerianPhonePattern.hasMatch(phoneClean)) {
-        setState(
-          () => _localError =
-              'Please enter a valid Nigerian mobile number (e.g. 08012345678).',
-        );
-        return;
-      }
-    } else {
-      if (!_mauritiusPhonePattern.hasMatch(phoneClean)) {
-        setState(
-          () => _localError = 'Phone must be 5–8 digits starting with 5–7.',
-        );
-        return;
-      }
+    if (phoneClean.length < 5) {
+      setState(() => _localError = 'Please enter a valid mobile number.');
+      return;
     }
     final ok = await ref
         .read(authProvider.notifier)
@@ -66,7 +51,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           _email.text,
           _password.text,
           phoneClean,
-          country: _country,
+          country: 'MU',
         );
     if (!mounted) return;
     if (ok) Navigator.of(context).popUntil((r) => r.isFirst);
@@ -108,7 +93,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'Step 1 of your journey — next you will pick how you use Finovault.',
+                      'Create your account to start managing your finances and vault.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
@@ -141,140 +126,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             ),
                             const SizedBox(height: FvSpacing.x4),
                           ],
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Country',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  color: context.fvText,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: InkWell(
-                                      onTap: () => setState(() {
-                                        _country = 'MU';
-                                        _localError = null;
-                                      }),
-                                      borderRadius: BorderRadius.circular(
-                                        FvRadius.input,
-                                      ),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 10,
-                                          horizontal: 8,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: _country == 'MU'
-                                              ? context.fvWash
-                                              : context.fvSurface,
-                                          border: Border.all(
-                                            color: _country == 'MU'
-                                                ? context.fvPrimary
-                                                : context.fvBorder,
-                                            width: _country == 'MU' ? 2 : 1,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            FvRadius.input,
-                                          ),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Text(
-                                              '🇲🇺',
-                                              style: TextStyle(fontSize: 16),
-                                            ),
-                                            const SizedBox(width: 6),
-                                            Flexible(
-                                              child: Text(
-                                                'Mauritius',
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: _country == 'MU'
-                                                      ? FontWeight.w700
-                                                      : FontWeight.w500,
-                                                  color: context.fvText,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: InkWell(
-                                      onTap: () => setState(() {
-                                        _country = 'NG';
-                                        _localError = null;
-                                      }),
-                                      borderRadius: BorderRadius.circular(
-                                        FvRadius.input,
-                                      ),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 10,
-                                          horizontal: 8,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: _country == 'NG'
-                                              ? context.fvWash
-                                              : context.fvSurface,
-                                          border: Border.all(
-                                            color: _country == 'NG'
-                                                ? context.fvPrimary
-                                                : context.fvBorder,
-                                            width: _country == 'NG' ? 2 : 1,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            FvRadius.input,
-                                          ),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Text(
-                                              '🇳🇬',
-                                              style: TextStyle(fontSize: 16),
-                                            ),
-                                            const SizedBox(width: 6),
-                                            Flexible(
-                                              child: Text(
-                                                'Nigeria',
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: _country == 'NG'
-                                                      ? FontWeight.w700
-                                                      : FontWeight.w500,
-                                                  color: context.fvText,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: FvSpacing.x4),
+
                           FvTextField(
                             label: 'Full name',
                             controller: _name,
@@ -292,9 +144,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             label: 'Mobile number',
                             controller: _phone,
                             keyboardType: TextInputType.phone,
-                            hint: _country == 'NG'
-                                ? '080xxxxxxxx · Nigerian mobile'
-                                : '5xxxxxxx · Mauritius mobile',
+                            hint: 'e.g. +1 234 567 8900 or 5123 4567',
                           ),
                           const SizedBox(height: FvSpacing.x4),
                           FvTextField(

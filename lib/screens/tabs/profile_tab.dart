@@ -10,6 +10,7 @@ import '../../core/state/auth.dart';
 import '../../core/state/biometric.dart';
 import '../../core/state/notifications.dart';
 import '../../core/state/preferences.dart';
+import '../../core/state/student_vault.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/fv_avatar.dart';
@@ -266,6 +267,53 @@ class ProfileTab extends ConsumerWidget {
                             .setThemeMode(ThemeModePref.system),
                       ),
                     ],
+                  );
+                },
+              ),
+              const SizedBox(height: FvSpacing.x4),
+              const Text(
+                'Currency',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: FvColors.ink,
+                ),
+              ),
+              const SizedBox(height: FvSpacing.x2),
+              Consumer(
+                builder: (context, ref, _) {
+                  final currentCurrency = ref.watch(preferencesProvider).currency;
+                  const currencies = [
+                    (code: 'USD', label: r'\$ USD'),
+                    (code: 'EUR', label: '€ EUR'),
+                    (code: 'GBP', label: '£ GBP'),
+                    (code: 'NGN', label: '₦ NGN'),
+                    (code: 'MUR', label: 'Rs MUR'),
+                    (code: 'ZAR', label: 'R ZAR'),
+                    (code: 'KES', label: 'KSh KES'),
+                    (code: 'INR', label: '₹ INR'),
+                  ];
+                  return Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: currencies.map((c) {
+                      final code = c.code;
+                      final label = c.label;
+                      return _ChoiceChip(
+                        selected: currentCurrency == code,
+                        label: label,
+                        expanded: false,
+                        onTap: () {
+                          ref.read(preferencesProvider.notifier).setCurrency(code);
+                          ref.read(studentVaultProvider.notifier).setCurrency(code);
+                          FvNotification.show(
+                            context,
+                            message: 'Currency set to ' + code,
+                            type: FvNotificationType.success,
+                          );
+                        },
+                      );
+                    }).toList(),
                   );
                 },
               ),
@@ -580,46 +628,51 @@ class _ChoiceChip extends ConsumerWidget {
     required this.selected,
     required this.label,
     required this.onTap,
+    this.expanded = true,
   });
 
   final bool selected;
   final String label;
   final VoidCallback onTap;
+  final bool expanded;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Expanded(
-      child: Material(
-        color: selected ? FvColors.ink : FvColors.surface,
+    final chip = Material(
+      color: selected ? FvColors.ink : FvColors.surface,
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
         borderRadius: BorderRadius.circular(10),
-        child: InkWell(
-          onTap: () {
-            HapticFeedback.selectionClick();
-            onTap();
-          },
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: FvColors.ink,
-                width: selected ? 2 : 1.5,
-              ),
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            vertical: 10,
+            horizontal: expanded ? 0 : 16,
+          ),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: FvColors.ink,
+              width: selected ? 2 : 1.5,
             ),
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w800,
-                color: selected ? Colors.white : FvColors.ink,
-              ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: selected ? Colors.white : FvColors.ink,
             ),
           ),
         ),
       ),
     );
+
+    return expanded ? Expanded(child: chip) : chip;
   }
 }
 

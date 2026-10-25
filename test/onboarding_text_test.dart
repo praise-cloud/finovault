@@ -6,9 +6,6 @@ import 'package:finovault_flutter/theme/app_theme.dart';
 import 'package:finovault_flutter/theme/tokens.dart';
 import 'package:finovault_flutter/widgets/ui.dart';
 import 'package:finovault_flutter/screens/welcome_screen.dart';
-import 'package:finovault_flutter/screens/role_screen.dart';
-import 'package:finovault_flutter/screens/onboarding/goals_screen.dart';
-import 'package:finovault_flutter/screens/onboarding/link_accounts_screen.dart';
 import 'package:finovault_flutter/screens/auth/login_screen.dart';
 import 'package:finovault_flutter/screens/auth/signup_screen.dart';
 
@@ -59,24 +56,9 @@ List<String> findNonBrandText(WidgetTester tester) {
 }
 
 void main() {
-  group('onboarding/auth text is brand-primary in light mode', () {
+  group('auth text is brand-primary in light mode', () {
     testWidgets('WelcomeScreen', (tester) async {
       await pumpScreen(tester, const WelcomeScreen(), theme: FvTheme.light(), loggedIn: false);
-      expect(findNonBrandText(tester), isEmpty);
-    });
-
-    testWidgets('RoleScreen', (tester) async {
-      await pumpScreen(tester, const RoleScreen(), theme: FvTheme.light(), loggedIn: false);
-      expect(findNonBrandText(tester), isEmpty);
-    });
-
-    testWidgets('GoalsScreen', (tester) async {
-      await pumpScreen(tester, const GoalsScreen(), theme: FvTheme.light(), loggedIn: false);
-      expect(findNonBrandText(tester), isEmpty);
-    });
-
-    testWidgets('LinkAccountsScreen', (tester) async {
-      await pumpScreen(tester, const LinkAccountsScreen(), theme: FvTheme.light(), loggedIn: false);
       expect(findNonBrandText(tester), isEmpty);
     });
 
@@ -88,26 +70,6 @@ void main() {
     testWidgets('SignupScreen', (tester) async {
       await pumpScreen(tester, const SignupScreen(), theme: FvTheme.light(), loggedIn: false);
       expect(findNonBrandText(tester), isEmpty);
-    });
-  });
-
-  group('RoleScreen background', () {
-    testWidgets('is white (no brand gradient) in dark mode too', (tester) async {
-      await pumpScreen(tester, const RoleScreen(), theme: FvTheme.dark(), loggedIn: false);
-      final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
-      final body = scaffold.body as Container;
-      final decoration = body.decoration as BoxDecoration;
-      expect(decoration.gradient, isNull);
-      expect(decoration.color, Colors.white);
-    });
-
-    testWidgets('is white in light mode', (tester) async {
-      await pumpScreen(tester, const RoleScreen(), theme: FvTheme.light(), loggedIn: false);
-      final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
-      final body = scaffold.body as Container;
-      final decoration = body.decoration as BoxDecoration;
-      expect(decoration.gradient, isNull);
-      expect(decoration.color, Colors.white);
     });
   });
 }

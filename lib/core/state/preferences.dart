@@ -13,27 +13,32 @@ class PreferencesState {
     this.language = 'en',
     this.themeMode = ThemeModePref.system,
     this.biometricEnabled = false,
+    this.currency = 'USD',
   });
 
   final String language;
   final ThemeModePref themeMode;
   final bool biometricEnabled;
+  final String currency;
 
   PreferencesState copyWith({
     String? language,
     ThemeModePref? themeMode,
     bool? biometricEnabled,
+    String? currency,
   }) =>
       PreferencesState(
         language: language ?? this.language,
         themeMode: themeMode ?? this.themeMode,
         biometricEnabled: biometricEnabled ?? this.biometricEnabled,
+        currency: currency ?? this.currency,
       );
 
   Map<String, dynamic> toJson() => {
         'language': language,
         'themeMode': themeMode.name,
         'biometricEnabled': biometricEnabled,
+        'currency': currency,
       };
 
   static PreferencesState fromJson(Map<String, dynamic>? j) => PreferencesState(
@@ -44,6 +49,7 @@ class PreferencesState {
           _ => ThemeModePref.system,
         },
         biometricEnabled: (j?['biometricEnabled'] as bool?) ?? false,
+        currency: (j?['currency'] as String?) ?? 'USD',
       );
 }
 
@@ -79,6 +85,11 @@ class PreferencesController extends Notifier<PreferencesState> {
 
   Future<void> setBiometricEnabled(bool enabled) async {
     state = state.copyWith(biometricEnabled: enabled);
+    await _persist();
+  }
+
+  Future<void> setCurrency(String currency) async {
+    state = state.copyWith(currency: currency);
     await _persist();
   }
 }

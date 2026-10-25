@@ -6,6 +6,7 @@ import '../l10n/app_localizations.dart';
 import '../theme/tokens.dart';
 import '../widgets/ui.dart';
 import 'auth/login_screen.dart';
+import 'auth/signup_screen.dart';
 
 /// Welcome entry screen — branded hero over a light-blue gradient.
 class WelcomeScreen extends ConsumerWidget {
@@ -46,8 +47,10 @@ class WelcomeScreen extends ConsumerWidget {
                 const Spacer(flex: 3),
                 FvButton(
                   label: s.getStarted,
-                  onPressed: () =>
-                      ref.read(onboardingProvider.notifier).start(),
+                  onPressed: () => pushScreen(
+                    context,
+                    const FvLightTheme(child: SignupScreen()),
+                  ),
                 ),
                 const SizedBox(height: FvSpacing.x3),
                 TextButton(

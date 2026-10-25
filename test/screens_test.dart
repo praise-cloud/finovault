@@ -6,7 +6,6 @@ import 'package:finovault_flutter/core/state/money.dart';
 import 'package:finovault_flutter/screens/auth/login_screen.dart';
 import 'package:finovault_flutter/screens/auth/signup_screen.dart';
 import 'package:finovault_flutter/screens/home_shell.dart';
-import 'package:finovault_flutter/screens/role_screen.dart';
 import 'package:finovault_flutter/screens/welcome_screen.dart';
 import 'package:finovault_flutter/screens/money/accounts_screen.dart';
 import 'package:finovault_flutter/screens/money/bills_screen.dart';
@@ -20,8 +19,6 @@ import 'package:finovault_flutter/screens/money/security_screen.dart';
 import 'package:finovault_flutter/screens/money/transactions_screen.dart';
 import 'package:finovault_flutter/screens/money/transfer_screen.dart';
 import 'package:finovault_flutter/screens/money/vendors_screen.dart';
-import 'package:finovault_flutter/screens/onboarding/goals_screen.dart';
-import 'package:finovault_flutter/screens/onboarding/link_accounts_screen.dart';
 import 'package:finovault_flutter/screens/tabs/insights_tab.dart';
 import 'package:finovault_flutter/screens/tabs/pay_tab.dart';
 import 'package:finovault_flutter/screens/tabs/profile_tab.dart';
@@ -37,13 +34,9 @@ import 'helpers.dart';
 final _transferDate = DateTime.utc(2024, 1, 1);
 
 void main() {
-  group('auth + onboarding screens', () {
+  group('auth screens', () {
     testWidgets('WelcomeScreen', (tester) async {
       await pumpScreen(tester, const WelcomeScreen(), loggedIn: false);
-      expect(tester.takeException(), isNull);
-    });
-    testWidgets('RoleScreen', (tester) async {
-      await pumpScreen(tester, const RoleScreen(), loggedIn: false);
       expect(tester.takeException(), isNull);
     });
     testWidgets('LoginScreen', (tester) async {
@@ -52,14 +45,6 @@ void main() {
     });
     testWidgets('SignupScreen', (tester) async {
       await pumpScreen(tester, const SignupScreen(), loggedIn: false);
-      expect(tester.takeException(), isNull);
-    });
-    testWidgets('Onboarding GoalsScreen', (tester) async {
-      await pumpScreen(tester, const GoalsScreen(), loggedIn: false);
-      expect(tester.takeException(), isNull);
-    });
-    testWidgets('Onboarding LinkAccountsScreen', (tester) async {
-      await pumpScreen(tester, const LinkAccountsScreen(), loggedIn: false);
       expect(tester.takeException(), isNull);
     });
   });

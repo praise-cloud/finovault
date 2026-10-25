@@ -258,6 +258,7 @@ class FvTextField extends StatelessWidget {
     this.suffix,
     this.maxLines = 1,
     this.onChanged,
+    this.inkLabelAndBorder = false,
   });
 
   final String label;
@@ -270,6 +271,7 @@ class FvTextField extends StatelessWidget {
   final Widget? suffix;
   final int maxLines;
   final ValueChanged<String>? onChanged;
+  final bool inkLabelAndBorder;
 
   @override
   Widget build(BuildContext context) {
@@ -281,7 +283,7 @@ class FvTextField extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w700,
-            color: context.fvText,
+            color: inkLabelAndBorder ? FvColors.ink : context.fvText,
             letterSpacing: 0.3,
           ),
         ),
@@ -312,21 +314,21 @@ class FvTextField extends StatelessWidget {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(FvRadius.input),
               borderSide: BorderSide(
-                color: context.fvCardBorder,
+                color: inkLabelAndBorder ? FvColors.ink : context.fvCardBorder,
                 width: FvBorders.width,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(FvRadius.input),
               borderSide: BorderSide(
-                color: context.fvCardBorder,
+                color: inkLabelAndBorder ? FvColors.ink : context.fvCardBorder,
                 width: FvBorders.width,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(FvRadius.input),
               borderSide: BorderSide(
-                color: context.fvPrimary,
+                color: inkLabelAndBorder ? FvColors.ink : context.fvPrimary,
                 width: FvBorders.width,
               ),
             ),

@@ -35,13 +35,14 @@ void main() {
     expect(find.text('Get Started'), findsOneWidget);
   });
 
-  testWidgets('Get Started advances into role selection', (tester) async {
+  testWidgets('Get Started opens the signup screen', (tester) async {
     await tester.pumpWidget(withProviders(const FinovaultApp()));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Get Started'));
     await tester.pumpAndSettle();
 
-    expect(find.text('How will you use Finovault?'), findsOneWidget);
+    expect(find.text('Create your account'), findsOneWidget);
+    expect(find.text('Full name'), findsOneWidget);
   });
 }

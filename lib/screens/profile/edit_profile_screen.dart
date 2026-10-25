@@ -25,6 +25,7 @@ class EditProfileScreen extends ConsumerStatefulWidget {
 
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _picker = ImagePicker();
   bool _saving = false;
   String? _previewDataUri;
@@ -33,13 +34,16 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _nameController.text = ref.read(currentUserProvider)?.fullName ?? '';
-    _previewDataUri = ref.read(currentUserProvider)?.avatarUrl;
+    final u = ref.read(currentUserProvider);
+    _nameController.text = u?.fullName ?? '';
+    _emailController.text = u?.email ?? '';
+    _previewDataUri = u?.avatarUrl;
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -192,7 +196,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   children: [
                     FvButton(
                       label: s.uploadPhoto,
-                      variant: FvButtonVariant.secondary,
+                      variant: FvButtonVariant.primary,
                       expanded: false,
                       icon: Icons.photo_library_outlined,
                       onPressed: _pickImage,
@@ -237,22 +241,23 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 Text(
                   s.personalInfo,
                   style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
                     color: FvColors.ink,
+                    letterSpacing: -0.2,
                   ),
                 ),
                 const SizedBox(height: FvSpacing.x4),
-                FvTextField(
+                _BrutalistTextField(
                   label: s.fullName,
                   controller: _nameController,
                   hint: 'Amina Diallo',
                   errorText: _error == s.fullNameError ? _error : null,
                 ),
                 const SizedBox(height: FvSpacing.x4),
-                FvTextField(
+                _BrutalistTextField(
                   label: s.email,
-                  controller: TextEditingController(text: user?.email ?? ''),
+                  controller: _emailController,
                   enabled: false,
                   hint: user?.email ?? '',
                 ),
@@ -280,6 +285,81 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+
+class _BrutalistTextField extends StatelessWidget {
+  const _BrutalistTextField({
+    required this.label,
+    required this.controller,
+    this.enabled = true,
+    this.hint,
+    this.errorText,
+  });
+
+  final String label;
+  final TextEditingController controller;
+  final bool enabled;
+  final String? hint;
+  final String? errorText;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            color: FvColors.ink,
+            letterSpacing: 0.2,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          enabled: enabled,
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: FvColors.ink,
+          ),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: const TextStyle(
+              color: Color(0xFF64748B),
+              fontWeight: FontWeight.w500,
+            ),
+            errorText: errorText,
+            filled: true,
+            fillColor: enabled ? Colors.white : const Color(0xFFF8FAFC),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: FvColors.ink, width: 2),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: FvColors.ink, width: 2),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: FvColors.ink, width: 2.5),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: FvColors.ink, width: 2),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

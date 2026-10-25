@@ -6,6 +6,7 @@ import '../models.dart';
 import '../mock/api.dart';
 import '../mock/db.dart';
 import '../providers.dart';
+import 'preferences.dart';
 
 /// Represents a student's budget/allowance period (e.g. "October Allowance", "Week 42", "Semester 1").
 class StudentPeriod {
@@ -387,19 +388,22 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
     required KvStore? store,
     FinovaultApi? api,
     String? Function()? tokenGetter,
+    String? defaultCurrency,
   })  : _store = store,
         _api = api,
         _tokenGetter = tokenGetter,
-        super(_initialState()) {
+        _defaultCurrency = defaultCurrency,
+        super(_initialState(defaultCurrency: defaultCurrency ?? 'USD')) {
     _hydrate();
   }
 
   final KvStore? _store;
   final FinovaultApi? _api;
   final String? Function()? _tokenGetter;
+  final String? _defaultCurrency;
   static const _storageKey = 'finovault.student_vault.v1';
 
-  static StudentVaultState _initialState() {
+  static StudentVaultState _initialState({String defaultCurrency = 'USD'}) {
     final now = DateTime.now();
     final startOfMonth = DateTime(now.year, now.month, 1);
     final endOfMonth = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
@@ -408,7 +412,7 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
       id: 'period_default',
       name: 'Monthly Allowance',
       budgetAmount: 5000.0,
-      currency: 'MUR',
+      currency: defaultCurrency,
       startDate: startOfMonth,
       endDate: endOfMonth,
     );
@@ -472,7 +476,10 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
       final raw = _store.getString(_storageKey);
       if (raw != null) {
         final data = jsonDecode(raw) as Map<String, dynamic>;
-        final activePeriod = StudentPeriod.fromJson(data['activePeriod'] as Map<String, dynamic>);
+        var activePeriod = StudentPeriod.fromJson(data['activePeriod'] as Map<String, dynamic>);
+        if (_defaultCurrency != null && activePeriod.currency != _defaultCurrency) {
+          activePeriod = activePeriod.copyWith(currency: _defaultCurrency);
+        }
         final rawTx = (data['transactions'] as List<dynamic>? ?? []);
         final txs = rawTx.map((e) => _txFromJson(e as Map<String, dynamic>)).toList();
         final rawM = (data['merchants'] as List<dynamic>? ?? []);
@@ -823,30 +830,52 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
     return wrap;
   }
 
+  Future<void> setCurrency(String newCurrency) async {
+    state = state.copyWith(
+      activePeriod: state.activePeriod.copyWith(currency: newCurrency),
+      transactions: state.transactions.map((t) => t.copyWith(currency: newCurrency)).toList(),
+    );
+    await _persist();
+    _syncToBackend((api, token) async {
+      await api.updateStudentBudget(
+        token,
+        name: state.activePeriod.name,
+        budgetAmount: state.activePeriod.budgetAmount,
+      );
+    });
+  }
+
   Future<void> setCategoryBudget({
     required String category,
     required double amount,
     String? emoji,
+    String? oldCategory,
   }) async {
     final cat = category.trim();
     final cleanEmoji = emoji ?? _pickEmoji(cat, cat);
-    final existingIndex = state.categoryBudgets.indexWhere(
+
+    List<CategoryBudget> updated = List.of(state.categoryBudgets);
+    if (oldCategory != null && oldCategory.trim().toLowerCase() != cat.toLowerCase()) {
+      updated.removeWhere((b) => b.category.toLowerCase() == oldCategory.trim().toLowerCase());
+      _syncToBackend((api, token) async {
+        await api.deleteStudentCategoryBudget(token, category: oldCategory.trim());
+      });
+    }
+
+    final existingIndex = updated.indexWhere(
       (b) => b.category.toLowerCase() == cat.toLowerCase(),
     );
 
-    List<CategoryBudget> updated;
     if (existingIndex >= 0) {
-      updated = List.of(state.categoryBudgets);
       updated[existingIndex] = CategoryBudget(
         category: cat,
         amount: amount.abs(),
         emoji: cleanEmoji,
       );
     } else {
-      updated = [
-        ...state.categoryBudgets,
+      updated.add(
         CategoryBudget(category: cat, amount: amount.abs(), emoji: cleanEmoji),
-      ];
+      );
     }
 
     state = state.copyWith(categoryBudgets: updated);
@@ -998,9 +1027,11 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
 final studentVaultProvider = StateNotifierProvider<StudentVaultNotifier, StudentVaultState>((ref) {
   final store = ref.watch(kvStoreProvider);
   final api = ref.watch(apiProvider);
+  final prefCurrency = ref.watch(preferencesProvider.select((p) => p.currency));
   return StudentVaultNotifier(
     store: store,
     api: api,
     tokenGetter: () => currentToken(ref),
+    defaultCurrency: prefCurrency,
   );
 });
