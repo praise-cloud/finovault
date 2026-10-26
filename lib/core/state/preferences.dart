@@ -11,7 +11,7 @@ enum ThemeModePref { light, dark, system }
 class PreferencesState {
   const PreferencesState({
     this.language = 'en',
-    this.themeMode = ThemeModePref.system,
+    this.themeMode = ThemeModePref.light,
     this.biometricEnabled = false,
     this.currency = 'USD',
   });
@@ -53,11 +53,7 @@ class PreferencesState {
       );
 }
 
-ThemeMode flutterThemeMode(ThemeModePref pref) => switch (pref) {
-      ThemeModePref.light => ThemeMode.light,
-      ThemeModePref.dark => ThemeMode.dark,
-      ThemeModePref.system => ThemeMode.system,
-    };
+ThemeMode flutterThemeMode(ThemeModePref pref) => ThemeMode.light;
 
 const _prefsKey = 'finovault.prefs.v1';
 

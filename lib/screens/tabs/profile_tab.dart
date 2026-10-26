@@ -160,11 +160,13 @@ class ProfileTab extends ConsumerWidget {
   void _openSettings(BuildContext context, WidgetRef ref) {
     final prefs = ref.read(preferencesProvider);
     final s = AppLocalizations.of(context);
+    final screenHeight = MediaQuery.of(context).size.height;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (sheet) => Container(
+        height: screenHeight * 0.55,
         decoration: const BoxDecoration(
           color: FvColors.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -174,244 +176,210 @@ class ProfileTab extends ConsumerWidget {
             right: BorderSide(color: FvColors.ink, width: 2.5),
           ),
         ),
-        padding: const EdgeInsets.all(FvSpacing.x5),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 36,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: FvColors.border,
-                    borderRadius: BorderRadius.circular(2),
+        padding: const EdgeInsets.fromLTRB(FvSpacing.x5, FvSpacing.x4, FvSpacing.x5, FvSpacing.x5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: FvColors.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: FvSpacing.x3),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  s.settingsAndPlan,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: FvColors.ink,
                   ),
                 ),
-              ),
-              const SizedBox(height: FvSpacing.x4),
-              Text(
-                s.settings,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w900,
-                  color: FvColors.ink,
-                ),
-              ),
-              const SizedBox(height: FvSpacing.x4),
-              Text(
-                s.language,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
-                  color: FvColors.ink,
-                ),
-              ),
-              const SizedBox(height: FvSpacing.x2),
-              Row(
-                children: [
-                  _ChoiceChip(
-                    selected: prefs.language == 'en',
-                    label: 'English',
-                    onTap: () => ref
-                        .read(preferencesProvider.notifier)
-                        .setLanguage('en'),
+                GestureDetector(
+                  onTap: () => Navigator.of(sheet).pop(),
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F5F9),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: FvColors.ink, width: 1.2),
+                    ),
+                    child: const Icon(Icons.close_rounded, size: 16, color: FvColors.ink),
                   ),
-                  const SizedBox(width: FvSpacing.x2),
-                  _ChoiceChip(
-                    selected: prefs.language == 'fr',
-                    label: 'Français',
-                    onTap: () => ref
-                        .read(preferencesProvider.notifier)
-                        .setLanguage('fr'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: FvSpacing.x4),
-              Text(
-                s.appearance,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
-                  color: FvColors.ink,
                 ),
-              ),
-              const SizedBox(height: FvSpacing.x2),
-              Consumer(
-                builder: (context, ref, _) {
-                  final mode = ref.watch(preferencesProvider).themeMode;
-                  return Row(
-                    children: [
-                      _ChoiceChip(
-                        selected: mode == ThemeModePref.light,
-                        label: s.themeLight,
-                        onTap: () => ref
-                            .read(preferencesProvider.notifier)
-                            .setThemeMode(ThemeModePref.light),
+              ],
+            ),
+            const SizedBox(height: FvSpacing.x3),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      s.language,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: FvColors.ink,
                       ),
-                      const SizedBox(width: FvSpacing.x2),
-                      _ChoiceChip(
-                        selected: mode == ThemeModePref.dark,
-                        label: s.themeDark,
-                        onTap: () => ref
-                            .read(preferencesProvider.notifier)
-                            .setThemeMode(ThemeModePref.dark),
-                      ),
-                      const SizedBox(width: FvSpacing.x2),
-                      _ChoiceChip(
-                        selected: mode == ThemeModePref.system,
-                        label: s.themeSystem,
-                        onTap: () => ref
-                            .read(preferencesProvider.notifier)
-                            .setThemeMode(ThemeModePref.system),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: FvSpacing.x4),
-              const Text(
-                'Currency',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
-                  color: FvColors.ink,
-                ),
-              ),
-              const SizedBox(height: FvSpacing.x2),
-              Consumer(
-                builder: (context, ref, _) {
-                  final currentCurrency = ref.watch(preferencesProvider).currency;
-                  const currencies = [
-                    (code: 'USD', label: r'\$ USD'),
-                    (code: 'EUR', label: '€ EUR'),
-                    (code: 'GBP', label: '£ GBP'),
-                    (code: 'NGN', label: '₦ NGN'),
-                    (code: 'MUR', label: 'Rs MUR'),
-                    (code: 'ZAR', label: 'R ZAR'),
-                    (code: 'KES', label: 'KSh KES'),
-                    (code: 'INR', label: '₹ INR'),
-                  ];
-                  return Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: currencies.map((c) {
-                      final code = c.code;
-                      final label = c.label;
-                      return _ChoiceChip(
-                        selected: currentCurrency == code,
-                        label: label,
-                        expanded: false,
-                        onTap: () {
-                          ref.read(preferencesProvider.notifier).setCurrency(code);
-                          ref.read(studentVaultProvider.notifier).setCurrency(code);
-                          FvNotification.show(
-                            context,
-                            message: 'Currency set to ' + code,
-                            type: FvNotificationType.success,
-                          );
-                        },
-                      );
-                    }).toList(),
-                  );
-                },
-              ),
-              const SizedBox(height: FvSpacing.x4),
-              Consumer(
-                builder: (context, ref, _) {
-                  final enabled = ref
-                      .watch(preferencesProvider)
-                      .biometricEnabled;
-                  return _SwitchRow(
-                    icon: Icons.fingerprint,
-                    label: s.biometricUnlock,
-                    value: enabled,
-                    onChanged: (v) async {
-                      if (v) {
-                        final ok = await ref
-                            .read(biometricServiceProvider)
-                            .authenticate();
-                        if (!ok) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(s.biometricUnavailable)),
+                    ),
+                    const SizedBox(height: FvSpacing.x2),
+                    Row(
+                      children: [
+                        _ChoiceChip(
+                          selected: prefs.language == 'en',
+                          label: 'English',
+                          onTap: () => ref
+                              .read(preferencesProvider.notifier)
+                              .setLanguage('en'),
+                        ),
+                        const SizedBox(width: FvSpacing.x2),
+                        _ChoiceChip(
+                          selected: prefs.language == 'fr',
+                          label: 'Français',
+                          onTap: () => ref
+                              .read(preferencesProvider.notifier)
+                              .setLanguage('fr'),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: FvSpacing.x4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Currency',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: FvColors.ink,
+                          ),
+                        ),
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final cur = ref.watch(preferencesProvider).currency;
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFEF3C7),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: FvColors.ink, width: 1.2),
+                              ),
+                              child: Text(
+                                'ACTIVE: ' + cur,
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 0.8,
+                                  color: FvColors.ink,
+                                ),
+                              ),
                             );
-                          }
-                          return;
-                        }
-                      }
-                      await ref
-                          .read(preferencesProvider.notifier)
-                          .setBiometricEnabled(v);
-                    },
-                  );
-                },
-              ),
-              const SizedBox(height: FvSpacing.x4),
-              Text(
-                s.notifications,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
-                  color: FvColors.ink,
-                ),
-              ),
-              const SizedBox(height: FvSpacing.x2),
-              Consumer(
-                builder: (context, ref, _) {
-                  final n = ref.watch(notificationSettingsProvider);
-                  final notif = ref.read(notificationSettingsProvider.notifier);
-                  return Column(
-                    children: [
-                      _SwitchRow(
-                        icon: Icons.notifications,
-                        label: s.notifications,
-                        value: n.enabled,
-                        onChanged: (v) async {
-                          await notif.setEnabled(v);
-                          if (v) {
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: FvSpacing.x2),
+                    const _CurrencyDropdown(),
+                    const SizedBox(height: FvSpacing.x4),
+                    Consumer(
+                      builder: (context, ref, _) {
+                        final enabled = ref
+                            .watch(preferencesProvider)
+                            .biometricEnabled;
+                        return _SwitchRow(
+                          icon: Icons.fingerprint,
+                          label: s.biometricUnlock,
+                          value: enabled,
+                          onChanged: (v) async {
+                            if (v) {
+                              final ok = await ref
+                                  .read(biometricServiceProvider)
+                                  .authenticate();
+                              if (!ok) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(s.biometricUnavailable)),
+                                  );
+                                }
+                                return;
+                              }
+                            }
                             await ref
-                                .read(notificationServiceProvider)
-                                .notifyBillDue(
-                                  'Finovault alerts are on',
-                                  DateTime.now().add(const Duration(days: 2)),
-                                );
-                          }
-                        },
+                                .read(preferencesProvider.notifier)
+                                .setBiometricEnabled(v);
+                          },
+                        );
+                      },
+                    ),
+                    const SizedBox(height: FvSpacing.x4),
+                    Text(
+                      s.notifications,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: FvColors.ink,
                       ),
-                      const SizedBox(height: FvSpacing.x3),
-                      _SwitchRow(
-                        icon: Icons.receipt_long,
-                        label: s.billReminders,
-                        value: n.billReminders,
-                        onChanged: (v) => notif.setBillReminders(v),
-                      ),
-                      const SizedBox(height: FvSpacing.x3),
-                      _SwitchRow(
-                        icon: Icons.account_balance_wallet,
-                        label: s.lowBalanceAlert,
-                        value: n.lowBalance,
-                        onChanged: (v) => notif.setLowBalance(v),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: FvSpacing.x4),
-              Text(
-                s.backendUrl,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
-                  color: FvColors.ink,
+                    ),
+                    const SizedBox(height: FvSpacing.x2),
+                    Consumer(
+                      builder: (context, ref, _) {
+                        final n = ref.watch(notificationSettingsProvider);
+                        final notif = ref.read(notificationSettingsProvider.notifier);
+                        return Column(
+                          children: [
+                            _SwitchRow(
+                              icon: Icons.notifications,
+                              label: s.notifications,
+                              value: n.enabled,
+                              onChanged: (v) async {
+                                await notif.setEnabled(v);
+                                if (v) {
+                                  await ref
+                                      .read(notificationServiceProvider)
+                                      .notifyBillDue(
+                                        'Finovault alerts are on',
+                                        DateTime.now().add(const Duration(days: 2)),
+                                      );
+                                }
+                              },
+                            ),
+                            const SizedBox(height: FvSpacing.x3),
+                            _SwitchRow(
+                              icon: Icons.receipt_long,
+                              label: s.billReminders,
+                              value: n.billReminders,
+                              onChanged: (v) => notif.setBillReminders(v),
+                            ),
+                            const SizedBox(height: FvSpacing.x3),
+                            _SwitchRow(
+                              icon: Icons.account_balance_wallet,
+                              label: s.lowBalanceAlert,
+                              value: n.lowBalance,
+                              onChanged: (v) => notif.setLowBalance(v),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: FvSpacing.x4),
+                  ],
                 ),
               ),
-              const SizedBox(height: FvSpacing.x2),
-              const _BackendUrlTile(),
-              const SizedBox(height: FvSpacing.x4),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -673,142 +641,6 @@ class _ChoiceChip extends ConsumerWidget {
     );
 
     return expanded ? Expanded(child: chip) : chip;
-  }
-}
-
-class _BackendUrlTile extends ConsumerStatefulWidget {
-  const _BackendUrlTile();
-
-  @override
-  ConsumerState<_BackendUrlTile> createState() => _BackendUrlTileState();
-}
-
-class _BackendUrlTileState extends ConsumerState<_BackendUrlTile> {
-  final _controller = TextEditingController();
-  bool _testing = false;
-  String? _status;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.text = ref.read(apiBaseUrlProvider) ?? '';
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  Future<void> _test() async {
-    setState(() => _testing = true);
-    final s = AppLocalizations.of(context);
-    final url = _controller.text.trim();
-    try {
-      final api = HttpFinovaultApi(
-        baseUrl: url.isEmpty ? 'http://invalid.invalid' : url,
-      );
-      await api.getSession(null);
-      if (mounted) setState(() => _status = s.connectionOk);
-    } on FvApiException {
-      if (mounted) setState(() => _status = s.connectionFailed);
-    } catch (_) {
-      if (mounted) setState(() => _status = s.connectionFailed);
-    } finally {
-      if (mounted) setState(() => _testing = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final s = AppLocalizations.of(context);
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: FvColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: FvColors.ink, width: 2),
-        boxShadow: const [
-          BoxShadow(color: FvColors.ink, offset: Offset(3, 3), blurRadius: 0),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextField(
-            controller: _controller,
-            decoration: InputDecoration(
-              labelText: s.backendUrl,
-              labelStyle: const TextStyle(color: FvColors.ink, fontWeight: FontWeight.w700),
-              hintText: s.backendUrlHint,
-              hintStyle: const TextStyle(color: FvColors.textSecondary),
-              isDense: true,
-              filled: true,
-              fillColor: const Color(0xFFF8FAFC),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: FvColors.ink, width: 1.5),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: FvColors.ink, width: 1.5),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: FvColors.ink, width: 2),
-              ),
-            ),
-            style: const TextStyle(fontSize: 14, color: FvColors.ink, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: FvSpacing.x3),
-          Wrap(
-            spacing: FvSpacing.x3,
-            runSpacing: FvSpacing.x2,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              FvButton(
-                label: s.save,
-                onPressed: _testing
-                    ? null
-                    : () async {
-                        await ref
-                            .read(apiBaseUrlProvider.notifier)
-                            .set(_controller.text);
-                        ref.invalidate(apiProvider);
-                        if (mounted) {
-                          setState(() => _status = null);
-                          FvNotification.show(
-                            context,
-                            message: 'Backend URL updated',
-                            type: FvNotificationType.success,
-                          );
-                        }
-                      },
-              ),
-              FvButton(
-                label: s.testConnection,
-                variant: FvButtonVariant.secondary,
-                loading: _testing,
-                onPressed: _testing ? null : _test,
-              ),
-              if (_status != null) ...[
-                const SizedBox(width: FvSpacing.x3),
-                Text(
-                  _status!,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: _status == s.connectionOk
-                        ? const Color(0xFF047857)
-                        : const Color(0xFFEF4444),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ],
-      ),
-    );
   }
 }
 
@@ -1248,4 +1080,143 @@ class _Label extends StatelessWidget {
       ),
     ),
   );
+}
+
+class CurrencyOption {
+  final String code;
+  final String symbol;
+  final String name;
+
+  const CurrencyOption({
+    required this.code,
+    required this.symbol,
+    required this.name,
+  });
+}
+
+const appCurrencies = [
+  CurrencyOption(code: 'USD', symbol: r'$', name: 'US Dollar'),
+  CurrencyOption(code: 'EUR', symbol: '€', name: 'Euro'),
+  CurrencyOption(code: 'GBP', symbol: '£', name: 'British Pound'),
+  CurrencyOption(code: 'NGN', symbol: '₦', name: 'Nigerian Naira'),
+  CurrencyOption(code: 'MUR', symbol: 'Rs', name: 'Mauritian Rupee'),
+  CurrencyOption(code: 'ZAR', symbol: 'R', name: 'South African Rand'),
+  CurrencyOption(code: 'KES', symbol: 'KSh', name: 'Kenyan Shilling'),
+  CurrencyOption(code: 'GHS', symbol: 'GH₵', name: 'Ghanaian Cedi'),
+  CurrencyOption(code: 'CAD', symbol: r'$', name: 'Canadian Dollar'),
+  CurrencyOption(code: 'AUD', symbol: r'$', name: 'Australian Dollar'),
+  CurrencyOption(code: 'INR', symbol: '₹', name: 'Indian Rupee'),
+  CurrencyOption(code: 'JPY', symbol: '¥', name: 'Japanese Yen'),
+  CurrencyOption(code: 'CNY', symbol: '¥', name: 'Chinese Yuan'),
+  CurrencyOption(code: 'AED', symbol: 'AED', name: 'UAE Dirham'),
+  CurrencyOption(code: 'EGP', symbol: 'E£', name: 'Egyptian Pound'),
+  CurrencyOption(code: 'RWF', symbol: 'FRw', name: 'Rwandan Franc'),
+  CurrencyOption(code: 'TZS', symbol: 'TSh', name: 'Tanzanian Shilling'),
+  CurrencyOption(code: 'UGX', symbol: 'USh', name: 'Ugandan Shilling'),
+  CurrencyOption(code: 'XOF', symbol: 'CFA', name: 'West African CFA'),
+  CurrencyOption(code: 'XAF', symbol: 'FCFA', name: 'Central African CFA'),
+];
+
+class _CurrencyDropdown extends ConsumerWidget {
+  const _CurrencyDropdown();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentCurrency = ref.watch(preferencesProvider).currency;
+    final selectedOption = appCurrencies.firstWhere(
+      (c) => c.code.toUpperCase() == currentCurrency.toUpperCase(),
+      orElse: () => appCurrencies.first,
+    );
+
+    return Container(
+      decoration: BoxDecoration(
+        color: FvColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: FvColors.ink, width: 2),
+        boxShadow: const [
+          BoxShadow(
+            color: FvColors.ink,
+            offset: Offset(2.5, 2.5),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: selectedOption.code,
+          isExpanded: true,
+          menuMaxHeight: 280,
+          icon: const Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: FvColors.ink,
+            size: 24,
+          ),
+          dropdownColor: FvColors.surface,
+          borderRadius: BorderRadius.circular(14),
+          elevation: 4,
+          items: appCurrencies.map((c) {
+            return DropdownMenuItem<String>(
+              value: c.code,
+              child: Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 28,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F5F9),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: FvColors.ink, width: 1.2),
+                    ),
+                    child: Text(
+                      c.symbol,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                        color: FvColors.ink,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    c.code,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      color: FvColors.ink,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      '•  ${c.name}',
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: FvColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+          onChanged: (newCode) {
+            if (newCode != null && newCode != currentCurrency) {
+              HapticFeedback.selectionClick();
+              ref.read(preferencesProvider.notifier).setCurrency(newCode);
+              ref.read(studentVaultProvider.notifier).setCurrency(newCode);
+              FvNotification.show(
+                context,
+                message: 'Currency updated to ' + newCode,
+                type: FvNotificationType.success,
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
 }

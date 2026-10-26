@@ -40,10 +40,14 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       return;
     }
     final phoneClean = _phone.text.trim();
-    if (phoneClean.length < 5) {
+    if (phoneClean.replaceAll(RegExp(r'\D'), '').length < 5) {
       setState(() => _localError = 'Please enter a valid mobile number.');
       return;
     }
+    final isNg = phoneClean.startsWith('+234') ||
+        phoneClean.startsWith('234') ||
+        RegExp(r'^0[789][01]\d{8}$').hasMatch(phoneClean);
+    final country = isNg ? 'NG' : 'MU';
     final ok = await ref
         .read(authProvider.notifier)
         .signup(
@@ -51,7 +55,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           _email.text,
           _password.text,
           phoneClean,
-          country: 'MU',
+          country: country,
         );
     if (!mounted) return;
     if (ok) Navigator.of(context).popUntil((r) => r.isFirst);

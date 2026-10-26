@@ -17,13 +17,24 @@ class FvFormat {
   static const _symbols = {
     'MUR': 'Rs',
     'NGN': '₦',
-    'USD': '\$',
+    'USD': r'$',
     'EUR': '€',
     'GBP': '£',
     'JPY': '¥',
+    'CNY': '¥',
     'ZAR': 'R',
     'INR': '₹',
     'KES': 'KSh',
+    'GHS': 'GH₵',
+    'CAD': r'$',
+    'AUD': r'$',
+    'AED': 'AED',
+    'EGP': 'E£',
+    'RWF': 'FRw',
+    'TZS': 'TSh',
+    'UGX': 'USh',
+    'XOF': 'CFA',
+    'XAF': 'FCFA',
   };
 
   static String _currencySymbol(String currency) => _symbols[currency] ?? currency;

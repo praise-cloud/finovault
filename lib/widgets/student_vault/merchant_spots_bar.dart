@@ -13,11 +13,13 @@ class MerchantSpotsBar extends StatelessWidget {
     required this.merchants,
     required this.selectedFilter,
     required this.onSelectSpot,
+    this.currency = 'USD',
   });
 
   final List<MerchantSpot> merchants;
   final String? selectedFilter;
   final ValueChanged<String?> onSelectSpot;
+  final String currency;
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +179,7 @@ class MerchantSpotsBar extends StatelessWidget {
                               const SizedBox(height: 2),
                               Text(
                                 spot.totalSpent > 0
-                                    ? 'Rs ${spot.totalSpent.toStringAsFixed(0)} • ${spot.visitCount}x'
+                                    ? '$currency ${spot.totalSpent.toStringAsFixed(0)} • ${spot.visitCount}x'
                                     : 'Student spot',
                                 maxLines: 1,
                                 style: const TextStyle(

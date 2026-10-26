@@ -86,8 +86,7 @@ class _FinovaultAppState extends ConsumerState<FinovaultApp> {
       ],
       supportedLocales: AppLocalizations.supportedLocales,
       theme: FvTheme.light(),
-      darkTheme: FvTheme.dark(),
-      themeMode: flutterThemeMode(prefs.themeMode),
+      themeMode: ThemeMode.light,
       home: const RootGate(),
     );
   }

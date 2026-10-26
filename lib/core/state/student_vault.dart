@@ -480,8 +480,9 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
         if (_defaultCurrency != null && activePeriod.currency != _defaultCurrency) {
           activePeriod = activePeriod.copyWith(currency: _defaultCurrency);
         }
+        final cur = activePeriod.currency;
         final rawTx = (data['transactions'] as List<dynamic>? ?? []);
-        final txs = rawTx.map((e) => _txFromJson(e as Map<String, dynamic>)).toList();
+        final txs = rawTx.map((e) => _txFromJson(e as Map<String, dynamic>).copyWith(currency: cur)).toList();
         final rawM = (data['merchants'] as List<dynamic>? ?? []);
         final merchants = rawM.map((e) => MerchantSpot.fromJson(e as Map<String, dynamic>)).toList();
         final rawB = (data['categoryBudgets'] as List<dynamic>? ?? []);
@@ -632,14 +633,15 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
         merchantName: 'Timo',
         date: now.subtract(const Duration(days: 4)),
         isExpense: true,
-      ),
+      ).copyWith(currency: state.currency),
     ];
 
     // Recalculate merchant stats from samples
-    final updatedMerchants = _recalculateMerchants(state.merchants, samples);
+    final localizedSamples = samples.map((t) => t.copyWith(currency: state.currency)).toList();
+    final updatedMerchants = _recalculateMerchants(state.merchants, localizedSamples);
 
     state = state.copyWith(
-      transactions: samples,
+      transactions: localizedSamples,
       merchants: updatedMerchants,
     );
     _persist();
@@ -661,6 +663,7 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
       id: 'tx_${DateTime.now().millisecondsSinceEpoch}',
       accountId: 'acc_wallet',
       amount: amount.abs(),
+      currency: state.currency,
       direction: TransactionDirection.out,
       category: category,
       merchantName: cleanMerchant,
@@ -1027,11 +1030,17 @@ class StudentVaultNotifier extends StateNotifier<StudentVaultState> {
 final studentVaultProvider = StateNotifierProvider<StudentVaultNotifier, StudentVaultState>((ref) {
   final store = ref.watch(kvStoreProvider);
   final api = ref.watch(apiProvider);
-  final prefCurrency = ref.watch(preferencesProvider.select((p) => p.currency));
-  return StudentVaultNotifier(
+  final initialCurrency = ref.read(preferencesProvider).currency;
+  final notifier = StudentVaultNotifier(
     store: store,
     api: api,
     tokenGetter: () => currentToken(ref),
-    defaultCurrency: prefCurrency,
+    defaultCurrency: initialCurrency,
   );
+  ref.listen<String>(preferencesProvider.select((p) => p.currency), (prev, next) {
+    if (prev != next && next != notifier.state.currency) {
+      notifier.setCurrency(next);
+    }
+  });
+  return notifier;
 });

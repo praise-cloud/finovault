@@ -381,13 +381,18 @@ class MockFinovaultApi extends FinovaultApi {
           'Please enter a valid Nigerian mobile number (e.g. 08012345678).',
         );
       }
-    } else {
+    } else if (ctry == 'MU' && phoneClean.startsWith('+230')) {
       if (_mobilePattern.hasMatch(phoneClean) == false) {
         throw FvApiException(
           'validation',
           'Phone must be 5–8 digits starting with 5–7.',
         );
       }
+    } else if (phoneClean.replaceAll(RegExp(r'\D'), '').length < 5) {
+      throw FvApiException(
+        'validation',
+        'Please enter a valid mobile number.',
+      );
     }
     if (_db.credentials.containsKey(normalized)) {
       throw FvApiException(

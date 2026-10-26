@@ -195,6 +195,7 @@ class StudentHomeScreen extends ConsumerWidget {
               child: MerchantSpotsBar(
                 merchants: state.topSpots,
                 selectedFilter: state.filterMerchant,
+                currency: state.currency,
                 onSelectSpot: (merchant) {
                   ref.read(studentVaultProvider.notifier).setMerchantFilter(merchant);
                 },

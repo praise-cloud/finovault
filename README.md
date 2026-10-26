@@ -7,11 +7,12 @@ Cross-platform financial application built with Flutter, Riverpod, and a pure ne
   - Direct, frictionless onboarding: Welcome screen leads straight to account creation (Full Name, Email, Phone, Password) via **Get Started**, or directly to **Log in** for existing users.
   - Multi-step questionnaire and unneeded wizard screens have been removed for an instant, direct path to the application.
   - Demo login (mock mode): `demo@finovault.app` / `Vault123!`.
-- **User-Selectable Currency**:
-  - Users can select their working currency anytime in **Profile → Settings → Currency** (`USD $`, `EUR €`, `GBP £`, `NGN ₦`, `MUR Rs`, `ZAR R`, `KES KSh`, `INR ₹`).
-  - Currency preferences persist locally in `SharedPreferences` and instantly sync across all active screens, the Student Vault fuel gauge, transaction history, budget caps, and savings pots.
-- **Pure Neo-Brutalist Theming**:
-  - High-contrast brutalist design language: `#F3F1EA` page background, crisp `#FFFFFF` cards, 2px solid `#0A0A0A` ink black borders, 3px hard drop shadows, and pure black typography.
+- **User-Selectable Currency & Half-Screen Settings Drawer**:
+  - **Half-Screen Drawer**: Settings & Plan opens in a tactile half-screen modal drawer (55% viewport height) with grab handle, title, and close button, allowing scrollable configuration without blocking the entire screen.
+  - **Comprehensive Currency Dropdown**: Users can select from 20 global and African currencies via a tactile neo-brutalist dropdown (`USD $`, `EUR €`, `GBP £`, `NGN ₦`, `MUR Rs`, `ZAR R`, `KES KSh`, `GHS GH₵`, `CAD $`, `AUD $`, `INR ₹`, `JPY ¥`, `CNY ¥`, `AED AED`, `EGP E£`, `RWF FRw`, `TZS TSh`, `UGX USh`, `XOF CFA`, `XAF FCFA`).
+  - Currency preferences persist locally in `SharedPreferences` and instantly sync across all active screens, the Student Vault fuel gauge, transaction history, budget caps, merchant hangout spots, and savings pots.
+- **Pure Neo-Brutalist Light Mode**:
+  - Dedicated light mode across the full application (`#F3F1EA` page background, crisp `#FFFFFF` cards, 2px solid `#0A0A0A` ink black borders, 3px hard drop shadows, and pure black typography). Unneeded dark theme toggles and backend URL manual inputs have been removed to preserve design consistency and direct automatic backend connection.
   - **Edit Profile**: Text and input field outlines are rendered in solid black (`#0A0A0A`) with clean borders across normal, focused, and disabled states.
   - Full accessibility compliance with semantic labels and toggle states (`profile_a11y_test.dart`).
 - **Custom Modals & Floating Notifications**:
