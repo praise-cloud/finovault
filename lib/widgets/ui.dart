@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -245,7 +246,7 @@ class FvCard extends StatelessWidget {
   }
 }
 
-class FvTextField extends StatelessWidget {
+class FvTextField extends StatefulWidget {
   const FvTextField({
     super.key,
     required this.label,
@@ -274,37 +275,74 @@ class FvTextField extends StatelessWidget {
   final bool inkLabelAndBorder;
 
   @override
+  State<FvTextField> createState() => _FvTextFieldState();
+}
+
+class _FvTextFieldState extends State<FvTextField> {
+  late bool _obscured;
+
+  @override
+  void initState() {
+    super.initState();
+    _obscured = widget.obscure;
+  }
+
+  @override
+  void didUpdateWidget(covariant FvTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.obscure != widget.obscure) {
+      _obscured = widget.obscure;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    Widget? effectiveSuffix = widget.suffix;
+    if (widget.obscure && effectiveSuffix == null) {
+      effectiveSuffix = IconButton(
+        icon: Icon(
+          _obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+          color: widget.inkLabelAndBorder ? FvColors.ink : context.fvTextSecondary,
+          size: 20,
+        ),
+        onPressed: () {
+          HapticFeedback.selectionClick();
+          setState(() => _obscured = !_obscured);
+        },
+        tooltip: _obscured ? 'Show password' : 'Hide password',
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          widget.label,
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w700,
-            color: inkLabelAndBorder ? FvColors.ink : context.fvText,
+            color: widget.inkLabelAndBorder ? FvColors.ink : context.fvText,
             letterSpacing: 0.3,
           ),
         ),
         const SizedBox(height: 6),
         TextField(
-          controller: controller,
-          obscureText: obscure,
-          keyboardType: keyboardType,
-          enabled: enabled,
-          maxLines: maxLines,
-          onChanged: onChanged,
+          controller: widget.controller,
+          obscureText: _obscured,
+          keyboardType: widget.keyboardType,
+          enabled: widget.enabled,
+          maxLines: widget.maxLines,
+          onChanged: widget.onChanged,
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w600,
             color: context.fvText,
           ),
           decoration: InputDecoration(
-            hintText: hint,
+            hintText: widget.hint,
             hintStyle: TextStyle(color: context.fvTextSecondary),
-            errorText: errorText,
-            suffixIcon: suffix,
+            errorText: widget.errorText,
+            suffixIcon: effectiveSuffix,
             filled: true,
             fillColor: context.fvSurface,
             contentPadding: const EdgeInsets.symmetric(
@@ -314,21 +352,21 @@ class FvTextField extends StatelessWidget {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(FvRadius.input),
               borderSide: BorderSide(
-                color: inkLabelAndBorder ? FvColors.ink : context.fvCardBorder,
+                color: widget.inkLabelAndBorder ? FvColors.ink : context.fvCardBorder,
                 width: FvBorders.width,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(FvRadius.input),
               borderSide: BorderSide(
-                color: inkLabelAndBorder ? FvColors.ink : context.fvCardBorder,
+                color: widget.inkLabelAndBorder ? FvColors.ink : context.fvCardBorder,
                 width: FvBorders.width,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(FvRadius.input),
               borderSide: BorderSide(
-                color: inkLabelAndBorder ? FvColors.ink : context.fvPrimary,
+                color: widget.inkLabelAndBorder ? FvColors.ink : context.fvPrimary,
                 width: FvBorders.width,
               ),
             ),

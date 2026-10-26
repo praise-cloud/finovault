@@ -36,8 +36,8 @@ void main() {
     final c = await makeLoggedInContainer();
     await pumpScreen(tester, const ProfileTab(), container: c);
 
-    final securityNode = tester.getSemantics(find.byIcon(Icons.security_outlined));
+    final rowNode = tester.getSemantics(find.byIcon(Icons.lock_outline));
     // ignore: deprecated_member_use
-    expect(securityNode.hasFlag(SemanticsFlag.isButton), isTrue);
+    expect(rowNode.hasFlag(SemanticsFlag.isButton), isTrue);
   });
 }

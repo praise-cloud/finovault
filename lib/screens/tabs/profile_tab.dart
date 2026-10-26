@@ -127,12 +127,6 @@ class ProfileTab extends ConsumerWidget {
           onTap: () => pushScreen(context, const EditProfileScreen()),
         ),
 
-        _SectionTitle(s.profileSectionSecurity),
-        _Row(
-          icon: Icons.security_outlined,
-          label: s.security,
-          onTap: () => openSecurity(context),
-        ),
         _Row(
           icon: Icons.lock_outline,
           label: s.changePassword,
