@@ -31,6 +31,30 @@
 
   <title>finovault_flutter</title>
   <link rel="manifest" href="manifest.json">
+
+  <script>
+    // Safeguard against DWDS / Flutter Web DOM detach errors (e.g. Cannot read properties of null (reading 'removeChild'))
+    (function() {
+      var originalRemoveChild = Node.prototype.removeChild;
+      Node.prototype.removeChild = function(child) {
+        if (!child) return null;
+        if (child.parentNode !== this) {
+          if (typeof child.remove === 'function') {
+            try { child.remove(); } catch (_) {}
+          }
+          return child;
+        }
+        return originalRemoveChild.call(this, child);
+      };
+
+      window.addEventListener('error', function(event) {
+        if (event && event.message && event.message.indexOf('removeChild') !== -1) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }
+      }, true);
+    })();
+  </script>
 </head>
 <body>
   <!--

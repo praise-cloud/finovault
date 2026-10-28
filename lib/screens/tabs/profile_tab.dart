@@ -338,14 +338,19 @@ class ProfileTab extends ConsumerWidget {
                               label: s.notifications,
                               value: n.enabled,
                               onChanged: (v) async {
+                                if (v) {
+                                  await ref.read(notificationServiceProvider).requestPermission();
+                                }
                                 await notif.setEnabled(v);
                                 if (v) {
-                                  await ref
-                                      .read(notificationServiceProvider)
-                                      .notifyBillDue(
-                                        'Finovault alerts are on',
-                                        DateTime.now().add(const Duration(days: 2)),
-                                      );
+                                  try {
+                                    await ref
+                                        .read(notificationServiceProvider)
+                                        .notifyBillDue(
+                                          'Finovault alerts are on',
+                                          DateTime.now().add(const Duration(days: 2)),
+                                        );
+                                  } catch (_) {}
                                 }
                               },
                             ),

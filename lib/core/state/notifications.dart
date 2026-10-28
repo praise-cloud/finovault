@@ -68,6 +68,8 @@ final notificationSettingsProvider =
 abstract class NotificationService {
   /// Platform permission + channel setup. Safe to call once at startup.
   Future<void> initialize();
+  /// Requests notification permissions across platforms (Android 13+, iOS, Web).
+  Future<bool> requestPermission();
   Future<void> notifyBillDue(String biller, DateTime due);
   Future<void> notifyLowBalance(String account, double balance);
 }
@@ -77,6 +79,9 @@ class DebugNotificationService implements NotificationService {
 
   @override
   Future<void> initialize() async {}
+
+  @override
+  Future<bool> requestPermission() async => true;
 
   @override
   Future<void> notifyBillDue(String biller, DateTime due) async {
@@ -129,22 +134,45 @@ class LocalNotificationService implements NotificationService {
     }
   }
 
+  @override
+  Future<bool> requestPermission() async {
+    try {
+      final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      if (android != null) {
+        final granted = await android.requestNotificationsPermission();
+        return granted ?? false;
+      }
+      final ios = _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+      if (ios != null) {
+        final granted = await ios.requestPermissions(alert: true, badge: true, sound: true);
+        return granted ?? false;
+      }
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<void> _show(String title, String body) async {
     if (!_ready) return;
-    await _plugin.show(
-      id: title.hashCode,
-      title: title,
-      body: body,
-      notificationDetails: const NotificationDetails(
-        android: AndroidNotificationDetails(
-          _channelId,
-          _channelName,
-          importance: Importance.high,
-          priority: Priority.high,
+    try {
+      await _plugin.show(
+        id: title.hashCode,
+        title: title,
+        body: body,
+        notificationDetails: const NotificationDetails(
+          android: AndroidNotificationDetails(
+            _channelId,
+            _channelName,
+            importance: Importance.high,
+            priority: Priority.high,
+          ),
+          iOS: DarwinNotificationDetails(),
         ),
-        iOS: DarwinNotificationDetails(),
-      ),
-    );
+      );
+    } catch (_) {
+      // Degrade silently if permission not granted or unsupported on platform
+    }
   }
 
   @override
