@@ -19,6 +19,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _email = TextEditingController();
   final _password = TextEditingController();
+  String? _localError;
 
   @override
   void dispose() {
@@ -28,9 +29,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _submit() async {
+    final email = _email.text.trim();
+    final password = _password.text;
+    if (email.isEmpty || password.isEmpty) {
+      setState(() => _localError = 'Please enter your email and password.');
+      return;
+    }
+    final sqli = RegExp(r"(\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|ALTER|EXEC)\b|--|\/\*|\*\/)", caseSensitive: false);
+    if (sqli.hasMatch(email)) {
+      setState(() => _localError = 'Email format contains invalid characters.');
+      return;
+    }
+    setState(() => _localError = null);
     final ok = await ref
         .read(authProvider.notifier)
-        .login(_email.text, _password.text);
+        .login(email, password);
     if (!mounted) return;
     final auth = ref.read(authProvider);
     if (auth.isMfaPending) {
@@ -54,7 +67,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final auth = ref.watch(authProvider);
-    final error = auth.error;
+    final error = auth.error ?? _localError;
     final s = AppLocalizations.of(context);
 
     return Scaffold(

@@ -23,6 +23,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
   final store = SharedPrefsStore(prefs);
+  if (store.getString('finovault.apiBaseUrl') == null) {
+    await store.setString('finovault.apiBaseUrl', 'https://finovault-bff.onrender.com');
+  }
   final db = MockDb(store: store);
   await db.hydrate();
 

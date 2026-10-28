@@ -32,14 +32,36 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   Future<void> _submit() async {
     setState(() => _localError = null);
-    if (_name.text.trim().isEmpty ||
-        _email.text.trim().isEmpty ||
-        _phone.text.trim().isEmpty ||
-        _password.text.isEmpty) {
+    final name = _name.text.trim();
+    final email = _email.text.trim();
+    final password = _password.text;
+    final phoneClean = _phone.text.trim();
+
+    if (name.isEmpty || email.isEmpty || phoneClean.isEmpty || password.isEmpty) {
       setState(() => _localError = 'Please fill in every field.');
       return;
     }
-    final phoneClean = _phone.text.trim();
+    final sqli = RegExp(r"(\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|ALTER|EXEC)\b|--|\/\*|\*\/)", caseSensitive: false);
+    if (sqli.hasMatch(name) || sqli.hasMatch(email) || sqli.hasMatch(phoneClean)) {
+      setState(() => _localError = 'Input contains prohibited characters.');
+      return;
+    }
+    if (name.length < 2 || name.length > 100) {
+      setState(() => _localError = 'Full name must be between 2 and 100 characters.');
+      return;
+    }
+    if (!RegExp(r"^[\w\.-]+@[\w\.-]+\.\w+$").hasMatch(email)) {
+      setState(() => _localError = 'Please enter a valid email address.');
+      return;
+    }
+    if (password.length < 8) {
+      setState(() => _localError = 'Password must be at least 8 characters.');
+      return;
+    }
+    if (password.length > 128) {
+      setState(() => _localError = 'Password cannot exceed 128 characters.');
+      return;
+    }
     if (phoneClean.replaceAll(RegExp(r'\D'), '').length < 5) {
       setState(() => _localError = 'Please enter a valid mobile number.');
       return;
@@ -51,9 +73,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     final ok = await ref
         .read(authProvider.notifier)
         .signup(
-          _name.text,
-          _email.text,
-          _password.text,
+          name,
+          email,
+          password,
           phoneClean,
           country: country,
         );
