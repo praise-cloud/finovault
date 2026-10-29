@@ -12,6 +12,8 @@ import 'core/state/onboarding.dart';
 import 'core/state/notifications.dart';
 import 'core/state/preferences.dart';
 import 'core/mock/db.dart';
+import 'core/mock/http_api.dart';
+import 'core/supabase_api.dart';
 import 'core/state/biometric.dart';
 import 'screens/home_shell.dart';
 import 'screens/welcome_screen.dart';
@@ -23,8 +25,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
   final store = SharedPrefsStore(prefs);
-  if (store.getString('finovault.apiBaseUrl') == null) {
-    await store.setString('finovault.apiBaseUrl', 'https://finovault-bff.onrender.com');
+  // Clear any legacy dead onrender endpoint so app defaults to live Supabase backend
+  if (store.getString('finovault.apiBaseUrl')?.contains('onrender.com') == true) {
+    await store.remove('finovault.apiBaseUrl');
   }
   final db = MockDb(store: store);
   await db.hydrate();
@@ -40,6 +43,19 @@ Future<void> main() async {
         initialOnboardingProvider.overrideWithValue(
           loadInitialOnboarding(store),
         ),
+        apiProvider.overrideWith((ref) {
+          final customUrl = ref.watch(apiBaseUrlProvider);
+          if (customUrl != null &&
+              customUrl.isNotEmpty &&
+              !customUrl.contains('onrender.com')) {
+            final api = HttpFinovaultApi(baseUrl: customUrl);
+            ref.onDispose(api.close);
+            return api;
+          }
+          final api = SupabaseFinovaultApi(fallbackDb: db);
+          ref.onDispose(api.close);
+          return api;
+        }),
       ],
       child: const FinovaultApp(),
     ),
