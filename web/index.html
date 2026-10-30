@@ -29,6 +29,10 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
+    <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Noto+Color+Emoji&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <title>finovault_flutter</title>
   <link rel="manifest" href="manifest.json">
 
@@ -53,6 +57,18 @@
           event.stopImmediatePropagation();
         }
       }, true);
+
+      // Filter out repetitive Flutter Web font fallback warning spam in dev console
+      var originalWarn = console.warn;
+      var lastFontWarn = 0;
+      console.warn = function() {
+        if (arguments.length > 0 && typeof arguments[0] === 'string' && arguments[0].indexOf('Noto fonts') !== -1) {
+          var now = Date.now();
+          if (now - lastFontWarn < 60000) return; // at most once per minute
+          lastFontWarn = now;
+        }
+        return originalWarn.apply(console, arguments);
+      };
     })();
   </script>
 </head>

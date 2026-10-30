@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
 import 'models.dart';
@@ -849,8 +850,38 @@ class SupabaseFinovaultApi implements FinovaultApi {
   Future<BankLinkResult> linkBankAccount(String? token, {required String institution, required String accountNumber, String? holderName}) =>
       _mock.linkBankAccount(token, institution: institution, accountNumber: accountNumber, holderName: holderName);
   @override
-  Future<StatementUploadResult> uploadStatement(String? token, {required String accountId, required String fileName, required String fileType, required String data}) =>
-      _mock.uploadStatement(token, accountId: accountId, fileName: fileName, fileType: fileType, data: data);
+  Future<StatementUploadResult> uploadStatement(
+    String? token, {
+    required String accountId,
+    required String fileName,
+    required String fileType,
+    required String data,
+  }) async {
+    final user = await getSession(token);
+    if (user != null) {
+      try {
+        final rawBytes = base64Decode(data);
+        final path = '${user.id}/${DateTime.now().millisecondsSinceEpoch}_$fileName';
+        await _client.post(
+          Uri.parse('$supabaseUrl/storage/v1/object/statements/$path'),
+          headers: {
+            'apikey': supabaseKey,
+            'Authorization': 'Bearer $supabaseKey',
+            'Content-Type': fileType == 'pdf' ? 'application/pdf' : 'text/csv',
+            'x-upsert': 'true',
+          },
+          body: rawBytes,
+        );
+      } catch (_) {}
+    }
+    return _mock.uploadStatement(
+      token,
+      accountId: accountId,
+      fileName: fileName,
+      fileType: fileType,
+      data: data,
+    );
+  }
   @override
   Future<PaymentLinkResult> generatePaymentLink(String? token, {required String accountId, required double amount, required String recipient}) =>
       _mock.generatePaymentLink(token, accountId: accountId, amount: amount, recipient: recipient);

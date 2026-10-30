@@ -23,18 +23,31 @@ class FvTheme {
       error: dark ? FvColors.errorDark : FvColors.error,
     );
 
+    const fontFallbacks = [
+      'Roboto',
+      'Noto Sans',
+      'Noto Color Emoji',
+      'Apple Color Emoji',
+      'Segoe UI Emoji',
+      'Segoe UI Symbol',
+      'sans-serif',
+    ];
+
     final base = ThemeData(
       useMaterial3: true,
       brightness: brightness,
       colorScheme: scheme,
       scaffoldBackgroundColor: dark ? FvColors.bgDark : FvColors.bg,
       fontFamily: 'Montserrat',
+      fontFamilyFallback: fontFallbacks,
     );
 
     return base.copyWith(
       textTheme: base.textTheme.apply(
         bodyColor: dark ? FvColors.textDark : FvColors.ink,
         displayColor: dark ? FvColors.textDark : FvColors.ink,
+        fontFamily: 'Montserrat',
+        fontFamilyFallback: fontFallbacks,
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: dark ? FvColors.surfaceDark : FvColors.surface,
