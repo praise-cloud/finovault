@@ -68,5 +68,9 @@
 	</array>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Use Face ID / Touch ID to unlock Finovault quickly and securely.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Finovault needs camera access to take profile pictures and scan QR codes.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Finovault needs photo library access to upload profile avatars and bank statements.</string>
 </dict>
 </plist>
